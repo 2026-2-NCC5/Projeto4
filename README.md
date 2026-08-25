@@ -23,7 +23,7 @@
 
 ---
 
-# 👥 Grupo 4  TDR Devs
+# 👥 Grupo 4 - TDR Devs
 
 > **Status:** Grupo ativo
 
@@ -138,9 +138,9 @@ A área reúne uma equipe multidisciplinar e uma ampla cesta de serviços relaci
 Com o objetivo de melhorar a experiência do estudante e tornar o atendimento mais **ágil, consistente, personalizado e proativo**, a FECAP propõe às equipes do 5º semestre do curso de Ciências da Computação o desenvolvimento de **agentes inteligentes** capazes de analisar dados autorizados, apoiar os atendentes do ASA, orientar estudantes e sinalizar situações que mereçam acompanhamento.
 
 ---
-## ASA  Agentes Inteligentes para o Sucesso do Estudante
+## ASA - Agentes Inteligentes para o Sucesso do Estudante
 
-O projeto desenvolvido pelo **Grupo 4  TDR Devs** tem como objetivo criar uma solução tecnológica baseada em **Inteligência Artificial e Aprendizado de Máquina** para apoiar a Área do Sucesso Alvarista da FECAP.
+O projeto desenvolvido pelo **Grupo 4 - TDR Devs** tem como objetivo criar uma solução tecnológica baseada em **Inteligência Artificial e Aprendizado de Máquina** para apoiar a Área do Sucesso Alvarista da FECAP.
 
 A solução deverá auxiliar estudantes e profissionais do ASA por meio de recursos inteligentes capazes de consultar informações institucionais, compreender contextos, organizar informações e fornecer suporte aos atendimentos.
 
@@ -900,6 +900,5 @@ Materiais de terceiros permanecem sujeitos às respectivas licenças de seus aut
 </p>
 
 <p align="center">
-  <strong>Grupo 4  TDR Devs</strong>
+  <strong>Grupo 4 - TDR Devs</strong>
 </p>
-
