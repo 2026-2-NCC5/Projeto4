@@ -1,0 +1,14 @@
+Matriz de registros históricos: (96628, 477)
+Digite a pergunta do estudante: Exemplo manual (pergunta x 1º registro) — produto escalar: 0.0 | cosseno: 0.0
+
+Registros mais semelhantes à pergunta:
+           Motivo do Contato   Tema Relacionamento  similaridade
+76385  Solicitação de Boleto  Solicitação de Aluno      0.924286
+29739  Solicitação de Boleto  Solicitação de Aluno      0.924286
+76930  Solicitação de Boleto  Solicitação de Aluno      0.924286
+54422  Solicitação de Boleto  Solicitação de Aluno      0.924286
+29718  Solicitação de Boleto  Solicitação de Aluno      0.924286
+
+Motivo identificado: Solicitação de Boleto
+
+Orientação: sua solicitação foi identificada como 'Solicitação de Boleto'. Buscando o procedimento oficial correspondente na base de conhecimento do ASA...
