@@ -1,0 +1,10 @@
+# Identidade e versionamento do Agente para o Estudante (TASK-004 §57-59)
+agent:
+  name: student_agent
+  version: "1.0.0"
+
+config_version: "1.0.0"
+
+contracts:
+  version: "1.0"
+  supported_major: 1

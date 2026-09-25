@@ -1,0 +1,32 @@
+# Limiares do Agente para o Estudante. Alterar aqui = nova config_version em agent.yaml.
+# Nenhum destes valores deve ser repetido em código Python.
+
+confidence:
+  # Recomendações com confiança abaixo deste valor não são emitidas; se todas as
+  # situações detectadas ficarem abaixo dele, o agente se abstém (TASK-001 §10).
+  minimum: 0.70
+
+attendance:
+  # Abaixo deste percentual a frequência "merece atenção" (SCENARIO-003).
+  attention_rate: 0.80
+  # Abaixo deste percentual a situação pode afetar direitos acadêmicos
+  # (reprovação por frequência) e exige validação humana (SCENARIO-008).
+  critical_rate: 0.75
+  # Amostras pequenas reduzem a confiança da regra de frequência.
+  minimum_classes_for_full_confidence: 8
+
+performance:
+  # Média (score/max_score) abaixo deste valor "merece atenção" (SCENARIO-004).
+  attention_ratio: 0.60
+  # Mínimo de avaliações com nota para avaliar desempenho de uma disciplina.
+  minimum_assessments: 1
+  # Com apenas uma avaliação a confiança da regra é reduzida.
+  assessments_for_full_confidence: 2
+
+pending:
+  # Pendências com prazo em até N dias (ou vencidas) recebem prioridade maior.
+  due_soon_days: 7
+
+data_sufficiency:
+  # Se nenhuma coleção do contexto possuir dados, o agente se abstém (SCENARIO-006).
+  require_any_collection: true

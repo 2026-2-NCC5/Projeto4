@@ -1,0 +1,18 @@
+[project]
+name = "asa-agent-service"
+version = "1.0.0"
+description = "ASA Conecta - Agent Service (FastAPI) + Student Agent Engine"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
