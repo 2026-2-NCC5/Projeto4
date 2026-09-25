@@ -1,0 +1,9 @@
+regra,dimensao,condicao,prioridade,acao_sugerida,observacao
+R1,Financeiro,pct_parcelas_em_aberto >= 0.30,Alta,Contato proativo + orientação financeira,Sinal de inadimplência corrente; validar contexto antes de agir.
+R2,Financeiro,pct_parcelas_acordo >= 0.20,Média,Oferecer canais de negociação/bolsas,"Acordos podem sinalizar dificuldade, mas não equivalem a evasão."
+R3,Acadêmico,pct_reprovacao >= 0.30,Alta,Encaminhar apoio acadêmico,Não usar como sanção; ação apenas assistiva.
+R4,Acadêmico,tendencia_notas < -10 OU tendencia_assiduidade < -10,Alta,Contato de acolhimento,Tendência exige histórico suficiente.
+R5,Relacionamento,total_contatos >= 3 E dias_desde_ultimo_contato <= 60,Média,Revisar temas recentes,Excluir sinais que vazem o rótulo de evasão.
+R6,Modelo,score_risco >= 0.65,Alta,Priorizar revisão humana,Score não é decisão administrativa.
+R7,Modelo,0.35 <= score_risco < 0.65,Média,Acompanhar e combinar com regras,"Faixa inicial, sujeita a calibração."
+R8,Modelo,score_risco < 0.35,Baixa,Acompanhamento rotineiro,Baixo risco não significa risco zero.
