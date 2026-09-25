@@ -1,0 +1,22 @@
+{
+  "contract_version": "1.0",
+  "request_id": "req-demo-001",
+  "correlation_id": "corr-demo-001",
+  "student_id": "student-demo-001",
+  "reference_date": "2026-09-16",
+  "academic_context": {
+    "subjects": [],
+    "pending_items": [
+      {
+        "id": "pending-demo-001",
+        "subject_id": "subject-demo-001",
+        "type": "assignment",
+        "description": "Entrega do trabalho pratico",
+        "due_date": "2026-09-21",
+        "status": "pending"
+      }
+    ],
+    "attendance": [],
+    "assessments": []
+  }
+}

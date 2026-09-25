@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asa-conecta.local/contracts/agent/student-agent-request.v1.json",
+  "title": "StudentAgentRequest v1",
+  "description": "Contrato interno Node.js API -> Python Agent Service (POST /internal/v1/student-agent/evaluate). Versao 1.x. Somente dados sinteticos/ficticios.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "request_id", "correlation_id", "student_id", "academic_context"],
+  "properties": {
+    "contract_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "correlation_id": { "type": "string", "minLength": 1 },
+    "student_id": { "type": "string", "minLength": 1 },
+    "reference_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Data de referencia (YYYY-MM-DD) usada para calculos de prazo. Quando ausente, o servico usa a data atual."
+    },
+    "academic_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subjects", "pending_items", "attendance", "assessments"],
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "code", "name"],
+            "properties": {
+              "id": { "type": "string" },
+              "code": { "type": "string" },
+              "name": { "type": "string" },
+              "enrollment_status": { "type": "string", "enum": ["active", "completed", "cancelled"], "default": "active" }
+            }
+          }
+        },
+        "pending_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "type", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "subject_id": { "type": ["string", "null"] },
+              "type": { "type": "string" },
+              "description": { "type": ["string", "null"] },
+              "due_date": { "type": ["string", "null"], "format": "date" },
+              "status": { "type": "string", "enum": ["pending", "completed", "overdue"] }
+            }
+          }
+        },
+        "attendance": {
+          "type": "array",
+          "description": "Frequencia agregada por disciplina.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["subject_id", "total_classes", "attended_classes"],
+            "properties": {
+              "subject_id": { "type": "string" },
+              "total_classes": { "type": "integer", "minimum": 0 },
+              "attended_classes": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "assessments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "subject_id", "title", "max_score"],
+            "properties": {
+              "id": { "type": "string" },
+              "subject_id": { "type": "string" },
+              "title": { "type": "string" },
+              "type": { "type": "string", "enum": ["exam", "assignment", "project", "other"], "default": "other" },
+              "score": { "type": ["number", "null"] },
+              "max_score": { "type": "number", "exclusiveMinimum": 0 },
+              "applied_at": { "type": ["string", "null"], "format": "date" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
