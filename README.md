@@ -362,112 +362,250 @@ A arquitetura poderá evoluir durante o desenvolvimento conforme os requisitos l
 
 # 🛠️ Estrutura de Pastas
 
-A estrutura principal do repositório será organizada da seguinte forma:
+O repositório é organizado por **entrega** e por **disciplina**: `documentos/` guarda os arquivos
+entregues em cada disciplina e `src/` guarda o código de cada entrega, separado em `Backend/` e
+`Frontend/`. As pastas das demais disciplinas já existem e recebem os arquivos de cada entrega.
 
 ```text
 Projeto4/
 │
 ├── documentos/
-│   ├── antigos/
-│   └── Documentação.docx
+│   ├── Entrega 1/
+│   │   ├── Álgebra Linear, Vetores e Geometria Analítica/   # notebook e relatório da entrega
+│   │   ├── Inteligência Artificial e Aprendizado de Máquina/
+│   │   ├── Projeto Interdisciplinar - Inteligência Artificial/
+│   │   │   ├── pipelines/                 # TASK-001 … TASK-005 (fontes de verdade do escopo)
+│   │   │   ├── escopo-completo/           # escopo do protótipo da primeira entrega
+│   │   │   └── PRESENTATION_SCRIPT.md     # roteiro da apresentação
+│   │   ├── Psicologia, Liderança e Soft Skills/             # relatório da entrega
+│   │   └── Sistemas Operacionais e Computação em Nuvem/     # relatório, protótipo e logs
+│   └── Entrega 2/
+│       ├── Álgebra Linear, Vetores e Geometria Analítica/
+│       ├── Inteligência Artificial e Aprendizado de Máquina/
+│       ├── Projeto Interdisciplinar - Inteligência Artificial/
+│       │   ├── adr/                       # decisões de arquitetura (ADR-001 … ADR-005)
+│       │   ├── architecture/              # arquitetura, autenticação, voz e regras do agente
+│       │   ├── api/                       # referência da API
+│       │   ├── assistant/                 # assistente ASA: voz, "Hey Asa" e privacidade
+│       │   └── evidence/                  # indicadores da PoC e evidências E2E geradas
+│       ├── Psicologia, Liderança e Soft Skills/
+│       └── Sistemas Operacionais e Computação em Nuvem/
 │
-├── executáveis/
-│   └── android/
-│
-├── imagens/
+├── imagens/                               # logos e recursos visuais
 │
 ├── src/
-│   ├── Backend/
-│   └── Frontend/
+│   ├── Entrega 1/                         # protótipo da primeira entrega (Supabase + mocks), mantido como histórico
+│   │   ├── Backend/                       # scripts SQL do Supabase
+│   │   └── Frontend/                      # app Expo do protótipo
+│   └── Entrega 2/                         # ASA Conecta
+│       ├── Backend/
+│       │   ├── api/                       # API principal / BFF — Node.js + TypeScript + PostgreSQL
+│       │   ├── agent-service/             # Agent Service (FastAPI) + Student Agent Engine (Python puro)
+│       │   ├── database/                  # migrations (npm run db:migrate) e seeds sintéticos (npm run db:seed)
+│       │   ├── contracts/                 # contratos Node ↔ Python (JSON Schema) e Mobile ↔ Node (TypeScript)
+│       │   ├── scripts/                   # e2e.sh, check-contracts-sync.sh
+│       │   ├── docker-compose.yml         # PostgreSQL + API + Agent Service + Mailpit (e-mail local)
+│       │   └── .env.example               # variáveis do Docker Compose
+│       └── Frontend/                      # app mobile — Expo / React Native / TypeScript
 │
+├── .github/workflows/ci.yml               # CI: contratos, Python, Node (unit/integração/E2E), mobile, Docker
 ├── .gitignore
-├── LICENSE
 └── README.md
 ```
 
 ---
 
-# 📁 Descrição das Pastas
+# 🚀 Como executar o ASA Conecta
 
-## `documentos/`
+## Pré-requisitos
 
-Responsável por armazenar a documentação acadêmica e técnica.
+> Os blocos abaixo partem da **raiz do repositório** (`Projeto4/`). O código da Entrega 2 fica em
+> `src/Entrega 2/` — use aspas no `cd`, porque o nome da pasta tem espaço.
+> As linhas com `( cd … && … )` rodam em subshell, então o diretório atual não muda entre elas.
 
-Exemplos:
+* Node.js 20+ e npm
+* Python 3.11+ (recomendado 3.12)
+* Docker com Docker Compose v2 (para o PostgreSQL; opcionalmente para API e agente)
+* Expo Go **para o SDK 57** no celular (versão atual das lojas) ou emulador
 
-* documentação do Projeto Integrador;
-* levantamento de requisitos;
-* diagramas;
-* pesquisas;
-* relatórios;
-* documentação de arquitetura;
-* documentação da IA;
-* protótipos;
-* apresentações;
-* documentos de entregas.
+## Opção A — tudo com Docker (PostgreSQL + API + Agent Service + Mailpit)
 
----
-
-## `executáveis/`
-
-Responsável pelos artefatos distribuíveis da solução.
-
-Exemplo:
-
-```text
-executáveis/
-└── android/
-    └── aplicativo.apk
+```bash
+cd "src/Entrega 2/Backend"
+docker compose up -d --build
+docker compose logs -f api        # aguarde "api listening"
+curl -s localhost:3000/health     # {"data":{"status":"ok",...}}
 ```
 
----
+O container da API aplica as migrations e os seeds fictícios automaticamente. Os e-mails de
+recuperação de senha chegam na caixa local do Mailpit: <http://localhost:8025>.
 
-## `imagens/`
+> Se o app mostrar `ERR_CONNECTION_REFUSED` em `:3000/api/auth/login`, a API não está rodando:
+> suba a stack com o comando acima.
 
-Contém:
+## Opção B — serviços locais (desenvolvimento)
 
-* logos;
-* diagramas;
-* screenshots;
-* mockups;
-* imagens da aplicação;
-* recursos utilizados pela documentação.
+```bash
+# 1. Banco e caixa de e-mail local
+cd "src/Entrega 2/Backend"
+docker compose up -d db mailpit
 
----
+# 2. Agent Service (Python)
+cd agent-service
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload --port 8000
 
-## `src/`
-
-Contém todo o código-fonte do projeto.
-
-```text
-src/
-├── Backend/
-└── Frontend/
+# 3. API (Node.js) — em outro terminal, a partir da raiz
+cd "src/Entrega 2/Backend/api"
+cp .env.example .env
+npm install
+npm run db:migrate && npm run db:seed
+npm run dev                        # http://localhost:3000
 ```
 
-### Backend
+## Opção C — banco online no Supabase (API e agente locais ou em Docker)
 
-Responsável por:
+O projeto **ASA Conecta** no Supabase é o banco online da equipe. Reative-o no painel se estiver
+pausado, pegue a senha em *Project Settings → Database* e aponte a API para o pooler (modo sessão):
 
-* APIs;
-* autenticação;
-* autorização;
-* regras de negócio;
-* banco de dados;
-* integrações;
-* serviços;
-* comunicação com IA.
+```bash
+# src/Entrega 2/Backend/api/.env (ou src/Entrega 2/Backend/.env, para o Compose)
+DATABASE_URL=postgresql://postgres.lxfssnqxsxiywfndsfdn:[SENHA]@aws-0-sa-east-1.pooler.supabase.com:5432/postgres
+DATABASE_SSL=auto
+```
 
-### Frontend
+```bash
+cd "src/Entrega 2/Backend"
+( cd api && npm run db:migrate && npm run db:seed )    # schema + contas fictícias no Supabase
+docker compose up -d --build api agent-service mailpit # ou: ( cd api && npm run dev )
+```
 
-Responsável por:
+Passo a passo, limites e regras (sem `db:reset` remoto, sem `TEST_DATABASE_URL` no Supabase) em
+[`src/Entrega 2/Backend/database/README.md`](<src/Entrega 2/Backend/database/README.md#banco-online-supabase>).
 
-* interfaces;
-* componentes;
-* navegação;
-* experiência do usuário;
-* integração com a API;
-* aplicação destinada aos usuários.
+## Aplicativo mobile (Expo Go)
+
+```bash
+cd "src/Entrega 2/Frontend"
+cp .env.example .env               # opcional: EXPO_PUBLIC_API_URL=http://<IP-da-sua-máquina>:3000
+npm install
+npx expo start
+```
+
+Sem `EXPO_PUBLIC_API_URL`, o app deriva a URL da API a partir do host do Metro (mesmo IP
+da máquina, porta 3000). Leia o QR code com o Expo Go. No Expo Go tudo funciona por **texto + resposta
+falada**; a **entrada por voz** e o **"Hey Asa"** exigem um development build (abaixo).
+
+A aba Assistente segue um layout de chat (respostas reveladas caractere a caractere, balões, campo que
+cresce até 5 linhas e botão microfone ⇄ enviar); as telas de autenticação usam o fundo radial roxo → verde
+das cores do logo ASA. Detalhes e decisões: [ADR-005](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-005-assistant-experience.md>).
+
+## Development build (voz e "Hey Asa")
+
+```bash
+cd "src/Entrega 2/Frontend"
+npx expo prebuild                  # gera android/ e ios/ aplicando os config plugins (microfone, fala)
+npx expo run:android               # ou: npx expo run:ios
+# ou, na nuvem: eas build --profile development --platform android
+```
+
+Depois, no app: **Perfil → Assistente ASA → Ativação "Hey Asa"** (o onboarding explica o uso do
+microfone antes de pedir a permissão). A detecção funciona apenas com o app em primeiro plano.
+
+## Contas fictícias (senha: `Demo@2026`)
+
+As contas abaixo existem apenas no seed (`src/Entrega 2/Backend/database/seeds/001_demo_students.sql`); a tela de login não
+exibe atalhos nem senhas — entra-se com e-mail e senha, como em produção.
+
+| E-mail | Cenário demonstrado |
+| --- | --- |
+| `estudante.exemplo@demo.asa` | atividade pendente → recomendação com evidência e próxima ação |
+| `estudante.regular@demo.asa` | sem alertas (`no_action`) |
+| `estudante.frequencia@demo.asa` | frequência que merece atenção |
+| `estudante.desempenho@demo.asa` | desempenho que merece atenção |
+| `estudante.multiplo@demo.asa` | múltiplos fatores simultâneos |
+| `estudante.semdados@demo.asa` | dados insuficientes → abstenção |
+| `estudante.inconsistente@demo.asa` | dados inconsistentes → validação humana |
+| `estudante.validacao@demo.asa` | frequência abaixo do mínimo → validação humana |
+
+## Testes
+
+```bash
+cd "src/Entrega 2"
+( cd Backend/agent-service && .venv/bin/pytest -q && .venv/bin/ruff check . )
+( cd Backend/api && npm run lint && npm run typecheck && npm run test:unit )
+( cd Backend/api && npm run test:integration && npm run test:e2e )   # exigem TEST_DATABASE_URL (banco asa_conecta_test) e Mailpit
+( cd Frontend && npm run typecheck && npm run lint && npm test )     # inclui máquina de estados, "Hey Asa", provider e tema
+Backend/scripts/e2e.sh                                               # cenários E2E oficiais + evidências em documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/evidence/e2e/
+Backend/scripts/check-contracts-sync.sh                              # cópias do contrato mobile ↔ API idênticas
+```
+
+## Autenticação
+
+- **Entrar:** e-mail e senha, com "Manter conectado" (sessão de 30 dias no aparelho; desligado por padrão) ou sessão curta. A tela de login dá acesso a **Criar conta**, **Esqueci minha senha** e, quando ativada, **Entrar com biometria**.
+- **Criar conta:** nome, e-mail institucional (`@edu.fecap.br`, `@fecap.br` ou `@demo.asa` para demonstração), RA de 8 dígitos, curso opcional e senha forte.
+- **Esqueci minha senha:** o código de 6 dígitos chega por e-mail (em desenvolvimento, no Mailpit em <http://localhost:8025>), depois defina a nova senha.
+- **Biometria:** após entrar com senha, o app oferece Face ID, impressão digital ou biometria do aparelho. Funciona no Expo Go Android e em development builds; não funciona no navegador nem com Face ID no Expo Go iOS.
+
+Segurança e fluxos: [architecture/authentication.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/authentication.md>) e
+[ADR-004](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-004-authentication.md>).
+
+## Assistente ASA (voz, texto e "Hey Asa")
+
+O assistente é uma camada global do app: **Home** ("Falar agora"/"Digitar"), **botão central** da
+navegação (toque = abrir; toque e segure = falar agora), **overlay** sobre qualquer tela e a frase
+**"Hey Asa"** (development build/web, primeiro plano, opt-in). Exemplos:
+"Hey Asa, qual minha próxima prova?", "Como estão minhas notas?", "Tenho alguma pendência?",
+"E em Banco de Dados?" (contexto), "Abre minhas notas" (navega), "Corrige minha nota." (limite).
+
+| Ambiente | Texto + resposta falada | Entrada por voz | "Hey Asa" |
+| --- | --- | --- | --- |
+| Expo Go | ✅ | ❌ (o app avisa e mantém o modo texto) | ❌ |
+| Development build (`npx expo run:android` / `run:ios` / `eas build --profile development`) | ✅ | ✅ | ✅ (primeiro plano) |
+| Navegador (`npx expo start --web`, Chrome/Edge/Safari) | ✅ | ✅ (Web Speech API) | ✅ (Chrome/Edge) |
+
+Como testar o assistente:
+
+1. Entre com uma conta de demonstração e, na Home, toque em **Falar agora** (ou **Digitar** no Expo Go).
+2. Pergunte "Tenho alguma atividade pendente?" e depois "E essa semana?" (contexto conversacional).
+3. Na tela **Acadêmico → Avaliações**, toque e segure o botão central e pergunte "Qual foi a menor?"
+   (contexto da tela).
+4. Diga "Abre minha frequência" — o app navega e fala "Claro. Abrindo sua frequência."
+5. Em development build, ative o "Hey Asa" em **Perfil → Assistente ASA** e diga "Hey Asa, qual minha
+   próxima prova?" com o app aberto. O indicador de microfone aparece no topo sempre que a captura está ativa.
+
+A interpretação acontece na API (regras pt-BR, sem provedor externo) e reutiliza o Agente para o
+Estudante quando a pergunta pede análise. O áudio não é gravado; só o texto é enviado. Documentação:
+[assistant/architecture.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/architecture.md>) ·
+[voice.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/voice.md>) · [wake-word.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/wake-word.md>) ·
+[privacy.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/privacy.md>) · [ADR-005](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-005-assistant-experience.md>).
+
+### Permissões e privacidade
+
+- Microfone (iOS `NSMicrophoneUsageDescription`/`NSSpeechRecognitionUsageDescription`; Android
+  `RECORD_AUDIO`) é pedido **somente** ao tocar no microfone ou ao ativar o "Hey Asa" após o onboarding.
+  Negar mantém o app 100% funcional por texto.
+- "Hey Asa" nasce desligado, roda só em primeiro plano e é desligado em background.
+- Preferências (Perfil → Assistente ASA): Hey Asa, interromper por voz (experimental), resposta por
+  voz, voz do TTS, feedback tátil, animações, transcrição, histórico local (só texto) e status/permissão
+  do microfone. O app é exibido sempre no tema claro.
+
+## Reproduzindo falhas controladas
+
+```bash
+cd "src/Entrega 2/Backend/api"
+AGENT_STUB_MODE=slow AGENT_STUB_PORT=8001 npm run agent:stub                 # terminal 1
+AGENT_SERVICE_URL=http://localhost:8001 AGENT_SERVICE_TIMEOUT_MS=1000 npm run dev   # terminal 2 → 504 TIMEOUT
+```
+
+Modos do stub: `slow` (timeout), `incompatible` (contrato 2.0 → 502), `error` (503); parar o
+Agent Service real também produz `503 DEPENDENCY_ERROR`. A abstenção e a validação humana
+são demonstradas com as contas `estudante.semdados@demo.asa` e `estudante.validacao@demo.asa`.
+
+Documentação detalhada (em `documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/`): [architecture/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/README.md>) ·
+[api/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/api/README.md>) · [evidence/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/evidence/README.md>) ·
+[adr/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-001-agent-selection.md>).
 
 ---
 
@@ -477,42 +615,27 @@ Clone o repositório:
 
 ```bash
 git clone https://github.com/2026-2-NCC5/Projeto4.git
-```
-
-Acesse a pasta:
-
-```bash
 cd Projeto4
 ```
 
-As instruções específicas de instalação do **Frontend**, **Backend**, **Banco de Dados** e serviços de **Inteligência Artificial** deverão ser adicionadas conforme a stack definitiva for implementada pelo grupo.
+Siga a seção [🚀 Como executar o ASA Conecta](#-como-executar-o-asa-conecta). Cada módulo
+possui um README próprio: [`Frontend`](<src/Entrega 2/Frontend/README.md>),
+[`Backend/api`](<src/Entrega 2/Backend/api/README.md>), [`Backend/agent-service`](<src/Entrega 2/Backend/agent-service/README.md>),
+[`Backend/database`](<src/Entrega 2/Backend/database/README.md>) — todos em `src/Entrega 2/`.
 
 ---
 
 # 🔑 Variáveis de Ambiente
 
-Credenciais e configurações sensíveis não deverão ser armazenadas diretamente no código.
+Credenciais e configurações sensíveis não são armazenadas no código. Cada módulo possui um
+`.env.example` com valores fictícios; copie para `.env` (ignorado pelo Git):
 
-Quando necessário, utilize:
-
-```text
-.env
-```
-
-Um arquivo de exemplo poderá ser criado:
-
-```text
-.env.example
-```
-
-Exemplo conceitual:
-
-```env
-DATABASE_URL=
-JWT_SECRET=
-AI_API_KEY=
-API_URL=
-```
+| Arquivo | Principais variáveis |
+| --- | --- |
+| `src/Entrega 2/Backend/.env.example` (Docker Compose) | `POSTGRES_*`, `JWT_SECRET`, `AGENT_SERVICE_TIMEOUT_MS`, portas |
+| `src/Entrega 2/Backend/api/.env.example` | `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `REFRESH_TOKEN_TTL_DAYS`, `AGENT_SERVICE_URL`, `AGENT_SERVICE_TIMEOUT_MS`, `CORS_ORIGIN`, `VOICE_ASSISTANT_ENABLED`, `INTENT_MIN_CONFIDENCE`, `APP_TIMEZONE` |
+| `src/Entrega 2/Backend/agent-service/.env.example` | `AGENT_SERVICE_PORT`, `AGENT_LOG_LEVEL`, `AGENT_CONFIG_DIR` |
+| `src/Entrega 2/Frontend/.env.example` | `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_API_TIMEOUT_MS`, `EXPO_PUBLIC_ANALYSIS_TIMEOUT_MS`, `EXPO_PUBLIC_VOICE_ASSISTANT_ENABLED`, `EXPO_PUBLIC_SPEECH_PROVIDER`, `EXPO_PUBLIC_SPEECH_LANGUAGE`, `EXPO_PUBLIC_SPEECH_ON_DEVICE_ONLY`, `EXPO_PUBLIC_TTS_ENABLED_DEFAULT`, `EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS`, `EXPO_PUBLIC_WAKE_WORD_ENABLED`, `EXPO_PUBLIC_BARGE_IN_ENABLED` |
 
 > Nunca faça commit de tokens, senhas, chaves privadas ou credenciais reais.
 

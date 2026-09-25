@@ -1,0 +1,31 @@
+{
+  "contract_version": "1.0",
+  "request_id": "req-demo-001",
+  "correlation_id": "corr-demo-001",
+  "run_id": "run-demo-001",
+  "agent": "student_agent",
+  "agent_version": "1.0.0",
+  "config_version": "1.0.0",
+  "status": "recommendation",
+  "summary": "Foram identificadas situacoes que merecem atencao.",
+  "recommendations": [
+    {
+      "id": "rec-demo-001",
+      "type": "pending_activity",
+      "message": "Existe uma atividade pendente que merece sua atencao.",
+      "evidence": [
+        { "type": "pending_item", "description": "Foi identificada uma atividade pendente.", "source_reference": "pending_items#pending-demo-001" }
+      ],
+      "next_action": "Consultar os detalhes da atividade.",
+      "confidence": 0.9,
+      "requires_human_validation": false,
+      "priority": 1,
+      "subject_id": "subject-demo-001"
+    }
+  ],
+  "confidence": 0.9,
+  "requires_human_validation": false,
+  "abstained": false,
+  "abstention_reason": null,
+  "evaluated_at": "2026-09-16T12:00:00Z"
+}

@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-09-17T04:20:39.006Z",
+  "agentServiceUrl": "n/a",
+  "apiVersion": "1.0.0",
+  "scenarios": [
+    {
+      "scenario": "E2E-AUTH-001",
+      "title": "Cadastro, recuperação por e-mail real e redefinição",
+      "student": "conta criada no teste",
+      "correlationId": "corr-24aa76aa-e9cb-465c-a4a1-f4cf8c21d133",
+      "requestId": "req-deec97fc-3b86-49fe-a322-523ccdd2ca43",
+      "runId": null,
+      "httpStatus": 200,
+      "outcome": "register 201 · forgot 202 · verify 200 · reset 200 · refresh antigo 401 · senha antiga 401",
+      "expected": "sessões antigas revogadas e nova senha válida",
+      "passed": true,
+      "details": {
+        "codeLength": 6,
+        "rememberMe": true,
+        "oldRefreshReason": "session_expired",
+        "oldAccessReason": "session_revoked"
+      }
+    },
+    {
+      "scenario": "E2E-AUTH-002",
+      "title": "Login biométrico com credencial de dispositivo",
+      "student": "conta criada no teste",
+      "correlationId": "corr-cb888a85-9c0c-489d-92c7-e377ac32bad5",
+      "requestId": "req-08b35aa7-8238-424f-a072-55d6d02d770f",
+      "runId": null,
+      "httpStatus": 200,
+      "outcome": "enroll 201 · login 200 · após revogar 401 (biometric_credential_invalid)",
+      "expected": "201 · 200 · 401",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "scenario": "E2E-AUTH-003",
+      "title": "Limites de tentativas (código e login)",
+      "student": "conta criada no teste",
+      "correlationId": "corr-6129cc3f-3242-4c63-8277-5f899deedfdb",
+      "requestId": "req-7ed808dc-3eba-4946-af33-8158dd06bdda",
+      "runId": null,
+      "httpStatus": 429,
+      "outcome": "verify: code_invalid, code_invalid, code_invalid, code_invalid, code_locked · código correto após bloqueio: code_locked · login: 429 too_many_attempts",
+      "expected": "code_locked · 429 too_many_attempts",
+      "passed": true,
+      "details": {
+        "retryAfterSeconds": 900
+      }
+    }
+  ]
+}

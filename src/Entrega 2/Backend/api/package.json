@@ -1,0 +1,55 @@
+{
+  "name": "@asa-conecta/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ASA Conecta - API principal / BFF (Node.js + TypeScript)",
+  "type": "module",
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --dir test/unit",
+    "test:unit": "vitest run --dir test/unit",
+    "test:integration": "vitest run --dir test/integration",
+    "test:e2e": "vitest run --dir test/e2e",
+    "test:all": "vitest run",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/db/seed.ts",
+    "db:reset": "tsx src/db/reset.ts",
+    "agent:stub": "tsx scripts/agentStub.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^10.0.10",
+    "pg": "^8.16.3",
+    "pino": "^9.7.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.19.11",
+    "@types/pg": "^8.15.5",
+    "@types/supertest": "^6.0.3",
+    "eslint": "^9.33.0",
+    "supertest": "^7.1.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
+    "vitest": "^3.2.4"
+  }
+}
