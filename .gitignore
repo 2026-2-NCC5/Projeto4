@@ -141,3 +141,13 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ASA Conecta — adicionados na Entrega 2
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.expo/
+web-build/
+src/Entrega 2/Backend/api/dist/
