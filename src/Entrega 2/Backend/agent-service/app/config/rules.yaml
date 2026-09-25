@@ -1,0 +1,61 @@
+# Regras determinísticas, textos e confiança-base por tipo de recomendação.
+# A confiança final é: base_confidence - penalidades documentadas em evaluator.py.
+
+rules:
+  pending_activity:
+    enabled: true
+    base_confidence: 0.90
+    priority: 1
+    message: "Existe uma atividade pendente que merece sua atenção."
+    message_plural: "Existem {count} atividades pendentes que merecem sua atenção."
+    next_action: "Consultar os detalhes da atividade."
+    requires_human_validation: false
+
+  attendance_attention:
+    enabled: true
+    base_confidence: 0.85
+    small_sample_penalty: 0.20
+    priority: 2
+    message: "Sua frequência em {subject} atingiu um limiar de atenção."
+    next_action: "Confirme com o professor se os registros de presença estão atualizados e evite novas faltas."
+    requires_human_validation: false
+
+  attendance_critical:
+    enabled: true
+    base_confidence: 0.85
+    small_sample_penalty: 0.20
+    priority: 1
+    message: "Sua frequência em {subject} está abaixo do mínimo institucional e precisa ser confirmada por uma pessoa responsável."
+    next_action: "Procure a coordenação para validar sua situação de frequência."
+    requires_human_validation: true
+
+  performance_attention:
+    enabled: true
+    base_confidence: 0.80
+    single_assessment_penalty: 0.15
+    priority: 2
+    message: "Seu desempenho em {subject} merece atenção."
+    next_action: "Consultar os detalhes da avaliação e procurar o professor para orientações de estudo."
+    requires_human_validation: false
+
+  institutional_validation:
+    enabled: true
+    base_confidence: 0.75
+    priority: 1
+    message: "A informação acadêmica disponível possui inconsistência e precisa ser confirmada."
+    next_action: "Entre em contato com a coordenação para validação."
+    requires_human_validation: true
+
+summaries:
+  recommendation_single: "Foi identificada uma situação que merece atenção."
+  recommendation_multiple: "Foram identificadas {count} situações que merecem atenção."
+  human_validation: "Foi identificada uma situação que precisa de confirmação por uma pessoa responsável."
+  no_action: "Nenhuma situação que mereça atenção foi identificada nos dados disponíveis."
+  abstained: "Não foi possível gerar uma recomendação confiável."
+
+abstention:
+  enabled: true
+  insufficient_data_reason: "Dados insuficientes para realizar uma análise confiável."
+  low_confidence_reason: "As situações identificadas não atingiram o nível mínimo de confiança configurado."
+  no_action_base_confidence: 0.80
+  no_action_thin_data_confidence: 0.60

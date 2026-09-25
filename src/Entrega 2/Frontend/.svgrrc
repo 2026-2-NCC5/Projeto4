@@ -1,0 +1,27 @@
+{
+  "native": true,
+  "svgoConfig": {
+    "plugins": [
+      {
+        "name": "preset-default",
+        "params": {
+          "overrides": {
+            "removeViewBox": false,
+            "inlineStyles": {
+              "onlyMatchedOnce": false
+            },
+            "removeUnknownsAndDefaults": false,
+            "convertColors": false
+          }
+        }
+      },
+      "convertStyleToAttrs",
+      {
+        "name": "removeAttrs",
+        "params": {
+          "attrs": "filter"
+        }
+      }
+    ]
+  }
+}
