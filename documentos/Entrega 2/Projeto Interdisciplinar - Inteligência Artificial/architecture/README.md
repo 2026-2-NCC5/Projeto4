@@ -36,7 +36,7 @@
 
 ```text
 documentos/
-├── Entrega 1/<matéria>/          entregas de cada disciplina (TASK-001…004 em Projeto Interdisciplinar)
+├── Entrega 1/<matéria>/          entregas de cada disciplina (TASK-001…005 em Projeto Interdisciplinar)
 └── Entrega 2/<matéria>/          esta documentação: adr, architecture, api, assistant, evidence
 src/
 ├── Entrega 1/                    protótipo da primeira entrega (Supabase + mocks), mantido como histórico

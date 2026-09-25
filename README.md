@@ -372,10 +372,11 @@ Projeto4/
 ├── documentos/
 │   ├── Entrega 1/
 │   │   ├── Álgebra Linear, Vetores e Geometria Analítica/   # notebook e relatório da entrega
-│   │   ├── Inteligência Artificial e Aprendizado de Máquina/
+│   │   ├── Inteligência Artificial e Aprendizado de Máquina/  # baseline de evasão, RAG inicial, Model Card e relatório
 │   │   ├── Projeto Interdisciplinar - Inteligência Artificial/
 │   │   │   ├── pipelines/                 # TASK-001 … TASK-005 (fontes de verdade do escopo)
 │   │   │   ├── escopo-completo/           # escopo do protótipo da primeira entrega
+│   │   │   ├── PI_Entrega1_ASA_Final.docx # relatório técnico e Model Card da Entrega 1
 │   │   │   └── PRESENTATION_SCRIPT.md     # roteiro da apresentação
 │   │   ├── Psicologia, Liderança e Soft Skills/             # relatório da entrega
 │   │   └── Sistemas Operacionais e Computação em Nuvem/     # relatório, protótipo e logs
