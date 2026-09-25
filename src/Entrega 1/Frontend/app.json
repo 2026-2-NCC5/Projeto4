@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "ASA Conecta",
+    "slug": "asa-conecta",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#071A2B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.asaconecta.app"
+    },
+    "android": {
+      "package": "com.asaconecta.app",
+      "predictiveBackGestureEnabled": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5fdd5c41-1692-4544-b951-e0eee3120aa3"
+      }
+    }
+  }
+}
