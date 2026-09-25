@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "ASA Conecta",
+    "slug": "asa-conecta",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "asaconecta",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "backgroundColor": "#F4F7F9",
+    "splash": {
+      "backgroundColor": "#023327",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.asaconecta.app"
+    },
+    "android": {
+      "package": "com.asaconecta.app",
+      "predictiveBackGestureEnabled": false,
+      "permissions": []
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Permitir que o ASA Conecta use o Face ID para proteger seu acesso."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Permitir que o ASA Conecta use o Face ID para você entrar com segurança."
+        }
+      ],
+      "expo-font",
+      "expo-asset",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "O ASA Conecta usa o microfone apenas enquanto você fala com o assistente.",
+          "speechRecognitionPermission": "O ASA Conecta converte sua fala em texto para responder às suas perguntas acadêmicas.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ],
+      "expo-status-bar"
+    ]
+  }
+}
