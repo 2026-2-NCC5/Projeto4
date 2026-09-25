@@ -1,0 +1,102 @@
+# ASA Conecta — ambiente local (PostgreSQL + API Node.js + Agent Service Python).
+# Rode os comandos a partir desta pasta (src/Entrega 2/Backend).
+# O aplicativo Expo roda fora do container: cd ../Frontend && npx expo start
+#
+#   docker compose up -d --build
+#   docker compose logs -f api agent-service
+#
+# Banco online (Supabase): defina DATABASE_URL no .env desta pasta (ver database/README.md) e suba só
+# o que precisa: docker compose up -d --build api agent-service mailpit
+# Sem DATABASE_URL a API usa o PostgreSQL local do serviço `db`.
+#
+# Credenciais abaixo são apenas para desenvolvimento local.
+# Nome fixo do projeto: mantém os mesmos containers e o volume do banco (projeto4_*)
+# independentemente da pasta de onde o Compose é executado.
+name: projeto4
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: asa-conecta-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-asa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-asa_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-asa_conecta}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - asa-conecta-pgdata:/var/lib/postgresql/data
+      - ./database/docker:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-asa} -d ${POSTGRES_DB:-asa_conecta}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Caixa de e-mail local (SMTP de desenvolvimento). Interface: http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.27
+    container_name: asa-conecta-mailpit
+    ports:
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+    environment:
+      MP_MAX_MESSAGES: 500
+
+  agent-service:
+    build:
+      context: ./agent-service
+    container_name: asa-conecta-agent-service
+    environment:
+      AGENT_SERVICE_PORT: "8000"
+      AGENT_LOG_LEVEL: ${AGENT_LOG_LEVEL:-INFO}
+    ports:
+      - "${AGENT_SERVICE_PORT:-8000}:8000"
+
+  api:
+    build:
+      context: ./api
+    container_name: asa-conecta-api
+    depends_on:
+      db:
+        condition: service_healthy
+        required: false
+      agent-service:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: "3000"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-asa}:${POSTGRES_PASSWORD:-asa_dev_password}@db:5432/${POSTGRES_DB:-asa_conecta}}
+      DATABASE_SSL: ${DATABASE_SSL:-auto}
+      DATABASE_SSL_CA_FILE: ${DATABASE_SSL_CA_FILE:-}
+      DATABASE_DIR: /srv/database
+      JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-local-com-pelo-menos-32-caracteres}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      REFRESH_TOKEN_TTL_DAYS: ${REFRESH_TOKEN_TTL_DAYS:-30}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-12}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      SIGNUP_ALLOWED_EMAIL_DOMAINS: ${SIGNUP_ALLOWED_EMAIL_DOMAINS:-edu.fecap.br,fecap.br,demo.asa}
+      BIOMETRIC_LOGIN_ENABLED: ${BIOMETRIC_LOGIN_ENABLED:-true}
+      MAIL_TRANSPORT: smtp
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      MAIL_FROM: ${MAIL_FROM:-ASA Conecta <nao-responda@asa-conecta.local>}
+      AGENT_SERVICE_URL: http://agent-service:8000
+      AGENT_SERVICE_TIMEOUT_MS: ${AGENT_SERVICE_TIMEOUT_MS:-5000}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      VOICE_ASSISTANT_ENABLED: ${VOICE_ASSISTANT_ENABLED:-true}
+      INTENT_MIN_CONFIDENCE: ${INTENT_MIN_CONFIDENCE:-0.6}
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
+    volumes:
+      - ./database:/srv/database:ro
+    ports:
+      - "${API_PORT:-3000}:3000"
+    # aplica migrations e seeds ficticios antes de subir
+    command: sh -c "node dist/db/migrate.js && node dist/db/seed.js && node dist/server.js"
+
+volumes:
+  asa-conecta-pgdata:
