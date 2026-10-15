@@ -5,10 +5,11 @@ import { PASSWORD_POLICY, passwordErrorDetails, unmetPasswordRequirements } from
 import { FixedWindowLimiter } from '../auth/rateLimiter.js';
 import { randomToken, sha256Hex } from '../auth/secrets.js';
 import type { AppConfig } from '../config/env.js';
-import type { AuthPolicy, AuthSession, ProgramOption, RegisterRequest } from '../contracts/mobileApi.v1.js';
-import { ForbiddenError, RateLimitedError, UnauthorizedError, ValidationError, type ErrorDetail } from '../errors/AppError.js';
+import { permissionsFor, ROLE_LABELS } from '../auth/permissions.js';
+import type { AuthMe, AuthPolicy, AuthSession, AuthSessionList, AuthSessionSummary, ProgramOption, RegisterRequest, SessionChannel } from '../contracts/mobileApi.v1.js';
+import { ForbiddenError, NotFoundError, RateLimitedError, UnauthorizedError, ValidationError, type ErrorDetail } from '../errors/AppError.js';
 import type { Repositories } from '../repositories/types.js';
-import type { AuthContext, UserRecord } from '../types/domain.js';
+import type { AuthContext, SessionFamilyRecord, UserRecord } from '../types/domain.js';
 
 interface AccessTokenClaims {
   sub: string;
@@ -36,6 +37,21 @@ export function normalizeEmail(email: string): string {
 export const LOGIN_FAILURE_WINDOW_MS = 15 * 60 * 1000;
 export const LOGIN_MAX_FAILURES = 5;
 
+/** Domínio reservado das contas fictícias (seeds e testes). */
+export const DEMO_EMAIL_DOMAIN = 'demo.asa';
+
+/** Canal e aparelho de uma nova sessão (o app usa `mobile`; o portal, `web`). */
+export interface SessionContext {
+  channel: SessionChannel;
+  deviceLabel?: string | null;
+}
+
+const MOBILE: SessionContext = { channel: 'mobile' };
+
+export function isDemoAccount(user: Pick<UserRecord, 'email' | 'isDemo'>): boolean {
+  return user.isDemo ?? normalizeEmail(user.email).endsWith(`@${DEMO_EMAIL_DOMAIN}`);
+}
+
 export class AuthService {
   /** Falhas de login por e-mail (inclusive e-mails inexistentes, para não permitir enumeração). */
   private readonly loginFailures: FixedWindowLimiter;
@@ -52,7 +68,7 @@ export class AuthService {
     const { auth } = this.config;
     return {
       password: PASSWORD_POLICY,
-      allowedEmailDomains: auth.allowedEmailDomains,
+      allowedEmailDomains: this.allowedEmailDomains(),
       registrationNumber: { pattern: auth.registrationNumberPatternSource, example: auth.registrationNumberExample },
       resetCode: {
         length: auth.resetCode.length,
@@ -65,6 +81,19 @@ export class AuthService {
       legal: auth.legal,
       passwordRecoveryAvailable,
     };
+  }
+
+  /** Com o modo demonstração desligado, o domínio reservado demo.asa deixa de aceitar cadastros. */
+  private allowedEmailDomains(): string[] {
+    const domains = this.config.auth.allowedEmailDomains;
+    return this.config.demo.dataEnabled ? domains : domains.filter((domain) => domain !== DEMO_EMAIL_DOMAIN);
+  }
+
+  /** Contas fictícias não entram quando DEMO_DATA_ENABLED=false (isolamento do modo demonstração). */
+  private assertNotBlockedDemo(user: UserRecord): void {
+    if (!this.config.demo.dataEnabled && isDemoAccount(user)) {
+      throw new ForbiddenError('Contas de demonstração estão desativadas neste ambiente.', 'demo_account_disabled');
+    }
   }
 
   async listPrograms(): Promise<ProgramOption[]> {
@@ -88,7 +117,8 @@ export class AuthService {
   }
 
   /** Cria uma sessão (refresh token rotativo + access token curto) para um usuário ativo. */
-  async issueSession(user: UserRecord, rememberMe: boolean): Promise<AuthSession> {
+  async issueSession(user: UserRecord, rememberMe: boolean, context: SessionContext = MOBILE, familyId?: string): Promise<AuthSession> {
+    this.assertNotBlockedDemo(user);
     const refreshToken = randomToken(48);
     const ttlMs = this.refreshTtlMs(rememberMe);
     const session = await this.repos.sessions.create({
@@ -96,6 +126,9 @@ export class AuthService {
       tokenHash: hashRefreshToken(refreshToken),
       expiresAt: new Date(this.now().getTime() + ttlMs),
       rememberMe,
+      channel: context.channel,
+      ...(familyId ? { familyId } : {}),
+      deviceLabel: context.deviceLabel ?? null,
     });
     const access = this.issueAccessToken(user.id, user.role, session.id);
     const student = await this.repos.students.findByUserId(user.id);
@@ -111,7 +144,7 @@ export class AuthService {
     };
   }
 
-  async login(email: string, password: string, rememberMe = false): Promise<AuthSession> {
+  async login(email: string, password: string, rememberMe = false, context: SessionContext = MOBILE): Promise<AuthSession> {
     const key = normalizeEmail(email);
     if (this.config.rateLimit.enabled) {
       const status = this.loginFailures.peek(key);
@@ -126,10 +159,12 @@ export class AuthService {
     // Só informa conta desativada a quem já provou conhecer a senha.
     if (!user.isActive) throw new ForbiddenError('Conta desativada.', 'account_disabled');
     this.loginFailures.reset(key);
-    return this.issueSession(user, rememberMe);
+    const session = await this.issueSession(user, rememberMe, context);
+    await this.repos.users.touchLogin(user.id, this.now());
+    return session;
   }
 
-  async register(input: RegisterRequest): Promise<AuthSession> {
+  async register(input: RegisterRequest, context: SessionContext = MOBILE): Promise<AuthSession> {
     const email = normalizeEmail(input.email);
     const fullName = input.fullName.trim().replace(/\s+/g, ' ');
     const registrationNumber = input.registrationNumber.trim();
@@ -140,7 +175,7 @@ export class AuthService {
       details.push(...detail);
     };
 
-    const domains = this.config.auth.allowedEmailDomains;
+    const domains = this.allowedEmailDomains();
     const domain = email.split('@')[1] ?? '';
     if (domains.length > 0 && !domains.includes(domain)) {
       fail('email_domain_not_allowed', [{ field: 'email', message: `Use um e-mail institucional (${domains.map((item) => `@${item}`).join(', ')}).` }]);
@@ -164,18 +199,35 @@ export class AuthService {
       user: { email, passwordHash, fullName },
       student: { id: `student-${randomUUID()}`, registrationNumber, program },
     });
-    return this.issueSession(user, input.rememberMe ?? false);
+    const session = await this.issueSession(user, input.rememberMe ?? false, context);
+    await this.repos.users.touchLogin(user.id, this.now());
+    return session;
   }
 
-  async refresh(refreshToken: string): Promise<AuthSession> {
+  /**
+   * Renova a sessão com rotação do refresh token. O canal precisa ser o mesmo da sessão original
+   * (um token do portal não renova sessão do app e vice-versa); a família é mantida.
+   */
+  async refresh(refreshToken: string, channel: SessionChannel = 'mobile'): Promise<AuthSession> {
     const session = await this.repos.sessions.findByTokenHash(hashRefreshToken(refreshToken));
-    if (!session || session.revokedAt || session.expiresAt.getTime() <= this.now().getTime()) {
-      throw new UnauthorizedError('Sessão expirada. Faça login novamente.', 'session_expired');
-    }
+    const expired = () => new UnauthorizedError('Sessão expirada. Faça login novamente.', 'session_expired');
+    if (!session || session.revokedAt || session.expiresAt.getTime() <= this.now().getTime()) throw expired();
+    if ((session.channel ?? 'mobile') !== channel) throw expired();
     const user = await this.repos.users.findById(session.userId);
-    if (!user || !user.isActive) throw new UnauthorizedError('Sessão expirada. Faça login novamente.', 'session_expired');
+    if (!user || !user.isActive) throw expired();
+    if (!this.config.demo.dataEnabled && isDemoAccount(user)) throw expired();
     await this.repos.sessions.revoke(session.id); // rotação: o refresh token antigo deixa de valer
-    return this.issueSession(user, session.rememberMe);
+    return this.issueSession(user, session.rememberMe, { channel, deviceLabel: session.deviceLabel ?? null }, session.familyId);
+  }
+
+  /** Papel atual de uma conta (auditoria do logout pelo cookie). */
+  async roleOf(userId: string): Promise<UserRecord['role'] | null> {
+    return (await this.repos.users.findById(userId))?.role ?? null;
+  }
+
+  /** Sessão de um refresh token (logout do portal pelo cookie, sem access token válido). */
+  async findSessionByRefreshToken(refreshToken: string) {
+    return this.repos.sessions.findByTokenHash(hashRefreshToken(refreshToken));
   }
 
   async logout(auth: AuthContext | null, refreshToken?: string): Promise<void> {
@@ -201,6 +253,65 @@ export class AuthService {
     if (!claims.sub || !claims.sid || !claims.role) throw new UnauthorizedError('Token inválido.', 'token_invalid');
     const session = await this.repos.sessions.findById(claims.sid);
     if (!session || session.revokedAt) throw new UnauthorizedError('Sessão encerrada. Faça login novamente.', 'session_revoked');
-    return { userId: claims.sub, role: claims.role, sessionId: claims.sid };
+    return { userId: claims.sub, role: claims.role, sessionId: claims.sid, channel: session.channel ?? 'mobile', ...(session.familyId ? { familyId: session.familyId } : {}) };
+  }
+
+  // ---- platform (perfil unificado e sessões por aparelho/navegador)
+
+  private toSummary(family: SessionFamilyRecord, auth: AuthContext): AuthSessionSummary {
+    return {
+      id: family.familyId,
+      channel: family.channel,
+      deviceLabel: family.deviceLabel,
+      createdAt: family.createdAt.toISOString(),
+      lastUsedAt: family.lastUsedAt?.toISOString() ?? null,
+      expiresAt: family.expiresAt.toISOString(),
+      rememberMe: family.rememberMe,
+      current: family.activeSessionId === auth.sessionId || (auth.familyId !== undefined && family.familyId === auth.familyId),
+    };
+  }
+
+  /** GET /api/auth/me — mesmo perfil para o app (Bearer) e o portal (cookie). */
+  async me(auth: AuthContext): Promise<AuthMe> {
+    const user = await this.repos.users.findById(auth.userId);
+    if (!user || !user.isActive) throw new UnauthorizedError('Sessão encerrada. Faça login novamente.', 'session_revoked');
+    const [student, families] = await Promise.all([this.repos.students.findByUserId(user.id), this.repos.sessions.listFamilies(user.id, this.now())]);
+    const current = families.find((family) => family.activeSessionId === auth.sessionId);
+    const session: AuthSessionSummary = current
+      ? this.toSummary(current, auth)
+      : { id: auth.familyId ?? auth.sessionId, channel: auth.channel ?? 'mobile', deviceLabel: null, createdAt: this.now().toISOString(), lastUsedAt: null, expiresAt: this.now().toISOString(), rememberMe: false, current: true };
+    return {
+      user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role },
+      roleLabel: ROLE_LABELS[user.role],
+      permissions: permissionsFor(user.role),
+      student: student ? { id: student.id, registrationNumber: student.registrationNumber, program: student.program } : null,
+      isDemo: isDemoAccount(user),
+      session,
+    };
+  }
+
+  async listSessions(auth: AuthContext): Promise<AuthSessionList> {
+    const families = await this.repos.sessions.listFamilies(auth.userId, this.now());
+    return { items: families.map((family) => this.toSummary(family, auth)) };
+  }
+
+  /** Encerra uma sessão (aparelho/navegador) da própria conta. */
+  async revokeSession(auth: AuthContext, familyId: string): Promise<{ revokedCurrent: boolean }> {
+    const families = await this.repos.sessions.listFamilies(auth.userId, this.now());
+    const family = families.find((item) => item.familyId === familyId);
+    if (!family) throw new NotFoundError('Sessão não encontrada.');
+    await this.repos.sessions.revokeFamily(auth.userId, familyId);
+    return { revokedCurrent: family.activeSessionId === auth.sessionId };
+  }
+
+  /** "Sair dos outros aparelhos": mantém só a sessão atual. */
+  async revokeOtherSessions(auth: AuthContext): Promise<number> {
+    const current = (await this.repos.sessions.findById(auth.sessionId))?.familyId ?? null;
+    return this.repos.sessions.revokeAllExcept(auth.userId, current);
+  }
+
+  /** "Sair de todos os aparelhos", incluindo o atual. */
+  async logoutAll(auth: AuthContext): Promise<number> {
+    return this.repos.sessions.revokeAllExcept(auth.userId, null);
   }
 }
