@@ -6,6 +6,7 @@ CANON="$ROOT/contracts/api/mobile-api.v1.ts"
 COPIES=(
   "$ROOT/api/src/contracts/mobileApi.v1.ts"
   "$ROOT/../Frontend/types/api.ts"
+  "$ROOT/../Web/src/types/api.ts"
 )
 status=0
 for copy in "${COPIES[@]}"; do

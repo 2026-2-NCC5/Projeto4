@@ -22,6 +22,13 @@ compatível (nenhum tipo existente mudou). A allow-list de intenções do tipo `
 espelhada em `src/Entrega 2/Backend/api/src/assistant/intents.ts` (`INTENT_KIND: Record<AssistantIntent, …>`),
 o que quebra a compilação da API se uma intenção for adicionada ao contrato sem implementação.
 
+## Atendimento ASA (Mobile ↔ API, v1.3)
+
+Os tipos `Support*` (chamados, eventos, mensagens, anexos, prazo, avisos e rotas da equipe) foram adicionados
+ao final de `contracts/api/mobile-api.v1.ts` como mudança compatível. As listas de situações, tipos de evento e
+equipes são conferidas pela API (`api/src/support/statuses.ts`, `catalog.ts` e os schemas Zod de
+`controllers/supportController.ts`).
+
 ## Autenticação (Mobile ↔ API)
 
 `AuthSession` passou a ter `refreshExpiresIn` e `rememberMe`, e o contrato ganhou `AuthPolicy`,
