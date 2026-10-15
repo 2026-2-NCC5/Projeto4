@@ -1,0 +1,12 @@
+export { getSupportApi, setSupportApi, createMockSupportApi, httpSupportApi, type SupportApi } from './api';
+export { SUPPORT, SUPPORT_ROUTES } from './config';
+export { supportErrorMessage, isConnectivityError } from './errors';
+export * from './format';
+export * from './labels';
+export { buildProgress, nextStep, type ProgressStep, type TicketProgress } from './progress';
+export { useAttachmentUploads, type AttachmentUploads, type UploadItem } from './hooks/useAttachmentUploads';
+export { useCreateTicket, newClientRequestId, type CreateTicketController } from './hooks/useCreateTicket';
+export { useSupportCatalog, useSupportNotifications, useSupportOverview, useTicket, useTickets, useTicketUpdates } from './hooks/useSupportData';
+export { useSupportResource, useSupportUserId, type SupportResource } from './hooks/useSupportResource';
+export { useTicketActions, type PendingMessage, type TicketActions } from './hooks/useTicketActions';
+export { purgeOtherUsers } from './cache';
