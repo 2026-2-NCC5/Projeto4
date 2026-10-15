@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "asaconecta",
+    "icon": "./assets/branding/asa-app-icon.png",
     "userInterfaceStyle": "light",
     "backgroundColor": "#F4F7F9",
     "ios": {
@@ -13,6 +14,11 @@
     },
     "android": {
       "package": "com.asaconecta.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/branding/asa-app-icon-foreground.png",
+        "monochromeImage": "./assets/branding/asa-app-icon-foreground.png",
+        "backgroundColor": "#299B60"
+      },
       "predictiveBackGestureEnabled": false,
       "permissions": []
     },

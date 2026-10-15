@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#299B60"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M266 286h322c48 0 72 24 72 61v13c0 26 20 46 46 46h35c25 0 45 20 45 45v8c0 25-20 45-45 45H420c-54 0-82-24-90-66" stroke="#fff" stroke-width="34"/>
+    <path d="M314 374h263c42 0 65 22 67 58M354 462h254" stroke="#fff" stroke-width="34"/>
+  </g>
+  <text x="512" y="758" text-anchor="middle" fill="#fff" font-family="DejaVu Sans, sans-serif" font-size="205" font-weight="800" letter-spacing="8">ASA</text>
+</svg>
