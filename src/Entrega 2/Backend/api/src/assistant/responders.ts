@@ -10,12 +10,15 @@ import type {
   AssistantNextAction,
   AssistantResponseStatus,
   StudentPendingItem,
+  AssistantHandoff,
+  AssistantSource,
 } from '../contracts/mobileApi.v1.js';
 import { AppError } from '../errors/AppError.js';
 import type { AgentService } from '../services/agentService.js';
 import type { StudentService } from '../services/studentService.js';
 import type { RequestContext } from '../types/domain.js';
 import type { Interpretation } from './interpretation.js';
+import { queueCurrentCall, queueEstimate, queueStatus, type QueueAssistantSource } from './queueResponders.js';
 import {
   addDays,
   assessmentTypeLabel,
@@ -35,6 +38,12 @@ import type { SubjectRef } from './subjects.js';
 
 export interface ResponderInput {
   studentId: string;
+  /** texto da pergunta (usado só para propor o rascunho de chamado; nunca persistido) */
+  questionText?: string;
+  /** usuário da sessão (a fila presencial é por usuário) */
+  userId: string;
+  /** fuso do atendimento (horários falados) */
+  timeZone: string;
   userFullName: string;
   interpretation: Interpretation;
   context: AssistantConversationContext;
@@ -61,11 +70,17 @@ export interface ResponderOutput {
   runId?: string | null;
   agentDurationMs?: number | null;
   contextPatch?: Partial<AssistantConversationContext>;
+  /** v1.7: citações da base de conhecimento */
+  sources?: AssistantSource[];
+  /** v1.7: rascunho de chamado proposto (só é criado se o aluno confirmar no app/portal) */
+  handoff?: AssistantHandoff | null;
 }
 
 export interface ResponderDeps {
   students: StudentService;
   agents: AgentService;
+  /** fila presencial do ASA; null quando o módulo não está disponível */
+  queue?: QueueAssistantSource | null;
 }
 
 type Responder = (input: ResponderInput, deps: ResponderDeps) => Promise<ResponderOutput>;
@@ -181,7 +196,7 @@ const unknown: Responder = async (input) => {
   };
 };
 
-const requestHumanHelp: Responder = async () => ({
+const requestHumanHelp: Responder = async (input) => ({
   status: 'success',
   title: 'Com quem falar',
   message:
@@ -193,6 +208,13 @@ const requestHumanHelp: Responder = async () => ({
     { id: 'help-asa', title: 'Área do Sucesso Alvarista (ASA)', description: 'Acolhimento e orientação sobre sua jornada acadêmica.', meta: null, badge: null, tone: 'info', subjectId: null },
   ],
   nextActions: [{ type: 'navigate', label: 'Ver meus dados acadêmicos', target: 'academic.subjects' }],
+  // proposta de chamado: o aluno revisa e confirma no formulário (o assistente nunca abre chamado sozinho)
+  handoff: {
+    categoryId: 'asa_service',
+    subject: 'Orientação solicitada pelo Assistente ASA',
+    description: input.questionText ?? 'Gostaria de falar com a equipe do ASA.',
+    reason: 'Pedido de atendimento humano',
+  },
 });
 
 // ----------------------------------------------------------------- política
@@ -314,6 +336,7 @@ const SCREEN_NAMES: Record<string, string> = {
   services: 'os serviços',
   history: 'o histórico de análises',
   profile: 'seu perfil',
+  queue: 'a fila presencial do ASA',
 };
 
 /** "Abra minhas notas" → o app navega; nenhum dado é alterado e a resposta é curta para a voz. */
@@ -871,6 +894,7 @@ export const RESPONDERS: Record<AssistantIntent, Responder> = {
   help,
   unknown,
   request_human_help: requestHumanHelp,
+  knowledge_question: unknown,
   get_student_summary: summary,
   get_pending_items: pendingItems,
   get_subjects: subjects,
@@ -893,4 +917,7 @@ export const RESPONDERS: Record<AssistantIntent, Responder> = {
   go_back: goBack,
   clarify_last: clarifyLast,
   open_screen: openScreen,
+  get_queue_status: (input, deps) => queueStatus(input, deps.queue ?? null),
+  get_queue_current_call: (input, deps) => queueCurrentCall(input, deps.queue ?? null),
+  get_queue_estimate: (input, deps) => queueEstimate(input, deps.queue ?? null),
 };

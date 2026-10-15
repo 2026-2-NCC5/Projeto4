@@ -46,6 +46,8 @@ const OPEN_TARGETS: Array<[RegExp, AssistantNavigationTarget]> = [
   [/\b(pendencias?|pendentes?|atividades?|tarefas?|entregas?)\b/, 'academic.pending'],
   [/\b(disciplinas?|materias?|area academica|academico|horarios?|grade)\b/, 'academic.subjects'],
   [/\b(perfil|minha conta|configurac(ao|oes)|ajustes)\b/, 'profile'],
+  // antes de "atendimento" (Serviços): "abre a fila do ASA" / "atendimento presencial"
+  [/\b(fila( presencial)?( do asa)?|atendimento presencial|painel (do asa|de senhas))\b/, 'queue'],
   [/\b(servicos?|atendimento|secretaria|financeiro|documentos?)\b/, 'services'],
   [/\b(inicio|home|tela inicial|pagina inicial)\b/, 'home'],
   [/\b(assistente|conversa|chat)\b/, 'assistant'],
@@ -60,7 +62,23 @@ const SCREEN_DEFAULT_INTENT: Partial<Record<AssistantScreenContext, AssistantInt
   history: 'get_agent_history',
   recommendation: 'explain_recommendation',
   run: 'get_recommendations',
+  queue: 'get_queue_status',
 };
+
+// ------------------------------------------------------- fila presencial do ASA
+
+/** Vocabulário inequívoco da fila. "senha" sozinha não basta ("esqueci minha senha" é outra coisa). */
+const QUEUE_WORDS =
+  /\b(filas?|minha vez|atendimento presencial|presencial do asa|painel (do asa|de senhas)|mesa \d+|senhas? (\d+|da fila|do asa|do atendimento|presencial|chamadas?)|minha senha (ja )?(foi|vai ser|sera|esta) chamada)\b/;
+const QUEUE_PEOPLE_AHEAD =
+  /\b(quantas pessoas|quantos (alunos|estudantes)|quantas senhas|na minha frente|a minha frente|antes de mim|antes da minha( senha)?|faltam? (quantas|quantos|muita gente|muitas pessoas)|minha posicao|em que posicao)\b/;
+const QUEUE_MY_TURN = /\b(ja (e|chegou) (a )?minha vez|chamaram (a )?minha senha|minha vez (ja )?chegou|fui chamad[oa])\b/;
+const QUEUE_CURRENT_CALL =
+  /\b((qual|que) (e a )?senha (esta|ta|e|foi|estao)( sendo)? (atendida|chamada)s?|senhas? (atual|da vez|sendo atendidas?|chamadas? agora)|ultima senha( chamada)?|quem (esta|ta) sendo atendido)\b/;
+const QUEUE_ESTIMATE =
+  /\b(quanto tempo|quantos minutos|vai demorar|demora muito|demorar|previsao|estimativa|que horas (eu )?(vou ser|serei) (atendid[oa]|chamad[oa]))\b/;
+/** "quanto tempo falta?" não é pergunta sobre faltas (frequência). */
+const TIME_LEFT = /\b(quanto tempo|quantos minutos) (ainda )?falta\b/;
 
 // ------------------------------------------------------------ controle de voz
 
@@ -249,6 +267,15 @@ export class RuleBasedIntentInterpreter implements IntentInterpreter {
     if (SUBJECTS_WORD.test(q)) add(hasSubject ? 'get_subject_details' : 'get_subjects', 0.82);
     if (HUMAN.test(q)) add('request_human_help', 0.87);
     if (HELP.test(q)) add('help', 0.8);
+
+    // Fila presencial: vocabulário explícito ou, para perguntas curtas sem tema acadêmico,
+    // o contexto de quem acompanha uma senha ou está na tela da fila.
+    const academicTopic = ATTENDANCE.test(q.replace(TIME_LEFT, ' ')) || PENDING.test(q) || EXAM.test(q) || GRADE.test(q) || hasSubject;
+    const queueContext = QUEUE_WORDS.test(q) || (!academicTopic && (input.queueTracking === true || input.currentScreen === 'queue'));
+    if (QUEUE_CURRENT_CALL.test(q) && (queueContext || /\bsenhas?\b/.test(q))) add('get_queue_current_call', 0.9);
+    if (QUEUE_ESTIMATE.test(q) && queueContext) add('get_queue_estimate', 0.89);
+    if (QUEUE_MY_TURN.test(q) || (QUEUE_PEOPLE_AHEAD.test(q) && (queueContext || !academicTopic))) add('get_queue_status', 0.88);
+    if (QUEUE_WORDS.test(q)) add('get_queue_status', 0.86);
 
     const top = candidates.reduce<Candidate | null>((acc, item) => (acc && acc.score >= item.score ? acc : item), null);
 

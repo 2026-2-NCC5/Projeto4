@@ -38,6 +38,11 @@ export const INTENT_KIND: Record<AssistantIntent, IntentKind> = {
   go_back: 'control',
   clarify_last: 'control',
   open_screen: 'control',
+  get_queue_status: 'query',
+  get_queue_current_call: 'query',
+  get_queue_estimate: 'query',
+  // v1.7: resposta por artigo publicado da base de conhecimento (decidida pelo serviço, não pelo interpretador)
+  knowledge_question: 'query',
 };
 
 export const ASSISTANT_INTENTS = Object.keys(INTENT_KIND) as [AssistantIntent, ...AssistantIntent[]];

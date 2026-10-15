@@ -36,7 +36,7 @@ export const assistantMessageSchema = z
 
 export function assistantEnabled(enabled: boolean) {
   return (_req: Request, _res: Response, next: NextFunction): void => {
-    if (!enabled) return next(new NotFoundError('O assistente conversacional está desabilitado neste ambiente.'));
+    if (!enabled) return next(new NotFoundError('O assistente conversacional está desabilitado neste ambiente.', 'feature_disabled'));
     next();
   };
 }

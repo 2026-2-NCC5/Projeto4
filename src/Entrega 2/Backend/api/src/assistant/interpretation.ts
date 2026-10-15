@@ -33,6 +33,8 @@ export interface InterpreterInput {
   context: AssistantConversationContext;
   /** tela visível no app quando a mensagem foi enviada (só desambigua perguntas curtas) */
   currentScreen?: AssistantScreenContext;
+  /** o estudante acompanha uma senha da fila presencial agora ("quanto tempo falta?" passa a ser sobre a fila) */
+  queueTracking?: boolean;
 }
 
 /**
@@ -61,6 +63,7 @@ export const NAVIGATION_TARGETS = [
   'subject',
   'recommendation',
   'run',
+  'queue',
 ] as const;
 
 /** Telas que o app pode informar como contexto. */
@@ -76,6 +79,7 @@ export const SCREEN_CONTEXTS = [
   'profile',
   'recommendation',
   'run',
+  'queue',
 ] as const;
 
 const interpretationSchema = z
