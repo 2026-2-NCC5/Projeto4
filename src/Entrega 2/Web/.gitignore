@@ -1,0 +1,9 @@
+node_modules
+dist
+.env.local
+.env.*.local
+playwright-report
+test-results
+*.tsbuildinfo
+e2e/.auth
+blob-report

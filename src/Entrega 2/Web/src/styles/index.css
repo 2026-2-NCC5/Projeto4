@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/*
+ * Tokens do ASA Conecta (espelham src/Entrega 2/Frontend/theme). Somente tema claro, como no app.
+ * Verde de ação #0D6D53 (contraste 6,3:1 com branco); o verde do logo #00AB7E é só marca.
+ * Roxo do assistente aparece como cor de destaque; como texto, usa a variante escura (#5B3BC4, 7,3:1).
+ */
+@theme {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --color-brand: #00ab7e;
+  --color-action: #0d6d53;
+  --color-action-hover: #0b5e48;
+  --color-action-pressed: #09533f;
+  --color-action-soft: #e8f3ee;
+  --color-fecap: #023327;
+  --color-assistant: #845df2;
+  --color-assistant-soft: #f1ecfe;
+  --color-assistant-text: #5b3bc4;
+  --color-highlight: #ffde33;
+
+  --color-ink: #1a1d21;
+  --color-slate: #555b63;
+  --color-mist: #6b717a;
+  --color-fog: #8e949c;
+  --color-line-strong: #cbd0d5;
+  --color-line: #e2e5e8;
+  --color-line-soft: #eceef0;
+  --color-cloud: #eef0f2;
+  --color-snow: #f3f4f6;
+  --color-paper: #f6f7f8;
+
+  --color-success: #1e7f4f;
+  --color-success-soft: #e9f5ee;
+  --color-success-text: #18693f;
+  --color-warning: #b7791f;
+  --color-warning-soft: #fbf3e3;
+  --color-warning-text: #8a5a12;
+  --color-danger: #c93c37;
+  --color-danger-soft: #fcedec;
+  --color-danger-text: #a93430;
+  --color-info: #3468c0;
+  --color-info-soft: #ecf2fb;
+  --color-info-text: #2b579f;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-sm: 0 1px 2px rgb(17 19 21 / 0.05);
+  --shadow-md: 0 2px 8px rgb(17 19 21 / 0.06);
+  --shadow-lg: 0 12px 32px rgb(17 19 21 / 0.12);
+
+  --text-display: 1.75rem;
+  --text-display--line-height: 2.125rem;
+  --text-h1: 1.625rem;
+  --text-h1--line-height: 2rem;
+  --text-h2: 1.375rem;
+  --text-h2--line-height: 1.75rem;
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.5rem;
+  --text-h4: 1rem;
+  --text-h4--line-height: 1.375rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-small: 0.8125rem;
+  --text-small--line-height: 1.125rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-metric: 1.5rem;
+  --text-metric--line-height: 1.875rem;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-paper text-ink font-sans text-body antialiased;
+    min-height: 100vh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-action);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-action-soft);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-mist);
+    opacity: 1;
+  }
+  dialog::backdrop {
+    background: rgb(17 19 21 / 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes asa-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes asa-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.asa-skeleton {
+  background: var(--color-line-soft);
+  animation: asa-pulse 1.4s ease-in-out infinite;
+}
+
+.asa-appear {
+  animation: asa-fade-in 200ms var(--ease-standard) both;
+}
