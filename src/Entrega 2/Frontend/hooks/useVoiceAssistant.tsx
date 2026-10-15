@@ -231,6 +231,8 @@ class VoiceAssistantController {
     let session = -1;
     try {
       if (this.state.phase === 'answering') this.stopSpeaking();
+      // anúncio do app (fila presencial) em andamento: o microfone não pode ouvir a própria fala
+      else if (this.speaking) this.silence();
 
       const availability = await this.loadAvailability();
       if (!availability.available) {
@@ -522,6 +524,41 @@ class VoiceAssistantController {
     this.speak(text);
   };
 
+  // ------------------------------------------------------------------ anúncios do app
+
+  /**
+   * Anúncio iniciado pelo app (alertas da fila presencial), falado pelo MESMO TTS do assistente — não
+   * existe um segundo sistema de voz. Não altera a conversa: só usa a saída de voz.
+   * - 'high' (senha chamada): interrompe a escuta e a resposta em andamento; uma pergunta já enviada
+   *   continua e sua resposta é falada depois;
+   * - 'normal': só fala com o assistente ocioso — ocupado, o aviso visual na tela já basta.
+   * Quem chama decide se deve falar (preferência "ASA IA por voz" da fila).
+   */
+  announce = (text: string, priority: 'high' | 'normal' = 'normal'): boolean => {
+    const utterance = text.trim();
+    if (!utterance) return false;
+    const phase = this.state.phase;
+    const busy = this.speaking || phase === 'answering' || CANCELLABLE_PHASES.includes(phase);
+    if (busy && priority !== 'high') return false;
+    if (phase === 'listening' || phase === 'transcribing') this.cancel();
+    if (this.state.phase === 'answering') this.stopSpeaking();
+    else if (this.speaking) this.silence();
+    const id = ++this.speechId;
+    this.speaking = true;
+    safely(() => this.options.onSpeakingChange?.(true, utterance));
+    const done = () => {
+      if (id !== this.speechId) return;
+      this.speaking = false;
+      safely(() => this.options.onSpeakingChange?.(false, null));
+    };
+    try {
+      this.deps.synthesis.speak(utterance, { onDone: done, onStopped: done, onError: done });
+    } catch {
+      done();
+    }
+    return true;
+  };
+
   // ------------------------------------------------------------------ cancelamento
 
   cancel = (): void => {
@@ -601,6 +638,8 @@ export interface VoiceAssistantContextValue {
   repeatLast: () => void;
   resetConversation: () => void;
   releaseMedia: () => void;
+  /** Fala um aviso do app pelo TTS do assistente (ex.: "É a sua vez!" da fila). Devolve false se não falou. */
+  announce: (text: string, priority?: 'high' | 'normal') => boolean;
 }
 
 const VoiceAssistantContext = createContext<VoiceAssistantContextValue | null>(null);
@@ -677,6 +716,7 @@ export function VoiceAssistantProvider({ children, recognition, synthesis, sendM
       repeatLast: controller.repeatLast,
       resetConversation: controller.resetConversation,
       releaseMedia: controller.releaseMedia,
+      announce: controller.announce,
     }),
     [state, availability, audioLevel, effectiveTts, metrics, controller],
   );

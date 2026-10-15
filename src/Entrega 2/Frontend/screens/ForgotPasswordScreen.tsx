@@ -5,7 +5,6 @@ import Animated from 'react-native-reanimated';
 
 import { AuthLinkRow, AuthShell, AuthStepper, AuthTextField, PasswordRequirements, useAuthMotion } from '../components/auth';
 import { ErrorBanner } from '../components/ErrorBanner';
-import { PrimaryButton } from '../components/PrimaryButton';
 import { AppButton, AppText, Surface } from '../components/ui';
 import { useAuthPolicy } from '../hooks/useAuthPolicy';
 import { useSession } from '../hooks/useSession';
@@ -173,7 +172,6 @@ export function ForgotPasswordScreen({ onBack, onDone, now = Date.now }: ForgotP
 
   return (
     <AuthShell
-      eyebrow="Recuperação de acesso"
       title={titles[step.kind].title}
       subtitle={titles[step.kind].subtitle}
       onBack={step.kind === 'done' ? undefined : onBack}
@@ -181,7 +179,7 @@ export function ForgotPasswordScreen({ onBack, onDone, now = Date.now }: ForgotP
       footer={step.kind === 'done' ? undefined : <AuthLinkRow text="Lembrou a senha?" linkLabel="Entrar" icon="log-in-outline" onPress={onBack} accessibilityLabel="Lembrei a senha, entrar" disabled={busy !== null} testID="forgot-go-login" />}
       testID="forgot-screen"
     >
-      <Surface tone="glass" elevation="md" style={styles.card}>
+      <Surface style={styles.card}>
         {step.kind !== 'done' ? <AuthStepper steps={STEPS} current={STEP_INDEX[step.kind]} testID="forgot-stepper" /> : null}
 
         {info ? (
@@ -198,7 +196,7 @@ export function ForgotPasswordScreen({ onBack, onDone, now = Date.now }: ForgotP
             <AuthTextField label="E-mail" icon="mail-outline" value={email} onChangeText={(value) => { setEmail(value); setError(null); }} placeholder="nome@instituicao.edu.br" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" editable={!busy} returnKeyType="send" onSubmitEditing={() => void requestCode()} error={touched ? emailError : null} testID="forgot-email" />
             {error ? <ErrorBanner message={error} testID="forgot-error" /> : null}
             <View style={styles.submit}>
-              <PrimaryButton label="Enviar código" accessibilityLabel="Enviar código de recuperação" loadingLabel="Enviando, aguarde" onPress={() => void requestCode()} loading={busy === 'submit'} disabled={busy !== null} testID="forgot-submit" />
+              <AppButton size="large" fullWidth label="Enviar código" accessibilityLabel="Enviar código de recuperação" loadingLabel="Enviando, aguarde" onPress={() => void requestCode()} loading={busy === 'submit'} disabled={busy !== null} testID="forgot-submit" />
             </View>
           </Animated.View>
         ) : null}
@@ -208,7 +206,7 @@ export function ForgotPasswordScreen({ onBack, onDone, now = Date.now }: ForgotP
             <AuthTextField label="Código" icon="keypad-outline" value={code} onChangeText={(value) => { setCode(value.replace(/\D/g, '').slice(0, step.codeLength)); setError(null); }} placeholder={'0'.repeat(step.codeLength)} keyboardType="number-pad" autoComplete="one-time-code" textContentType="oneTimeCode" maxLength={step.codeLength} editable={!busy} returnKeyType="done" onSubmitEditing={() => void verify()} error={codeError} hint={expiresIn > 0 ? `Expira em ${formatCountdown(expiresIn)}` : 'Código expirado. Solicite um novo.'} testID="forgot-code" />
             {error ? <ErrorBanner message={error} testID="forgot-error" /> : null}
             <View style={styles.submit}>
-              <PrimaryButton label="Confirmar código" accessibilityLabel="Confirmar código" loadingLabel="Confirmando, aguarde" onPress={() => void verify()} loading={busy === 'submit'} disabled={busy !== null || expiresIn === 0} testID="forgot-verify" />
+              <AppButton size="large" fullWidth label="Confirmar código" accessibilityLabel="Confirmar código" loadingLabel="Confirmando, aguarde" onPress={() => void verify()} loading={busy === 'submit'} disabled={busy !== null || expiresIn === 0} testID="forgot-verify" />
             </View>
             <View style={styles.inline}>
               <AppText variant="bodySmall" tone="secondary">
@@ -230,7 +228,7 @@ export function ForgotPasswordScreen({ onBack, onDone, now = Date.now }: ForgotP
             <AuthTextField label="Confirmar nova senha" icon="shield-checkmark-outline" value={confirm} onChangeText={(value) => { setConfirm(value); setError(null); }} placeholder="Repita a senha" secureToggle autoCapitalize="none" autoCorrect={false} autoComplete="new-password" textContentType="newPassword" editable={!busy} returnKeyType="done" onSubmitEditing={() => void reset()} error={touched ? confirmError : null} testID="forgot-confirm" />
             {error ? <ErrorBanner message={error} testID="forgot-error" /> : null}
             <View style={styles.submit}>
-              <PrimaryButton label="Salvar nova senha" accessibilityLabel="Salvar nova senha" loadingLabel="Salvando, aguarde" onPress={() => void reset()} loading={busy === 'submit'} disabled={busy !== null} testID="forgot-save" />
+              <AppButton size="large" fullWidth label="Salvar nova senha" accessibilityLabel="Salvar nova senha" loadingLabel="Salvando, aguarde" onPress={() => void reset()} loading={busy === 'submit'} disabled={busy !== null} testID="forgot-save" />
             </View>
           </Animated.View>
         ) : null}

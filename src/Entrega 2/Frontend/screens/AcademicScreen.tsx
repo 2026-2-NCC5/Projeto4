@@ -1,13 +1,13 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { AttendanceCard, GradeCard, InsightCard, PendingCard, StatTile, SubjectCard, type Insight } from '../components/academic';
+import { AttendanceRow, GradeRow, InsightList, MetricStrip, PendingRow, SubjectCard, type Insight } from '../components/academic';
 import { Screen } from '../components/Screen';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { StateView, messageForError, stateKindFromError } from '../components/StateView';
-import { AcademicCardSkeleton, AppText, CardSkeleton, EmptyState, OfflineBanner, SectionHeader, Surface } from '../components/ui';
-import { ATTENDANCE_WARNING_THRESHOLD } from '../hooks/useAcademicOverview';
+import { AcademicCardSkeleton, AppText, CardSkeleton, EmptyState, List, OfflineBanner, SectionHeader, Surface } from '../components/ui';
+import { ATTENDANCE_WARNING_THRESHOLD, attendanceTone } from '../hooks/useAcademicOverview';
 import { useResource } from '../hooks/useResource';
 import { studentService } from '../services/studentService';
 import { makeStyles, useTheme } from '../theme';
@@ -32,8 +32,10 @@ interface AcademicScreenProps {
 }
 
 const useStyles = makeStyles((theme) => ({
-  stats: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm + 2, marginTop: theme.spacing.md },
-  focusMissing: { marginBottom: theme.spacing.md },
+  insights: { marginTop: theme.spacing.md },
+  // As seções ficam direto no ScrollView (sem contêiner): o onLayout da disciplina em destaque mede o y da rolagem.
+  tabs: { marginTop: theme.spacing.xxl, marginBottom: theme.spacing.xl },
+  focusMissing: { marginBottom: theme.spacing.md, padding: theme.spacing.md },
 }));
 
 export function AcademicScreen({ focusSubjectId = null, onClearFocus, initialSegment = null }: AcademicScreenProps) {
@@ -85,29 +87,38 @@ export function AcademicScreen({ focusSubjectId = null, onClearFocus, initialSeg
     onAction: () => changeSegment('attendance'),
   }));
 
+  const averageAttendance = summary.data ? attendanceTone(summary.data.averageAttendanceRate) : 'default';
+
   return (
     <Screen scrollRef={scrollRef} testID="academic-screen">
-      <ScreenHeader eyebrow="Área acadêmica" title="Acadêmico" subtitle="Disciplinas, avaliações, frequência e pendências do período." />
+      <ScreenHeader title="Acadêmico" subtitle="Disciplinas, avaliações, frequência e pendências do período." />
       <OfflineBanner />
 
       {summary.status === 'loading' ? <AcademicCardSkeleton /> : null}
       {summary.data ? (
-        <View style={styles.stats} accessible={false}>
-          <StatTile label="Disciplinas" value={String(summary.data.subjectsCount)} detail="no período" onPress={() => changeSegment('subjects')} />
-          <StatTile label="Média" value={formatScore(summary.data.averageScore)} detail="geral" onPress={() => changeSegment('assessments')} />
-          <StatTile label="Frequência" value={formatPercent(summary.data.averageAttendanceRate)} detail="média" tone={summary.data.averageAttendanceRate !== null && summary.data.averageAttendanceRate < ATTENDANCE_WARNING_THRESHOLD ? 'attention' : 'default'} onPress={() => changeSegment('attendance')} />
-        </View>
+        <MetricStrip
+          items={[
+            { key: 'subjects', label: 'Disciplinas', value: String(summary.data.subjectsCount), detail: 'no período', onPress: () => changeSegment('subjects') },
+            { key: 'average', label: 'Média', value: formatScore(summary.data.averageScore), detail: 'geral', onPress: () => changeSegment('assessments') },
+            {
+              key: 'attendance',
+              label: 'Frequência',
+              value: formatPercent(summary.data.averageAttendanceRate),
+              detail: 'média',
+              tone: averageAttendance === 'danger' ? 'critical' : averageAttendance === 'warning' ? 'attention' : 'default',
+              onPress: () => changeSegment('attendance'),
+            },
+          ]}
+        />
       ) : null}
 
       {insights.length > 0 && segment !== 'attendance' ? (
-        <View style={{ marginTop: theme.spacing.md }}>
-          {insights.map((insight) => (
-            <InsightCard key={insight.id} insight={insight} />
-          ))}
+        <View style={styles.insights}>
+          <InsightList insights={insights} />
         </View>
       ) : null}
 
-      <SegmentedControl options={SEGMENTS} value={segment} onChange={changeSegment} accessibilityLabel="Seções acadêmicas" />
+      <SegmentedControl options={SEGMENTS} value={segment} onChange={changeSegment} accessibilityLabel="Seções acadêmicas" style={styles.tabs} />
 
       {segment === 'subjects' ? <SubjectsSection resource={subjects} focusSubjectId={focusSubjectId} onClearFocus={onClearFocus} onFocusLayout={scrollToY} /> : null}
       {segment === 'assessments' ? <AssessmentsSection resource={assessments} /> : null}
@@ -139,10 +150,10 @@ function SubjectsSection({ resource, focusSubjectId, onClearFocus, onFocusLayout
     <ResourceStates resource={resource} empty={<EmptyState title="Nenhuma disciplina encontrada" message={MESSAGES.emptySubjects} icon="school-outline" />}>
       {(data) => (
         <>
-          <SectionHeader title="Suas disciplinas" action={pluralize(data.length, 'disciplina', 'disciplinas')} />
+          <SectionHeader title="Minhas disciplinas" action={pluralize(data.length, 'disciplina', 'disciplinas')} flush />
           {focusSubjectId && !data.some((subject) => subject.id === focusSubjectId) ? (
             <Surface tone="info" style={styles.focusMissing} accessibilityLiveRegion="polite">
-              <AppText variant="bodySmallStrong" tone="info">
+              <AppText variant="bodySmall" tone="info">
                 A disciplina indicada pela recomendação não está na sua lista atual.
               </AppText>
             </Surface>
@@ -172,10 +183,12 @@ function AssessmentsSection({ resource }: { resource: ResourceState<StudentAsses
     <ResourceStates resource={resource} empty={<EmptyState title="Nenhuma avaliação registrada" message={MESSAGES.emptyAssessments} icon="ribbon-outline" />}>
       {(data) => (
         <>
-          <SectionHeader title="Avaliações e notas" action={pluralize(data.length, 'registro', 'registros')} />
-          {data.map((assessment) => (
-            <GradeCard key={assessment.id} assessment={assessment} />
-          ))}
+          <SectionHeader title="Avaliações e notas" action={pluralize(data.length, 'registro', 'registros')} flush />
+          <List>
+            {data.map((assessment) => (
+              <GradeRow key={assessment.id} assessment={assessment} />
+            ))}
+          </List>
         </>
       )}
     </ResourceStates>
@@ -187,10 +200,12 @@ function AttendanceSection({ resource }: { resource: ResourceState<StudentAttend
     <ResourceStates resource={resource} empty={<EmptyState title="Sem registros de frequência" message={MESSAGES.emptyAttendance} icon="calendar-outline" />}>
       {(data) => (
         <>
-          <SectionHeader title="Frequência por disciplina" />
-          {data.map((item) => (
-            <AttendanceCard key={item.subjectId} item={item} warningThreshold={ATTENDANCE_WARNING_THRESHOLD} />
-          ))}
+          <SectionHeader title="Frequência por disciplina" subtitle={`Mínimo exigido: ${formatPercent(ATTENDANCE_WARNING_THRESHOLD)}`} flush />
+          <List>
+            {data.map((item) => (
+              <AttendanceRow key={item.subjectId} item={item} warningThreshold={ATTENDANCE_WARNING_THRESHOLD} />
+            ))}
+          </List>
         </>
       )}
     </ResourceStates>
@@ -199,15 +214,24 @@ function AttendanceSection({ resource }: { resource: ResourceState<StudentAttend
 
 function PendingSection({ resource }: { resource: ResourceState<StudentPendingItem[]> }) {
   return (
-    <ResourceStates resource={resource} empty={<EmptyState title="Nenhuma pendência encontrada" message="Tudo certo por aqui. ✓" tone="positive" testID="pending-empty" />}>
+    <ResourceStates resource={resource} empty={<EmptyState title="Nenhuma pendência encontrada" message="Tudo certo por aqui." tone="positive" testID="pending-empty" />}>
       {(data) => (
         <>
-          <SectionHeader title="Pendências" action={pluralize(data.length, 'item', 'itens')} />
-          {data.map((item) => (
-            <PendingCard key={item.id} item={item} />
-          ))}
+          <SectionHeader title="Pendências" subtitle={pendingSummary(data)} flush />
+          <List>
+            {data.map((item) => (
+              <PendingRow key={item.id} item={item} />
+            ))}
+          </List>
         </>
       )}
     </ResourceStates>
   );
+}
+
+/** "2 itens precisam de atenção" — conta só o que não foi concluído. */
+function pendingSummary(items: StudentPendingItem[]): string {
+  const open = items.filter((item) => item.status !== 'completed').length;
+  if (open === 0) return 'Tudo concluído';
+  return open === 1 ? '1 item precisa de atenção' : `${open} itens precisam de atenção`;
 }

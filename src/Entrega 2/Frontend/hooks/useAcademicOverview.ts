@@ -10,6 +10,19 @@ import { useResource } from './useResource';
 /** Frequência abaixo deste valor é destacada como atenção (apenas visual; a regra oficial é do agente). */
 export const ATTENDANCE_WARNING_THRESHOLD = 0.75;
 
+/** Margem acima do mínimo em que a frequência já merece atenção (apenas visual). */
+const ATTENDANCE_ATTENTION_MARGIN = 0.05;
+
+export type AttendanceTone = 'default' | 'warning' | 'danger';
+
+/** Tom visual da frequência: abaixo do mínimo é crítico, logo acima é atenção; o resto é saudável. */
+export function attendanceTone(rate: number | null, threshold = ATTENDANCE_WARNING_THRESHOLD): AttendanceTone {
+  if (rate === null) return 'default';
+  if (rate < threshold) return 'danger';
+  if (rate < threshold + ATTENDANCE_ATTENTION_MARGIN) return 'warning';
+  return 'default';
+}
+
 export interface UpcomingEntry {
   id: string;
   kind: 'exam' | 'assignment' | 'project' | 'pending' | 'other';

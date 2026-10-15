@@ -233,10 +233,11 @@ export function pendingStatusIcon(status: PendingItemStatus): string {
   }
 }
 
+/** Só o atraso usa cor de alerta; pendência no prazo é neutra (evita amarelo em toda a lista). */
 export function pendingStatusTone(status: PendingItemStatus): PillTone {
   switch (status) {
     case 'pending':
-      return 'warning';
+      return 'neutral';
     case 'completed':
       return 'success';
     case 'overdue':

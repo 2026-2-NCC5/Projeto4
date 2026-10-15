@@ -19,8 +19,8 @@ describe('HistoryScreen', () => {
     mockGetHistory.mockResolvedValue(historyFixture);
     const onOpenRun = jest.fn();
     render(<HistoryScreen onOpenRun={onOpenRun} />);
-    await screen.findByText('⚠ Com recomendações');
-    expect(screen.getByText('✓ Sem ações necessárias')).toBeTruthy();
+    await screen.findByText('Com recomendações');
+    expect(screen.getByText('Sem ações necessárias')).toBeTruthy();
     expect(screen.getByText(historyFixture[0]!.summary)).toBeTruthy();
     expect(screen.getByText('1 recomendação')).toBeTruthy();
     expect(screen.getByText('0 recomendações')).toBeTruthy();

@@ -4,8 +4,7 @@ import Animated from 'react-native-reanimated';
 
 import { AuthLinkRow, AuthSection, AuthShell, AuthTextField, PasswordRequirements, useAuthMotion } from '../components/auth';
 import { ErrorBanner } from '../components/ErrorBanner';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { AppText, PressableScale, Surface } from '../components/ui';
+import { AppButton, AppText, PressableScale, Surface } from '../components/ui';
 import { useAuthPolicy } from '../hooks/useAuthPolicy';
 import { useSession } from '../hooks/useSession';
 import { normalizeAuthError } from '../services/authErrors';
@@ -52,8 +51,8 @@ const EMPTY_FIELDS: SignUpFields = { fullName: '', email: '', registrationNumber
 const useStyles = makeStyles((theme) => ({
   card: { padding: theme.spacing.xl },
   programs: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm, marginTop: theme.spacing.md },
-  programChip: { minHeight: 40, justifyContent: 'center', paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.pill, borderWidth: 1.5, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.glass },
-  programChipSelected: { borderColor: theme.colors.aurora.focus, backgroundColor: theme.colors.brand.accentSoft },
+  programChip: { minHeight: 40, justifyContent: 'center', paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.md, borderWidth: 1, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.primary },
+  programChipSelected: { borderColor: theme.colors.brand.primaryStrong, backgroundColor: theme.colors.brand.primarySoft },
   remember: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, marginTop: theme.spacing.md, minHeight: theme.minTouchTarget },
   submit: { marginTop: theme.spacing.xl },
   legalRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: theme.spacing.xxs, marginTop: theme.spacing.md },
@@ -61,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * Cadastro de estudante em blocos nomeados (dados, curso, senha, sessão): fundo aurora, campos com
- * foco roxo, requisitos de senha dinâmicos vindos da política pública da API e curso opcional.
+ * Cadastro de estudante em blocos nomeados (dados, curso, senha, sessão): fundo neutro, campos com
+ * foco verde, requisitos de senha dinâmicos vindos da política pública da API e curso opcional.
  * Ao concluir, a sessão é criada pela própria API (o AppShell troca para a área autenticada).
  */
 export function SignUpScreen({ onBack }: SignUpScreenProps) {
@@ -151,8 +150,8 @@ export function SignUpScreen({ onBack }: SignUpScreenProps) {
   const passwordHint = `Mínimo de ${policy.password.minLength} caracteres, com letras, números e símbolos.`;
 
   return (
-    <AuthShell eyebrow="Cadastro" title="Criar conta" subtitle="Use seu e-mail institucional e seu RA. Leva menos de um minuto." onBack={onBack} backLabel="Entrar" footer={<AuthLinkRow text="Já tem conta?" linkLabel="Entrar" icon="log-in-outline" onPress={onBack} accessibilityLabel="Já tenho conta, entrar" testID="signup-go-login" />} testID="signup-screen">
-      <Surface tone="glass" elevation="md" style={styles.card}>
+    <AuthShell title="Criar conta" subtitle="Use seu e-mail institucional e seu RA. Leva menos de um minuto." onBack={onBack} backLabel="Entrar" footer={<AuthLinkRow text="Já tem conta?" linkLabel="Entrar" icon="log-in-outline" onPress={onBack} accessibilityLabel="Já tenho conta, entrar" testID="signup-go-login" />} testID="signup-screen">
+      <Surface style={styles.card}>
         <AuthSection title="Seus dados" description="Como estão registrados na sua matrícula." first />
         <AuthTextField label="Nome completo" icon="person-outline" value={fields.fullName} onChangeText={update('fullName')} placeholder="Como está na matrícula" autoCapitalize="words" autoComplete="name" textContentType="name" editable={!submitting} returnKeyType="next" error={errors.fullName} testID="signup-name" />
         <AuthTextField label="E-mail institucional" icon="mail-outline" value={fields.email} onChangeText={update('email')} placeholder="nome@edu.fecap.br" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" editable={!submitting} returnKeyType="next" error={errors.email} hint={domainsHint} testID="signup-email" />
@@ -166,7 +165,7 @@ export function SignUpScreen({ onBack }: SignUpScreenProps) {
                 const selected = program.code === programCode;
                 return (
                   <PressableScale key={program.code} accessibilityRole="radio" accessibilityState={{ selected, checked: selected }} accessibilityLabel={program.name} onPress={() => setProgramCode(selected ? null : program.code)} disabled={submitting} style={[styles.programChip, selected && styles.programChipSelected]} testID={`signup-program-${program.code}`}>
-                    <AppText variant="bodySmallStrong" tone={selected ? 'accent' : 'secondary'}>
+                    <AppText variant="bodySmallStrong" tone={selected ? 'brand' : 'secondary'}>
                       {program.name}
                     </AppText>
                   </PressableScale>
@@ -217,12 +216,12 @@ export function SignUpScreen({ onBack }: SignUpScreenProps) {
         ) : null}
 
         <View style={styles.submit}>
-          <PrimaryButton label="Criar conta" accessibilityLabel="Criar minha conta" loadingLabel="Criando sua conta, aguarde" onPress={() => void handleSubmit()} loading={submitting} disabled={submitting} testID="signup-submit" />
+          <AppButton size="large" fullWidth label="Criar conta" accessibilityLabel="Criar minha conta" loadingLabel="Criando sua conta, aguarde" onPress={() => void handleSubmit()} loading={submitting} disabled={submitting} testID="signup-submit" />
         </View>
 
         {policy.legal.termsUrl || policy.legal.privacyUrl ? (
           <View style={styles.legalRow}>
-            <AppText variant="caption" tone="muted" style={{ fontWeight: '400' }}>
+            <AppText variant="caption" tone="muted">
               Ao criar a conta você concorda com
             </AppText>
             {policy.legal.termsUrl ? (
@@ -233,7 +232,7 @@ export function SignUpScreen({ onBack }: SignUpScreenProps) {
               </Pressable>
             ) : null}
             {policy.legal.termsUrl && policy.legal.privacyUrl ? (
-              <AppText variant="caption" tone="muted" style={{ fontWeight: '400' }}>
+              <AppText variant="caption" tone="muted">
                 e
               </AppText>
             ) : null}

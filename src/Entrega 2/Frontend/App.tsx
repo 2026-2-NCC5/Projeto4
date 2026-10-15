@@ -22,6 +22,17 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { RecommendationDetailScreen } from './screens/RecommendationDetailScreen';
 import { RunDetailScreen } from './screens/RunDetailScreen';
 import { ServicesScreen } from './screens/ServicesScreen';
+// ---- support (Atendimento)
+import { isSupportRoute } from './navigation/navigationReducer';
+import { SupportPushRouter } from './screens/support/SupportPushRouter';
+import { SupportRouter } from './screens/support/SupportRouter';
+// ---- queue (Fila presencial do ASA)
+import { QueueAlertLayer, QueueProvider, QueueScreen } from './features/queue';
+// ---- appointments (Agendamentos com o ASA) · notifications (Central de avisos)
+import { isAppointmentRoute } from './navigation';
+import { AppointmentsRouter } from './screens/appointments/AppointmentsRouter';
+import { NotificationsPushRouter } from './screens/NotificationsPushRouter';
+import { NotificationsScreen } from './screens/NotificationsScreen';
 import { setPreferredVoice } from './services/voice/speechSynthesis';
 import { ThemeProvider, useTheme } from './theme';
 import { MESSAGES } from './utils/messages';
@@ -58,15 +69,17 @@ export function AppShell() {
 function Splash() {
   const theme = useTheme();
   return (
-    <View style={[styles.splash, { backgroundColor: theme.colors.brand.secondary }]} testID="splash" accessibilityLiveRegion="polite">
-      <AsaLogo width={160} height={64} />
-      <AppText variant="h2" tone="inverse" style={{ marginTop: 18 }}>
+    <View style={[styles.splash, { backgroundColor: theme.colors.background.primary }]} testID="splash" accessibilityLiveRegion="polite">
+      <View style={[styles.logo, { backgroundColor: theme.colors.brand.secondary, borderRadius: theme.radius.lg }]}>
+        <AsaLogo width={96} height={38} />
+      </View>
+      <AppText variant="h3" style={{ marginTop: theme.spacing.xl }}>
         ASA Conecta
       </AppText>
-      <AppText variant="bodySmall" tone="inverseMuted" style={{ marginTop: 6 }}>
+      <AppText variant="bodySmall" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
         Preparando sua jornada acadêmica
       </AppText>
-      <ActivityIndicator color={theme.colors.brand.primary} style={styles.loader} accessibilityLabel={MESSAGES.loadingSession} />
+      <ActivityIndicator color={theme.colors.brand.primaryStrong} style={styles.loader} accessibilityLabel={MESSAGES.loadingSession} />
     </View>
   );
 }
@@ -91,7 +104,10 @@ function AuthenticatedAssistant() {
   return (
     // A conversa com o assistente sobrevive à troca de abas e é descartada no logout (desmontagem).
     <AssistantProvider onGoBack={navigation.goHome}>
-      <AppContent />
+      {/* ---- queue (Fila presencial do ASA): dentro do assistente para falar pelo mesmo TTS */}
+      <QueueProvider onOpenQueue={navigation.openQueue}>
+        <AppContent />
+      </QueueProvider>
     </AssistantProvider>
   );
 }
@@ -110,6 +126,18 @@ function AppContent() {
     content = <RunDetailScreen runId={detail.runId} onBack={navigation.goBack} onViewSubject={navigation.viewSubject} onOpenRecommendation={navigation.openRecommendation} />;
   } else if (detail?.screen === 'history') {
     content = <HistoryScreen onOpenRun={navigation.openRun} onBack={navigation.goBack} />;
+  } else if (isSupportRoute(detail)) {
+    // ---- support (Atendimento): hub, "Meus chamados", abertura e detalhe do chamado
+    content = <SupportRouter route={detail} />;
+  } else if (detail?.screen === 'queue') {
+    // ---- queue (Fila presencial do ASA)
+    content = <QueueScreen onBack={navigation.goBack} />;
+  } else if (isAppointmentRoute(detail)) {
+    // ---- appointments (Agendamentos com o ASA): "Meus agendamentos", agendar/remarcar e detalhe
+    content = <AppointmentsRouter route={detail} />;
+  } else if (detail?.screen === 'notifications') {
+    // ---- notifications (Central de avisos)
+    content = <NotificationsScreen />;
   } else {
     switch (tab) {
       case 'home':
@@ -148,6 +176,12 @@ function AppContent() {
       </View>
       <BottomNav active={tab} onChange={navigation.changeTab} onAssistantLongPress={() => void assistant.activate('gesture')} />
       <AssistantOverlay />
+      {/* ---- queue (Fila presencial do ASA): aviso de proximidade e "É a sua vez!" sobre qualquer tela */}
+      <QueueAlertLayer />
+      {/* ---- support (Atendimento): toque em notificação de chamado abre o detalhe */}
+      <SupportPushRouter />
+      {/* ---- notifications (Central de avisos): toque em push de agendamento/aviso abre o registro */}
+      <NotificationsPushRouter />
       <HeyAsaOnboarding visible={assistant.onboardingVisible} onComplete={(accept) => void assistant.completeOnboarding(accept)} voiceUnavailableReason={assistant.wakeWord.availability?.available === false ? assistant.wakeWord.availability.reason ?? 'not_supported' : null} />
     </View>
   );
@@ -156,6 +190,7 @@ function AppContent() {
 const styles = StyleSheet.create({
   app: { flex: 1 },
   splash: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+  logo: { paddingHorizontal: 20, paddingVertical: 14 },
   loader: { marginTop: 24 },
   indicator: { position: 'absolute', left: 0, right: 0, alignItems: 'center', zIndex: 150 },
 });

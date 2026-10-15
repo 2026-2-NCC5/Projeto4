@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, Platform, ScrollView, StyleSheet, View, type TextInput } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AnalysisPanel } from '../components/AnalysisPanel';
 import { AssistantTranscript } from '../components/assistant/AssistantTranscript';
@@ -12,12 +11,13 @@ import { VoiceWaveform } from '../components/assistant/VoiceWaveform';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Screen } from '../components/Screen';
 import { SegmentedControl } from '../components/SegmentedControl';
-import { AppText, IconButton, PressableScale, Surface } from '../components/ui';
+import { AppButton, AppText, IconButton, List, ListItem } from '../components/ui';
 import { AsaVoiceOrb, VoiceResponse, VoiceStatus, type AsaOrbState, type VoiceButtonMode } from '../components/voice';
 import { VOICE } from '../config/services';
 import { useOptionalAssistant } from '../features/assistant/hooks/useAssistant';
 import { groupHistoryByDay } from '../features/assistant/services/conversationHistory';
 import { useAnalysis } from '../hooks/useAnalysis';
+import { useNavBarInset } from '../hooks/useNavBarInset';
 import { usePreferences } from '../hooks/usePreferences';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { useResponsive } from '../hooks/useResponsive';
@@ -53,9 +53,6 @@ const MODE_OPTIONS: { key: AssistantMode; label: string }[] = [
   { key: 'analysis', label: 'Análise completa' },
 ];
 
-/** Espaço reservado para a BottomNav absoluta (inclui o botão central que sobressai). */
-const NAV_SPACE = 120;
-
 const PROCESSING_PHASES: readonly VoicePhase[] = ['listening', 'transcribing', 'understanding', 'thinking'];
 
 /** Largura do seletor de modo quando ele divide a linha do cabeçalho (tablets, desktop, paisagem). */
@@ -69,8 +66,8 @@ const COMPACT_COMPOSER_HEIGHT = 700;
  * e navegação fixos), limitado pela largura em telas estreitas.
  */
 function heroOrbSize(width: number, height: number, isShort: boolean): number {
-  if (isShort) return 56;
-  return Math.round(Math.min(140, Math.max(80, Math.min(width * 0.3, height * 0.13))));
+  if (isShort) return 48;
+  return Math.round(Math.min(112, Math.max(64, Math.min(width * 0.24, height * 0.11))));
 }
 
 /** A caixa do orb tem 1,5× o tamanho (halo e partículas); recupera parte da margem vazia acima e abaixo. */
@@ -92,14 +89,13 @@ const useStyles = makeStyles((theme) => ({
   scrollFill: { flexGrow: 1 },
   scrollCentered: { justifyContent: 'center' },
   orbArea: { alignItems: 'center' },
-  infoBox: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start', backgroundColor: theme.colors.status.warningSoft, borderColor: theme.colors.status.warning, borderWidth: 1, borderRadius: theme.radius.lg, padding: theme.spacing.md, marginTop: theme.spacing.md },
-  notice: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'center', backgroundColor: theme.colors.status.infoSoft, borderRadius: theme.radius.md, padding: theme.spacing.md, marginTop: theme.spacing.md },
+  infoBox: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start', backgroundColor: theme.colors.status.warningSoft, borderRadius: theme.radius.md, padding: theme.spacing.md, marginTop: theme.spacing.md },
+  notice: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start', backgroundColor: theme.colors.status.infoSoft, borderRadius: theme.radius.md, padding: theme.spacing.md, marginTop: theme.spacing.md },
   composer: { paddingTop: theme.spacing.xs, gap: theme.spacing.xs },
   statusLine: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: theme.spacing.sm, minHeight: 24 },
-  stopPill: { alignSelf: 'center', minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.pill, borderWidth: 1, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.primary },
-  history: { marginTop: theme.spacing.xl },
-  historyItem: { paddingVertical: theme.spacing.sm + 2, borderBottomWidth: 1, borderBottomColor: theme.colors.border.subtle },
-  privacy: { paddingHorizontal: theme.spacing.md, fontWeight: '400' },
+  stop: { alignSelf: 'center' },
+  history: { marginTop: theme.spacing.xxl, gap: theme.spacing.sm },
+  privacy: { paddingHorizontal: theme.spacing.md },
   privacyInline: { marginTop: theme.spacing.lg },
 }));
 
@@ -176,7 +172,7 @@ function AssistantTopBar({ modeSwitcher, leading, trailing, orb }: AssistantTopB
             <AppText variant="h4" align={inline ? 'left' : 'center'} accessibilityRole="header" numberOfLines={1}>
               Assistente ASA
             </AppText>
-            <AppText variant="caption" tone="muted" align={inline ? 'left' : 'center'} style={{ fontWeight: '500' }} numberOfLines={1}>
+            <AppText variant="caption" tone="secondary" align={inline ? 'left' : 'center'} numberOfLines={1}>
               ASA Conecta
             </AppText>
           </View>
@@ -201,10 +197,11 @@ function AnalysisMode({ analysis, modeSwitcher, onViewSubject, onOpenRecommendat
   const theme = useTheme();
   const styles = useStyles();
   const responsive = useResponsive();
+  const navInset = useNavBarInset();
   return (
     <Screen scroll={false} withNavSpace={false} contentStyle={styles.screenContent} testID="assistant-screen">
       <AssistantTopBar modeSwitcher={modeSwitcher} />
-      <ScrollView style={styles.flex} contentContainerStyle={[styles.scrollContent, { paddingHorizontal: responsive.gutter, paddingBottom: theme.spacing.navSpace }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.flex} contentContainerStyle={[styles.scrollContent, { paddingHorizontal: responsive.gutter, paddingBottom: navInset + theme.spacing.xxl }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <AnalysisPanel analysis={analysis} onViewSubject={onViewSubject} onOpenRecommendation={onOpenRecommendation} showHeader={false} />
       </ScrollView>
     </Screen>
@@ -258,7 +255,7 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
   const { preferences, updatePreferences } = usePreferences();
   const reduceMotion = useReducedMotion();
   const responsive = useResponsive();
-  const insets = useSafeAreaInsets();
+  const navInset = useNavBarInset();
   const keyboardVisible = useIosKeyboardVisible();
   const [draft, setDraft] = useState('');
   // A resposta já existente ao abrir a tela aparece completa; só respostas novas são reveladas em streaming.
@@ -314,7 +311,7 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
   const canReset = Boolean(turn || state.transcript || error || state.notice) || phase !== 'idle';
   const canRetryByVoice = !voiceKnownUnavailable && error !== null && error.kind !== 'permission_denied' && error.kind !== 'unavailable';
   const canRepeat = ttsEnabled && Boolean(turn?.response.speech?.text?.trim()) && phase !== 'answering';
-  const navSpace = keyboardVisible ? theme.spacing.md : NAV_SPACE + insets.bottom;
+  const navSpace = keyboardVisible ? theme.spacing.md : navInset + theme.spacing.sm;
   const tone = phase === 'abstained' || phase === 'human_validation' ? 'attention' : 'default';
   const previousTurns = turn ? thread.filter((item) => item.id !== turn.id) : thread;
   const historyGroups = global && preferences.historyEnabled && !turn && !isProcessing ? groupHistoryByDay(global.history).slice(0, 2) : [];
@@ -400,7 +397,7 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
                 {MESSAGES.voiceUnavailable}
               </AppText>
               {availability?.reason === 'expo_go' ? (
-                <AppText variant="caption" tone="warning" style={{ fontWeight: '400', marginTop: 2 }}>
+                <AppText variant="caption" tone="warning" style={{ marginTop: 2 }}>
                   {MESSAGES.voiceUnavailableExpoGo}
                 </AppText>
               ) : null}
@@ -426,7 +423,7 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
           <View>
             <ErrorBanner message={error.message} onRetry={canRetryByVoice ? () => void assistant.startListening() : undefined} testID="voice-error" />
             {error.detail ? (
-              <AppText variant="caption" tone="muted" style={{ fontWeight: '400', marginTop: theme.spacing.xs, paddingHorizontal: theme.spacing.xxs }}>
+              <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.xs, paddingHorizontal: theme.spacing.xxs }}>
                 {error.detail}
               </AppText>
             ) : null}
@@ -435,38 +432,31 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
 
         {state.notice ? (
           <View style={styles.notice} accessibilityLiveRegion="polite" testID="voice-notice">
-            <AppText variant="bodyStrong" tone="info" importantForAccessibility="no">
-              ⓘ
-            </AppText>
-            <AppText variant="bodySmallStrong" tone="info" style={{ flex: 1 }}>
+            <Ionicons name="information-circle-outline" size={18} color={theme.colors.status.infoText} accessibilityElementsHidden importantForAccessibility="no" />
+            <AppText variant="bodySmall" tone="info" style={{ flex: 1 }}>
               {state.notice}
             </AppText>
           </View>
         ) : null}
 
         {historyGroups.length > 0 ? (
-          <Surface style={styles.history} testID="conversation-history">
+          <View style={styles.history} testID="conversation-history">
             <AppText variant="h4" accessibilityRole="header">
               Conversas recentes
             </AppText>
             {historyGroups.map((group) => (
-              <View key={group.label} style={{ marginTop: theme.spacing.sm }}>
-                <AppText variant="label" tone="muted" uppercase>
+              <View key={group.label} style={{ gap: theme.spacing.xs }}>
+                <AppText variant="caption" tone="secondary">
                   {group.label}
                 </AppText>
-                {group.entries.slice(0, 4).map((entry) => (
-                  <PressableScale key={entry.id} accessibilityRole="button" accessibilityLabel={`Perguntar de novo: ${entry.question}`} onPress={() => submit(entry.question)} style={styles.historyItem}>
-                    <AppText variant="bodySmallStrong" numberOfLines={1}>
-                      {entry.question}
-                    </AppText>
-                    <AppText variant="caption" tone="muted" numberOfLines={1} style={{ fontWeight: '400' }}>
-                      {entry.answer}
-                    </AppText>
-                  </PressableScale>
-                ))}
+                <List>
+                  {group.entries.slice(0, 4).map((entry) => (
+                    <ListItem key={entry.id} title={entry.question} description={entry.answer} titleLines={1} descriptionLines={1} accessibilityLabel={`Perguntar de novo: ${entry.question}`} onPress={() => submit(entry.question)} showChevron={false} />
+                  ))}
+                </List>
               </View>
             ))}
-          </Surface>
+          </View>
         ) : null}
 
         {compactComposer ? privacyNotice : null}
@@ -474,12 +464,7 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
 
       <View style={[styles.composer, { paddingHorizontal: Math.max(theme.spacing.md, gutter - theme.spacing.sm) }]}>
         {showStatusLine ? <View style={styles.statusLine}>{status}</View> : null}
-        {phase === 'answering' ? (
-          <PressableScale accessibilityRole="button" accessibilityLabel="Parar resposta" onPress={stopSpeaking} style={styles.stopPill}>
-            <Ionicons name="stop-circle-outline" size={18} color={theme.colors.text.primary} />
-            <AppText variant="caption">Parar resposta</AppText>
-          </PressableScale>
-        ) : null}
+        {phase === 'answering' ? <AppButton label="Parar resposta" icon="stop-circle-outline" variant="secondary" size="small" onPress={stopSpeaking} style={styles.stop} /> : null}
         <ChatInputBar value={draft} onChangeText={setDraft} onSubmit={submit} voiceMode={voiceMode} onVoicePress={onVoicePress} onCancel={assistant.cancel} actions={inputActions} inputRef={inputRef} placeholder="Pergunte ao ASA..." inline={compactComposer} />
         {compactComposer ? null : privacyNotice}
       </View>

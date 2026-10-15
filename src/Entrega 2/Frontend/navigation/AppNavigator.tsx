@@ -3,8 +3,8 @@ import React, { createContext, useCallback, useContext, useMemo, useReducer } fr
 import type { AssistantMode } from '../types/assistant';
 import type { AssistantNavigationParams, AssistantNavigationTarget } from '../types/api';
 
-import { actionForTarget, currentScreenKey, INITIAL_NAVIGATION_STATE, navigationReducer, type NavigationState } from './navigationReducer';
-import type { AcademicSegment, ScreenKey, TabKey } from './routes';
+import { actionForTarget, appointmentRoutes, currentScreenKey, INITIAL_NAVIGATION_STATE, navigationReducer, supportRoutes, type NavigationState } from './navigationReducer';
+import type { AcademicSegment, ScreenKey, SupportListFilter, TabKey } from './routes';
 
 export interface AppNavigation extends NavigationState {
   currentScreen: ScreenKey;
@@ -21,6 +21,27 @@ export interface AppNavigation extends NavigationState {
   clearFocus: () => void;
   /** Executa um destino da allow-list do contrato; devolve false quando não há o que fazer. */
   navigateTo: (target: AssistantNavigationTarget, params?: AssistantNavigationParams) => boolean;
+  // ---- support (Atendimento)
+  openSupport: () => void;
+  openSupportTickets: (filter?: SupportListFilter) => void;
+  openNewTicket: (categoryId?: string) => void;
+  /** `replace`: substitui a tela atual (ex.: confirmação da abertura → detalhe do chamado). */
+  openTicket: (id: string, options?: { replace?: boolean }) => void;
+  // ---- queue (Fila presencial do ASA)
+  /** Atendimento → Fila presencial (também usado pelo deep link asaconecta://atendimento/fila). */
+  openQueue: () => void;
+  // ---- appointments (Agendamentos com o ASA)
+  /** "Meus agendamentos" (próximos e histórico). */
+  openAppointments: () => void;
+  /** Fluxo de agendamento (assunto → modalidade → dia → horário → confirmação). */
+  openBookAppointment: () => void;
+  /** O mesmo fluxo, remarcando um agendamento existente. */
+  openRescheduleAppointment: (id: string) => void;
+  /** `replace`: substitui a tela atual; `dropPreviousDetail`: remove também o detalhe anterior (remarcação concluída). */
+  openAppointment: (id: string, options?: { replace?: boolean; dropPreviousDetail?: boolean }) => void;
+  // ---- notifications (Central de avisos)
+  /** Central de avisos (sino do Início e toque em push sem registro). */
+  openNotifications: () => void;
 }
 
 const NavigationContext = createContext<AppNavigation | null>(null);
@@ -45,6 +66,24 @@ export function NavigationProvider({ children, initialState }: { children: React
     dispatch(action);
     return true;
   }, []);
+  // ---- support (Atendimento)
+  const openSupport = useCallback(() => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.home() }), []);
+  const openSupportTickets = useCallback((filter?: SupportListFilter) => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.tickets(filter) }), []);
+  const openNewTicket = useCallback((categoryId?: string) => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.newTicket(categoryId) }), []);
+  const openTicket = useCallback((id: string, options?: { replace?: boolean }) => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.ticket(id), replace: Boolean(options?.replace) }), []);
+  // ---- queue (Fila presencial do ASA)
+  const openQueue = useCallback(() => dispatch({ type: 'OPEN_QUEUE' }), []);
+  // ---- appointments (Agendamentos com o ASA)
+  const openAppointments = useCallback(() => dispatch({ type: 'OPEN_APPOINTMENT_ROUTE', route: appointmentRoutes.list() }), []);
+  const openBookAppointment = useCallback(() => dispatch({ type: 'OPEN_APPOINTMENT_ROUTE', route: appointmentRoutes.book() }), []);
+  const openRescheduleAppointment = useCallback((id: string) => dispatch({ type: 'OPEN_APPOINTMENT_ROUTE', route: appointmentRoutes.reschedule(id) }), []);
+  const openAppointment = useCallback(
+    (id: string, options?: { replace?: boolean; dropPreviousDetail?: boolean }) =>
+      dispatch({ type: 'OPEN_APPOINTMENT_ROUTE', route: appointmentRoutes.detail(id), replace: Boolean(options?.replace), dropPreviousDetail: Boolean(options?.dropPreviousDetail) }),
+    [],
+  );
+  // ---- notifications (Central de avisos)
+  const openNotifications = useCallback(() => dispatch({ type: 'OPEN_NOTIFICATIONS' }), []);
 
   const value = useMemo<AppNavigation>(
     () => ({
@@ -62,8 +101,42 @@ export function NavigationProvider({ children, initialState }: { children: React
       goHome,
       clearFocus,
       navigateTo,
+      openSupport,
+      openSupportTickets,
+      openNewTicket,
+      openTicket,
+      openQueue,
+      openAppointments,
+      openBookAppointment,
+      openRescheduleAppointment,
+      openAppointment,
+      openNotifications,
     }),
-    [state, changeTab, viewSubject, openAcademicSegment, openRecommendation, openRun, openHistory, openAssistant, setAssistantMode, goBack, goHome, clearFocus, navigateTo],
+    [
+      state,
+      changeTab,
+      viewSubject,
+      openAcademicSegment,
+      openRecommendation,
+      openRun,
+      openHistory,
+      openAssistant,
+      setAssistantMode,
+      goBack,
+      goHome,
+      clearFocus,
+      navigateTo,
+      openSupport,
+      openSupportTickets,
+      openNewTicket,
+      openTicket,
+      openQueue,
+      openAppointments,
+      openBookAppointment,
+      openRescheduleAppointment,
+      openAppointment,
+      openNotifications,
+    ],
   );
 
   return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;

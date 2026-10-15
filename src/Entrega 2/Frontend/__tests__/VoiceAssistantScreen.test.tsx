@@ -115,7 +115,7 @@ describe('AssistantScreen (modo Conversar)', () => {
     expect(screen.getByText('Suas pendências')).toBeTruthy();
     expect(screen.getByText('Você tem 1 atividade pendente.')).toBeTruthy();
     expect(screen.getByText('Trabalho prático de Banco de Dados')).toBeTruthy();
-    expect(screen.getByText('⚠ Pendente')).toBeTruthy();
+    expect(screen.getByText('Pendente')).toBeTruthy();
     expect(screen.getByText(recommendationFixture.message)).toBeTruthy();
     expect(screen.getByText('Por que estou vendo isso?')).toBeTruthy();
     expect(screen.getByText('Trabalho prático sem entrega registrada')).toBeTruthy();

@@ -1,7 +1,7 @@
 import type { AssistantScreenContext } from '../types/api';
-import type { AcademicSegment, DetailRoute, TabKey } from '../types/ui';
+import type { AcademicSegment, AppointmentRoute, DetailRoute, SupportListFilter, SupportRoute, TabKey } from '../types/ui';
 
-export type { AcademicSegment, DetailRoute, TabKey };
+export type { AcademicSegment, AppointmentRoute, DetailRoute, SupportListFilter, SupportRoute, TabKey };
 
 /** Identificador da tela visível — o mesmo vocabulário do contrato (`AssistantScreenContext`). */
 export type ScreenKey = AssistantScreenContext;
@@ -26,4 +26,6 @@ export const SCREEN_LABELS: Record<ScreenKey, string> = {
   profile: 'Perfil',
   recommendation: 'Recomendação',
   run: 'Detalhe da análise',
+  // ---- queue (Fila presencial do ASA)
+  queue: 'Fila presencial do ASA',
 };

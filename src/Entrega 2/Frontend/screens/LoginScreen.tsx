@@ -4,8 +4,7 @@ import Animated from 'react-native-reanimated';
 
 import { AuthAltButton, AuthDivider, AuthLinkRow, AuthSection, AuthShell, AuthTextField, useAuthMotion } from '../components/auth';
 import { ErrorBanner } from '../components/ErrorBanner';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { AppText, Surface } from '../components/ui';
+import { AppButton, AppText, Surface } from '../components/ui';
 import { useAuthPolicy } from '../hooks/useAuthPolicy';
 import { toApiClientError } from '../hooks/useResource';
 import { useSession } from '../hooks/useSession';
@@ -118,13 +117,12 @@ export function LoginScreen({ onCreateAccount, onForgotPassword }: LoginScreenPr
 
   return (
     <AuthShell
-      eyebrow="ASA Conecta"
       title="Bem-vindo ao ASA"
       subtitle="Entre com sua conta de estudante para acompanhar sua jornada acadêmica."
       footer={onCreateAccount ? <AuthLinkRow text="Ainda não tem conta?" linkLabel="Criar conta" icon="person-add-outline" onPress={onCreateAccount} accessibilityLabel="Criar conta de estudante" accessibilityHint="Abre o cadastro com e-mail institucional e RA" disabled={submitting || biometricBusy} testID="login-create-account" /> : undefined}
       testID="login-screen"
     >
-      <Surface tone="glass" elevation="md" style={styles.card}>
+      <Surface style={styles.card}>
         {signOutReason === 'expired' ? (
           <Animated.View entering={motion.rise()}>
             <ErrorBanner tone="warning" message={MESSAGES.errorUnauthorized} testID="session-expired-banner" />
@@ -213,7 +211,7 @@ export function LoginScreen({ onCreateAccount, onForgotPassword }: LoginScreenPr
         ) : null}
 
         <View style={styles.submit}>
-          <PrimaryButton label="Entrar" accessibilityLabel="Entrar na sua conta" loadingLabel="Entrando, aguarde" onPress={() => void handleSubmit()} loading={submitting} disabled={submitting} testID="login-submit" />
+          <AppButton size="large" fullWidth label="Entrar" accessibilityLabel="Entrar na sua conta" loadingLabel="Entrando, aguarde" onPress={() => void handleSubmit()} loading={submitting} disabled={submitting} testID="login-submit" />
         </View>
 
         {biometricAvailable ? (

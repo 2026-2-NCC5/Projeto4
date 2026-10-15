@@ -43,7 +43,7 @@ raiz. A tela de login não exibe atalhos nem senhas: entra-se como em produção
 | `npm start` / `npm run android` / `npm run ios` / `npm run web` | Metro / plataformas |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint (config Expo + regras React Compiler) |
-| `npm test` | Jest (jest-expo) — 20 suítes, 392 testes |
+| `npm test` | Jest (jest-expo) — 32 suítes, 488 testes |
 | `npm run doctor` | `expo-doctor` |
 
 ## Estrutura
@@ -53,14 +53,17 @@ App.tsx                      Preferences → Theme → Session → Navigation �
 theme/                       Design System: palette (logos), colors (tema claro aplicado; escuro só como referência), typography, spacing, radius, shadows, animations, ThemeProvider (useTheme, makeStyles)
 navigation/                  reducer puro + provider tipado (aba, detalhe, tela atual, allow-list → ação)
 features/assistant/          state machine da casca, wakeWordMatcher/Service, histórico local, telemetria, useAssistant (provider global)
-components/ui/               AppText, AppButton, Surface, GradientSurface, AuroraBackground (radial roxo→verde em SVG), Badge, Avatar, SectionHeader, EmptyState, Skeletons, SettingRow, IconButton, PressableScale, OfflineBanner
-components/academic/         StatTile, ScheduleCard, InsightCard, SubjectCard, GradeCard, AttendanceCard, PendingCard
+features/support/            Atendimento ASA: api (HTTP + demonstração), hooks (cache SWR, lista paginada, detalhe, ações otimistas, abertura com rascunho, anexos), labels, progress, format, motion (Reanimated)
+components/ui/               AppText, AppButton, Surface, List/ListItem, Divider, Badge, Avatar, SectionHeader, EmptyState, Skeletons, SettingRow, IconButton, PressableScale, OfflineBanner
+components/academic/         MetricStrip, UpcomingList, InsightList, SubjectCard, GradeRow, AttendanceRow, PendingRow
 components/assistant/        AssistantOrb, AssistantOverlay, VoiceWaveform, MicrophoneIndicator, HeyAsaOnboarding, AssistantSettingsSection
                              chat (layout "Chat V1"): StreamingText (revelação caractere a caractere), ChatBubble (UserBubble/AssistantMessage/TypingIndicator), ChatInputBar (campo que cresce até 5 linhas, mic ⇄ enviar), ChatEmptyState (saudação + ações rápidas), AssistantTranscript
-components/voice/            AsaVoiceOrb, VoiceWave, VoiceButton, VoiceResponse, VoiceStatus, VoiceSuggestions, VoiceTextInput, VoiceTranscript
-components/auth/             layout "Sign Up V1": AuthShell (fundo aurora + logos + título responsivo), AuthTextField (foco roxo), AuthDivider ("OU"), AuthAltButton (biometria/criar conta), PasswordRequirements
-components/                  Card, Pill, PrimaryButton, ProgressBar, Screen, ScreenHeader, SegmentedControl, StateView, ErrorBanner, análise do agente…
+components/voice/            AsaVoiceOrb, VoiceWave, VoiceResponse, VoiceStatus, VoiceSuggestions, voiceModes (rótulos do botão de voz)
+components/tickets/          Atendimento: TicketStatusBadge, FilterChips, SearchField, StepIndicator, SelectRow, TicketRow, TicketSummaryCard, TicketProgress, TicketTimeline, TicketMessages, TicketComposer, AttachmentItems, TicketStatusCards, TicketRating, BottomSheet, AnimatedCheck, Appear, SupportNotice, TicketEmptyState
+components/auth/             AuthShell (logos + título responsivo), AuthTextField (foco verde), AuthDivider ("ou"), AuthAltButton (biometria), AuthStepper, PasswordRequirements
+components/                  BottomNav, Screen, ScreenHeader, SegmentedControl, ProgressBar, InfoRow, StateView, ErrorBanner, análise do agente…
 screens/                     Home, Academic, Assistant (chat), Services, Profile, History, RecommendationDetail, RunDetail, Login, SignUp, ForgotPassword, auth/AuthFlow (login ↔ cadastro ↔ recuperação)
+screens/support/             Atendimento (hub), Meus chamados, Abrir chamado, Detalhe do chamado, SupportHomeSection (Home/Avisos), SupportRouter
 hooks/                       useSession, usePreferences, useResource, useAnalysis, useAcademicOverview, useNetworkStatus, useReducedMotion, useResponsive, useAuthPolicy, useVoiceAssistant + voiceAssistantReducer
 services/                    apiClient (timeout, refresh, erros normalizados), auth/student/agent/assistant services, voice/ (STT, TTS, háptica), sessionStorage, biometricService
 config/                      env (URL da API), services (timeouts, VOICE, WAKE_WORD, HISTORY, rotas)
@@ -72,15 +75,22 @@ __tests__/                   Jest + Testing Library (fakes de voz/wake word em s
 ## Design System
 
 - Tokens semânticos em `theme/colors.ts` (`brand`, `background`, `surface`, `text`, `border`, `status`,
-  `assistant`, `nav`, `control`, `skeleton`) com **Light e Dark projetados separadamente**. Cores da marca
-  extraídas dos SVGs oficiais em `assets/branding` (verde ASA `#00AB7E`, roxo `#845DF2`, amarelo
-  `#FFDE33`, verde FECAP `#023327`). Preenchimentos com texto usam `brand.primaryStrong` (contraste ≥ 3:1).
-- Tipografia única (`display`, `h1`–`h4`, `body`, `bodySmall`, `caption`, `label`, `mono`, `button`,
-  `input`, `metric`), raios (`xs`–`xxxl`, `pill`), sombras (`sm`/`md`/`lg`/`nav`/`assistantGlow`) e
-  vocabulário de movimento (`motion`).
+  `assistant`, `nav`, `control`, `skeleton`, `chat`) com **Light e Dark projetados separadamente**. Fundos e
+  textos são neutros (cinzas frios, sem matiz verde); o verde marca só ação e seleção.
+- Verde institucional `brand.primaryStrong` (`#0D6D53`, mesmo matiz do logo, 6,3:1 com texto branco) em
+  botão principal, item ativo, links e progresso saudável. O verde do logo (`#00AB7E`) fica restrito à marca;
+  verde FECAP (`#023327`) só no bloco do logo ASA. Sem gradientes, brilhos ou sombras coloridas.
+- Tipografia única (`display`, `h1`–`h4`, `body`, `bodySmall`, `caption`, `label`, `tab`, `mono`, `button`,
+  `input`, `metric`) com peso 700 só em títulos de tela; raios `xs` 4 · `sm` 6 · `md` 10 (botões, campos) ·
+  `lg` 12 (cards) · `xl` 16 (folhas) · `pill`; sombras neutras `sm`/`md`/`lg` (só no que flutua); espaçamento
+  base 4; movimento de 150–250 ms sem rebote (`motion`).
+- Composição: `Surface` é o card padrão (branco, borda de 1 px, sem sombra). Informações da mesma natureza
+  ficam num único `List` com divisores (`ListItem`, `GradeRow`, `AttendanceRow`, `PendingRow`) em vez de um
+  card por item; ícones são Ionicons simples de 20 px (sem círculos coloridos); status usa `Badge` com ícone
+  e texto (nunca só cor). Uma ação principal por tela.
 - Uso: `const theme = useTheme()` ou `const useStyles = makeStyles((theme) => ({ ... }))` (cache por tema).
 - Tema sempre claro (`ThemeProvider` ignora o esquema do sistema; `userInterfaceStyle: light` no `app.json`); não há mais a opção Perfil → Aparência.
-- Responsividade: `hooks/useResponsive.ts` (escala 0.86–1.12, `gutter`, `contentMaxWidth` 720 em tablets/paisagem, `columns`); `Screen` centraliza o conteúdo, `StatTile`/atalhos quebram linha em telas estreitas, Serviços em 2 colunas em tablets, BottomNav e overlay do assistente com largura máxima.
+- Responsividade: `hooks/useResponsive.ts` (escala 0.86–1.12, `gutter`, `contentMaxWidth` 720 em tablets/paisagem, `columns`); `Screen` centraliza o conteúdo e reserva a altura da barra inferior fixa (`hooks/useNavBarInset.ts`, inclui a área segura); ações rápidas do assistente em 1 coluna em telas estreitas; overlay do assistente com largura máxima.
 - Animações com `Animated` + `useNativeDriver` (transform/opacity) na área autenticada; as telas públicas
   (entrar, criar conta, redefinir senha) usam **Reanimated 4** (`components/auth/authMotion.ts`: entrada em
   cascata, foco dos campos, medidor de senha, stepper) e são sempre exibidas no tema claro. Tudo respeita
@@ -90,7 +100,7 @@ __tests__/                   Jest + Testing Library (fakes de voz/wake word em s
 
 Documentação completa em [`documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/`](<../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/architecture.md>). Resumo:
 
-- **Acesso**: Home ("Falar agora"/"Digitar"), botão central (toque = abrir; toque longo = falar), overlay
+- **Acesso**: Home (linha do assistente + botão de microfone), botão central (toque = abrir; toque longo = falar), overlay
   sobre qualquer tela, indicador de microfone e a frase **"Hey Asa"** (primeiro plano, opt-in).
 - **Estados** (derivados): `idle`, `wake-word-listening`, `activating`, `listening`, `processing`,
   `thinking`, `speaking`, `interrupted`, `error`, `offline` — sempre com texto e rótulo acessível.
@@ -122,6 +132,8 @@ Documentação completa em [`documentos/Entrega 2/Projeto Interdisciplinar - Int
 | `EXPO_PUBLIC_TTS_ENABLED_DEFAULT` | `true` | valor inicial de "Resposta por voz" |
 | `EXPO_PUBLIC_WAKE_WORD_ENABLED` | `true` | disponibiliza o "Hey Asa" (preferência do aluno nasce desligada) |
 | `EXPO_PUBLIC_BARGE_IN_ENABLED` | `true` | disponibiliza "Interromper por voz" (opt-in) |
+| `EXPO_PUBLIC_USE_MOCK_TICKETS` | `false` | chamados de demonstração no app (sem a API de chamados) |
+| `EXPO_PUBLIC_USE_MOCK_QUEUE` | `false` | fila presencial simulada no app (sem a API da fila) |
 
 Limites em `config/services.ts` (`VOICE`, `WAKE_WORD`, `HISTORY`). Nenhuma chave ou segredo no app.
 
@@ -133,6 +145,46 @@ Limites em `config/services.ts` (`VOICE`, `WAKE_WORD`, `HISTORY`). Nenhuma chave
 - "Hey Asa": só em primeiro plano; em background o microfone é desligado; indicador visível sempre que a
   captura está ativa. Detalhes em [`documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/privacy.md`](<../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/privacy.md>).
 - Preferências em `AsyncStorage` (`asa.preferences.v2`); histórico local (só texto) em `asa.assistant.history.v1`.
+
+## Atendimento ASA (chamados)
+
+Serviços → **Atendimento**: abrir chamado em etapas (categoria → detalhes → anexos → revisão → protocolo), "Meus
+chamados" com filtros, busca e paginação, e o detalhe com progresso, prazo, histórico, mensagens, arquivos,
+resolução, avaliação, reabertura e cancelamento. A Home mostra um card só quando há um chamado relevante e os
+avisos não lidos entram em Serviços → Avisos.
+
+- Dados da API (`/api/support/*`, contrato v1.3); `EXPO_PUBLIC_USE_MOCK_TICKETS=true` usa chamados de demonstração
+  no próprio app.
+- Atualização a cada 30 s no detalhe e 60 s na lista (só em primeiro plano) + pull-to-refresh; cache local por
+  usuário (`asa.support.cache.v1:*`) para abrir na hora e funcionar offline; rascunho da abertura em
+  `asa.support.draft.v1:<usuário>`.
+- Anexos: `expo-document-picker` + `expo-file-system` (PDF, imagem, DOC, TXT até 5 MB); "Copiar protocolo" com
+  `expo-clipboard`. Os três funcionam no Expo Go.
+- Animações com Reanimated 4 via `features/support/motion.ts`, todas respeitando "Reduzir movimento".
+
+Detalhes: [`architecture/support-tickets.md`](<../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/support-tickets.md>) e
+[ADR-006](<../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-006-support-tickets.md>).
+
+## Fila presencial do ASA
+
+Serviços → **Fila presencial** (também em Atendimento e pelo assistente: "abre a fila do ASA"): o aluno informa
+a senha que retirou no ASA e o app mostra a senha em atendimento por mesa, as últimas chamadas, quantas pessoas
+estão à frente (só quando o painel informa), uma estimativa aproximada e o andamento. A Home mostra um card só
+enquanto há uma senha acompanhada.
+
+- O app nunca consulta `presencial.fecap.br`: o backend monitora a fonte e envia **push** (app fechado) e eventos
+  em tempo real por SSE (app aberto; polling de 15 s só como plano B, só em primeiro plano).
+- Alertas progressivos (5 à frente, 3 à frente, próxima, chamada) sem repetição: aviso no topo, modal
+  "É a sua vez!", vibração (`expo-haptics`) e a voz do ASA IA pelo mesmo TTS do assistente; o aluno controla
+  notificação, vibração e voz. Leitor de tela e "Reduzir movimento" são respeitados.
+- Push: `expo-notifications`; a permissão é pedida só depois que o aluno começa a acompanhar uma senha. Exige
+  build com projeto EAS (`extra.eas.projectId`) — no Expo Go/web os avisos aparecem só com o app aberto. Toque
+  na notificação ou link `asaconecta://atendimento/fila` abre a fila.
+- `EXPO_PUBLIC_USE_MOCK_QUEUE=true` simula a fila no aparelho; em desenvolvimento a tela tem o painel
+  "Simulação" (cenários relativos à senha 0029).
+
+Detalhes: [`architecture/queue-presencial.md`](<../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/queue-presencial.md>) e
+[ADR-007](<../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-007-queue-presencial.md>).
 
 ## Sessão e segurança
 

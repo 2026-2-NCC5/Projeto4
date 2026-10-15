@@ -7,7 +7,36 @@ export type TabKey = 'home' | 'academic' | 'assistant' | 'services' | 'profile';
 export type DetailRoute =
   | { screen: 'recommendation'; id: string }
   | { screen: 'run'; runId: string }
-  | { screen: 'history' };
+  | { screen: 'history' }
+  // ---- support (Atendimento)
+  | SupportRoute
+  // ---- queue (Fila presencial do ASA)
+  | { screen: 'queue' }
+  // ---- appointments (Agendamentos com o ASA)
+  | AppointmentRoute
+  // ---- notifications (Central de avisos)
+  | { screen: 'notifications' };
+
+// ---- appointments (Agendamentos com o ASA)
+/** Rotas dos agendamentos (empilháveis como as do Atendimento: voltar retorna à tela anterior). */
+export type AppointmentRoute =
+  | { screen: 'appointments' }
+  /** `rescheduleId`: o mesmo fluxo remarca um agendamento existente */
+  | { screen: 'appointment-book'; rescheduleId?: string }
+  | { screen: 'appointment'; id: string };
+// ---- end appointments
+
+// ---- support (Atendimento)
+/** Abas principais de "Meus chamados". */
+export type SupportListFilter = 'all' | 'active' | 'waiting_student' | 'finished';
+
+/** Rotas do Atendimento (empilháveis: voltar retorna à tela anterior do fluxo). */
+export type SupportRoute =
+  | { screen: 'support' }
+  | { screen: 'support-tickets'; filter?: SupportListFilter }
+  | { screen: 'support-new'; categoryId?: string }
+  | { screen: 'support-ticket'; id: string };
+// ---- end support
 
 export type AcademicSegment = 'subjects' | 'assessments' | 'attendance' | 'pending';
 

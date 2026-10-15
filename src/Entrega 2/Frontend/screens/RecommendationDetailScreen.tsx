@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Card, Divider, InfoRow, RecommendationCard, Screen, ScreenHeader, StateView, TechnicalDetails, messageForError, stateKindFromError } from '../components';
-import { AppText, CardSkeleton } from '../components/ui';
+import { InfoRow, RecommendationCard, Screen, ScreenHeader, StateView, TechnicalDetails, messageForError, stateKindFromError } from '../components';
+import { CardSkeleton, List, SectionHeader } from '../components/ui';
 import { useResource } from '../hooks/useResource';
 import { agentService } from '../services/agentService';
 import type { AgentRecommendationDetail } from '../types/api';
@@ -25,16 +25,12 @@ export function RecommendationDetailScreen({ id, onBack, onViewSubject }: Recomm
       {detail.data ? (
         <>
           <RecommendationCard recommendation={detail.data} onViewSubject={onViewSubject} />
-          <Card>
-            <AppText variant="bodySmallStrong" tone="muted" style={{ marginBottom: 12 }}>
-              Origem
-            </AppText>
+          <SectionHeader title="Origem" />
+          <List inset="text">
             <InfoRow label="Análise" value={runStatusLabel(detail.data.runStatus)} />
-            <Divider />
             <InfoRow label="Data" value={formatDateTime(detail.data.createdAt)} />
-            <Divider />
             <InfoRow label="Prioridade" value={String(detail.data.priority)} />
-          </Card>
+          </List>
           <TechnicalDetails runId={detail.data.runId} />
         </>
       ) : null}

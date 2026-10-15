@@ -71,7 +71,7 @@ describe('AssistantScreen (modo Análise completa)', () => {
     expect(screen.getByText('Trabalho prático sem entrega registrada')).toBeTruthy();
     expect(screen.getByText(recommendationFixture.nextAction as string)).toBeTruthy();
     expect(screen.getAllByText('90% de confiança').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('⚠ Atividade pendente')).toBeTruthy();
+    expect(screen.getByText('Atividade pendente')).toBeTruthy();
     expect(screen.getByText(/runId: run-001/)).toBeTruthy();
     fireEvent.press(screen.getByLabelText('Ver disciplina'));
     expect(onViewSubject).toHaveBeenCalledWith('subject-demo-002');
@@ -111,7 +111,7 @@ describe('AssistantScreen (modo Análise completa)', () => {
     fireEvent.press(screen.getByLabelText('Solicitar análise'));
     await screen.findByText(MESSAGES.humanValidation);
     expect(screen.getAllByText('Procure a secretaria acadêmica.').length).toBeGreaterThan(0);
-    expect(screen.getByText('ⓘ Validação humana')).toBeTruthy();
+    expect(screen.getByText('Validação humana')).toBeTruthy();
   });
 
   it.each([

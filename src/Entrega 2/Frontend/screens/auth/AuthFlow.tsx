@@ -13,7 +13,7 @@ export type AuthRoute = 'login' | 'signup' | 'forgot';
 
 /**
  * Navegação local da área pública (login, cadastro e redefinição de senha). A sessão decide quando
- * sair daqui. As telas públicas são sempre exibidas no tema claro (fundo aurora), independentemente
+ * sair daqui. As telas públicas são sempre exibidas no tema claro, independentemente
  * da preferência de aparência do aluno, que volta a valer na área autenticada.
  */
 export function AuthFlow({ initialRoute = 'login' }: { initialRoute?: AuthRoute }) {
