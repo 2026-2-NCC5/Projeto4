@@ -56,7 +56,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#023327",
+          "backgroundColor": "#299B60",
+          "image": "./assets/branding/asa-splash.png",
+          "imageWidth": 250,
           "resizeMode": "contain"
         }
       ]

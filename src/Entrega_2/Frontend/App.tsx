@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Defs, Path, Pattern, Rect } from 'react-native-svg';
 
 import AsaLogo from './assets/branding/Asa_Logo.svg';
 import { BottomNav } from './components/BottomNav';
@@ -65,7 +66,7 @@ export function AppShell() {
 
   return (
     <View style={[styles.app, { backgroundColor: theme.colors.background.primary }]}>
-      <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+      <StatusBar style={status === 'booting' || theme.isDark ? 'light' : 'dark'} />
       {status === 'booting' ? <Splash /> : null}
       {status === 'unauthenticated' ? <AuthFlow /> : null}
       {status === 'authenticated' ? <AuthenticatedArea /> : null}
@@ -74,19 +75,34 @@ export function AppShell() {
 }
 
 function Splash() {
-  const theme = useTheme();
   return (
-    <View style={[styles.splash, { backgroundColor: theme.colors.background.primary }]} testID="splash" accessibilityLiveRegion="polite">
-      <View style={[styles.logo, { backgroundColor: theme.colors.brand.secondary, borderRadius: theme.radius.lg }]}>
-        <AsaLogo width={96} height={38} />
+    <View style={styles.splash} testID="splash" accessibilityLiveRegion="polite">
+      <View style={StyleSheet.absoluteFill} pointerEvents="none">
+        <View style={styles.splashBackground} />
+        <Svg width="100%" height="100%" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+          <Defs>
+            <Pattern id="asa-wing-pattern" width="104" height="82" patternUnits="userSpaceOnUse" patternTransform="rotate(12)">
+              <Path
+                d="M10 18h37c8 0 12 4 12 10v2c0 4 3 7 8 7h8c5 0 8 3 8 7v2c0 4-3 7-8 7H43c-7 0-11-3-12-9M18 29h28c7 0 10 3 11 8M24 39h25"
+                fill="none"
+                stroke="#116238"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Pattern>
+          </Defs>
+          <Rect width="100%" height="100%" fill="url(#asa-wing-pattern)" opacity={0.48} />
+        </Svg>
+        <View style={styles.splashGlow} />
       </View>
-      <AppText variant="h3" style={{ marginTop: theme.spacing.xl }}>
-        ASA Conecta
-      </AppText>
-      <AppText variant="bodySmall" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
-        Preparando sua jornada acadêmica
-      </AppText>
-      <ActivityIndicator color={theme.colors.brand.primaryStrong} style={styles.loader} accessibilityLabel={MESSAGES.loadingSession} />
+      <View style={styles.splashContent}>
+        <AsaLogo width={276} height={112} accessibilityLabel="ASA FECAP" />
+        <View style={styles.splashDivider} />
+        <AppText variant="bodySmall" style={styles.splashCaption}>ASA CONECTA · FECAP</AppText>
+        <AppText variant="bodySmall" style={styles.splashMessage}>Preparando sua jornada acadêmica</AppText>
+        <ActivityIndicator color="#FFFFFF" size="small" style={styles.loader} accessibilityLabel={MESSAGES.loadingSession} />
+      </View>
     </View>
   );
 }
@@ -197,8 +213,13 @@ function AppContent() {
 
 const styles = StyleSheet.create({
   app: { flex: 1 },
-  splash: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  logo: { paddingHorizontal: 20, paddingVertical: 14 },
-  loader: { marginTop: 24 },
+  splash: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, overflow: 'hidden', backgroundColor: '#299B60' },
+  splashBackground: { ...StyleSheet.absoluteFillObject, backgroundColor: '#299B60' },
+  splashGlow: { position: 'absolute', width: 360, height: 360, borderRadius: 180, backgroundColor: '#62C68B', opacity: 0.12, top: '17%', left: '50%', marginLeft: -180 },
+  splashContent: { width: '100%', alignItems: 'center', justifyContent: 'center' },
+  splashDivider: { width: 36, height: 2, borderRadius: 1, backgroundColor: '#FFFFFF', opacity: 0.62, marginTop: 28, marginBottom: 18 },
+  splashCaption: { color: '#FFFFFF', fontWeight: '700', letterSpacing: 2.2, fontSize: 11 },
+  splashMessage: { color: '#FFFFFF', opacity: 0.86, marginTop: 8 },
+  loader: { marginTop: 26 },
   indicator: { position: 'absolute', left: 0, right: 0, alignItems: 'center', zIndex: 150 },
 });
