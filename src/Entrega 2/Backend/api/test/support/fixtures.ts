@@ -12,6 +12,8 @@ export const USERS = {
   student5: { id: '00000000-0000-4000-8000-000000000005', email: 'estudante.multiplo@demo.asa', passwordHash: PASSWORD_HASH, fullName: 'Estudante Múltiplo', role: 'student' as const, isActive: true },
   student6: { id: '00000000-0000-4000-8000-000000000006', email: 'estudante.semdados@demo.asa', passwordHash: PASSWORD_HASH, fullName: 'Estudante Sem Dados', role: 'student' as const, isActive: true },
   staff: { id: '00000000-0000-4000-8000-000000000099', email: 'responsavel.exemplo@demo.asa', passwordHash: PASSWORD_HASH, fullName: 'Responsável Exemplo', role: 'institutional_staff' as const, isActive: true },
+  // ---- platform (portal web): administração fictícia (seed 004)
+  admin: { id: '00000000-0000-4000-8000-000000000097', email: 'admin.plataforma@demo.asa', passwordHash: PASSWORD_HASH, fullName: 'Administração (demonstração)', role: 'technical_admin' as const, isActive: true },
   inactive: { id: '00000000-0000-4000-8000-000000000050', email: 'inativo@demo.asa', passwordHash: PASSWORD_HASH, fullName: 'Conta Inativa', role: 'student' as const, isActive: false },
 };
 

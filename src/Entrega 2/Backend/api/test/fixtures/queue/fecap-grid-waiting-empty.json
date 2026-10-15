@@ -1,0 +1,16 @@
+{
+ "MoreRecords": false,
+ "Records": [],
+ "ItemCount": 0,
+ "PageCount": 0,
+ "PageNumber": 1,
+ "PageSize": 10,
+ "NextPagePagingCookie": null,
+ "ViewConfiguration": null,
+ "CompleteViewLayout": null,
+ "CreateActionMetadata": {
+  "Disabled": false,
+  "DisabledMessage": null
+ },
+ "DisabledItemActionLinks": []
+}

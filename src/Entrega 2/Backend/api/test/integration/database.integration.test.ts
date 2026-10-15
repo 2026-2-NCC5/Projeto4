@@ -1,5 +1,8 @@
+import { readdirSync } from 'node:fs';
+import path from 'node:path';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { resolveDatabaseDir } from '../../src/db/paths.js';
 import { createStubAgentServer, type StubHandle } from '../support/agentStubServer.js';
 import { prepareDatabase, TEST_DATABASE_URL, type DatabaseHandle } from '../support/database.js';
 import { bearer, createTestApp, loginAs } from '../support/testApp.js';
@@ -23,7 +26,10 @@ describeDb('integração API ↔ PostgreSQL (migrations, seeds, persistência do
 
   it('migrations constroem o schema do zero e seeds são idempotentes', async () => {
     const { rows } = await db.pool.query<{ name: string }>('select name from schema_migrations order by name');
-    expect(rows.map((row) => row.name)).toEqual(['001_init_schema.sql', '002_assistant_interactions.sql', '003_auth_recovery_biometrics.sql']);
+    const onDisk = readdirSync(path.join(resolveDatabaseDir(), 'migrations')).filter((file) => file.endsWith('.sql')).sort();
+    // todas as migrations do repositório foram aplicadas, em ordem, a partir de um banco vazio
+    expect(rows.map((row) => row.name)).toEqual(onDisk);
+    expect(onDisk.slice(0, 6)).toEqual(['001_init_schema.sql', '002_assistant_interactions.sql', '003_auth_recovery_biometrics.sql', '004_support_tickets.sql', '005_queue_tracking.sql', '006_platform_identity_audit.sql']);
     const { runSeeds } = await import('../../src/db/seed.js');
     await runSeeds(db.pool, () => undefined); // segunda execução não duplica
     const students = await db.pool.query<{ count: number }>('select count(*)::int as count from students');

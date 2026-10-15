@@ -1,0 +1,125 @@
+{
+ "MoreRecords": false,
+ "ItemCount": 4,
+ "PageCount": 1,
+ "PageNumber": 1,
+ "PageSize": 50,
+ "NextPagePagingCookie": null,
+ "ViewConfiguration": null,
+ "CompleteViewLayout": null,
+ "CreateActionMetadata": {
+  "Disabled": false,
+  "DisabledMessage": null
+ },
+ "DisabledItemActionLinks": [],
+ "Records": [
+  {
+   "Id": "aaaaaaaa-0000-4000-8000-000000000027",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "fecap_posicaonafilapresencial",
+     "Type": "System.Int32",
+     "Value": 1,
+     "FormattedValue": "1",
+     "DisplayValue": 1
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "aaaaaaaa-0000-4000-8000-000000000027",
+     "FormattedValue": "",
+     "DisplayValue": "aaaaaaaa-0000-4000-8000-000000000027"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0027\n",
+     "FormattedValue": "",
+     "DisplayValue": "0027\n"
+    }
+   ]
+  },
+  {
+   "Id": "aaaaaaaa-0000-4000-8000-000000000028",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "fecap_posicaonafilapresencial",
+     "Type": "System.Int32",
+     "Value": 2,
+     "FormattedValue": "2",
+     "DisplayValue": 2
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "aaaaaaaa-0000-4000-8000-000000000028",
+     "FormattedValue": "",
+     "DisplayValue": "aaaaaaaa-0000-4000-8000-000000000028"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0028\n",
+     "FormattedValue": "",
+     "DisplayValue": "0028\n"
+    }
+   ]
+  },
+  {
+   "Id": "aaaaaaaa-0000-4000-8000-000000000029",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "fecap_posicaonafilapresencial",
+     "Type": "System.Int32",
+     "Value": 3,
+     "FormattedValue": "3",
+     "DisplayValue": 3
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "aaaaaaaa-0000-4000-8000-000000000029",
+     "FormattedValue": "",
+     "DisplayValue": "aaaaaaaa-0000-4000-8000-000000000029"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0029\n",
+     "FormattedValue": "",
+     "DisplayValue": "0029\n"
+    }
+   ]
+  },
+  {
+   "Id": "aaaaaaaa-0000-4000-8000-000000000030",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "fecap_posicaonafilapresencial",
+     "Type": "System.Int32",
+     "Value": 4,
+     "FormattedValue": "4",
+     "DisplayValue": 4
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "aaaaaaaa-0000-4000-8000-000000000030",
+     "FormattedValue": "",
+     "DisplayValue": "aaaaaaaa-0000-4000-8000-000000000030"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0030\n",
+     "FormattedValue": "",
+     "DisplayValue": "0030\n"
+    }
+   ]
+  }
+ ]
+}

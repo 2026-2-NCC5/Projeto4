@@ -1,0 +1,557 @@
+{
+ "MoreRecords": true,
+ "ItemCount": 27,
+ "PageCount": 3,
+ "PageNumber": 1,
+ "PageSize": 10,
+ "NextPagePagingCookie": null,
+ "ViewConfiguration": null,
+ "CompleteViewLayout": null,
+ "CreateActionMetadata": {
+  "Disabled": false,
+  "DisabledMessage": null
+ },
+ "DisabledItemActionLinks": [],
+ "Records": [
+  {
+   "Id": "16835784-dcc1-f111-aaaf-000d3a88fcb9",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 0,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Ativo(a)",
+     "DisplayValue": "Ativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "16835784-dcc1-f111-aaaf-000d3a88fcb9",
+     "FormattedValue": "",
+     "DisplayValue": "16835784-dcc1-f111-aaaf-000d3a88fcb9"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791328999000)/",
+     "FormattedValue": "06/10/2026 23:23",
+     "DisplayValue": "2026-10-06T23:23:19Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 03",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 03"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230008,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Em atendimento",
+     "DisplayValue": "Em atendimento"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0026\n",
+     "FormattedValue": "",
+     "DisplayValue": "0026\n"
+    }
+   ]
+  },
+  {
+   "Id": "98a44c6a-dbc1-f111-aaaf-7ced8da88e4d",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 1,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Inativo(a)",
+     "DisplayValue": "Inativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "98a44c6a-dbc1-f111-aaaf-7ced8da88e4d",
+     "FormattedValue": "",
+     "DisplayValue": "98a44c6a-dbc1-f111-aaaf-7ced8da88e4d"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791328989000)/",
+     "FormattedValue": "06/10/2026 23:23",
+     "DisplayValue": "2026-10-06T23:23:09Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 03",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 03"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230007,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Concluído",
+     "DisplayValue": "Concluído"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0025\n",
+     "FormattedValue": "",
+     "DisplayValue": "0025\n"
+    }
+   ]
+  },
+  {
+   "Id": "2f1d6e1f-d8c1-f111-a05a-002248dea911",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 0,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Ativo(a)",
+     "DisplayValue": "Ativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "2f1d6e1f-d8c1-f111-a05a-002248dea911",
+     "FormattedValue": "",
+     "DisplayValue": "2f1d6e1f-d8c1-f111-a05a-002248dea911"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791328077000)/",
+     "FormattedValue": "06/10/2026 23:07",
+     "DisplayValue": "2026-10-06T23:07:57Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 01",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 01"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230008,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Em atendimento",
+     "DisplayValue": "Em atendimento"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0024\n",
+     "FormattedValue": "",
+     "DisplayValue": "0024\n"
+    }
+   ]
+  },
+  {
+   "Id": "199aeb2d-d5c1-f111-a05a-002248dea911",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 0,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Ativo(a)",
+     "DisplayValue": "Ativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "199aeb2d-d5c1-f111-a05a-002248dea911",
+     "FormattedValue": "",
+     "DisplayValue": "199aeb2d-d5c1-f111-a05a-002248dea911"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791327845000)/",
+     "FormattedValue": "06/10/2026 23:04",
+     "DisplayValue": "2026-10-06T23:04:05Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 01",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 01"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230008,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Em atendimento",
+     "DisplayValue": "Em atendimento"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0023\n",
+     "FormattedValue": "",
+     "DisplayValue": "0023\n"
+    }
+   ]
+  },
+  {
+   "Id": "df2e79db-d4c1-f111-aaaf-7ced8da88059",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 1,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Inativo(a)",
+     "DisplayValue": "Inativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "df2e79db-d4c1-f111-aaaf-7ced8da88059",
+     "FormattedValue": "",
+     "DisplayValue": "df2e79db-d4c1-f111-aaaf-7ced8da88059"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791327259000)/",
+     "FormattedValue": "06/10/2026 22:54",
+     "DisplayValue": "2026-10-06T22:54:19Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 03",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 03"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230007,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Concluído",
+     "DisplayValue": "Concluído"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0022\n",
+     "FormattedValue": "",
+     "DisplayValue": "0022\n"
+    }
+   ]
+  },
+  {
+   "Id": "4a19ff4f-d4c1-f111-aaaf-7ced8da88e4d",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 1,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Inativo(a)",
+     "DisplayValue": "Inativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "4a19ff4f-d4c1-f111-aaaf-7ced8da88e4d",
+     "FormattedValue": "",
+     "DisplayValue": "4a19ff4f-d4c1-f111-aaaf-7ced8da88e4d"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791326528000)/",
+     "FormattedValue": "06/10/2026 22:42",
+     "DisplayValue": "2026-10-06T22:42:08Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 03",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 03"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230007,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Concluído",
+     "DisplayValue": "Concluído"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0021\n",
+     "FormattedValue": "",
+     "DisplayValue": "0021\n"
+    }
+   ]
+  },
+  {
+   "Id": "03d9d5bd-d3c1-f111-aaaf-7ced8da8a68b",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 0,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Ativo(a)",
+     "DisplayValue": "Ativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "03d9d5bd-d3c1-f111-aaaf-7ced8da8a68b",
+     "FormattedValue": "",
+     "DisplayValue": "03d9d5bd-d3c1-f111-aaaf-7ced8da8a68b"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791325576000)/",
+     "FormattedValue": "06/10/2026 22:26",
+     "DisplayValue": "2026-10-06T22:26:16Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 01",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 01"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230008,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Em atendimento",
+     "DisplayValue": "Em atendimento"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0020\n",
+     "FormattedValue": "",
+     "DisplayValue": "0020\n"
+    }
+   ]
+  },
+  {
+   "Id": "49064895-d3c1-f111-aaaf-7ced8da88e4d",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 1,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Inativo(a)",
+     "DisplayValue": "Inativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "49064895-d3c1-f111-aaaf-7ced8da88e4d",
+     "FormattedValue": "",
+     "DisplayValue": "49064895-d3c1-f111-aaaf-7ced8da88e4d"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791325239000)/",
+     "FormattedValue": "06/10/2026 22:20",
+     "DisplayValue": "2026-10-06T22:20:39Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 01",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 01"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230007,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Concluído",
+     "DisplayValue": "Concluído"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0019\n",
+     "FormattedValue": "",
+     "DisplayValue": "0019\n"
+    }
+   ]
+  },
+  {
+   "Id": "d23abafd-d2c1-f111-aaaf-7ced8da88059",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 1,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Inativo(a)",
+     "DisplayValue": "Inativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "d23abafd-d2c1-f111-aaaf-7ced8da88059",
+     "FormattedValue": "",
+     "DisplayValue": "d23abafd-d2c1-f111-aaaf-7ced8da88059"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791324914000)/",
+     "FormattedValue": "06/10/2026 22:15",
+     "DisplayValue": "2026-10-06T22:15:14Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 03",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 03"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230007,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Concluído",
+     "DisplayValue": "Concluído"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0018\n",
+     "FormattedValue": "",
+     "DisplayValue": "0018\n"
+    }
+   ]
+  },
+  {
+   "Id": "761e5bdc-d0c1-f111-aaaf-7ced8da88059",
+   "EntityName": "ret_relacionamento",
+   "Attributes": [
+    {
+     "Name": "statecode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 0,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Ativo(a)",
+     "DisplayValue": "Ativo(a)"
+    },
+    {
+     "Name": "ret_relacionamentoid",
+     "Type": "System.Guid",
+     "Value": "761e5bdc-d0c1-f111-aaaf-7ced8da88059",
+     "FormattedValue": "",
+     "DisplayValue": "761e5bdc-d0c1-f111-aaaf-7ced8da88059"
+    },
+    {
+     "Name": "fecap_datadeatribuicao",
+     "Type": "System.DateTime",
+     "Value": "/Date(1791324361000)/",
+     "FormattedValue": "06/10/2026 22:06",
+     "DisplayValue": "2026-10-06T22:06:01Z"
+    },
+    {
+     "Name": "fecap_mesaasa_porextenso",
+     "Type": "System.String",
+     "Value": "Mesa 01",
+     "FormattedValue": "",
+     "DisplayValue": "Mesa 01"
+    },
+    {
+     "Name": "statuscode",
+     "Type": "Microsoft.Xrm.Sdk.OptionSetValue",
+     "Value": {
+      "Value": 283230008,
+      "ExtensionData": null
+     },
+     "FormattedValue": "Em atendimento",
+     "DisplayValue": "Em atendimento"
+    },
+    {
+     "Name": "fecap_senhanopresencial",
+     "Type": "System.String",
+     "Value": "0017\n",
+     "FormattedValue": "",
+     "DisplayValue": "0017\n"
+    }
+   ]
+  }
+ ]
+}

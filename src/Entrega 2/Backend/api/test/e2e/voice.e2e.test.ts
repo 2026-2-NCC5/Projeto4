@@ -26,7 +26,7 @@ describeE2E('E2E — assistente por voz do ASA Conecta', () => {
 
   beforeAll(async () => {
     db = await prepareDatabase();
-    agent = await startAgentService(8766);
+    agent = await startAgentService();
   });
 
   afterAll(async () => {
