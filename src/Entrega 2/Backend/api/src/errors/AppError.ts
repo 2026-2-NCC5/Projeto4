@@ -70,8 +70,8 @@ export class ForbiddenError extends AppError {
 }
 
 export class NotFoundError extends AppError {
-  constructor(message = 'Recurso não encontrado.') {
-    super(404, 'NOT_FOUND', message);
+  constructor(message = 'Recurso não encontrado.', reason?: string) {
+    super(404, 'NOT_FOUND', message, reason ? { reason } : {});
   }
 }
 

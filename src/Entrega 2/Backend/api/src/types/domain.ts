@@ -1,4 +1,4 @@
-import type { UserRole, EnrollmentStatus, AssessmentType, PendingItemStatus, AgentRunStatus, AssistantInputType } from '../contracts/mobileApi.v1.js';
+import type { UserRole, EnrollmentStatus, AssessmentType, PendingItemStatus, AgentRunStatus, AssistantInputType, SessionChannel } from '../contracts/mobileApi.v1.js';
 
 export interface UserRecord {
   id: string;
@@ -7,6 +7,10 @@ export interface UserRecord {
   fullName: string;
   role: UserRole;
   isActive: boolean;
+  /** conta fictícia de demonstração (migration 006); ausente em registros antigos de teste = false */
+  isDemo?: boolean;
+  lastLoginAt?: Date | null;
+  createdAt?: Date;
 }
 
 export interface StudentRecord {
@@ -23,6 +27,27 @@ export interface RefreshSessionRecord {
   expiresAt: Date;
   revokedAt: Date | null;
   rememberMe: boolean;
+  /** canal da sessão (migration 006); registros anteriores são do app */
+  channel?: SessionChannel;
+  /** estável entre rotações do refresh token (um aparelho/navegador) */
+  familyId?: string;
+  deviceLabel?: string | null;
+  lastUsedAt?: Date | null;
+  createdAt?: Date;
+}
+
+/** Sessão agregada por família (aparelho/navegador) para a lista de sessões. */
+export interface SessionFamilyRecord {
+  familyId: string;
+  userId: string;
+  channel: SessionChannel;
+  deviceLabel: string | null;
+  rememberMe: boolean;
+  createdAt: Date;
+  lastUsedAt: Date | null;
+  expiresAt: Date;
+  /** id da linha ativa (a que o access token atual referencia) */
+  activeSessionId: string;
 }
 
 export interface ProgramRecord {
@@ -139,6 +164,14 @@ export interface AgentRunRecord {
   createdAt: Date;
 }
 
+export interface AgentFeedbackRecord {
+  recommendationId: string;
+  studentId: string;
+  helpful: boolean;
+  comment: string | null;
+  createdAt: Date;
+}
+
 export interface AgentRunWithRecommendations extends AgentRunRecord {
   recommendations: AgentRecommendationRecord[];
 }
@@ -147,6 +180,9 @@ export interface AuthContext {
   userId: string;
   role: UserRole;
   sessionId: string;
+  /** canal da sessão; `web` quando a credencial veio do cookie do portal */
+  channel?: SessionChannel;
+  familyId?: string;
 }
 
 export interface RequestContext {

@@ -47,7 +47,56 @@ const envSchema = z.object({
   VOICE_ASSISTANT_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   INTENT_MIN_CONFIDENCE: z.coerce.number().min(0).max(1).default(0.6),
   APP_TIMEZONE: z.string().min(1).default('America/Sao_Paulo'),
+  // ---- queue (Fila presencial do ASA): UM monitor no backend consulta a fonte pública
+  ASA_QUEUE_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  // fecap: endpoint JSON do portal com fallback para o HTML | fecap-html: só HTML | mock/demo: simulador (nunca em produção).
+  // Sem valor: simulador fora de produção; em produção a fila fica desativada até a fonte ser escolhida (não presume autorização).
+  ASA_QUEUE_PROVIDER: z.enum(['fecap', 'fecap-html', 'mock', 'demo']).optional(),
+  // A leitura de presencial.fecap.br só é tratada como integração autorizada quando a instituição confirmar (painel admin)
+  ASA_QUEUE_SOURCE_AUTHORIZED: z.enum(['true', 'false', '1', '0']).default('false'),
+  ASA_QUEUE_SOURCE_URL: z.string().url().default('https://presencial.fecap.br/'),
+  ASA_QUEUE_POLL_INTERVAL_SECONDS: z.coerce.number().int().min(5).max(300).default(10),
+  ASA_QUEUE_CACHE_TTL_SECONDS: z.coerce.number().int().min(5).max(3600).default(30),
+  ASA_QUEUE_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1000).max(60_000).default(8000),
+  ASA_QUEUE_MAX_BACKOFF_SECONDS: z.coerce.number().int().min(10).max(3600).default(300),
+  ASA_QUEUE_FAILURE_THRESHOLD: z.coerce.number().int().min(1).max(50).default(5),
+  ASA_QUEUE_SUBSCRIPTION_RATE_LIMIT: z.coerce.number().int().min(1).max(100).default(10),
+  ASA_QUEUE_MOCK_SCENARIO: z.enum(['empty', 'waiting', '5_ahead', '3_ahead', 'next', 'called', 'completed', 'offline', 'progression']).default('progression'),
+  ASA_QUEUE_MOCK_STEP_SECONDS: z.coerce.number().int().min(2).max(600).default(20),
+  // Push: expo (Expo Push Service) | log (desenvolvimento, só registra) | disabled
+  PUSH_PROVIDER: z.enum(['expo', 'log', 'disabled']).default('expo'),
+  // Opcional: só com "Enhanced Security for Push" no projeto Expo. Segredo do backend; nunca no app.
+  EXPO_ACCESS_TOKEN: z.string().min(1).optional(),
+  PUSH_RECEIPT_DELAY_SECONDS: z.coerce.number().int().min(0).max(3600).default(60),
+  // ---- plataforma (portal web, modo demonstração, flags)
+  // Ambiente lógico exibido nos clientes; padrão derivado de NODE_ENV
+  APP_ENV: z.enum(['development', 'test', 'staging', 'demo', 'production']).optional(),
+  // Dados fictícios identificados como DEMONSTRAÇÃO. false: contas demo não entram e nada fictício é exibido
+  DEMO_DATA_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  // Seeds fictícios (database/seeds) — nunca em produção; banco remoto só com DEMO_SEED_ALLOW_REMOTE=true
+  DEMO_SEED_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  DEMO_SEED_ALLOW_REMOTE: z.enum(['true', 'false', '1', '0']).default('false'),
+  DEMO_SCENARIO: z.string().regex(/^[a-z0-9-]{1,40}$/).default('academic-full'),
+  // demo: disciplinas/notas/frequência do seed fictício | institutional: fonte oficial (ainda não configurada)
+  ACADEMIC_DATA_PROVIDER: z.enum(['demo', 'institutional']).default('demo'),
+  FEATURE_TICKETS_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  FEATURE_APPOINTMENTS_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  FEATURE_KB_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  FEATURE_NOTIFICATIONS_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  // Só a fila presencial usa eventos em tempo real (SSE); o portal web usa atualização periódica visível
+  FEATURE_REALTIME_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
+  // Varredura dos prazos para as automações (segundos; 0 desliga). As regras continuam desligadas até a administração ativar.
+  AUTOMATION_SCAN_INTERVAL_SECONDS: z.coerce.number().int().min(0).max(86_400).default(300),
+  // Origens do portal web aceitas nas requisições com cookie de sessão (verificação de CSRF)
+  WEB_ORIGINS: z.string().default('http://localhost:5173,http://127.0.0.1:5173'),
+  // auto: cookies Secure só em produção (HTTPS); true/false força
+  WEB_COOKIE_SECURE: z.enum(['auto', 'true', 'false']).default('auto'),
+  // Provedor de IA do assistente: existing (regras + base de conhecimento) | jev (integração futura, desligada)
+  AI_PROVIDER: z.enum(['existing', 'jev']).default('existing'),
+  JEV_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
 });
+
+export type AppEnvironment = NonNullable<z.infer<typeof envSchema>['APP_ENV']>;
 
 export type Env = z.infer<typeof envSchema>;
 
@@ -81,7 +130,38 @@ export interface AppConfig {
   agentService: { url: string; timeoutMs: number; contractMajor: number; contractVersion: string };
   corsOrigin: string;
   assistant: { enabled: boolean; intentMinConfidence: number; timezone: string; maxTextLength: number };
+  // ---- queue (Fila presencial do ASA)
+  queue: {
+    enabled: boolean;
+    provider: QueueProviderName;
+    /** a fonte foi escolhida explicitamente (ASA_QUEUE_PROVIDER) */
+    providerExplicit: boolean;
+    /** instituição confirmou a autorização de uso da fonte (ASA_QUEUE_SOURCE_AUTHORIZED) */
+    sourceAuthorized: boolean;
+    /** motivo quando a fila foi desativada pela configuração (ex.: produção sem fonte escolhida) */
+    disabledReason: string | null;
+    sourceUrl: string;
+    pollIntervalSeconds: number;
+    /** snapshot mais velho que isto aparece como desatualizado (e seguidores releem o banco) */
+    cacheTtlSeconds: number;
+    requestTimeoutMs: number;
+    maxBackoffSeconds: number;
+    failureThreshold: number;
+    subscriptionRateLimit: number;
+    mock: { scenario: Env['ASA_QUEUE_MOCK_SCENARIO']; stepSeconds: number };
+  };
+  push: { provider: Env['PUSH_PROVIDER']; expoAccessToken: string | undefined; receiptDelaySeconds: number };
+  // ---- plataforma (portal web, modo demonstração, flags)
+  appEnv: AppEnvironment;
+  demo: { dataEnabled: boolean; seedEnabled: boolean; seedAllowRemote: boolean; scenario: string };
+  academic: { provider: Env['ACADEMIC_DATA_PROVIDER'] };
+  features: { tickets: boolean; appointments: boolean; knowledgeBase: boolean; notifications: boolean; realtime: boolean };
+  automations: { scanIntervalSeconds: number };
+  web: { origins: string[]; cookieSecure: boolean };
+  ai: { provider: Env['AI_PROVIDER']; jevEnabled: boolean };
 }
+
+export type QueueProviderName = 'fecap' | 'fecap-html' | 'mock';
 
 export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   // Variáveis vazias no .env (ex.: TERMS_URL=) equivalem a não definidas.
@@ -103,6 +183,19 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     throw new Error('Configuração inválida: MAIL_TRANSPORT=smtp exige SMTP_HOST');
   }
   const trustProxy = env.TRUST_PROXY === 'true' ? true : env.TRUST_PROXY === 'false' ? false : /^\d+$/.test(env.TRUST_PROXY) ? Number(env.TRUST_PROXY) : env.TRUST_PROXY;
+  const queueProviderRaw = env.ASA_QUEUE_PROVIDER === 'demo' ? 'mock' : env.ASA_QUEUE_PROVIDER;
+  if (env.NODE_ENV === 'production' && queueProviderRaw === 'mock') {
+    throw new Error('Configuração inválida: ASA_QUEUE_PROVIDER=mock não é permitido em produção');
+  }
+  // Sem fonte escolhida: simulador identificado fora de produção; em produção a fila fica desativada (não presume autorização).
+  const queueProvider: QueueProviderName = queueProviderRaw ?? 'mock';
+  const queueDisabledReason =
+    !queueProviderRaw && env.NODE_ENV === 'production' ? 'Defina ASA_QUEUE_PROVIDER para ativar a fila presencial (a fonte exige autorização institucional).' : null;
+  const appEnv: AppEnvironment = env.APP_ENV ?? (env.NODE_ENV === 'production' ? 'production' : env.NODE_ENV === 'test' ? 'test' : 'development');
+  const webOrigins = env.WEB_ORIGINS.split(',').map((origin) => origin.trim().replace(/\/+$/, '')).filter(Boolean);
+  for (const origin of webOrigins) {
+    if (!/^https?:\/\/[^/\s]+$/.test(origin)) throw new Error(`Configuração inválida: WEB_ORIGINS contém uma origem inválida (${origin})`);
+  }
   try {
     new Intl.DateTimeFormat('en-CA', { timeZone: env.APP_TIMEZONE });
   } catch {
@@ -157,5 +250,42 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
       timezone: env.APP_TIMEZONE,
       maxTextLength: 500,
     },
+    queue: {
+      enabled: flag(env.ASA_QUEUE_ENABLED) && queueDisabledReason === null,
+      provider: queueProvider,
+      providerExplicit: queueProviderRaw !== undefined,
+      sourceAuthorized: flag(env.ASA_QUEUE_SOURCE_AUTHORIZED),
+      disabledReason: flag(env.ASA_QUEUE_ENABLED) ? queueDisabledReason : 'ASA_QUEUE_ENABLED=false',
+      sourceUrl: env.ASA_QUEUE_SOURCE_URL,
+      pollIntervalSeconds: env.ASA_QUEUE_POLL_INTERVAL_SECONDS,
+      cacheTtlSeconds: env.ASA_QUEUE_CACHE_TTL_SECONDS,
+      requestTimeoutMs: env.ASA_QUEUE_REQUEST_TIMEOUT_MS,
+      maxBackoffSeconds: env.ASA_QUEUE_MAX_BACKOFF_SECONDS,
+      failureThreshold: env.ASA_QUEUE_FAILURE_THRESHOLD,
+      subscriptionRateLimit: env.ASA_QUEUE_SUBSCRIPTION_RATE_LIMIT,
+      mock: { scenario: env.ASA_QUEUE_MOCK_SCENARIO, stepSeconds: env.ASA_QUEUE_MOCK_STEP_SECONDS },
+    },
+    push: { provider: env.PUSH_PROVIDER, expoAccessToken: env.EXPO_ACCESS_TOKEN, receiptDelaySeconds: env.PUSH_RECEIPT_DELAY_SECONDS },
+    appEnv,
+    demo: {
+      dataEnabled: flag(env.DEMO_DATA_ENABLED),
+      seedEnabled: flag(env.DEMO_SEED_ENABLED),
+      seedAllowRemote: flag(env.DEMO_SEED_ALLOW_REMOTE),
+      scenario: env.DEMO_SCENARIO,
+    },
+    academic: { provider: env.ACADEMIC_DATA_PROVIDER },
+    features: {
+      tickets: flag(env.FEATURE_TICKETS_ENABLED),
+      appointments: flag(env.FEATURE_APPOINTMENTS_ENABLED),
+      knowledgeBase: flag(env.FEATURE_KB_ENABLED),
+      notifications: flag(env.FEATURE_NOTIFICATIONS_ENABLED),
+      realtime: flag(env.FEATURE_REALTIME_ENABLED),
+    },
+    automations: { scanIntervalSeconds: env.AUTOMATION_SCAN_INTERVAL_SECONDS },
+    web: {
+      origins: webOrigins,
+      cookieSecure: env.WEB_COOKIE_SECURE === 'auto' ? env.NODE_ENV === 'production' : env.WEB_COOKIE_SECURE === 'true',
+    },
+    ai: { provider: env.AI_PROVIDER, jevEnabled: flag(env.JEV_ENABLED) },
   };
 }
