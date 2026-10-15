@@ -105,13 +105,105 @@ jobs:
       - run: npm run lint
       - run: npm test -- --ci
 
+  web:
+    name: Portal web (React) — lint, typecheck, testes, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/Entrega 2/Web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/Entrega 2/Web/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  web-e2e:
+    name: Portal web — E2E (Playwright) com API e PostgreSQL reais
+    runs-on: ubuntu-latest
+    needs: [api, web]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: asa
+          POSTGRES_PASSWORD: asa_ci_password
+          POSTGRES_DB: asa_conecta_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U asa -d asa_conecta_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      DATABASE_URL: postgres://asa:asa_ci_password@localhost:5432/asa_conecta_ci
+      JWT_SECRET: ci-secret-not-for-production-0123456789abcdef
+      MAIL_TRANSPORT: disabled
+      PUSH_PROVIDER: disabled
+      ASA_QUEUE_PROVIDER: mock
+      # muitos logins seguidos no mesmo IP do runner (só no CI)
+      RATE_LIMIT_ENABLED: "false"
+      WEB_ORIGINS: http://localhost:4173,http://127.0.0.1:4173,http://localhost:4174,http://127.0.0.1:4174
+      AGENT_SERVICE_URL: http://127.0.0.1:8000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            src/Entrega 2/Backend/api/package-lock.json
+            src/Entrega 2/Web/package-lock.json
+      - name: API — build, migrations e seeds fictícios
+        working-directory: src/Entrega 2/Backend/api
+        run: |
+          npm ci
+          npm run build
+          npm run db:migrate
+          npm run db:seed
+      - name: API — sobe duas instâncias (demonstração ligada :3000 e desligada :3001)
+        working-directory: src/Entrega 2/Backend/api
+        run: |
+          nohup node dist/server.js > api.log 2>&1 &
+          PORT=3001 DEMO_DATA_ENABLED=false nohup node dist/server.js > api-demo-off.log 2>&1 &
+          for port in 3000 3001; do
+            for i in $(seq 1 60); do curl -sf "http://localhost:$port/health" > /dev/null && break; sleep 1; done
+            curl -sf "http://localhost:$port/health" > /dev/null
+          done
+      - name: Portal web — dependências e navegador
+        working-directory: src/Entrega 2/Web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+      - name: E2E
+        working-directory: src/Entrega 2/Web
+        env:
+          E2E_START_PREVIEW: "1"
+        run: npm run test:e2e
+      - name: Relatório e logs (falha)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-e2e-report
+          path: |
+            src/Entrega 2/Web/playwright-report
+            src/Entrega 2/Web/test-results
+            src/Entrega 2/Backend/api/api.log
+            src/Entrega 2/Backend/api/api-demo-off.log
+          retention-days: 7
+
   docker:
     name: Docker — build das imagens
     runs-on: ubuntu-latest
-    needs: [api, agent-service]
+    needs: [api, agent-service, web]
     defaults:
       run:
         working-directory: src/Entrega 2/Backend
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose build api agent-service
+      - run: docker compose build api agent-service web

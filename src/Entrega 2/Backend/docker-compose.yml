@@ -1,6 +1,7 @@
-# ASA Conecta — ambiente local (PostgreSQL + API Node.js + Agent Service Python).
+# ASA Conecta — ambiente local (PostgreSQL + API Node.js + Agent Service Python + portal web).
 # Rode os comandos a partir desta pasta (src/Entrega 2/Backend).
 # O aplicativo Expo roda fora do container: cd ../Frontend && npx expo start
+# Portal web (aluno, equipe ASA, administração): http://localhost:8080 (nginx repassa /api para a API).
 #
 #   docker compose up -d --build
 #   docker compose logs -f api agent-service
@@ -9,7 +10,8 @@
 # o que precisa: docker compose up -d --build api agent-service mailpit
 # Sem DATABASE_URL a API usa o PostgreSQL local do serviço `db`.
 #
-# Credenciais abaixo são apenas para desenvolvimento local.
+# Credenciais abaixo são apenas para desenvolvimento local. Banco, Mailpit e Agent Service ficam só em
+# 127.0.0.1 (a API os acessa pela rede interna do Compose); a API fica na rede local para o app Expo no celular.
 # Nome fixo do projeto: mantém os mesmos containers e o volume do banco (projeto4_*)
 # independentemente da pasta de onde o Compose é executado.
 name: projeto4
@@ -23,7 +25,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-asa_dev_password}
       POSTGRES_DB: ${POSTGRES_DB:-asa_conecta}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - asa-conecta-pgdata:/var/lib/postgresql/data
       - ./database/docker:/docker-entrypoint-initdb.d:ro
@@ -38,8 +40,8 @@ services:
     image: axllent/mailpit:v1.27
     container_name: asa-conecta-mailpit
     ports:
-      - "${MAILPIT_SMTP_PORT:-1025}:1025"
-      - "${MAILPIT_UI_PORT:-8025}:8025"
+      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
     environment:
       MP_MAX_MESSAGES: 500
 
@@ -51,7 +53,7 @@ services:
       AGENT_SERVICE_PORT: "8000"
       AGENT_LOG_LEVEL: ${AGENT_LOG_LEVEL:-INFO}
     ports:
-      - "${AGENT_SERVICE_PORT:-8000}:8000"
+      - "127.0.0.1:${AGENT_SERVICE_PORT:-8000}:8000"
 
   api:
     build:
@@ -91,12 +93,49 @@ services:
       VOICE_ASSISTANT_ENABLED: ${VOICE_ASSISTANT_ENABLED:-true}
       INTENT_MIN_CONFIDENCE: ${INTENT_MIN_CONFIDENCE:-0.6}
       APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
+      # Fila presencial do ASA: UM monitor na API abastece todos os alunos. Padrão: simulador identificado
+      # como demonstração; o painel público (fecap) só com autorização da FECAP registrada.
+      ASA_QUEUE_ENABLED: ${ASA_QUEUE_ENABLED:-true}
+      ASA_QUEUE_PROVIDER: ${ASA_QUEUE_PROVIDER:-mock}
+      ASA_QUEUE_SOURCE_AUTHORIZED: ${ASA_QUEUE_SOURCE_AUTHORIZED:-false}
+      ASA_QUEUE_SOURCE_URL: ${ASA_QUEUE_SOURCE_URL:-https://presencial.fecap.br/}
+      ASA_QUEUE_POLL_INTERVAL_SECONDS: ${ASA_QUEUE_POLL_INTERVAL_SECONDS:-10}
+      ASA_QUEUE_CACHE_TTL_SECONDS: ${ASA_QUEUE_CACHE_TTL_SECONDS:-30}
+      ASA_QUEUE_MOCK_SCENARIO: ${ASA_QUEUE_MOCK_SCENARIO:-progression}
+      PUSH_PROVIDER: ${PUSH_PROVIDER:-expo}
+      EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:-}
+      # ---- plataforma (portal web, modo demonstração, recursos) — ver api/.env.example
+      APP_ENV: ${APP_ENV:-development}
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+      DEMO_SEED_ENABLED: ${DEMO_SEED_ENABLED:-true}
+      ACADEMIC_DATA_PROVIDER: ${ACADEMIC_DATA_PROVIDER:-demo}
+      FEATURE_APPOINTMENTS_ENABLED: ${FEATURE_APPOINTMENTS_ENABLED:-true}
+      FEATURE_KB_ENABLED: ${FEATURE_KB_ENABLED:-true}
+      AUTOMATION_SCAN_INTERVAL_SECONDS: ${AUTOMATION_SCAN_INTERVAL_SECONDS:-300}
+      WEB_ORIGINS: ${WEB_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173}
+      WEB_COOKIE_SECURE: ${WEB_COOKIE_SECURE:-auto}
+      AI_PROVIDER: ${AI_PROVIDER:-existing}
+      JEV_ENABLED: ${JEV_ENABLED:-false}
     volumes:
       - ./database:/srv/database:ro
     ports:
       - "${API_PORT:-3000}:3000"
     # aplica migrations e seeds ficticios antes de subir
     command: sh -c "node dist/db/migrate.js && node dist/db/seed.js && node dist/server.js"
+
+  # Portal web: build estático do Vite servido pelo nginx, que repassa /api e /health para a API
+  # (mesma origem → cookies de sessão HttpOnly, sem CORS aberto). http://localhost:8080
+  web:
+    build:
+      context: ../Web
+    container_name: asa-conecta-web
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      API_UPSTREAM: http://api:3000
+    ports:
+      - "${WEB_HTTP_PORT:-8080}:80"
 
 volumes:
   asa-conecta-pgdata:
