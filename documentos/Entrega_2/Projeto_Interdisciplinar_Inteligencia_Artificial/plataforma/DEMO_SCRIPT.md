@@ -7,7 +7,7 @@ no começo.
 ## Preparação (antes da apresentação)
 
 ```bash
-cd "src/Entrega 2/Backend" && docker compose up -d --build     # banco, API, Agent Service, Mailpit e portal
+cd "src/Entrega_2/Backend" && docker compose up -d --build     # banco, API, Agent Service, Mailpit e portal
 # ou, em desenvolvimento: API (npm run dev em api/), portal (npm run dev em Web/) e app (npx expo start em Frontend/)
 ```
 

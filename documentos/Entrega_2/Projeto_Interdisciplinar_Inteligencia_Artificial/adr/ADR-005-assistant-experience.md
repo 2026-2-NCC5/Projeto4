@@ -13,7 +13,7 @@ configurações de privacidade e documentação — preservando tudo o que já f
 
 ## Decisões
 
-1. **Design System centralizado** em `src/Entrega 2/Frontend/theme` com tokens semânticos (`brand`, `background`,
+1. **Design System centralizado** em `src/Entrega_2/Frontend/theme` com tokens semânticos (`brand`, `background`,
    `surface`, `text`, `border`, `status`, `assistant`, `nav`, `control`) e dois temas desenhados
    separadamente. Cores da marca vêm dos SVGs oficiais: verde ASA `#00AB7E`, roxo `#845DF2`, amarelo
    `#FFDE33` (só acento), verde FECAP `#023327`. Preenchimentos com texto usam `primaryStrong`

@@ -1,8 +1,8 @@
 # Autenticação do ASA Conecta
 
-Implementação: `src/Entrega 2/Backend/api/src/services/{authService,passwordResetService,biometricService}.ts`,
-`src/Entrega 2/Backend/api/src/auth/`, `src/Entrega 2/Backend/api/src/mail/`; contrato em `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts`
-(seção *auth*); app em `src/Entrega 2/Frontend` (ver README do app). Decisão: [ADR-004](../adr/ADR-004-authentication.md).
+Implementação: `src/Entrega_2/Backend/api/src/services/{authService,passwordResetService,biometricService}.ts`,
+`src/Entrega_2/Backend/api/src/auth/`, `src/Entrega_2/Backend/api/src/mail/`; contrato em `src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts`
+(seção *auth*); app em `src/Entrega_2/Frontend` (ver README do app). Decisão: [ADR-004](../adr/ADR-004-authentication.md).
 
 ## Fluxos
 
@@ -43,7 +43,7 @@ Sessão
 | Credencial biométrica | token aleatório de 48 bytes, hash no banco, validade deslizante de 30 dias, máx. 5, revogável, liberado pelo SO | `biometricService.ts`, app |
 | Falsificação de IP para burlar limite | `TRUST_PROXY=false` por padrão | `app.ts` |
 | Escalada de privilégio no cadastro | corpo estrito (campos extras → 400); papel sempre `student` | `authController.ts`, `pgRepositories.ts` |
-| Mensagens técnicas ao usuário | erros com `code` + `reason` estáveis; texto final decidido no app | `errorHandler.ts`, `src/Entrega 2/Frontend/services/authErrors.ts` |
+| Mensagens técnicas ao usuário | erros com `code` + `reason` estáveis; texto final decidido no app | `errorHandler.ts`, `src/Entrega_2/Frontend/services/authErrors.ts` |
 | Conteúdo remoto no e-mail | `disableFileAccess`/`disableUrlAccess` no nodemailer 10 (sem vulnerabilidades conhecidas) | `mail/mailer.ts` |
 
 ## Armazenamento no app
@@ -59,7 +59,7 @@ Sessão
 
 ## Configuração
 
-Variáveis em `src/Entrega 2/Backend/api/.env.example`: `REFRESH_TOKEN_TTL_DAYS`, `SESSION_TTL_HOURS`,
+Variáveis em `src/Entrega_2/Backend/api/.env.example`: `REFRESH_TOKEN_TTL_DAYS`, `SESSION_TTL_HOURS`,
 `RATE_LIMIT_ENABLED`, `TRUST_PROXY`, `SIGNUP_ALLOWED_EMAIL_DOMAINS`, `REGISTRATION_NUMBER_PATTERN`,
 `REGISTRATION_NUMBER_EXAMPLE`, `TERMS_URL`, `PRIVACY_URL`, `RESET_CODE_*`, `RESET_TOKEN_TTL_MINUTES`,
 `MAIL_TRANSPORT`, `SMTP_*`, `MAIL_FROM`, `BIOMETRIC_LOGIN_ENABLED`, `BIOMETRIC_CREDENTIAL_TTL_DAYS`.
@@ -75,10 +75,10 @@ ficam vazios e o app não exibe links.
 
 ## Evidências
 
-- Unitários: `src/Entrega 2/Backend/api/test/unit/authFlows.test.ts` (política, rememberMe, bloqueio, cadastro,
+- Unitários: `src/Entrega_2/Backend/api/test/unit/authFlows.test.ts` (política, rememberMe, bloqueio, cadastro,
   recuperação, enumeração, biometria).
-- Integração PostgreSQL: `src/Entrega 2/Backend/api/test/integration/auth.integration.test.ts`.
-- E2E com SMTP real (Mailpit): `src/Entrega 2/Backend/api/test/e2e/auth.e2e.test.ts` → [`evidence/e2e/auth-last-run.md`](../evidence/e2e/auth-last-run.md).
+- Integração PostgreSQL: `src/Entrega_2/Backend/api/test/integration/auth.integration.test.ts`.
+- E2E com SMTP real (Mailpit): `src/Entrega_2/Backend/api/test/e2e/auth.e2e.test.ts` → [`evidence/e2e/auth-last-run.md`](../evidence/e2e/auth-last-run.md).
 
 ## Limitações
 

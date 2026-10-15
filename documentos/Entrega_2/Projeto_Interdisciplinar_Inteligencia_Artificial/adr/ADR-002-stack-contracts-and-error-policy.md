@@ -2,7 +2,7 @@
 
 - **Status:** Aceito
 - **Data:** 2026-09-16
-- **Origem:** [TASK-001](<../../../Entrega 1/Projeto Interdisciplinar - Inteligência Artificial/pipelines/TASK_001.md>) §2 e §11, [TASK-004](<../../../Entrega 1/Projeto Interdisciplinar - Inteligência Artificial/pipelines/TASK_004.md>) §22-39
+- **Origem:** [TASK-001](<../../../Entrega_1/Projeto_Interdisciplinar_Inteligencia_Artificial/pipelines/TASK_001.md>) §2 e §11, [TASK-004](<../../../Entrega_1/Projeto_Interdisciplinar_Inteligencia_Artificial/pipelines/TASK_004.md>) §22-39
 
 ## Decisão de stack
 
@@ -19,14 +19,14 @@ O Node.js **não** foi substituído pelo Python: o Python não conhece usuários
 
 ## Contratos
 
-- `src/Entrega 2/Backend/contracts/agent/*.v1.json` (Node ↔ Python, snake_case) — validados por Zod (consumidor)
+- `src/Entrega_2/Backend/contracts/agent/*.v1.json` (Node ↔ Python, snake_case) — validados por Zod (consumidor)
   e Pydantic (provedor). `contract_version` segue `MAJOR.MINOR`; o consumidor aceita
   apenas `1.x`. Major diferente → `CONTRACT_ERROR` (502) na API; `422
   CONTRACT_VERSION_UNSUPPORTED` no Agent Service.
-- `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts` (Mobile ↔ Node, camelCase) — copiado para os dois
-  projetos e verificado em CI (`src/Entrega 2/Backend/scripts/check-contracts-sync.sh`).
+- `src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts` (Mobile ↔ Node, camelCase) — copiado para os dois
+  projetos e verificado em CI (`src/Entrega_2/Backend/scripts/check-contracts-sync.sh`).
 - A transformação snake_case → camelCase acontece uma única vez, em
-  `src/Entrega 2/Backend/api/src/services/agentService.ts`.
+  `src/Entrega_2/Backend/api/src/services/agentService.ts`.
 
 ## Rastreabilidade
 

@@ -15,7 +15,7 @@ resposta visual e, opcionalmente, falada. O MVP continua tendo **um único agent
 1. **Não é um segundo agente.** A voz é uma interface: `texto → intenção → consulta
    objetiva OU Agente para o Estudante → resposta estruturada`. Recomendações, evidências,
    próxima ação, abstenção e validação humana continuam vindo do Agent Engine Python.
-2. **Interpretação no Node.js, por regras determinísticas pt-BR** (`src/Entrega 2/Backend/api/src/assistant/`).
+2. **Interpretação no Node.js, por regras determinísticas pt-BR** (`src/Entrega_2/Backend/api/src/assistant/`).
    Qualquer interpretador (inclusive um LLM futuro) devolve um objeto **não confiável**, que só é
    usado após `validateInterpretation`: schema estrito → allow-list de intenções → disciplina precisa
    pertencer ao estudante → confiança mínima (`INTENT_MIN_CONFIDENCE`).

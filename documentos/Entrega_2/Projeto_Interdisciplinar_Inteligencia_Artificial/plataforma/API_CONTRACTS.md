@@ -2,7 +2,7 @@
 
 ## Fonte única e cópias verificadas
 
-- **Canônico:** `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts`.
+- **Canônico:** `src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts`.
 - **Cópias idênticas byte a byte:**
   - `api/src/contracts/mobileApi.v1.ts` (API);
   - `Frontend/types/api.ts` (app);

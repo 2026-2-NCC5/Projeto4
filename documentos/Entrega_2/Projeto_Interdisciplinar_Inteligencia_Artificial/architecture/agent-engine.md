@@ -1,6 +1,6 @@
 # Agente para o Estudante — regras, confiança e abstenção
 
-Implementação: `src/Entrega 2/Backend/agent-service/app/agent/`. Configuração: `src/Entrega 2/Backend/agent-service/app/config/`.
+Implementação: `src/Entrega_2/Backend/agent-service/app/agent/`. Configuração: `src/Entrega_2/Backend/agent-service/app/config/`.
 
 | Arquivo | Conteúdo |
 | --- | --- |
@@ -50,7 +50,7 @@ Alterar um limiar exige incrementar `config_version`; a versão usada fica grava
 | SCENARIO-007 dados inconsistentes | student-demo-007 | `institutional_validation` + validação humana | `test_engine.py`, E2E-007 |
 | SCENARIO-008 validação humana | student-demo-008 | `attendance_critical` + validação humana | `test_engine.py`, E2E-006 |
 
-Os cenários são definidos **antes** da execução em `src/Entrega 2/Backend/agent-service/tests/scenarios.py` (`EXPECTED`).
+Os cenários são definidos **antes** da execução em `src/Entrega_2/Backend/agent-service/tests/scenarios.py` (`EXPECTED`).
 
 ## Limitações conhecidas
 

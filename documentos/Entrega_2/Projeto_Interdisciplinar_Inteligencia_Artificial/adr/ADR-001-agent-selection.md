@@ -2,7 +2,7 @@
 
 - **Status:** Aceito
 - **Data:** 2026-08-26 (registrado em código em 2026-09-16)
-- **Origem:** [TASK-001](<../../../Entrega 1/Projeto Interdisciplinar - Inteligência Artificial/pipelines/TASK_001.md>)
+- **Origem:** [TASK-001](<../../../Entrega_1/Projeto_Interdisciplinar_Inteligencia_Artificial/pipelines/TASK_001.md>)
 
 ## Contexto
 
@@ -21,7 +21,7 @@ Implementar exclusivamente o **Agente para o Estudante** como agente obrigatóri
   confiança, abstenção com motivo e indicação de validação humana.
 - O agente é ferramenta de apoio à decisão: **nunca** reprova, altera matrícula, nota ou
   frequência, aplica sanções ou bloqueia o estudante (`FORBIDDEN_ACTIONS` em
-  `src/Entrega 2/Backend/agent-service/app/agent/engine.py`).
+  `src/Entrega_2/Backend/agent-service/app/agent/engine.py`).
 
 ## Alternativas descartadas
 

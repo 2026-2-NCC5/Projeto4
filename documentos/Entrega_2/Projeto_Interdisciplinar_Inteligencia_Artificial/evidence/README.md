@@ -1,17 +1,17 @@
 # Evidências e indicadores da PoC (TASK-002 §25)
 
-Última execução automatizada: [`e2e/last-run.md`](e2e/last-run.md) (gerado por `src/Entrega 2/Backend/scripts/e2e.sh`).
+Última execução automatizada: [`e2e/last-run.md`](e2e/last-run.md) (gerado por `src/Entrega_2/Backend/scripts/e2e.sh`).
 
 | Indicador | Meta | Resultado obtido | Como foi medido |
 | --- | --- | --- | --- |
-| 1. Cobertura dos cenários obrigatórios | 100% | **100%** (8/8 cenários SCENARIO-001…008 executados ponta a ponta) | `src/Entrega 2/Backend/api/test/e2e/scenarios.e2e.test.ts` (E2E-001, 005, 006, 007) com Agent Service Python real e PostgreSQL |
-| 2. Consistência das recomendações | ≥ 90% | **100%** (8/8 resultados iguais ao esperado definido previamente) | `EXPECTED` em `src/Entrega 2/Backend/agent-service/tests/scenarios.py` + `test_official_scenarios_match_expected_results` |
+| 1. Cobertura dos cenários obrigatórios | 100% | **100%** (8/8 cenários SCENARIO-001…008 executados ponta a ponta) | `src/Entrega_2/Backend/api/test/e2e/scenarios.e2e.test.ts` (E2E-001, 005, 006, 007) com Agent Service Python real e PostgreSQL |
+| 2. Consistência das recomendações | ≥ 90% | **100%** (8/8 resultados iguais ao esperado definido previamente) | `EXPECTED` em `src/Entrega_2/Backend/agent-service/tests/scenarios.py` + `test_official_scenarios_match_expected_results` |
 | 3. Recomendações com evidência | 100% | **100%** | `test_every_recommendation_has_evidence_and_next_action`; schema exige `evidence.minItems = 1`; zod rejeita evidência vazia |
 | 4. Recomendações acionáveis com próxima ação | 100% | **100%** | mesmo teste; toda regra em `rules.yaml` define `next_action` |
 | 5. Abstenção tratada com segurança | 100% | **100%** (dados insuficientes, dados apenas de disciplinas, confiança baixa) | `test_insufficient_data_abstains_safely`, `test_only_subjects_without_observable_data_abstains`, `test_minimum_confidence_triggers_abstention`, E2E-005 |
 | 6. Ações administrativas autônomas | 0 | **0** | `test_engine_never_exposes_administrative_actions`; o engine não possui efeitos colaterais (função pura sobre dados) |
 | 7. Rastreabilidade | 100% | **100%** — todo run possui `request_id`, `correlation_id`, `run_id`, `agent_version`, `config_version` persistidos | `agent_runs` + testes de integração (`database.integration.test.ts`) + tabela em `e2e/last-run.md` |
-| 8. Reprodutibilidade | 100% | **100%** — `test_scenarios_are_deterministic` (mesma entrada → mesma saída); seeds idempotentes; `src/Entrega 2/Backend/scripts/e2e.sh` | pytest + vitest |
+| 8. Reprodutibilidade | 100% | **100%** — `test_scenarios_are_deterministic` (mesma entrada → mesma saída); seeds idempotentes; `src/Entrega_2/Backend/scripts/e2e.sh` | pytest + vitest |
 | 9. Secrets ou dados pessoais reais nas evidências | 0 | **0** — apenas `student-demo-*`, e-mails `@demo.asa`, senha de demo em hash bcrypt | revisão manual + `grep` (ver seção abaixo) |
 
 ## Falhas controladas demonstradas
@@ -47,15 +47,15 @@ em `test/integration/database.integration.test.ts`.
 
 ```bash
 # a partir da raiz do repositório
-"src/Entrega 2/Backend/scripts/e2e.sh"                   # PostgreSQL via Docker + API + Python real → evidence/e2e/last-run.md
-( cd "src/Entrega 2/Backend/agent-service" && .venv/bin/pytest -q )
-( cd "src/Entrega 2/Backend/api" && npm run test:unit && npm run test:integration )
+"src/Entrega_2/Backend/scripts/e2e.sh"                   # PostgreSQL via Docker + API + Python real → evidence/e2e/last-run.md
+( cd "src/Entrega_2/Backend/agent-service" && .venv/bin/pytest -q )
+( cd "src/Entrega_2/Backend/api" && npm run test:unit && npm run test:integration )
 ```
 
 ## Verificação de segredos
 
 ```bash
-git grep -nE "(sb_publishable|service_role|BEGIN (RSA|OPENSSH) PRIVATE|AKIA[0-9A-Z]{16})" -- . ':!src/Entrega 1'
+git grep -nE "(sb_publishable|service_role|BEGIN (RSA|OPENSSH) PRIVATE|AKIA[0-9A-Z]{16})" -- . ':!src/Entrega_1'
 ```
 
 Os únicos valores "secretos" versionados são placeholders em `.env.example` e a senha

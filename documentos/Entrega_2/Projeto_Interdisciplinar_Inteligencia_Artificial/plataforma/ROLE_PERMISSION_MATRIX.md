@@ -1,6 +1,6 @@
 # Matriz de papéis e permissões
 
-> Fonte da verdade: `src/Entrega 2/Backend/api/src/auth/permissions.ts`. A tabela abaixo foi **gerada a partir
+> Fonte da verdade: `src/Entrega_2/Backend/api/src/auth/permissions.ts`. A tabela abaixo foi **gerada a partir
 > desse arquivo** com `npm run docs:permissions` (na pasta `api/`). Não edite à mão: rode o comando de novo quando
 > a matriz mudar. Os menus do app e do portal só escondem
 > o que o perfil não pode usar — quem decide é sempre a API.

@@ -18,7 +18,7 @@ O papel vinha só do JWT, por até 15 minutos. A administração conseguia ler o
 
 ## Decisões
 
-1. **Portal web** em `src/Entrega 2/Web` (React 19, Vite 8, TypeScript, Tailwind 4, React Router 7, TanStack
+1. **Portal web** em `src/Entrega_2/Web` (React 19, Vite 8, TypeScript, Tailwind 4, React Router 7, TanStack
    Query). Usa a API **na mesma origem**: o proxy do Vite em desenvolvimento e o nginx no Compose ou em produção.
    Por isso não há CORS para cookies.
 2. **Sessão web por cookie:**

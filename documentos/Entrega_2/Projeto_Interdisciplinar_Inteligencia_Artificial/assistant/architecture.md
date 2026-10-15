@@ -6,7 +6,7 @@
 > Estudante continua sendo a única fonte de recomendações. Nada aqui inventa dados acadêmicos.
 
 ```text
-┌──────────────────────────────── src/Entrega 2/Frontend ──────────────────────┐
+┌──────────────────────────────── src/Entrega_2/Frontend ──────────────────────┐
 │ App.tsx                                                                      │
 │  PreferencesProvider → ThemeProvider (tema claro) → SessionProvider              │
 │   └─ NavigationProvider (estado local tipado: aba, detalhe, tela atual)       │
@@ -20,7 +20,7 @@
 └──────────────────────────────────────────────────────────────────────────────┘
                  │ POST /api/assistant/message { inputType, text, conversationContext, currentScreen }
                  ▼
-┌──────────────────────────────── src/Entrega 2/Backend/api ───────────────────┐
+┌──────────────────────────────── src/Entrega_2/Backend/api ───────────────────┐
 │ auth → requireStudent → zod (.strict) → RuleBasedIntentInterpreter           │
 │   → validateInterpretation (allow-list, disciplina do aluno, confiança)     │
 │   → RESPONDERS[intent] (consulta | Agente | política | controle | open_screen)│

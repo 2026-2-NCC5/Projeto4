@@ -60,7 +60,7 @@
 ## Como reproduzir
 
 ```bash
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 docker compose up -d db mailpit
 ./scripts/check-contracts-sync.sh
 ( cd agent-service && .venv/bin/pytest -q && .venv/bin/ruff check . )

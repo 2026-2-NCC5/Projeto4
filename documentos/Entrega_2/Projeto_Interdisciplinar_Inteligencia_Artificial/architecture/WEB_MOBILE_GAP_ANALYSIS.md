@@ -79,7 +79,7 @@ Legenda: **E** existente e testado · **P** parcial · **A** ausente · **M** mo
 
 ### 3.2 Contratos
 
-- `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts` é a **fonte canônica** (v1.0 → v1.4), copiada byte a byte
+- `src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts` é a **fonte canônica** (v1.0 → v1.4), copiada byte a byte
   para `api/src/contracts/mobileApi.v1.ts` e `Frontend/types/api.ts`. A cópia é verificada em CI por
   `scripts/check-contracts-sync.sh`.
 - `contracts/agent/student-agent-{request,response}.v1.json`: JSON Schema API ↔ Agent Service (só aceita major 1).
@@ -188,7 +188,7 @@ funciona por texto, com resposta falada.
 
 ## 7. Decisões tomadas a partir desta auditoria
 
-1. **Portal web novo** em `src/Entrega 2/Web` com React 19 + Vite 8 + TypeScript + Tailwind CSS 4 + React Router 7
+1. **Portal web novo** em `src/Entrega_2/Web` com React 19 + Vite 8 + TypeScript + Tailwind CSS 4 + React Router 7
    + TanStack Query. Sem Radix/Framer/Recharts/Zustand: diálogos nativos (`<dialog>`), CSS e gráficos SVG próprios.
 2. **Uma API, um banco.** O portal usa a mesma API Express e o mesmo PostgreSQL. Não há segunda base nem Prisma.
 3. **Sessão web por cookie** (`asa_at`/`asa_rt` HttpOnly, `SameSite=Strict`, `Secure` em produção) com CSRF por

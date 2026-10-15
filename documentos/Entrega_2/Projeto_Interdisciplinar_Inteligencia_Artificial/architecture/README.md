@@ -1,28 +1,28 @@
 # Arquitetura do ASA Conecta (Entrega 2)
 
-> **Portal web (aluno, equipe ASA, administração):** a mesma API também atende o portal em `src/Entrega 2/Web`,
+> **Portal web (aluno, equipe ASA, administração):** a mesma API também atende o portal em `src/Entrega_2/Web`,
 > com sessão por cookie HttpOnly + CSRF e autorização por permissões. A visão completa (diagramas, módulos,
 > dados, segurança, runbook) está em [../plataforma/README.md](../plataforma/README.md). O diagrama abaixo mostra
 > o caminho do app até o Agente para o Estudante, que continua igual.
 
 ```text
 ┌───────────────────────────────┐
-│      ASA Conecta Mobile       │  src/Entrega 2/Frontend — Expo / React Native / TypeScript
+│      ASA Conecta Mobile       │  src/Entrega_2/Frontend — Expo / React Native / TypeScript
 │  telas → hooks → services →   │  sessão em expo-secure-store, timeouts em config/services.ts
 │  apiClient (timeout, erros)   │
 └───────────────┬───────────────┘
                 │ HTTPS/REST · Bearer JWT · x-correlation-id
                 ▼
 ┌───────────────────────────────┐
-│ API principal / BFF           │  src/Entrega 2/Backend/api — Node.js 20 + TypeScript + Express 5
+│ API principal / BFF           │  src/Entrega_2/Backend/api — Node.js 20 + TypeScript + Express 5
 │ routes → controllers →        │  auth (bcrypt + JWT + refresh rotativo), autorização por sessão,
 │ services → repositories (pg)  │  composição do contexto acadêmico, cliente do agente com timeout,
 │ clients/agentClient (zod)     │  validação do contrato 1.x, persistência de runs/recomendações/evidências
 └───────────────┬───────────────┘
-                │ contrato interno v1 (src/Entrega 2/Backend/contracts/agent/*.v1.json) · request_id/correlation_id
+                │ contrato interno v1 (src/Entrega_2/Backend/contracts/agent/*.v1.json) · request_id/correlation_id
                 ▼
 ┌───────────────────────────────┐
-│ Agent Service                 │  src/Entrega 2/Backend/agent-service — Python + FastAPI + Pydantic
+│ Agent Service                 │  src/Entrega_2/Backend/agent-service — Python + FastAPI + Pydantic
 │ api/routes → services →       │  POST /internal/v1/student-agent/evaluate (não exposto ao mobile)
 └───────────────┬───────────────┘
                 ▼
@@ -34,18 +34,18 @@
 └───────────────────────────────┘
                 │
                 ▼
-          PostgreSQL 16 (src/Entrega 2/Backend/database: migrations, seeds) — acessado apenas pela API Node.js
+          PostgreSQL 16 (src/Entrega_2/Backend/database: migrations, seeds) — acessado apenas pela API Node.js
 ```
 
 ## Estrutura do repositório
 
 ```text
 documentos/
-├── Entrega 1/<matéria>/          entregas de cada disciplina (TASK-001…004 em Projeto Interdisciplinar)
-└── Entrega 2/<matéria>/          esta documentação: adr, architecture, api, assistant, evidence
+├── Entrega_1/<matéria>/          entregas de cada disciplina (TASK-001…004 em Projeto Interdisciplinar)
+└── Entrega_2/<matéria>/          esta documentação: adr, architecture, api, assistant, evidence
 src/
-├── Entrega 1/                    protótipo da primeira entrega (Supabase + mocks), mantido como histórico
-└── Entrega 2/
+├── Entrega_1/                    protótipo da primeira entrega (Supabase + mocks), mantido como histórico
+└── Entrega_2/
     ├── Frontend/                 aplicativo Expo (ver Frontend/README.md)
     └── Backend/
         ├── api/                  API Node.js (ver api/README.md)

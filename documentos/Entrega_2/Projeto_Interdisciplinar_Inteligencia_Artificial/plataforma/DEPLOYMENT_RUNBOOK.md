@@ -6,7 +6,7 @@ Pré-requisitos: Node.js 22.12+ (portal; o CI usa 24), Node 20+ (API), Python 3.
 `docker compose`.
 
 ```bash
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 cp .env.example .env                       # opcional: valores de desenvolvimento já são o padrão
 docker compose up -d db mailpit agent-service
 cd api && cp .env.example .env && npm install && npm run db:migrate && npm run db:seed && npm run dev   # :3000
@@ -20,7 +20,7 @@ cd "../Frontend" && npx expo start                                              
 ### Pilha completa pelo Compose
 
 ```bash
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 docker compose up -d --build        # db, mailpit, agent-service, api (migrate + seed + server) e web
 ```
 

@@ -52,7 +52,7 @@ A resposta sempre devolve `x-request-id` e `x-correlation-id`.
 | — | `/api/support/*` | Bearer | Atendimento ASA (chamados) — ver [seção abaixo](#atendimento-asa-chamados) |
 | — | `/api/queue/*`, `/api/notifications/push-token`, `/health/queue` | Bearer (saúde: pública) | Fila presencial do ASA — ver [architecture/queue-presencial.md](../architecture/queue-presencial.md#api) |
 
-Tipos: `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts`.
+Tipos: `src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts`.
 
 ## Regras de autorização
 
@@ -131,7 +131,7 @@ curl -s -X POST localhost:3000/api/assistant/message \
 
 ### v1.2 — contexto da tela e navegação por intenção
 
-Adições compatíveis ao mesmo endpoint (`src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts`):
+Adições compatíveis ao mesmo endpoint (`src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts`):
 
 | Campo | Direção | Descrição |
 | --- | --- | --- |
@@ -189,6 +189,6 @@ app (`Conte um pouco mais sobre sua solicitação.`, `O arquivo é maior que 5 M
 
 ## Agent Service (interno)
 
-`POST /internal/v1/student-agent/evaluate` — contrato `src/Entrega 2/Backend/contracts/agent/student-agent-request.v1.json` →
+`POST /internal/v1/student-agent/evaluate` — contrato `src/Entrega_2/Backend/contracts/agent/student-agent-request.v1.json` →
 `student-agent-response.v1.json`. `GET /health`, `GET /internal/v1/student-agent/config`, docs em `/internal/docs`.
 Não deve ser exposto ao aplicativo.

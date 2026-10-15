@@ -19,9 +19,9 @@ Estudante ──voz──▶ ASA Conecta Mobile
                    Mobile: cartões + evidências + próxima ação na tela; TTS (expo-speech) opcional
 ```
 
-Código: `src/Entrega 2/Backend/api/src/assistant/` (intents, text, subjects, interpretation, ruleBasedInterpreter,
-phrasing, responders), `src/Entrega 2/Backend/api/src/services/assistantService.ts`, contrato em
-`src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts` (seção *assistant*), app em `src/Entrega 2/Frontend` (ver README do app).
+Código: `src/Entrega_2/Backend/api/src/assistant/` (intents, text, subjects, interpretation, ruleBasedInterpreter,
+phrasing, responders), `src/Entrega_2/Backend/api/src/services/assistantService.ts`, contrato em
+`src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts` (seção *assistant*), app em `src/Entrega_2/Frontend` (ver README do app).
 
 ## Intenções (allow-list)
 
@@ -85,7 +85,7 @@ no app e não é persistida.
 | `VOICE_ASSISTANT_ENABLED` | API | `true` (false → 404 no endpoint) |
 | `INTENT_MIN_CONFIDENCE` | API | `0.6` |
 | `APP_TIMEZONE` | API | `America/Sao_Paulo` ("hoje", "esta semana") |
-| `EXPO_PUBLIC_VOICE_ASSISTANT_ENABLED`, `EXPO_PUBLIC_SPEECH_PROVIDER`, `EXPO_PUBLIC_SPEECH_LANGUAGE`, `EXPO_PUBLIC_SPEECH_ON_DEVICE_ONLY`, `EXPO_PUBLIC_TTS_ENABLED_DEFAULT`, `EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS` | app | ver `src/Entrega 2/Frontend/.env.example` |
+| `EXPO_PUBLIC_VOICE_ASSISTANT_ENABLED`, `EXPO_PUBLIC_SPEECH_PROVIDER`, `EXPO_PUBLIC_SPEECH_LANGUAGE`, `EXPO_PUBLIC_SPEECH_ON_DEVICE_ONLY`, `EXPO_PUBLIC_TTS_ENABLED_DEFAULT`, `EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS` | app | ver `src/Entrega_2/Frontend/.env.example` |
 
 Nenhuma chave de provedor é necessária.
 
@@ -102,13 +102,13 @@ Nenhuma chave de provedor é necessária.
 
 | Cenário | Onde é verificado |
 | --- | --- |
-| VOICE-001 fluxo completo com Agente real | `src/Entrega 2/Backend/api/test/e2e/voice.e2e.test.ts` + testes do hook no app |
+| VOICE-001 fluxo completo com Agente real | `src/Entrega_2/Backend/api/test/e2e/voice.e2e.test.ts` + testes do hook no app |
 | VOICE-002 pendências | E2E + `test/unit/assistant.test.ts` |
 | VOICE-003 frequência (+ continuação) | E2E + unit |
 | VOICE-004 pergunta ambígua | E2E + unit |
 | VOICE-005 abstenção | E2E (Agente real) + unit |
 | VOICE-006 pedido administrativo | E2E + unit + integração (registros não mudam) |
-| VOICE-007 microfone negado | testes do app (`src/Entrega 2/Frontend/__tests__`) |
+| VOICE-007 microfone negado | testes do app (`src/Entrega_2/Frontend/__tests__`) |
 | VOICE-008/009 validação humana do Agente, outro aluno/injeção | E2E |
 
 Evidência gerada: [`evidence/e2e/voice-last-run.md`](../evidence/e2e/voice-last-run.md).

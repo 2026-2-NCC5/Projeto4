@@ -2,7 +2,7 @@
 
 Cada cenário diz quais canais participam e **qual teste automatizado o cobre**. Todos rodam contra a API e o
 PostgreSQL reais, exceto onde está escrito "unitário". Pastas:
-- `api/test` = `src/Entrega 2/Backend/api/test`;
+- `api/test` = `src/Entrega_2/Backend/api/test`;
 - `Web/e2e` = Playwright do portal;
 - `Web/src/**.test.tsx` = testes de tela do portal;
 - `Frontend/__tests__` = testes do app.
@@ -33,14 +33,14 @@ PostgreSQL reais, exceto onde está escrito "unitário". Pastas:
 
 ```bash
 # API: unitários (memória) e integração (PostgreSQL de teste em TEST_DATABASE_URL)
-cd "src/Entrega 2/Backend/api" && npm run test:unit && npm run test:integration
+cd "src/Entrega_2/Backend/api" && npm run test:unit && npm run test:integration
 # Portal: telas (Vitest) e ponta a ponta (Playwright) contra a pilha local já no ar (API :3000 + Vite :5173)
-cd "src/Entrega 2/Web" && npm test && npx playwright test
+cd "src/Entrega_2/Web" && npm test && npx playwright test
 # Cenário "demonstração desligada": precisa de uma segunda API com DEMO_DATA_ENABLED=false e de um
 # `vite preview` apontado para ela. O CI (job web-e2e) sobe as duas instâncias; localmente, defina
 # E2E_DEMO_OFF_URL para incluir o projeto demo-off.
 # App
-cd "src/Entrega 2/Frontend" && npm test
+cd "src/Entrega_2/Frontend" && npm test
 ```
 
 Os testes Playwright entram uma vez por perfil (projeto `setup`) e reaproveitam a sessão, por causa do limite de

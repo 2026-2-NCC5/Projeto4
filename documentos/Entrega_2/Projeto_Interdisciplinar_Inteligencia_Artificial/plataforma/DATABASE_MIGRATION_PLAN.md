@@ -46,7 +46,7 @@
 ### Local (Docker Compose)
 
 ```bash
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 docker compose up -d db
 cd api && npm run db:migrate && npm run db:seed   # o seed respeita DEMO_SEED_ENABLED / DEMO_DATA_ENABLED
 ```

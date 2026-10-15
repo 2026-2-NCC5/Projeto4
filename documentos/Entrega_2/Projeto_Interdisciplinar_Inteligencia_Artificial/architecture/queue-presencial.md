@@ -5,10 +5,10 @@ ASA Conecta acompanha a fila pública <https://presencial.fecap.br/> e avisa qua
 chegando e quando a senha for chamada — por push (app fechado), aviso na tela, vibração e pela voz do
 ASA IA. Decisões: [ADR-007](../adr/ADR-007-queue-presencial.md).
 
-Implementação: `src/Entrega 2/Backend/api/src/queue/` (monitor, parser, alertas, API),
-`src/Entrega 2/Backend/api/src/notifications/` (push), `database/migrations/005_queue_tracking.sql`,
-`src/Entrega 2/Frontend/features/queue/` (tela, alertas, push, tempo real). Contrato: seção *queue*
-(v1.4) de `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts`.
+Implementação: `src/Entrega_2/Backend/api/src/queue/` (monitor, parser, alertas, API),
+`src/Entrega_2/Backend/api/src/notifications/` (push), `database/migrations/005_queue_tracking.sql`,
+`src/Entrega_2/Frontend/features/queue/` (tela, alertas, push, tempo real). Contrato: seção *queue*
+(v1.4) de `src/Entrega_2/Backend/contracts/api/mobile-api.v1.ts`.
 
 ## Arquitetura
 
@@ -237,9 +237,9 @@ updated`, `queue_fetch_error`, `queue_parser_error`, `queue_source_recovered`, `
 
 ```bash
 # API com fila simulada (0026 → 0029 a cada 20 s)
-ASA_QUEUE_PROVIDER=mock PUSH_PROVIDER=log npm run dev          # src/Entrega 2/Backend/api
+ASA_QUEUE_PROVIDER=mock PUSH_PROVIDER=log npm run dev          # src/Entrega_2/Backend/api
 # App com fila simulada no próprio aparelho (sem API)
-EXPO_PUBLIC_USE_MOCK_QUEUE=true npx expo start                  # src/Entrega 2/Frontend
+EXPO_PUBLIC_USE_MOCK_QUEUE=true npx expo start                  # src/Entrega_2/Frontend
 ```
 
 Em desenvolvimento a tela mostra o painel "Simulação" (cenários `empty`, `waiting`, `5_ahead`, `3_ahead`,
