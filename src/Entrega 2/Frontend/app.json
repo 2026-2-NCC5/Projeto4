@@ -50,6 +50,12 @@
           ]
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "color": "#0D6D53"
+        }
+      ],
       "expo-status-bar"
     ]
   }

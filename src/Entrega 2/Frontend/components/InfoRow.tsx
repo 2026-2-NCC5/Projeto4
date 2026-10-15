@@ -6,26 +6,21 @@ import { makeStyles } from '../theme';
 import { AppText } from './ui/AppText';
 
 const useStyles = makeStyles((theme) => ({
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.md },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.md, minHeight: 48, paddingVertical: theme.spacing.md, paddingHorizontal: theme.spacing.lg },
   value: { flex: 1, textAlign: 'right' },
-  divider: { height: 1, backgroundColor: theme.colors.border.subtle, marginVertical: theme.spacing.md + 2 },
 }));
 
+/** Par rótulo/valor para usar dentro de um `List` (dados cadastrais, origem de uma análise). */
 export function InfoRow({ label, value }: { label: string; value: string }) {
   const styles = useStyles();
   return (
     <View style={styles.row} accessible accessibilityLabel={`${label}: ${value}`}>
-      <AppText variant="bodySmall" tone="muted">
+      <AppText variant="body" tone="secondary">
         {label}
       </AppText>
-      <AppText variant="bodySmallStrong" style={styles.value}>
+      <AppText variant="bodyStrong" style={styles.value}>
         {value}
       </AppText>
     </View>
   );
-}
-
-export function Divider() {
-  const styles = useStyles();
-  return <View style={styles.divider} />;
 }

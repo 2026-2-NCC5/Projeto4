@@ -37,9 +37,9 @@ export function orbStateForAssistant(state: AssistantState): AsaOrbState {
 }
 
 /**
- * Identidade visual do Assistente ASA: núcleo luminoso com auroras, anéis de voz e partículas.
- * Reage ao estado derivado (idle → respiração; wake-word → brilho suave; ativação → pulse;
- * ouvindo → amplitude real; pensando → órbita; falando → pulso; erro → tom quente breve).
+ * Identidade visual do Assistente ASA: círculo no verde institucional, anéis discretos e arco de processamento.
+ * Reage ao estado derivado (idle → respiração; ativação → pulso único; ouvindo → amplitude real e anéis;
+ * pensando → arco girando; falando → pulso; erro → tom quente breve).
  */
 export function AssistantOrb({ state, audioLevel, size = 160, tone = 'default', style, testID }: AssistantOrbProps) {
   const reduceMotion = useReducedMotion();

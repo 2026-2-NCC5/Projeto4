@@ -8,7 +8,7 @@ import { makeStyles, useTheme } from '../../theme';
 import { AppText } from './AppText';
 
 const useStyles = makeStyles((theme) => ({
-  banner: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, backgroundColor: theme.colors.status.warningSoft, borderColor: theme.colors.status.warning, borderWidth: 1, borderRadius: theme.radius.md, paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.sm, marginBottom: theme.spacing.md },
+  banner: { flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.sm, backgroundColor: theme.colors.status.warningSoft, borderRadius: theme.radius.md, paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.sm, marginBottom: theme.spacing.lg },
   text: { flex: 1 },
 }));
 
@@ -20,12 +20,12 @@ export function OfflineBanner() {
   if (!isOffline) return null;
   return (
     <View style={styles.banner} accessibilityRole="alert" accessibilityLiveRegion="polite" testID="offline-banner">
-      <Ionicons name="cloud-offline-outline" size={18} color={theme.colors.status.warningText} />
+      <Ionicons name="cloud-offline-outline" size={16} color={theme.colors.status.warningText} style={{ marginTop: 1 }} />
       <View style={styles.text}>
         <AppText variant="bodySmallStrong" tone="warning">
           Você está offline.
         </AppText>
-        <AppText variant="caption" tone="warning" style={{ fontWeight: '400' }}>
+        <AppText variant="caption" tone="warning">
           Algumas informações podem estar desatualizadas.
         </AppText>
       </View>

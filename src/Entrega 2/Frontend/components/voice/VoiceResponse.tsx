@@ -7,13 +7,13 @@ import type { AssistantTurn } from '../../types/assistant';
 import type { AssistantDisplayItem, AssistantNavigationParams, AssistantNavigationTarget, AssistantNextAction } from '../../types/api';
 import { assistantItemIcon, assistantItemTone, assistantItemToneLabel, assistantStatusIcon, assistantStatusLabel, assistantStatusTone } from '../../utils/format';
 import { AbstentionCard } from '../AbstentionCard';
-import { Card } from '../Card';
 import { HumanValidationBanner } from '../HumanValidationBanner';
-import { Pill } from '../Pill';
 import { RecommendationCard } from '../RecommendationCard';
 import { TechnicalDetails } from '../TechnicalDetails';
+import { AppButton } from '../ui/AppButton';
 import { AppText } from '../ui/AppText';
-import { PressableScale } from '../ui/PressableScale';
+import { Badge } from '../ui/Badge';
+import { List } from '../ui/ListItem';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -45,19 +45,18 @@ function actionIcon(action: AssistantNextAction): IconName {
 }
 
 const useStyles = makeStyles((theme) => ({
-  card: { marginTop: theme.spacing.md },
-  top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm, flexWrap: 'wrap' },
-  items: { marginTop: theme.spacing.md, gap: theme.spacing.sm },
-  item: { backgroundColor: theme.colors.surface.secondary, borderRadius: theme.radius.md, padding: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border.subtle },
-  itemLink: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', minHeight: theme.minTouchTarget, marginTop: theme.spacing.xxs },
-  repeat: { flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: theme.minTouchTarget, paddingHorizontal: theme.spacing.sm },
-  recommendations: { marginTop: theme.spacing.lg },
+  top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm, flexWrap: 'wrap', marginTop: theme.spacing.md },
+  items: { marginTop: theme.spacing.md },
+  item: { paddingVertical: theme.spacing.md, paddingHorizontal: theme.spacing.lg },
+  itemHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: theme.spacing.sm },
+  itemTitle: { flex: 1 },
+  itemLink: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xxs, alignSelf: 'flex-start', minHeight: 36, marginTop: theme.spacing.xxs },
+  recommendations: { marginTop: theme.spacing.xl },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm, marginTop: theme.spacing.md },
-  actionButton: { minHeight: theme.minTouchTarget, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs, paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.pill, borderWidth: 1, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.primary },
-  pressed: { opacity: 0.7 },
+  pressed: { opacity: 0.6 },
 }));
 
-/** Resposta estruturada do assistente: texto, itens (cards inteligentes), recomendações explicáveis e próximas ações. */
+/** Resposta estruturada do assistente: título, itens em lista, recomendações explicáveis e próximas ações. */
 export function VoiceResponse({ turn, onNavigate, onAsk, canRepeat = false, onRepeat, actionsDisabled = false, compact = false, maxItems, hideTechnicalDetails = false, hideMessage = false }: VoiceResponseProps) {
   const theme = useTheme();
   const styles = useStyles();
@@ -69,6 +68,8 @@ export function VoiceResponse({ turn, onNavigate, onAsk, canRepeat = false, onRe
   const validationNextAction = recommendations.find((item) => item.requiresHumanValidation)?.nextAction ?? recommendations[0]?.nextAction ?? null;
   const items = maxItems ? display.items.slice(0, maxItems) : display.items;
   const hiddenItems = display.items.length - items.length;
+  // Resposta normal não precisa de etiqueta; o status só aparece quando muda a leitura da resposta.
+  const showStatus = response.status !== 'success';
 
   const runAction = (action: AssistantNextAction) => {
     if (action.type === 'navigate') onNavigate(action.target, action.params);
@@ -78,49 +79,44 @@ export function VoiceResponse({ turn, onNavigate, onAsk, canRepeat = false, onRe
 
   return (
     <View testID="voice-response">
-      <Card style={styles.card}>
+      {showStatus || (canRepeat && onRepeat) ? (
         <View style={styles.top}>
-          <Pill label={assistantStatusLabel(response.status)} icon={assistantStatusIcon(response.status)} tone={assistantStatusTone(response.status)} />
-          {canRepeat && onRepeat ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Repetir resposta" onPress={onRepeat} style={({ pressed }) => [styles.repeat, pressed && styles.pressed]}>
-              <Ionicons name="volume-high-outline" size={16} color={theme.colors.brand.primaryStrong} />
-              <AppText variant="bodySmallStrong" tone="brand">
-                Repetir resposta
-              </AppText>
-            </Pressable>
-          ) : null}
+          {showStatus ? <Badge label={assistantStatusLabel(response.status)} icon={assistantStatusIcon(response.status)} tone={assistantStatusTone(response.status)} /> : <View />}
+          {canRepeat && onRepeat ? <AppButton label="Repetir resposta" icon="volume-high-outline" variant="ghost" size="small" onPress={onRepeat} /> : null}
         </View>
-        {display.title ? (
-          <AppText variant="h3" accessibilityRole="header" style={{ marginTop: theme.spacing.md }}>
-            {display.title}
-          </AppText>
-        ) : null}
-        {display.message && !hideMessage ? (
-          <AppText variant="body" accessibilityLiveRegion="polite" style={{ marginTop: theme.spacing.xs }}>
-            {display.message}
-          </AppText>
-        ) : null}
+      ) : null}
+      {display.title ? (
+        <AppText variant="h4" accessibilityRole="header" style={{ marginTop: theme.spacing.md }}>
+          {display.title}
+        </AppText>
+      ) : null}
+      {display.message && !hideMessage ? (
+        <AppText variant="body" accessibilityLiveRegion="polite" style={{ marginTop: theme.spacing.xs }}>
+          {display.message}
+        </AppText>
+      ) : null}
 
-        {items.length > 0 ? (
-          <View style={styles.items} accessibilityRole="list">
+      {items.length > 0 ? (
+        <View style={styles.items} accessibilityRole="list">
+          <List>
             {items.map((item) => (
               <ResponseItem key={item.id} item={item} onViewSubject={(subjectId) => onNavigate('subject', { subjectId })} />
             ))}
-            {hiddenItems > 0 ? (
-              <AppText variant="caption" tone="muted">
-                {`+ ${hiddenItems} ${hiddenItems === 1 ? 'item' : 'itens'}. Toque em “Ver detalhes”.`}
-              </AppText>
-            ) : null}
-          </View>
-        ) : null}
-      </Card>
+          </List>
+          {hiddenItems > 0 ? (
+            <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.xs }}>
+              {`+ ${hiddenItems} ${hiddenItems === 1 ? 'item' : 'itens'}. Toque em “Ver detalhes”.`}
+            </AppText>
+          ) : null}
+        </View>
+      ) : null}
 
       {isAbstained ? <AbstentionCard reason={response.abstentionReason} /> : null}
       {needsValidation ? <HumanValidationBanner nextAction={validationNextAction} compact={compact} /> : null}
 
       {!compact && recommendations.length > 0 ? (
         <View style={styles.recommendations}>
-          <AppText variant="h3" accessibilityRole="header" style={{ marginBottom: theme.spacing.md }}>
+          <AppText variant="h4" accessibilityRole="header" style={{ marginBottom: theme.spacing.md }}>
             Recomendações
           </AppText>
           {recommendations.map((recommendation) => (
@@ -138,25 +134,17 @@ export function VoiceResponse({ turn, onNavigate, onAsk, canRepeat = false, onRe
 
       {response.nextActions.length > 0 ? (
         <View style={styles.actions}>
-          {(compact ? response.nextActions.slice(0, 3) : response.nextActions).map((action, index) => {
-            const disabled = actionsDisabled && action.type !== 'navigate';
-            return (
-              <PressableScale
-                key={`${action.type}-${index}-${action.label}`}
-                accessibilityRole="button"
-                accessibilityLabel={action.label}
-                accessibilityState={{ disabled }}
-                disabled={disabled}
-                onPress={() => runAction(action)}
-                style={styles.actionButton}
-              >
-                <Ionicons name={actionIcon(action)} size={18} color={theme.colors.brand.primaryStrong} />
-                <AppText variant="bodySmallStrong" tone="brand">
-                  {action.label}
-                </AppText>
-              </PressableScale>
-            );
-          })}
+          {(compact ? response.nextActions.slice(0, 3) : response.nextActions).map((action, index) => (
+            <AppButton
+              key={`${action.type}-${index}-${action.label}`}
+              label={action.label}
+              icon={actionIcon(action)}
+              variant="secondary"
+              size="small"
+              disabled={actionsDisabled && action.type !== 'navigate'}
+              onPress={() => runAction(action)}
+            />
+          ))}
         </View>
       ) : null}
 
@@ -169,28 +157,31 @@ function ResponseItem({ item, onViewSubject }: { item: AssistantDisplayItem; onV
   const theme = useTheme();
   const styles = useStyles();
   const badge = item.badge?.trim() || assistantItemToneLabel(item.tone);
+  const subjectId = item.subjectId;
   return (
     <View style={styles.item}>
-      <Pill label={badge} icon={assistantItemIcon(item.tone)} tone={assistantItemTone(item.tone)} />
-      <AppText variant="bodyStrong" style={{ marginTop: theme.spacing.sm }}>
-        {item.title}
-      </AppText>
+      <View style={styles.itemHeader}>
+        <AppText variant="bodyStrong" style={styles.itemTitle}>
+          {item.title}
+        </AppText>
+        <Badge label={badge} icon={assistantItemIcon(item.tone)} tone={assistantItemTone(item.tone)} />
+      </View>
       {item.description ? (
-        <AppText variant="bodySmall" style={{ marginTop: 2 }}>
+        <AppText variant="bodySmall" tone="secondary" style={{ marginTop: 2 }}>
           {item.description}
         </AppText>
       ) : null}
       {item.meta ? (
-        <AppText variant="bodySmall" tone="muted" style={{ marginTop: 2 }}>
+        <AppText variant="caption" tone="muted" style={{ marginTop: 2 }}>
           {item.meta}
         </AppText>
       ) : null}
-      {item.subjectId ? (
-        <Pressable accessibilityRole="button" accessibilityLabel={`Ver disciplina: ${item.title}`} onPress={() => onViewSubject(item.subjectId as string)} style={({ pressed }) => [styles.itemLink, pressed && styles.pressed]}>
-          <Ionicons name="school-outline" size={15} color={theme.colors.brand.primaryStrong} />
-          <AppText variant="bodySmallStrong" tone="brand">
+      {subjectId ? (
+        <Pressable accessibilityRole="button" accessibilityLabel={`Ver disciplina: ${item.title}`} onPress={() => onViewSubject(subjectId)} style={({ pressed }) => [styles.itemLink, pressed && styles.pressed]}>
+          <AppText variant="bodySmallStrong" tone="link">
             Ver disciplina
           </AppText>
+          <Ionicons name="chevron-forward" size={14} color={theme.colors.text.link} />
         </Pressable>
       ) : null}
     </View>

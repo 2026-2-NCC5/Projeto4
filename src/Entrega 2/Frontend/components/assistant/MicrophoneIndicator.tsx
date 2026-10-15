@@ -16,7 +16,7 @@ export interface MicrophoneIndicatorProps {
 }
 
 const useStyles = makeStyles((theme) => ({
-  pill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: theme.spacing.md, minHeight: 32, borderRadius: theme.radius.pill, backgroundColor: theme.colors.surface.glass, borderWidth: 1, borderColor: theme.colors.surface.glassBorder, ...theme.shadows.sm },
+  pill: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs, paddingHorizontal: theme.spacing.md, minHeight: 32, borderRadius: theme.radius.pill, backgroundColor: theme.colors.surface.primary, borderWidth: 1, borderColor: theme.colors.border.default, ...theme.shadows.md },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.status.error },
 }));
 

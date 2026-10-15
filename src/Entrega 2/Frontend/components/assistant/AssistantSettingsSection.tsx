@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
 import { Linking, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
@@ -8,8 +9,7 @@ import { useOptionalAssistant } from '../../features/assistant/hooks/useAssistan
 import { usePreferences } from '../../hooks/usePreferences';
 import { makeStyles, useTheme } from '../../theme';
 import { MESSAGES } from '../../utils/messages';
-import { Card } from '../Card';
-import { Divider } from '../InfoRow';
+import { List } from '../ui/ListItem';
 import { SectionHeader } from '../ui/SectionHeader';
 import { SettingRow } from '../ui/SettingRow';
 import { AppText } from '../ui/AppText';
@@ -32,11 +32,12 @@ export function speechLanguageLabel(language: string): string {
 }
 
 const useStyles = makeStyles((theme) => ({
-  privacyBox: { backgroundColor: theme.colors.brand.primarySoft, borderRadius: theme.radius.md, padding: theme.spacing.md, marginTop: theme.spacing.lg },
-  hint: { marginTop: theme.spacing.sm },
+  privacy: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start', marginTop: theme.spacing.md, paddingHorizontal: theme.spacing.xxs },
+  privacyText: { flex: 1, gap: 2 },
   backdrop: { flex: 1, backgroundColor: theme.colors.background.backdrop, justifyContent: 'flex-end' },
-  sheet: { backgroundColor: theme.colors.background.elevated, borderTopLeftRadius: theme.radius.xxl, borderTopRightRadius: theme.radius.xxl, padding: theme.spacing.xl, maxHeight: '70%' },
-  voiceRow: { minHeight: theme.minTouchTarget, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: theme.spacing.sm },
+  sheet: { width: '100%', maxWidth: 560, alignSelf: 'center', backgroundColor: theme.colors.background.elevated, borderTopLeftRadius: theme.radius.xl, borderTopRightRadius: theme.radius.xl, padding: theme.spacing.xl, maxHeight: '70%' },
+  handle: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: theme.colors.border.strong, marginBottom: theme.spacing.lg, marginTop: -theme.spacing.sm },
+  voiceRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: theme.spacing.sm, borderBottomWidth: 1, borderBottomColor: theme.colors.border.subtle },
 }));
 
 function permissionLabel(state: 'granted' | 'denied' | 'undetermined' | null): string {
@@ -52,6 +53,7 @@ function openSystemSettings(): void {
 
 /** Perfil → "Assistente ASA": Hey Asa, resposta falada, feedback tátil, animações, histórico, voz, privacidade e permissões. */
 export function AssistantSettingsSection() {
+  const theme = useTheme();
   const styles = useStyles();
   const assistant = useOptionalAssistant();
   const { preferences, updatePreferences } = usePreferences();
@@ -82,7 +84,7 @@ export function AssistantSettingsSection() {
   return (
     <>
       <SectionHeader title="Assistente ASA" subtitle="Voz, privacidade e permissões" />
-      <Card testID="voice-preferences">
+      <List inset="icon" testID="voice-preferences">
         <SettingRow
           kind="switch"
           icon="mic-outline"
@@ -94,64 +96,43 @@ export function AssistantSettingsSection() {
           testID="setting-wake-word"
         />
         {wakeSupported && WAKE_WORD.BARGE_IN_FEATURE_ENABLED ? (
-          <>
-            <Divider />
-            <SettingRow
+          <SettingRow
               kind="switch"
               icon="hand-left-outline"
               label="Interromper por voz (experimental)"
               description="Enquanto o ASA fala, dizer “Hey Asa” interrompe a resposta. Depende do cancelamento de eco do aparelho."
               value={preferences.bargeInEnabled}
               disabled={!preferences.wakeWordEnabled}
-              onChange={(bargeInEnabled) => updatePreferences({ bargeInEnabled })}
-            />
-          </>
+            onChange={(bargeInEnabled) => updatePreferences({ bargeInEnabled })}
+          />
         ) : null}
-        <Divider />
         <SettingRow kind="switch" icon="volume-high-outline" label="Resposta por voz" description="O ASA lê as respostas em voz alta. O texto continua sempre na tela." value={preferences.ttsEnabled} onChange={(ttsEnabled) => updatePreferences({ ttsEnabled })} />
-        <Divider />
         <SettingRow kind="link" icon="person-circle-outline" label="Voz" value={preferences.ttsVoiceId ? 'Personalizada' : 'Padrão do sistema'} onPress={() => setVoicePickerOpen(true)} accessibilityHint="Escolhe a voz usada nas respostas faladas" />
-        <Divider />
         <SettingRow kind="info" icon="language-outline" label="Idioma" value={speechLanguageLabel(VOICE.LANGUAGE)} />
-        <Divider />
         <SettingRow kind="switch" icon="phone-portrait-outline" label="Feedback tátil" description="Vibração sutil ao ativar o assistente e em ações principais." value={preferences.hapticsEnabled} onChange={(hapticsEnabled) => updatePreferences({ hapticsEnabled })} />
-        <Divider />
         <SettingRow kind="switch" icon="sparkles-outline" label="Animações" description="Desligue para reduzir o movimento do assistente. O estado continua descrito em texto." value={preferences.reduceMotion !== 'always'} onChange={(enabled) => updatePreferences({ reduceMotion: enabled ? 'system' : 'always' })} testID="setting-animations" />
-        <Divider />
         <SettingRow kind="switch" icon="chatbox-ellipses-outline" label="Transcrição visível" description="Mostra o que o ASA entendeu da sua fala antes da resposta." value={preferences.transcriptVisible} onChange={(transcriptVisible) => updatePreferences({ transcriptVisible })} />
-        <Divider />
         <SettingRow kind="switch" icon="time-outline" label="Salvar histórico" description="Guarda perguntas e respostas (só texto e horário) neste aparelho. Desligar apaga o histórico." value={preferences.historyEnabled} onChange={(historyEnabled) => updatePreferences({ historyEnabled })} testID="setting-history" />
-        {assistant && assistant.history.length > 0 ? (
-          <>
-            <Divider />
-            <SettingRow kind="link" icon="trash-outline" label="Limpar histórico" value={`${assistant.history.length}`} onPress={() => void assistant.clearHistory()} destructive />
-          </>
-        ) : null}
-      </Card>
+        {assistant && assistant.history.length > 0 ? <SettingRow kind="link" icon="trash-outline" label="Limpar histórico" value={`${assistant.history.length}`} onPress={() => void assistant.clearHistory()} destructive /> : null}
+      </List>
 
       <SectionHeader title="Microfone e privacidade" />
-      <Card>
+      <List inset="icon">
         <SettingRow kind="info" icon="mic-circle-outline" label="Microfone agora" value={micCapturing ? 'Ativo' : 'Inativo'} testID="mic-status" />
-        <Divider />
         <SettingRow kind="info" icon="key-outline" label="Permissão do microfone" value={assistant ? permissionLabel(assistant.microphonePermission) : 'Indisponível'} />
-        {Platform.OS !== 'web' ? (
-          <>
-            <Divider />
-            <SettingRow kind="link" icon="settings-outline" label="Permissões do sistema" onPress={openSystemSettings} accessibilityHint="Abre as configurações do aplicativo no sistema" />
-          </>
-        ) : null}
-        <View style={styles.privacyBox} accessible accessibilityLabel={`Privacidade: ${MESSAGES.voicePrivacy}`}>
-          <AppText variant="label" tone="brand" uppercase>
-            Privacidade
-          </AppText>
-          <AppText variant="bodySmallStrong" style={{ marginTop: 4 }}>
+        {Platform.OS !== 'web' ? <SettingRow kind="link" icon="settings-outline" label="Permissões do sistema" onPress={openSystemSettings} accessibilityHint="Abre as configurações do aplicativo no sistema" /> : null}
+      </List>
+      <View style={styles.privacy} accessible accessibilityLabel={`Privacidade: ${MESSAGES.voicePrivacy}`}>
+        <Ionicons name="lock-closed-outline" size={16} color={theme.colors.text.muted} style={{ marginTop: 1 }} />
+        <View style={styles.privacyText}>
+          <AppText variant="bodySmallStrong" tone="secondary">
             {MESSAGES.voicePrivacy}
           </AppText>
-          <AppText variant="caption" tone="muted" style={styles.hint}>
+          <AppText variant="caption" tone="muted">
             A detecção de “Hey Asa” funciona somente com o app em primeiro plano. Em segundo plano o microfone é sempre desligado.
           </AppText>
         </View>
-      </Card>
+      </View>
 
       <VoicePicker visible={voicePickerOpen} onClose={() => setVoicePickerOpen(false)} />
     </>
@@ -198,10 +179,11 @@ function VoicePicker({ visible, onClose }: { visible: boolean; onClose: () => vo
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Fechar">
         <Pressable style={[styles.sheet, { paddingBottom: insets.bottom + theme.spacing.lg }]} onPress={() => undefined} accessibilityRole="none">
+          <View style={styles.handle} />
           <AppText variant="h3" accessibilityRole="header">
             Voz do assistente
           </AppText>
-          <AppText variant="bodySmall" tone="muted" style={{ marginTop: 4 }}>
+          <AppText variant="bodySmall" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
             Vozes instaladas no seu aparelho para {speechLanguageLabel(VOICE.LANGUAGE)}.
           </AppText>
           <ScrollView style={{ marginTop: theme.spacing.md }}>
@@ -226,6 +208,7 @@ function VoicePicker({ visible, onClose }: { visible: boolean; onClose: () => vo
 }
 
 function VoiceRow({ label, detail, selected, onPress }: { label: string; detail?: string; selected: boolean; onPress: () => void }) {
+  const theme = useTheme();
   const styles = useStyles();
   return (
     <Pressable accessibilityRole="radio" accessibilityState={{ selected, checked: selected }} accessibilityLabel={label} onPress={onPress} style={styles.voiceRow}>
@@ -237,9 +220,7 @@ function VoiceRow({ label, detail, selected, onPress }: { label: string; detail?
           </AppText>
         ) : null}
       </View>
-      <AppText variant="bodyStrong" tone={selected ? 'brand' : 'muted'}>
-        {selected ? '✓' : ''}
-      </AppText>
+      {selected ? <Ionicons name="checkmark" size={20} color={theme.colors.brand.primaryStrong} /> : null}
     </Pressable>
   );
 }

@@ -3,20 +3,7 @@ import { Text, type TextProps, type TextStyle } from 'react-native';
 
 import { useTheme, type Theme, type TypographyVariant } from '../../theme';
 
-export type TextTone =
-  | 'primary'
-  | 'secondary'
-  | 'muted'
-  | 'inverse'
-  | 'inverseMuted'
-  | 'brand'
-  | 'accent'
-  | 'link'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | 'onPrimary';
+export type TextTone = 'primary' | 'secondary' | 'muted' | 'inverse' | 'brand' | 'link' | 'success' | 'warning' | 'error' | 'info' | 'onPrimary';
 
 export interface AppTextProps extends TextProps {
   variant?: TypographyVariant;
@@ -34,12 +21,8 @@ export function toneColor(theme: Theme, tone: TextTone): string {
       return colors.text.muted;
     case 'inverse':
       return colors.text.inverse;
-    case 'inverseMuted':
-      return colors.text.inverseMuted;
     case 'brand':
       return colors.brand.primaryStrong;
-    case 'accent':
-      return colors.brand.accent;
     case 'link':
       return colors.text.link;
     case 'success':

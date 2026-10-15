@@ -8,20 +8,31 @@ import { AppText } from '../ui/AppText';
 
 import { StreamingText } from './StreamingText';
 
+const AVATAR_SIZE = 24;
+
 const useStyles = makeStyles((theme) => ({
-  userRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'flex-end', gap: theme.spacing.xs, marginTop: theme.spacing.md },
-  userBubble: { maxWidth: '84%', backgroundColor: theme.colors.chat.userBubble, borderRadius: theme.radius.xl, borderBottomRightRadius: 6, paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm + 3 },
-  userBubbleDark: { backgroundColor: theme.colors.surface.onInverse, borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
+  userRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'flex-end', gap: theme.spacing.xxs, marginTop: theme.spacing.lg },
+  userBubble: { maxWidth: '80%', backgroundColor: theme.colors.chat.userBubble, borderRadius: theme.radius.lg, borderBottomRightRadius: theme.radius.xs, paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.sm },
   edit: { minHeight: theme.minTouchTarget, minWidth: theme.minTouchTarget, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.md },
   pressed: { opacity: 0.6 },
-  assistantRow: { flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.sm + 2, marginTop: theme.spacing.lg },
-  avatar: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.brand.primarySoft, marginTop: 1 },
-  avatarDark: { backgroundColor: theme.colors.surface.onInverse },
+  assistantRow: { flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.sm, marginTop: theme.spacing.lg },
+  avatar: { width: AVATAR_SIZE, height: AVATAR_SIZE, borderRadius: AVATAR_SIZE / 2, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.brand.primaryStrong },
   assistantBody: { flex: 1, minWidth: 0 },
-  typing: { flexDirection: 'row', alignItems: 'center', gap: 5, height: 22, paddingLeft: 2 },
-  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: theme.colors.text.muted },
-  dotDark: { backgroundColor: theme.colors.text.inverseMuted },
+  name: { marginBottom: 2, lineHeight: AVATAR_SIZE },
+  typing: { flexDirection: 'row', alignItems: 'center', gap: 4, height: AVATAR_SIZE, paddingLeft: 2 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: theme.colors.text.muted },
 }));
+
+/** Marca do ASA nas mensagens: círculo pequeno no verde institucional. */
+function AsaAvatar() {
+  const theme = useTheme();
+  const styles = useStyles();
+  return (
+    <View style={styles.avatar} accessibilityElementsHidden importantForAccessibility="no">
+      <Ionicons name="sparkles" size={12} color={theme.colors.text.onPrimary} />
+    </View>
+  );
+}
 
 export interface UserBubbleProps {
   text: string;
@@ -29,29 +40,27 @@ export interface UserBubbleProps {
   caption?: string;
   /** Mostra um botão "Editar" ao lado do balão (coloca o texto no campo para correção). */
   onEdit?: (text: string) => void;
-  onDark?: boolean;
   testID?: string;
 }
 
-/** Mensagem do estudante: balão escuro alinhado à direita (receiver/sender styling do padrão Chat V1). */
-export function UserBubble({ text, caption, onEdit, onDark = false, testID = 'chat-user-bubble' }: UserBubbleProps) {
+/** Mensagem do estudante: balão neutro alinhado à direita, compacto. */
+export function UserBubble({ text, caption, onEdit, testID = 'chat-user-bubble' }: UserBubbleProps) {
   const theme = useTheme();
   const styles = useStyles();
-  const textTone = onDark ? 'inverse' : undefined;
   return (
     <View style={styles.userRow} testID={testID}>
       {onEdit ? (
         <Pressable accessibilityRole="button" accessibilityLabel="Editar" accessibilityHint="Coloca sua pergunta no campo de texto para você corrigir e enviar de novo" onPress={() => onEdit(text)} style={({ pressed }) => [styles.edit, pressed && styles.pressed]} testID={`${testID}-edit`}>
-          <Ionicons name="create-outline" size={18} color={onDark ? theme.colors.text.inverseMuted : theme.colors.text.muted} />
+          <Ionicons name="create-outline" size={18} color={theme.colors.text.muted} />
         </Pressable>
       ) : null}
-      <View style={[styles.userBubble, onDark && styles.userBubbleDark]} accessible accessibilityLabel={`${caption ?? 'Você'}: ${text}`}>
+      <View style={styles.userBubble} accessible accessibilityLabel={`${caption ?? 'Você'}: ${text}`}>
         {caption ? (
-          <AppText variant="caption" tone={textTone ?? 'inverseMuted'} style={{ color: onDark ? theme.colors.text.inverseMuted : theme.colors.chat.userTextMuted, marginBottom: 2 }}>
+          <AppText variant="caption" style={{ color: theme.colors.chat.userTextMuted, marginBottom: 2 }}>
             {caption}
           </AppText>
         ) : null}
-        <AppText variant="body" style={{ color: onDark ? theme.colors.text.inverse : theme.colors.chat.userText }} selectable>
+        <AppText variant="body" style={{ color: theme.colors.chat.userText }} selectable>
           {text}
         </AppText>
       </View>
@@ -65,31 +74,25 @@ export interface AssistantMessageProps {
   /** Anima a revelação (apenas para a resposta recém-chegada). */
   animate?: boolean;
   onComplete?: () => void;
-  onDark?: boolean;
   /** Oculta o avatar/nome (mensagens antigas compactas). */
   compact?: boolean;
   testID?: string;
 }
 
-/** Resposta do assistente: sem balão (texto corrido, como no padrão Chat V1), com avatar ASA e cards abaixo. */
-export function AssistantMessage({ text, animate = false, onComplete, onDark = false, compact = false, children, testID = 'chat-assistant-message' }: PropsWithChildren<AssistantMessageProps>) {
-  const theme = useTheme();
+/** Resposta do assistente: sem balão (texto corrido), com a marca ASA e o conteúdo estruturado abaixo. */
+export function AssistantMessage({ text, animate = false, onComplete, compact = false, children, testID = 'chat-assistant-message' }: PropsWithChildren<AssistantMessageProps>) {
   const styles = useStyles();
   const content = text?.trim() ?? '';
   return (
     <View style={styles.assistantRow} testID={testID}>
-      {!compact ? (
-        <View style={[styles.avatar, onDark && styles.avatarDark]} accessibilityElementsHidden importantForAccessibility="no">
-          <Ionicons name="sparkles" size={14} color={onDark ? theme.colors.assistant.primary : theme.colors.brand.primaryStrong} />
-        </View>
-      ) : null}
+      {!compact ? <AsaAvatar /> : null}
       <View style={styles.assistantBody}>
         {!compact ? (
-          <AppText variant="label" tone={onDark ? 'inverseMuted' : 'brand'} uppercase style={{ marginBottom: 4 }}>
+          <AppText variant="bodySmallStrong" tone="secondary" style={styles.name}>
             ASA
           </AppText>
         ) : null}
-        {content ? <StreamingText text={content} animate={animate} onComplete={onComplete} tone={onDark ? 'inverse' : 'primary'} testID={`${testID}-text`} /> : null}
+        {content ? <StreamingText text={content} animate={animate} onComplete={onComplete} tone="primary" testID={`${testID}-text`} /> : null}
         {children}
       </View>
     </View>
@@ -97,7 +100,7 @@ export function AssistantMessage({ text, animate = false, onComplete, onDark = f
 }
 
 /** "ASA está digitando": três pontos que pulsam (Animated + native driver; estático com "Reduzir movimento"). */
-export function TypingIndicator({ onDark = false, testID = 'chat-typing' }: { onDark?: boolean; testID?: string }) {
+export function TypingIndicator({ testID = 'chat-typing' }: { testID?: string }) {
   const theme = useTheme();
   const styles = useStyles();
   const reduceMotion = useReducedMotion();
@@ -122,12 +125,10 @@ export function TypingIndicator({ onDark = false, testID = 'chat-typing' }: { on
 
   return (
     <View style={styles.assistantRow} accessible accessibilityRole="progressbar" accessibilityLabel="ASA está preparando a resposta" accessibilityLiveRegion="polite" testID={testID}>
-      <View style={[styles.avatar, onDark && styles.avatarDark]}>
-        <Ionicons name="sparkles" size={14} color={onDark ? theme.colors.assistant.primary : theme.colors.brand.primaryStrong} />
-      </View>
+      <AsaAvatar />
       <View style={styles.typing}>
         {values.map((value, index) => (
-          <Animated.View key={index} style={[styles.dot, onDark && styles.dotDark, { opacity: value, transform: [{ translateY: value.interpolate({ inputRange: [0.35, 1], outputRange: [0, -3] }) }] }]} />
+          <Animated.View key={index} style={[styles.dot, { opacity: value }]} />
         ))}
       </View>
     </View>

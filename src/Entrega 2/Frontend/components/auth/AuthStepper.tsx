@@ -17,8 +17,8 @@ interface AuthStepperProps {
 const useStyles = makeStyles((theme) => ({
   wrapper: { marginBottom: theme.spacing.lg },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm },
-  track: { height: 6, borderRadius: 3, backgroundColor: theme.colors.border.subtle, marginTop: theme.spacing.sm, overflow: 'hidden' },
-  fill: { height: '100%', borderRadius: 3, backgroundColor: theme.colors.brand.accent },
+  track: { height: 4, borderRadius: 2, backgroundColor: theme.colors.surface.muted, marginTop: theme.spacing.sm, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: 2, backgroundColor: theme.colors.brand.primaryStrong },
 }));
 
 /** Indicador de progresso das etapas (ex.: recuperação de senha) com barra animada pelo Reanimated. */
@@ -44,7 +44,7 @@ export function AuthStepper({ steps, current, testID = 'auth-stepper' }: AuthSte
   return (
     <View style={styles.wrapper} accessible accessibilityRole="progressbar" accessibilityLabel={`Etapa ${position + 1} de ${total}: ${label}`} accessibilityValue={{ min: 0, max: total, now: position + 1 }} testID={testID}>
       <View style={styles.row}>
-        <AppText variant="label" tone="accent" uppercase>
+        <AppText variant="bodySmallStrong">
           {`Etapa ${position + 1} de ${total}`}
         </AppText>
         <AppText variant="caption" tone="secondary">

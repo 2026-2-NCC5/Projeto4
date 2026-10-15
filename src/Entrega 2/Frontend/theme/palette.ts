@@ -2,58 +2,55 @@
  * Paleta bruta da marca — extraída dos assets oficiais (assets/branding/*.svg).
  * NUNCA use estes valores diretamente em componentes: consuma as cores semânticas de `useTheme()`.
  *
- * Asa_Logo.svg   → verde #00AB7E · roxo #845DF2 · amarelo #FFDE33
+ * Asa_Logo.svg   → verde #00AB7E
  * FECAP_Logo.svg → verde institucional #023327
+ *
+ * O verde do logo (#00AB7E) não tem contraste suficiente para texto branco (2,95:1), então ações e
+ * destaques usam o verde institucional `asa.deep` — mesmo matiz do logo, mais escuro (6,3:1).
  */
 export const brandPalette = {
   fecap: {
     green: '#023327',
     greenDeep: '#011F18',
-    greenMid: '#034839',
-    greenSoft: '#0B4A3B',
   },
   asa: {
+    /** Verde do logo: só em marcas pequenas (orb, indicadores). */
     green: '#00AB7E',
     greenBright: '#2BC496',
-    greenDark: '#008F69',
-    greenDeep: '#00664B',
-    greenSoft: '#E3F6F0',
-    greenMist: '#DFF8F1',
+    /** Verde institucional de ação (botões, item ativo, links). */
+    deep: '#0D6D53',
+    deepPressed: '#09533F',
+    soft: '#E8F3EE',
     purple: '#845DF2',
     purpleBright: '#A48BFF',
-    purpleDark: '#6A46D6',
-    purpleSoft: '#EFEAFE',
-    yellow: '#FFDE33',
-    yellowDark: '#E6A700',
-    yellowSoft: '#FFF8D6',
   },
+  /** Neutros frios, sem matiz verde: o verde fica reservado para o que importa. */
   neutral: {
     white: '#FFFFFF',
-    black: '#000000',
-    ink: '#0F1F1A',
-    ink2: '#1B2C27',
-    slate: '#4E5F5A',
-    mist: '#7A8A85',
-    fog: '#A9B7B2',
-    line: '#D6E0DB',
-    lineSoft: '#E4ECE8',
-    cloud: '#EEF3F1',
-    snow: '#F6F9F8',
-    paper: '#F4F7F6',
-    night: '#0B1512',
-    night2: '#0F1D19',
-    night3: '#142622',
-    night4: '#1A2F2A',
-    night5: '#213933',
+    ink: '#1A1D21',
+    slate: '#555B63',
+    mist: '#6B717A',
+    fog: '#8E949C',
+    lineStrong: '#CBD0D5',
+    line: '#E2E5E8',
+    lineSoft: '#ECEEF0',
+    cloud: '#EEF0F2',
+    snow: '#F3F4F6',
+    paper: '#F6F7F8',
+    night: '#111315',
+    night2: '#16181B',
+    night3: '#1B1E22',
+    night4: '#22262B',
+    night5: '#2A2F35',
   },
   status: {
-    success: '#1D9B62',
-    successBright: '#3FCB8A',
-    warning: '#E6A700',
-    warningBright: '#FFC93C',
-    error: '#D64545',
-    errorBright: '#F06E6E',
-    info: '#3B82F6',
-    infoBright: '#7FAEFF',
+    success: '#1E7F4F',
+    successBright: '#4CC38A',
+    warning: '#B7791F',
+    warningBright: '#E8B04B',
+    error: '#C93C37',
+    errorBright: '#F0716B',
+    info: '#3468C0',
+    infoBright: '#7FA6E8',
   },
 } as const;

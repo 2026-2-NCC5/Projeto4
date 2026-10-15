@@ -14,7 +14,8 @@ export interface IconButtonProps {
   onPress: () => void;
   accessibilityHint?: string;
   size?: number;
-  tone?: 'default' | 'brand' | 'inverse' | 'muted';
+  /** default: sem fundo · brand: fundo verde suave (estado ativo) · outline: borda neutra · muted: ícone apagado. */
+  tone?: 'default' | 'brand' | 'outline' | 'muted';
   /** role "switch" para alternâncias (ex.: resposta por voz). */
   accessibilityRole?: 'button' | 'switch';
   checked?: boolean;
@@ -23,15 +24,15 @@ export interface IconButtonProps {
   testID?: string;
 }
 
-/** Botão só com ícone, com área mínima de toque e rótulo acessível obrigatório. */
+/** Botão só com ícone (20 px), com área mínima de toque e rótulo acessível obrigatório. */
 export function IconButton({ icon, accessibilityLabel, accessibilityHint, onPress, size = 44, tone = 'default', accessibilityRole = 'button', checked, disabled = false, style, testID }: IconButtonProps) {
   const theme = useTheme();
   const { colors } = theme;
   const palette = {
-    default: { background: colors.surface.secondary, color: colors.text.primary, border: colors.border.subtle },
+    default: { background: 'transparent', color: colors.text.primary, border: 'transparent' },
     brand: { background: colors.brand.primarySoft, color: colors.brand.primaryStrong, border: colors.brand.primarySoft },
-    inverse: { background: colors.surface.onInverse, color: colors.text.inverse, border: 'rgba(255,255,255,0.14)' },
-    muted: { background: colors.control.segmentTrack, color: colors.text.muted, border: colors.control.segmentTrack },
+    outline: { background: colors.surface.primary, color: colors.text.primary, border: colors.border.default },
+    muted: { background: 'transparent', color: colors.text.muted, border: 'transparent' },
   }[tone];
   const diameter = Math.max(size, theme.minTouchTarget);
   return (
@@ -44,13 +45,14 @@ export function IconButton({ icon, accessibilityLabel, accessibilityHint, onPres
       disabled={disabled}
       onPress={onPress}
       pressedScale={theme.motion.scale.pressedStrong}
+      pressedStyle={{ backgroundColor: tone === 'brand' ? colors.brand.primarySoft : colors.surface.muted }}
       testID={testID}
       style={[
         { width: diameter, height: diameter, borderRadius: theme.radius.md, alignItems: 'center', justifyContent: 'center', backgroundColor: palette.background, borderWidth: 1, borderColor: palette.border },
         style,
       ]}
     >
-      <Ionicons name={icon} size={Math.round(diameter * 0.45)} color={palette.color} />
+      <Ionicons name={icon} size={20} color={palette.color} />
     </PressableScale>
   );
 }

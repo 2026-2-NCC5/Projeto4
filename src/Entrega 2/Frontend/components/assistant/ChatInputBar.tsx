@@ -6,7 +6,7 @@ import { VOICE } from '../../config/services';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { makeStyles, NATIVE_DRIVER, useTheme } from '../../theme';
 import { PressableScale } from '../ui/PressableScale';
-import { VOICE_BUTTON_LABELS, type VoiceButtonMode } from '../voice/VoiceButton';
+import { VOICE_BUTTON_LABELS, type VoiceButtonMode } from '../voice/voiceModes';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -36,7 +36,6 @@ export interface ChatInputBarProps {
   actions?: ChatInputAction[];
   inputRef?: React.Ref<TextInput>;
   placeholder?: string;
-  onDark?: boolean;
   /** Máximo de linhas visíveis antes de rolar (padrão 5; 3 no layout em linha). */
   maxLines?: number;
   /**
@@ -77,24 +76,20 @@ export function trailingKindFor(value: string, voiceMode: VoiceButtonMode): Trai
 }
 
 const useStyles = makeStyles((theme) => ({
-  container: { borderRadius: theme.radius.xxl, borderWidth: 1.5, borderColor: theme.colors.chat.inputBorder, backgroundColor: theme.colors.chat.inputBackground, paddingHorizontal: theme.spacing.sm, paddingTop: theme.spacing.xxs, paddingBottom: theme.spacing.xs, ...theme.shadows.sm },
+  container: { borderRadius: theme.radius.xl, borderWidth: 1, borderColor: theme.colors.chat.inputBorder, backgroundColor: theme.colors.chat.inputBackground, paddingHorizontal: theme.spacing.xs, paddingTop: theme.spacing.xxs, paddingBottom: theme.spacing.xs },
   containerFocused: { borderColor: theme.colors.chat.inputBorderFocus },
-  containerDark: { backgroundColor: theme.colors.surface.onInverse, borderColor: 'rgba(255,255,255,0.16)', ...theme.shadows.none },
-  containerDarkFocused: { borderColor: theme.colors.assistant.primary },
-  input: { paddingHorizontal: theme.spacing.sm + 2, paddingTop: VERTICAL_PADDING, paddingBottom: VERTICAL_PADDING, color: theme.colors.text.primary, fontSize: 16, lineHeight: LINE_HEIGHT, textAlignVertical: 'top' },
-  inputDark: { color: theme.colors.text.inverse },
+  input: { paddingHorizontal: theme.spacing.sm, paddingTop: VERTICAL_PADDING, paddingBottom: VERTICAL_PADDING, color: theme.colors.text.primary, fontSize: 16, lineHeight: LINE_HEIGHT, textAlignVertical: 'top' },
   containerInline: { flexDirection: 'row', alignItems: 'flex-end', gap: theme.spacing.xxs, paddingTop: theme.spacing.xxs, paddingBottom: theme.spacing.xxs },
   inputInline: { flex: 1, minWidth: 0, paddingHorizontal: theme.spacing.xs },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm },
-  // Alinha os botões (36/42 px) ao centro da primeira linha do campo (CHAT_INPUT_MIN_HEIGHT).
+  // Alinha os botões (36/40 px) ao centro da primeira linha do campo (CHAT_INPUT_MIN_HEIGHT).
   actionsInline: { marginBottom: (CHAT_INPUT_MIN_HEIGHT - 36) / 2 },
   actions: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xxs, flexShrink: 1 },
-  action: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border.subtle, backgroundColor: theme.colors.surface.secondary },
-  actionActive: { backgroundColor: theme.colors.brand.primarySoft, borderColor: theme.colors.brand.primarySoft },
-  actionDark: { backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.14)' },
-  actionActiveDark: { backgroundColor: 'rgba(43,196,150,0.22)', borderColor: 'rgba(43,196,150,0.4)' },
-  trailing: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  layer: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 21 },
+  action: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  actionPressed: { backgroundColor: theme.colors.surface.muted },
+  actionActive: { backgroundColor: theme.colors.brand.primarySoft },
+  trailing: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  layer: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 20 },
 }));
 
 /**
@@ -103,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
  * quando há texto (crossfade + escala no native driver). O campo de texto está sempre disponível —
  * é a alternativa completa à voz.
  */
-export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoicePress, onCancel, actions = [], inputRef, placeholder = 'Pergunte ao ASA...', onDark = false, maxLines, inline = false, style, testID = 'chat-input-bar' }: ChatInputBarProps) {
+export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoicePress, onCancel, actions = [], inputRef, placeholder = 'Pergunte ao ASA...', maxLines, inline = false, style, testID = 'chat-input-bar' }: ChatInputBarProps) {
   const theme = useTheme();
   const styles = useStyles();
   const reduceMotion = useReducedMotion();
@@ -144,15 +139,15 @@ export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoice
   const trailing = (() => {
     switch (kind) {
       case 'send':
-        return { label: 'Enviar pergunta', hint: undefined, onPress: submit, disabled: false, background: onDark ? theme.colors.assistant.primary : theme.colors.chat.send, icon: theme.colors.chat.sendIcon };
+        return { label: 'Enviar pergunta', hint: undefined, onPress: submit, disabled: false, background: theme.colors.chat.send, icon: theme.colors.chat.sendIcon };
       case 'stop':
-        return { label: VOICE_BUTTON_LABELS.listening, hint: undefined, onPress: onVoicePress, disabled: false, background: theme.colors.status.error, icon: '#FFFFFF' };
+        return { label: VOICE_BUTTON_LABELS.listening, hint: undefined, onPress: onVoicePress, disabled: false, background: theme.colors.status.error, icon: theme.colors.text.inverse };
       case 'cancel':
-        return { label: 'Cancelar', hint: 'Interrompe a pergunta em andamento', onPress: onCancel ?? (() => undefined), disabled: !onCancel, background: onDark ? 'rgba(255,255,255,0.14)' : theme.colors.control.segmentTrack, icon: onDark ? theme.colors.text.inverse : theme.colors.text.primary };
+        return { label: 'Cancelar', hint: 'Interrompe a pergunta em andamento', onPress: onCancel ?? (() => undefined), disabled: !onCancel, background: theme.colors.surface.muted, icon: theme.colors.text.primary };
       case 'mic-off':
         return { label: VOICE_BUTTON_LABELS.unavailable, hint: undefined, onPress: () => undefined, disabled: true, background: theme.colors.control.disabled, icon: theme.colors.control.disabledText };
       default:
-        return { label: voiceMode === 'answering' ? VOICE_BUTTON_LABELS.answering : VOICE_BUTTON_LABELS.idle, hint: voiceMode === 'idle' ? 'Ativa o microfone para você fazer uma pergunta' : undefined, onPress: onVoicePress, disabled: false, background: onDark ? theme.colors.text.inverse : theme.colors.chat.mic, icon: onDark ? theme.colors.assistant.surface : theme.colors.chat.micIcon };
+        return { label: voiceMode === 'answering' ? VOICE_BUTTON_LABELS.answering : VOICE_BUTTON_LABELS.idle, hint: voiceMode === 'idle' ? 'Ativa o microfone para você fazer uma pergunta' : undefined, onPress: onVoicePress, disabled: false, background: theme.colors.chat.mic, icon: theme.colors.chat.micIcon };
     }
   })();
 
@@ -172,14 +167,14 @@ export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoice
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       placeholder={placeholder}
-      placeholderTextColor={onDark ? theme.colors.text.inverseMuted : theme.colors.text.placeholder}
+      placeholderTextColor={theme.colors.text.placeholder}
       accessibilityLabel="Digite sua pergunta"
       accessibilityHint="Você também pode tocar no microfone para falar"
       multiline
       submitBehavior="submit"
       returnKeyType="send"
       maxLength={VOICE.MAX_TEXT_CHARS}
-      style={[styles.input, inline && styles.inputInline, onDark && styles.inputDark, { height }]}
+      style={[styles.input, inline && styles.inputInline, { height }]}
       testID="voice-text-input"
     />
   );
@@ -200,10 +195,11 @@ export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoice
               onPress={action.onPress}
               hitSlop={theme.hitSlop}
               pressedScale={theme.motion.scale.pressedStrong}
-              style={[styles.action, onDark ? styles.actionDark : null, active && (onDark ? styles.actionActiveDark : styles.actionActive)]}
+              style={[styles.action, active && styles.actionActive]}
+              pressedStyle={active ? null : styles.actionPressed}
               testID={action.testID}
             >
-              <Ionicons name={action.icon} size={18} color={active ? (onDark ? theme.colors.assistant.primary : theme.colors.brand.primaryStrong) : onDark ? theme.colors.text.inverse : theme.colors.text.secondary} />
+              <Ionicons name={action.icon} size={20} color={active ? theme.colors.brand.primaryStrong : theme.colors.text.secondary} />
             </PressableScale>
           );
         })}
@@ -231,7 +227,7 @@ export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoice
             <Ionicons name="mic" size={20} color={trailing.icon} />
           </Animated.View>
           <Animated.View style={[styles.layer, { opacity: sendProgress, transform: [{ scale: sendScale }], pointerEvents: 'none' }]}>
-            <Ionicons name="arrow-up" size={22} color={trailing.icon} />
+            <Ionicons name="arrow-up" size={20} color={trailing.icon} />
           </Animated.View>
         </>
       ) : (
@@ -240,7 +236,7 @@ export function ChatInputBar({ value, onChangeText, onSubmit, voiceMode, onVoice
     </PressableScale>
   );
 
-  const containerStyle = [styles.container, onDark ? styles.containerDark : null, focused && (onDark ? styles.containerDarkFocused : styles.containerFocused), style];
+  const containerStyle = [styles.container, focused && styles.containerFocused, style];
 
   if (inline) {
     return (

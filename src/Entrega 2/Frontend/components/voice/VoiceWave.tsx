@@ -56,8 +56,8 @@ function WaveRings({ size, active, level, ringCount, periodMs = 2400, color }: W
             : progress.interpolate({ inputRange: [0, 1 - offset, 1 - offset + 0.0001, 1], outputRange: [offset, 1, 0, offset] });
         return {
           key: `ring-${index}`,
-          scale: phase.interpolate({ inputRange: [0, 1], outputRange: [1, 1.75] }),
-          opacity: phase.interpolate({ inputRange: [0, 0.12, 1], outputRange: [0, 0.55, 0] }),
+          scale: phase.interpolate({ inputRange: [0, 1], outputRange: [1, 1.6] }),
+          opacity: phase.interpolate({ inputRange: [0, 0.12, 1], outputRange: [0, 0.4, 0] }),
         };
       }),
     [progress, ringCount],
@@ -85,5 +85,5 @@ function WaveRings({ size, active, level, ringCount, periodMs = 2400, color }: W
 
 const styles = StyleSheet.create({
   layer: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' },
-  ring: { position: 'absolute', borderWidth: 2 },
+  ring: { position: 'absolute', borderWidth: 1.5 },
 });

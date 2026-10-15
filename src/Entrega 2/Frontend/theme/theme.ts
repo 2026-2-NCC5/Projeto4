@@ -1,6 +1,5 @@
 import { motion } from './animations';
 import { darkColors, lightColors, type ThemeColors } from './colors';
-import { brandPalette } from './palette';
 import { radius } from './radius';
 import { darkShadows, lightShadows, type ThemeShadows } from './shadows';
 import { hitSlop, MIN_TOUCH_TARGET, spacing } from './spacing';
@@ -17,7 +16,6 @@ export interface Theme {
   radius: typeof radius;
   typography: typeof typography;
   motion: typeof motion;
-  palette: typeof brandPalette;
   minTouchTarget: number;
   hitSlop: typeof hitSlop;
 }
@@ -32,7 +30,6 @@ export const LIGHT_THEME: Theme = Object.freeze({
   radius,
   typography,
   motion,
-  palette: brandPalette,
   minTouchTarget: MIN_TOUCH_TARGET,
   hitSlop,
 });
@@ -46,7 +43,6 @@ export const DARK_THEME: Theme = Object.freeze({
   radius,
   typography,
   motion,
-  palette: brandPalette,
   minTouchTarget: MIN_TOUCH_TARGET,
   hitSlop,
 });

@@ -32,13 +32,12 @@ export interface ChatEmptyStateProps {
   /** Linha de status abaixo do título (ex.: "Toque no microfone para falar"). */
   status?: React.ReactNode;
   actions?: readonly ChatQuickAction[];
-  /** Colunas da grade de ações rápidas (1 em telas estreitas, para o texto não quebrar em muitas linhas). */
+  /** Colunas das ações rápidas (1 em telas estreitas, para o texto não quebrar em muitas linhas). */
   columns?: 1 | 2;
   /** Saudação à esquerda e ações à direita, com título menor (telas baixas, como celular em paisagem). */
   split?: boolean;
   onSelect: (text: string) => void;
   disabled?: boolean;
-  onDark?: boolean;
   testID?: string;
 }
 
@@ -50,19 +49,17 @@ const useStyles = makeStyles((theme) => ({
   greetingBlock: { alignItems: 'center', marginTop: theme.spacing.sm, paddingHorizontal: theme.spacing.md },
   greetingBlockSplit: { marginTop: 0, paddingHorizontal: 0 },
   // No máximo duas colunas: em tablets/desktop a coluna de conteúdo já tem largura limitada.
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: theme.spacing.sm + 2, marginTop: theme.spacing.xl, alignSelf: 'stretch' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: theme.spacing.sm, marginTop: theme.spacing.xl, alignSelf: 'stretch' },
   gridSplit: { marginTop: 0 },
-  chipCellHalf: { width: '48.5%' },
+  chipCellHalf: { width: '49%' },
   chipCellFull: { width: '100%' },
-  chip: { flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm + 2, minHeight: 60, borderRadius: theme.radius.lg, borderWidth: 1, borderColor: theme.colors.chat.chipBorder, backgroundColor: theme.colors.chat.chipBackground, paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.sm + 2, ...theme.shadows.sm },
-  chipDark: { backgroundColor: theme.colors.surface.onInverse, borderColor: 'rgba(255,255,255,0.14)', ...theme.shadows.none },
-  chipIcon: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.brand.primarySoft },
-  chipIconDark: { backgroundColor: 'rgba(43,196,150,0.18)' },
+  chip: { flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, minHeight: 48, borderRadius: theme.radius.md, borderWidth: 1, borderColor: theme.colors.chat.chipBorder, backgroundColor: theme.colors.chat.chipBackground, paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.sm },
+  chipPressed: { backgroundColor: theme.colors.surface.secondary },
   chipLabel: { flex: 1, minWidth: 0 },
 }));
 
-/** Estado vazio da conversa: saudação, orb e grade de ações rápidas (enviadas como texto pelo fluxo normal). */
-export function ChatEmptyState({ name, greeting, title = 'Como posso ajudar?', hero, status, actions = DEFAULT_CHAT_QUICK_ACTIONS, columns = 2, split = false, onSelect, disabled = false, onDark = false, testID = 'voice-suggestions' }: ChatEmptyStateProps) {
+/** Estado vazio da conversa: orb, saudação e ações rápidas (enviadas como texto pelo fluxo normal). */
+export function ChatEmptyState({ name, greeting, title = 'Como posso ajudar?', hero, status, actions = DEFAULT_CHAT_QUICK_ACTIONS, columns = 2, split = false, onSelect, disabled = false, testID = 'voice-suggestions' }: ChatEmptyStateProps) {
   const theme = useTheme();
   const styles = useStyles();
   const hello = greeting ? (name ? `${greeting}, ${name}` : greeting) : name ? `Olá, ${name}` : null;
@@ -71,14 +68,14 @@ export function ChatEmptyState({ name, greeting, title = 'Como posso ajudar?', h
       {hero}
       <View style={[styles.greetingBlock, split && styles.greetingBlockSplit]}>
         {hello && !split ? (
-          <AppText variant="h4" tone={onDark ? 'inverseMuted' : 'secondary'} align="center">
+          <AppText variant="body" tone="secondary" align="center">
             {hello}
           </AppText>
         ) : null}
-        <AppText variant={split ? 'h2' : 'h1'} tone={onDark ? 'inverse' : 'primary'} align="center" accessibilityRole="header" style={{ marginTop: theme.spacing.xxs }}>
+        <AppText variant={split ? 'h3' : 'h2'} align="center" accessibilityRole="header" style={{ marginTop: theme.spacing.xxs }}>
           {title}
         </AppText>
-        {status ? <View style={{ marginTop: split ? theme.spacing.xxs : theme.spacing.sm }}>{status}</View> : null}
+        {status ? <View style={{ marginTop: theme.spacing.xs }}>{status}</View> : null}
       </View>
     </>
   );
@@ -94,12 +91,11 @@ export function ChatEmptyState({ name, greeting, title = 'Como posso ajudar?', h
           disabled={disabled}
           onPress={() => onSelect(action.text ?? action.label)}
           containerStyle={columns === 1 ? styles.chipCellFull : styles.chipCellHalf}
-          style={[styles.chip, onDark && styles.chipDark]}
+          style={styles.chip}
+          pressedStyle={styles.chipPressed}
         >
-          <View style={[styles.chipIcon, onDark && styles.chipIconDark]}>
-            <Ionicons name={action.icon} size={16} color={onDark ? theme.colors.assistant.primary : theme.colors.brand.primaryStrong} />
-          </View>
-          <AppText variant="bodySmallStrong" tone={onDark ? 'inverse' : 'primary'} style={styles.chipLabel}>
+          <Ionicons name={action.icon} size={18} color={theme.colors.text.secondary} />
+          <AppText variant="bodySmall" style={styles.chipLabel}>
             {action.label}
           </AppText>
         </PressableScale>

@@ -15,7 +15,7 @@ interface TechnicalDetailsProps {
 }
 
 const useStyles = makeStyles((theme) => ({
-  wrapper: { marginTop: theme.spacing.lg, paddingHorizontal: theme.spacing.xxs },
+  wrapper: { marginTop: theme.spacing.xl, paddingHorizontal: theme.spacing.xxs },
 }));
 
 /** Identificadores de rastreabilidade, discretos, para suporte e auditoria. Nunca inclui tokens. */

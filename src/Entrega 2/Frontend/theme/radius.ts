@@ -1,10 +1,12 @@
+/**
+ * Raios de borda. Componentes comuns usam `md` (botões, campos) e `lg` (cards); `xl` fica para folhas
+ * inferiores e `pill` só para avatares, indicadores e o botão do assistente.
+ */
 export const radius = {
-  xs: 8,
-  sm: 10,
-  md: 14,
-  lg: 18,
-  xl: 22,
-  xxl: 28,
-  xxxl: 34,
+  xs: 4,
+  sm: 6,
+  md: 10,
+  lg: 12,
+  xl: 16,
   pill: 999,
 } as const;

@@ -2,10 +2,9 @@ import React, { type PropsWithChildren } from 'react';
 import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, View, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useNavBarInset } from '../hooks/useNavBarInset';
 import { useResponsive } from '../hooks/useResponsive';
 import { makeStyles, useTheme } from '../theme';
-
-import { AuroraBackground } from './ui/AuroraBackground';
 
 interface ScreenProps {
   scroll?: boolean;
@@ -18,10 +17,8 @@ interface ScreenProps {
   /** Pull-to-refresh (somente com scroll). */
   refreshing?: boolean;
   onRefresh?: () => void;
-  /** Fundo alternativo (ex.: experiência imersiva do assistente). */
+  /** Fundo alternativo (ex.: superfície branca do assistente). */
   background?: string;
-  /** Brilho "aurora" suave no topo (linguagem visual comum a todas as telas). Padrão: true. */
-  aurora?: boolean;
   testID?: string;
 }
 
@@ -34,23 +31,13 @@ const useStyles = makeStyles((theme) => ({
   fixed: { flex: 1 },
 }));
 
-export function Screen({
-  children,
-  scroll = true,
-  withNavSpace = true,
-  contentStyle,
-  scrollRef,
-  keyboardAvoiding = false,
-  refreshing = false,
-  onRefresh,
-  background,
-  aurora = true,
-  testID,
-}: PropsWithChildren<ScreenProps>) {
+/** Moldura das telas: área segura, fundo neutro, margem lateral responsiva e espaço da barra inferior. */
+export function Screen({ children, scroll = true, withNavSpace = true, contentStyle, scrollRef, keyboardAvoiding = false, refreshing = false, onRefresh, background, testID }: PropsWithChildren<ScreenProps>) {
   const theme = useTheme();
   const styles = useStyles();
   const responsive = useResponsive();
-  const paddingBottom = withNavSpace ? theme.spacing.navSpace : theme.spacing.xxl;
+  const navInset = useNavBarInset();
+  const paddingBottom = withNavSpace ? navInset + theme.spacing.xxl : theme.spacing.xxl;
   // Tablets/paisagem: conteúdo centralizado com largura máxima; telefones: margem escalada pela largura.
   const layout = { paddingHorizontal: responsive.gutter, maxWidth: responsive.contentMaxWidth, paddingBottom };
   const content = scroll ? (
@@ -59,7 +46,7 @@ export function Screen({
       contentContainerStyle={[styles.content, layout, contentStyle]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-      refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.brand.primary} colors={[theme.colors.brand.primary]} /> : undefined}
+      refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.brand.primaryStrong} colors={[theme.colors.brand.primaryStrong]} /> : undefined}
     >
       {children}
     </ScrollView>
@@ -69,7 +56,6 @@ export function Screen({
 
   return (
     <SafeAreaView style={[styles.safe, background ? { backgroundColor: background } : null]} edges={['top', 'left', 'right']} testID={testID}>
-      {aurora && !background ? <AuroraBackground variant="subtle" /> : null}
       {keyboardAvoiding ? (
         <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           {content}

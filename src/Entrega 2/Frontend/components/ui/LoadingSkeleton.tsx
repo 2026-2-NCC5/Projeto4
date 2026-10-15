@@ -4,6 +4,8 @@ import { Animated, View, type DimensionValue, type StyleProp, type ViewStyle } f
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { makeStyles, NATIVE_DRIVER, useTheme } from '../../theme';
 
+import { Divider } from './Divider';
+
 export interface SkeletonProps {
   width?: DimensionValue;
   height?: number;
@@ -11,21 +13,21 @@ export interface SkeletonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/** Bloco pulsante (opacidade via native driver). Estático com "Reduzir movimento". */
+/** Bloco com pulso lento de opacidade (native driver). Estático com "Reduzir movimento". */
 export function Skeleton({ width = '100%', height = 14, radius, style }: SkeletonProps) {
   const theme = useTheme();
   const reduceMotion = useReducedMotion();
-  const [opacity] = useState(() => new Animated.Value(0.6));
+  const [opacity] = useState(() => new Animated.Value(0.7));
 
   useEffect(() => {
     if (reduceMotion) {
-      opacity.setValue(0.7);
+      opacity.setValue(0.8);
       return undefined;
     }
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, { toValue: 1, duration: 720, easing: theme.motion.easing.gentle, useNativeDriver: NATIVE_DRIVER }),
-        Animated.timing(opacity, { toValue: 0.55, duration: 720, easing: theme.motion.easing.gentle, useNativeDriver: NATIVE_DRIVER }),
+        Animated.timing(opacity, { toValue: 1, duration: 800, easing: theme.motion.easing.gentle, useNativeDriver: NATIVE_DRIVER }),
+        Animated.timing(opacity, { toValue: 0.6, duration: 800, easing: theme.motion.easing.gentle, useNativeDriver: NATIVE_DRIVER }),
       ]),
     );
     loop.start();
@@ -34,7 +36,7 @@ export function Skeleton({ width = '100%', height = 14, radius, style }: Skeleto
 
   return (
     <Animated.View
-      style={[{ width, height, borderRadius: radius ?? theme.radius.sm, backgroundColor: theme.colors.skeleton.base, opacity }, style]}
+      style={[{ width, height, borderRadius: radius ?? theme.radius.xs, backgroundColor: theme.colors.skeleton.base, opacity }, style]}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
     />
@@ -42,56 +44,63 @@ export function Skeleton({ width = '100%', height = 14, radius, style }: Skeleto
 }
 
 const useStyles = makeStyles((theme) => ({
-  card: { backgroundColor: theme.colors.surface.primary, borderRadius: theme.radius.xl, borderWidth: 1, borderColor: theme.colors.border.subtle, padding: theme.spacing.lg + 2, marginTop: theme.spacing.md, gap: theme.spacing.sm },
-  row: { flexDirection: 'row', gap: theme.spacing.sm + 2, marginTop: theme.spacing.md },
-  stat: { flex: 1, backgroundColor: theme.colors.surface.primary, borderRadius: theme.radius.lg, borderWidth: 1, borderColor: theme.colors.border.subtle, padding: theme.spacing.lg, gap: theme.spacing.sm },
-  header: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md },
+  card: { backgroundColor: theme.colors.surface.primary, borderRadius: theme.radius.lg, borderWidth: 1, borderColor: theme.colors.border.default, padding: theme.spacing.lg, marginBottom: theme.spacing.md, gap: theme.spacing.sm },
+  list: { backgroundColor: theme.colors.surface.primary, borderRadius: theme.radius.lg, borderWidth: 1, borderColor: theme.colors.border.default, overflow: 'hidden' },
+  metrics: { flexDirection: 'row', backgroundColor: theme.colors.surface.primary, borderRadius: theme.radius.lg, borderWidth: 1, borderColor: theme.colors.border.default },
+  metric: { flex: 1, padding: theme.spacing.lg, gap: theme.spacing.sm },
+  metricDivider: { width: 1, backgroundColor: theme.colors.border.subtle, marginVertical: theme.spacing.md },
+  row: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, padding: theme.spacing.lg },
   flex: { flex: 1, gap: theme.spacing.sm },
 }));
 
-/** Esqueleto de card genérico (título + duas linhas). */
+/** Esqueleto de card genérico (título + linhas). */
 export function CardSkeleton({ lines = 2, testID, accessibilityLabel = 'Carregando' }: { lines?: number; testID?: string; accessibilityLabel?: string | null }) {
   const styles = useStyles();
   return (
     <View style={styles.card} testID={testID} accessibilityLabel={accessibilityLabel ?? undefined} accessibilityElementsHidden={accessibilityLabel === null} importantForAccessibility={accessibilityLabel === null ? 'no-hide-descendants' : 'auto'} accessibilityLiveRegion="polite">
-      <Skeleton width={96} height={20} radius={999} />
-      <Skeleton width="72%" height={18} style={{ marginTop: 6 }} />
+      <Skeleton width={72} height={12} />
+      <Skeleton width="64%" height={16} style={{ marginTop: 4 }} />
       {Array.from({ length: lines }, (_, index) => (
-        <Skeleton key={index} width={index === lines - 1 ? '55%' : '92%'} height={12} />
+        <Skeleton key={index} width={index === lines - 1 ? '50%' : '90%'} height={12} />
       ))}
     </View>
   );
 }
 
-/** Esqueleto dos cartões de resumo acadêmico (três métricas). */
+/** Esqueleto do resumo acadêmico (três indicadores lado a lado). */
 export function AcademicCardSkeleton({ testID }: { testID?: string }) {
   const styles = useStyles();
   return (
-    <View style={styles.row} testID={testID} accessibilityLabel="Carregando resumo acadêmico" accessibilityLiveRegion="polite">
+    <View style={styles.metrics} testID={testID} accessibilityLabel="Carregando resumo acadêmico" accessibilityLiveRegion="polite">
       {[0, 1, 2].map((index) => (
-        <View key={index} style={styles.stat}>
-          <Skeleton width={40} height={12} />
-          <Skeleton width={64} height={26} />
-          <Skeleton width={54} height={10} />
-        </View>
+        <React.Fragment key={index}>
+          {index > 0 ? <View style={styles.metricDivider} /> : null}
+          <View style={styles.metric}>
+            <Skeleton width={56} height={11} />
+            <Skeleton width={48} height={22} />
+          </View>
+        </React.Fragment>
       ))}
     </View>
   );
 }
 
-/** Esqueleto de lista de compromissos/itens com ícone à esquerda. */
+/** Esqueleto de lista (compromissos, avisos) com marcador à esquerda. */
 export function ScheduleSkeleton({ rows = 3, testID }: { rows?: number; testID?: string }) {
   const styles = useStyles();
   return (
-    <View style={styles.card} testID={testID} accessibilityLabel="Carregando compromissos" accessibilityLiveRegion="polite">
+    <View style={styles.list} testID={testID} accessibilityLabel="Carregando compromissos" accessibilityLiveRegion="polite">
       {Array.from({ length: rows }, (_, index) => (
-        <View key={index} style={[styles.header, index > 0 && { marginTop: 8 }]}>
-          <Skeleton width={44} height={44} radius={14} />
-          <View style={styles.flex}>
-            <Skeleton width="70%" height={14} />
-            <Skeleton width="45%" height={11} />
+        <React.Fragment key={index}>
+          {index > 0 ? <Divider /> : null}
+          <View style={styles.row}>
+            <Skeleton width={36} height={36} radius={8} />
+            <View style={styles.flex}>
+              <Skeleton width="68%" height={13} />
+              <Skeleton width="40%" height={11} />
+            </View>
           </View>
-        </View>
+        </React.Fragment>
       ))}
     </View>
   );

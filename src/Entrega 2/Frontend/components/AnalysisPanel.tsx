@@ -8,10 +8,9 @@ import { makeStyles, useTheme } from '../theme';
 import { MESSAGES } from '../utils/messages';
 
 import { AnalysisResult } from './AnalysisResult';
-import { Card } from './Card';
 import { ErrorBanner } from './ErrorBanner';
-import { PrimaryButton } from './PrimaryButton';
 import { StateView, messageForError, stateKindFromError } from './StateView';
+import { AppButton } from './ui/AppButton';
 import { AppText } from './ui/AppText';
 import { Surface } from './ui/Surface';
 
@@ -47,12 +46,10 @@ export function analysisErrorMessage(error: ApiClientError | null): string {
 }
 
 const useStyles = makeStyles((theme) => ({
-  header: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, marginBottom: theme.spacing.lg },
-  aiAvatar: { width: 46, height: 46, borderRadius: theme.radius.lg, backgroundColor: theme.colors.brand.secondary, alignItems: 'center', justifyContent: 'center' },
-  headerText: { flex: 1 },
-  notice: { flexDirection: 'row', gap: theme.spacing.sm + 2, alignItems: 'flex-start', marginBottom: theme.spacing.md },
+  header: { marginBottom: theme.spacing.lg },
+  notice: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start', marginBottom: theme.spacing.lg },
   actionButton: { marginTop: theme.spacing.lg },
-  analyzing: { alignItems: 'center', paddingVertical: theme.spacing.xxxl, paddingHorizontal: theme.spacing.xl, marginTop: theme.spacing.md },
+  analyzing: { alignItems: 'center', paddingVertical: theme.spacing.xxl, marginTop: theme.spacing.md },
 }));
 
 /** Análise estruturada completa do Agente para o Estudante ("Solicitar análise"). */
@@ -66,35 +63,33 @@ export function AnalysisPanel({ analysis, onViewSubject, onOpenRecommendation, s
     <View testID="analysis-panel">
       {showHeader ? (
         <View style={styles.header}>
-          <View style={styles.aiAvatar}>
-            <Ionicons name="sparkles" size={20} color={theme.colors.brand.highlight} />
-          </View>
-          <View style={styles.headerText}>
-            <AppText variant="h1" accessibilityRole="header">
-              Assistente ASA
-            </AppText>
-            <AppText variant="bodySmall" tone="muted" style={{ marginTop: 2 }}>
-              Agente para o Estudante · apoio à decisão
-            </AppText>
-          </View>
+          <AppText variant="h1" accessibilityRole="header">
+            Assistente ASA
+          </AppText>
+          <AppText variant="body" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
+            Agente para o Estudante · apoio à decisão
+          </AppText>
         </View>
       ) : null}
 
-      <Surface tone="brand" padding={theme.spacing.md + 2} radius={theme.radius.lg} style={styles.notice} accessible accessibilityLabel="As recomendações apoiam sua decisão. Elas não alteram registros acadêmicos oficiais.">
-        <Ionicons name="sparkles-outline" size={18} color={theme.colors.brand.primaryStrong} />
+      <View style={styles.notice} accessible accessibilityLabel="As recomendações apoiam sua decisão. Elas não alteram registros acadêmicos oficiais.">
+        <Ionicons name="information-circle-outline" size={16} color={theme.colors.text.muted} style={{ marginTop: 1 }} />
         <AppText variant="bodySmall" tone="secondary" style={{ flex: 1 }}>
           As recomendações apoiam sua decisão. Elas não alteram registros acadêmicos oficiais.
         </AppText>
-      </Surface>
+      </View>
 
-      <Card>
+      <Surface>
         <AppText variant="h4">Análise da sua situação acadêmica</AppText>
-        <AppText variant="bodySmall" tone="muted" style={{ marginTop: theme.spacing.xs }}>
+        <AppText variant="bodySmall" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
           O agente analisa suas disciplinas, avaliações, frequência e pendências e explica cada recomendação com evidências.
         </AppText>
         <View style={styles.actionButton}>
-          <PrimaryButton
+          <AppButton
             label="Solicitar análise"
+            icon="sparkles-outline"
+            size="large"
+            fullWidth
             accessibilityLabel="Solicitar análise"
             accessibilityHint="Envia sua situação acadêmica para o agente analisar"
             loadingLabel={MESSAGES.analyzing}
@@ -104,15 +99,15 @@ export function AnalysisPanel({ analysis, onViewSubject, onOpenRecommendation, s
             testID="request-analysis"
           />
         </View>
-      </Card>
+      </Surface>
 
       {isAnalyzing ? (
         <Surface style={styles.analyzing} accessibilityLiveRegion="polite" testID="analysis-loading">
-          <ActivityIndicator size="large" color={theme.colors.brand.primary} accessibilityLabel={MESSAGES.analyzing} />
+          <ActivityIndicator size="small" color={theme.colors.brand.primaryStrong} accessibilityLabel={MESSAGES.analyzing} />
           <AppText variant="bodyStrong" align="center" style={{ marginTop: theme.spacing.md }}>
             {MESSAGES.analyzing}
           </AppText>
-          <AppText variant="bodySmall" tone="muted" align="center" style={{ marginTop: theme.spacing.xxs }}>
+          <AppText variant="bodySmall" tone="secondary" align="center" style={{ marginTop: theme.spacing.xxs }}>
             Isso pode levar alguns segundos.
           </AppText>
         </Surface>
@@ -122,13 +117,23 @@ export function AnalysisPanel({ analysis, onViewSubject, onOpenRecommendation, s
         <ErrorBanner title="Não foi possível concluir a análise" message={analysisErrorMessage(analysis.error)} onRetry={() => void analysis.requestAnalysis()} testID="analysis-error" />
       ) : null}
 
-      {isLoadingLatest ? <StateView kind="loading" /> : null}
-
-      {!isAnalyzing && analysis.status === 'idle' && analysis.latestStatus === 'error' ? (
-        <StateView kind={stateKindFromError(analysis.latestError)} message={messageForError(analysis.latestError)} onRetry={() => void analysis.loadLatest()} />
+      {isLoadingLatest ? (
+        <View style={{ marginTop: theme.spacing.md }}>
+          <StateView kind="loading" />
+        </View>
       ) : null}
 
-      {!isAnalyzing && analysis.status === 'idle' && analysis.latestStatus === 'ready' ? <StateView kind="empty" title="Sem recomendações" message={MESSAGES.emptyRecommendations} /> : null}
+      {!isAnalyzing && analysis.status === 'idle' && analysis.latestStatus === 'error' ? (
+        <View style={{ marginTop: theme.spacing.md }}>
+          <StateView kind={stateKindFromError(analysis.latestError)} message={messageForError(analysis.latestError)} onRetry={() => void analysis.loadLatest()} />
+        </View>
+      ) : null}
+
+      {!isAnalyzing && analysis.status === 'idle' && analysis.latestStatus === 'ready' ? (
+        <View style={{ marginTop: theme.spacing.md }}>
+          <StateView kind="empty" title="Sem recomendações" message={MESSAGES.emptyRecommendations} />
+        </View>
+      ) : null}
 
       {!isAnalyzing && analysis.analysis && analysis.status !== 'error' && analysis.status !== 'idle' ? (
         <AnalysisResult

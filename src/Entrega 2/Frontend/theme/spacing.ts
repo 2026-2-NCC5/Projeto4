@@ -1,4 +1,4 @@
-/** Escala de espaçamento (base 4). */
+/** Escala de espaçamento (base 4; `xs` é o meio-passo para ajustes finos de texto). */
 export const spacing = {
   none: 0,
   xxs: 4,
@@ -13,8 +13,8 @@ export const spacing = {
   xxxxxl: 48,
   /** Margem lateral padrão das telas. */
   screen: 20,
-  /** Espaço reservado para a barra de navegação inferior flutuante. */
-  navSpace: 124,
+  /** Altura da barra de navegação inferior (sem a área segura). */
+  navBar: 60,
 } as const;
 
 /** Área mínima de toque recomendada (WCAG 2.5.5 / HIG). */

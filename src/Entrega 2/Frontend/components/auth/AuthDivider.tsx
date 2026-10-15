@@ -15,7 +15,7 @@ export function AuthDivider({ label = 'OU' }: { label?: string }) {
   return (
     <View style={styles.row} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <View style={styles.line} />
-      <AppText variant="label" tone="muted" uppercase>
+      <AppText variant="caption" tone="muted">
         {label}
       </AppText>
       <View style={styles.line} />

@@ -7,16 +7,17 @@ import { Easing, Platform } from 'react-native';
 export const NATIVE_DRIVER = Platform.OS !== 'web';
 
 /**
- * Vocabulário de movimento. Toda microinteração usa estas durações/curvas para o app parecer um só.
- * `reduceMotion` (sistema ou preferência) troca durações por `motion.reduced`.
+ * Vocabulário de movimento. Microinterações ficam entre 150 e 250 ms, sem quicar: o movimento confirma
+ * a ação e sai do caminho. `reduceMotion` (sistema ou preferência) troca durações por `motion.reduced`.
  */
 export const motion = {
   duration: {
-    instant: 90,
-    fast: 160,
-    base: 240,
-    slow: 420,
-    slower: 640,
+    instant: 100,
+    fast: 150,
+    base: 200,
+    slow: 250,
+    /** Transições de estado do orb do assistente. */
+    slower: 400,
     reduced: 120,
   },
   easing: {
@@ -27,15 +28,13 @@ export const motion = {
     linear: Easing.linear,
   },
   spring: {
-    /** Toques e cards. */
-    press: { friction: 6, tension: 220 },
+    /** Toques e cards (amortecido: sem rebote visível). */
+    press: { friction: 9, tension: 320 },
     /** Aparição de overlays/sheets. */
-    sheet: { friction: 9, tension: 90 },
-    /** Ativação do assistente ("Hey Asa"). */
-    activation: { friction: 5, tension: 160 },
+    sheet: { friction: 11, tension: 110 },
   },
   scale: {
-    pressed: 0.97,
-    pressedStrong: 0.94,
+    pressed: 0.98,
+    pressedStrong: 0.95,
   },
 } as const;

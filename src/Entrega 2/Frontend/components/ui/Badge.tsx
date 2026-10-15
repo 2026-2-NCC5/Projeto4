@@ -1,26 +1,46 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View } from 'react-native';
 
-import { useTheme } from '../../theme';
+import { makeStyles, useTheme } from '../../theme';
 import type { PillTone } from '../../types/ui';
 
 import { AppText } from './AppText';
 
-export type BadgeTone = PillTone | 'brand' | 'accent' | 'inverse';
+export type BadgeTone = PillTone | 'brand';
+type IconName = React.ComponentProps<typeof Ionicons>['name'];
+
+/**
+ * Os utilitários de formatação descrevem o status com um glifo ("⚠", "✓", "ⓘ"...). Na tela ele vira um
+ * ícone vetorial: o status nunca depende só da cor e não aparece como emoji.
+ */
+const GLYPH_ICONS: Record<string, IconName> = {
+  '⚠': 'alert-circle-outline',
+  'ⓘ': 'information-circle-outline',
+  '✓': 'checkmark-circle-outline',
+  '◷': 'time-outline',
+  '?': 'help-circle-outline',
+  '⊘': 'remove-circle-outline',
+  '✦': 'sparkles-outline',
+};
 
 export interface BadgeProps {
   label: string;
   tone?: BadgeTone;
-  /** Ícone textual (ex.: "⚠", "✓", "ⓘ") — status nunca é comunicado só por cor. */
+  /** Glifo de status vindo dos utilitários de formatação (ex.: "⚠", "✓", "ⓘ"). */
   icon?: string;
-  size?: 'small' | 'medium';
   accessibilityLabel?: string;
   testID?: string;
 }
 
-/** Etiqueta de status/categoria. Sucessor tematizado do `Pill`. */
-export function Badge({ label, tone = 'neutral', icon, size = 'medium', accessibilityLabel, testID }: BadgeProps) {
+const useStyles = makeStyles((theme) => ({
+  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xxs, paddingHorizontal: theme.spacing.sm, paddingVertical: 2, borderRadius: theme.radius.sm },
+}));
+
+/** Etiqueta compacta de status/categoria: fundo suave do tom, ícone e texto. */
+export function Badge({ label, tone = 'neutral', icon, accessibilityLabel, testID }: BadgeProps) {
   const theme = useTheme();
+  const styles = useStyles();
   const { colors } = theme;
   const palette: Record<BadgeTone, { background: string; color: string }> = {
     neutral: { background: colors.surface.muted, color: colors.text.secondary },
@@ -29,27 +49,14 @@ export function Badge({ label, tone = 'neutral', icon, size = 'medium', accessib
     info: { background: colors.status.infoSoft, color: colors.status.infoText },
     danger: { background: colors.status.errorSoft, color: colors.status.errorText },
     brand: { background: colors.brand.primarySoft, color: colors.brand.primaryStrong },
-    accent: { background: colors.brand.accentSoft, color: colors.brand.accent },
-    inverse: { background: colors.surface.onInverse, color: colors.text.inverse },
   };
   const style = palette[tone];
-  const text = icon ? `${icon} ${label}` : label;
+  const iconName = icon ? GLYPH_ICONS[icon] : undefined;
   return (
-    <View
-      style={{
-        alignSelf: 'flex-start',
-        paddingHorizontal: size === 'small' ? theme.spacing.sm : theme.spacing.sm + 2,
-        paddingVertical: size === 'small' ? 3 : theme.spacing.xs,
-        borderRadius: theme.radius.pill,
-        backgroundColor: style.background,
-      }}
-      accessible
-      accessibilityRole="text"
-      accessibilityLabel={accessibilityLabel ?? label}
-      testID={testID}
-    >
-      <AppText variant={size === 'small' ? 'caption' : 'bodySmallStrong'} style={{ color: style.color, fontWeight: '700' }}>
-        {text}
+    <View style={[styles.badge, { backgroundColor: style.background }]} accessible accessibilityRole="text" accessibilityLabel={accessibilityLabel ?? label} testID={testID}>
+      {iconName ? <Ionicons name={iconName} size={13} color={style.color} /> : null}
+      <AppText variant="caption" style={{ color: style.color, fontWeight: '500' }}>
+        {label}
       </AppText>
     </View>
   );

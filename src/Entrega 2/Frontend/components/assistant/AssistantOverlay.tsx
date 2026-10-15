@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,9 +13,9 @@ import type { VoicePhase } from '../../types/voice';
 import { MESSAGES } from '../../utils/messages';
 import { ErrorBanner } from '../ErrorBanner';
 import { AppText } from '../ui/AppText';
+import { AppButton } from '../ui/AppButton';
 import { IconButton } from '../ui/IconButton';
-import { PressableScale } from '../ui/PressableScale';
-import { type VoiceButtonMode } from '../voice/VoiceButton';
+import { type VoiceButtonMode } from '../voice/voiceModes';
 import { VoiceResponse } from '../voice/VoiceResponse';
 import { VoiceSuggestions } from '../voice/VoiceSuggestions';
 
@@ -32,20 +31,18 @@ const useStyles = makeStyles((theme) => ({
   root: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 300, justifyContent: 'flex-end' },
   backdrop: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: theme.colors.background.backdrop },
   keyboard: { justifyContent: 'flex-end', pointerEvents: 'box-none' },
-  sheet: { width: '100%', maxWidth: 680, alignSelf: 'center', backgroundColor: theme.colors.assistant.surface, borderTopLeftRadius: theme.radius.xxxl, borderTopRightRadius: theme.radius.xxxl, paddingTop: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border.subtle, ...theme.shadows.lg },
+  sheet: { width: '100%', maxWidth: 680, alignSelf: 'center', backgroundColor: theme.colors.assistant.surface, borderTopLeftRadius: theme.radius.xl, borderTopRightRadius: theme.radius.xl, paddingTop: theme.spacing.sm, ...theme.shadows.lg },
   // Só o meio rola: cabeçalho e campo de mensagem ficam sempre visíveis, mesmo em telas baixas.
   body: { flexGrow: 0, flexShrink: 1 },
   bodyContent: { paddingBottom: theme.spacing.sm },
-  handle: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: theme.colors.border.default, marginBottom: theme.spacing.sm },
+  handle: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: theme.colors.border.strong, marginBottom: theme.spacing.xs },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm },
-  brand: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  headerActions: { flexDirection: 'row', gap: theme.spacing.xs },
+  headerActions: { flexDirection: 'row', gap: theme.spacing.xxs, marginRight: -theme.spacing.sm },
   orbArea: { alignItems: 'center', marginTop: -theme.spacing.sm },
   status: { alignItems: 'center', paddingHorizontal: theme.spacing.md },
-  micLine: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: theme.spacing.xs },
-  micDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: theme.colors.status.error },
-  sideButton: { minHeight: theme.minTouchTarget, flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.pill, borderWidth: 1, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.secondary },
-  stopPill: { alignSelf: 'center', minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.pill, borderWidth: 1, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.secondary, marginTop: theme.spacing.sm },
+  micLine: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: theme.spacing.xs, marginTop: theme.spacing.xs },
+  micDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: theme.colors.status.error },
+  centered: { alignSelf: 'center', marginTop: theme.spacing.md },
   footer: { paddingTop: theme.spacing.sm, gap: theme.spacing.sm, alignItems: 'stretch' },
   response: { marginTop: -theme.spacing.xs },
 }));
@@ -144,12 +141,9 @@ export function AssistantOverlay() {
         >
           <View style={styles.handle} />
           <View style={styles.header}>
-            <View style={styles.brand}>
-              <Ionicons name="sparkles" size={14} color={theme.colors.brand.accent} />
-              <AppText variant="label" tone="brand" uppercase>
-                Assistente ASA
-              </AppText>
-            </View>
+            <AppText variant="bodyStrong" accessibilityRole="header">
+              Assistente ASA
+            </AppText>
             <View style={styles.headerActions}>
               <IconButton icon="expand-outline" accessibilityLabel="Ver detalhes" accessibilityHint="Abre a conversa completa" onPress={assistant.expand} size={40} testID="overlay-expand" />
               <IconButton icon="close" accessibilityLabel="Fechar" onPress={assistant.closeOverlay} size={40} testID="overlay-close" />
@@ -159,7 +153,7 @@ export function AssistantOverlay() {
           <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} bounces={false}>
             <View style={styles.orbArea}>
               <AssistantOrb state={state} audioLevel={voice.audioLevel} size={orbSize} tone={tone} testID="overlay-orb" />
-              <VoiceWaveform level={voice.audioLevel} mode={waveformMode} height={responsive.isShort ? 18 : 26} color={theme.colors.assistant.primary} />
+              <VoiceWaveform level={voice.audioLevel} mode={waveformMode} height={responsive.isShort ? 16 : 22} />
             </View>
             <View style={styles.status}>
               <AppText variant="h4" align="center" accessibilityLiveRegion="polite" testID="overlay-status">
@@ -188,12 +182,7 @@ export function AssistantOverlay() {
                 <AssistantMessage key={turn.id} text={turn.response.display.message} animate={turn.id !== streamedTurnId} onComplete={() => setStreamedTurnId(turn.id)} testID="overlay-assistant-message">
                   <VoiceResponse turn={turn} onNavigate={navigate} onAsk={(text) => void voice.submitText(text)} actionsDisabled={isProcessing} compact maxItems={2} hideTechnicalDetails hideMessage={Boolean(turn.response.display.message)} />
                 </AssistantMessage>
-                <PressableScale accessibilityRole="button" accessibilityLabel="Ver detalhes da resposta" onPress={assistant.expand} style={[styles.sideButton, { alignSelf: 'center', marginTop: theme.spacing.md }]}>
-                  <Ionicons name="open-outline" size={16} color={theme.colors.brand.primaryStrong} />
-                  <AppText variant="bodySmallStrong" tone="brand">
-                    Ver detalhes
-                  </AppText>
-                </PressableScale>
+                <AppButton label="Ver detalhes" accessibilityLabel="Ver detalhes da resposta" icon="open-outline" variant="secondary" size="small" onPress={assistant.expand} style={styles.centered} />
               </View>
             ) : null}
 
@@ -202,12 +191,7 @@ export function AssistantOverlay() {
             {!turn && !isProcessing && phase !== 'answering' && state !== 'activating' ? <VoiceSuggestions suggestions={OVERLAY_SUGGESTIONS} onSelect={submit} title={null} /> : null}
 
             {phase === 'answering' ? (
-              <PressableScale accessibilityRole="button" accessibilityLabel="Parar resposta" onPress={voice.stopSpeaking} style={styles.stopPill}>
-                <Ionicons name="stop-circle-outline" size={16} color={theme.colors.text.primary} />
-                <AppText variant="bodySmallStrong">
-                  Parar
-                </AppText>
-              </PressableScale>
+              <AppButton label="Parar" accessibilityLabel="Parar resposta" icon="stop-circle-outline" variant="secondary" size="small" onPress={voice.stopSpeaking} style={styles.centered} />
             ) : null}
             {/* Telas baixas: a nota vai para o fim da rolagem e a barra fixa fica só com o campo. */}
             {responsive.isShort ? footnote : null}

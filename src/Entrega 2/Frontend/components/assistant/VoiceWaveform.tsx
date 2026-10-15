@@ -58,7 +58,7 @@ export function VoiceWaveform({ level, mode, bars = 14, height = 36, color, test
   return (
     <View style={{ height, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 }} testID={testID} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       {scales.map((scaleY, index) => (
-        <Animated.View key={index} style={{ width: 4, height, borderRadius: 2, backgroundColor: barColor, opacity: mode === 'idle' ? 0.35 : 0.9, transform: [{ scaleY }] }} />
+        <Animated.View key={index} style={{ width: 3, height, borderRadius: 1.5, backgroundColor: barColor, opacity: mode === 'idle' ? 0.3 : 0.75, transform: [{ scaleY }] }} />
       ))}
     </View>
   );

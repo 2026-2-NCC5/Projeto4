@@ -22,9 +22,10 @@ const useStyles = makeStyles((theme) => ({
   flush: { marginTop: 0 },
   titles: { flex: 1 },
   action: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 32, justifyContent: 'center' },
-  pressed: { opacity: 0.7 },
+  pressed: { opacity: 0.6 },
 }));
 
+/** Título de seção (18 px) com ação opcional à direita. */
 export function SectionHeader({ title, subtitle, action, onAction, actionAccessibilityLabel, flush = false }: SectionHeaderProps) {
   const theme = useTheme();
   const styles = useStyles();
@@ -35,7 +36,7 @@ export function SectionHeader({ title, subtitle, action, onAction, actionAccessi
           {title}
         </AppText>
         {subtitle ? (
-          <AppText variant="bodySmall" tone="muted" style={{ marginTop: 2 }}>
+          <AppText variant="bodySmall" tone="secondary" style={{ marginTop: 2 }}>
             {subtitle}
           </AppText>
         ) : null}
@@ -48,7 +49,7 @@ export function SectionHeader({ title, subtitle, action, onAction, actionAccessi
           <Ionicons name="chevron-forward" size={14} color={theme.colors.text.link} />
         </Pressable>
       ) : action ? (
-        <AppText variant="bodySmallStrong" tone="muted">
+        <AppText variant="bodySmall" tone="muted">
           {action}
         </AppText>
       ) : null}

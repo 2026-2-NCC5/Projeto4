@@ -1,15 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { makeStyles, useTheme } from '../theme';
 import type { AgentRecommendation } from '../types/api';
 import { formatConfidence, recommendationTypeIcon, recommendationTypeLabel, recommendationTypeTone } from '../utils/format';
 
-import { Card } from './Card';
 import { HumanValidationBanner } from './HumanValidationBanner';
-import { Pill } from './Pill';
+import { AppButton } from './ui/AppButton';
 import { AppText } from './ui/AppText';
+import { Badge } from './ui/Badge';
+import { Surface } from './ui/Surface';
 
 interface RecommendationCardProps {
   recommendation: AgentRecommendation;
@@ -23,26 +24,26 @@ interface RecommendationCardProps {
 const useStyles = makeStyles((theme) => ({
   card: { marginBottom: theme.spacing.md },
   top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: theme.spacing.sm },
-  details: { borderTopWidth: 1, borderTopColor: theme.colors.border.subtle, marginTop: theme.spacing.lg - 1, paddingTop: theme.spacing.lg - 1 },
-  evidenceRow: { flexDirection: 'row', gap: 9, alignItems: 'flex-start', marginBottom: theme.spacing.sm },
-  bullet: { width: 7, height: 7, borderRadius: 4, backgroundColor: theme.colors.brand.primary, marginTop: 6 },
-  nextBox: { backgroundColor: theme.colors.brand.primarySoft, borderRadius: theme.radius.md, padding: theme.spacing.md + 1, marginTop: theme.spacing.sm + 2 },
-  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm, marginTop: theme.spacing.md },
-  actionButton: { minHeight: theme.minTouchTarget, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs, paddingHorizontal: theme.spacing.md, borderRadius: theme.radius.md, borderWidth: 1, borderColor: theme.colors.border.default, backgroundColor: theme.colors.surface.primary },
-  pressed: { opacity: 0.7 },
+  why: { marginTop: theme.spacing.lg, gap: theme.spacing.xs },
+  evidenceRow: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start' },
+  bullet: { width: 4, height: 4, borderRadius: 2, backgroundColor: theme.colors.text.muted, marginTop: 8 },
+  next: { flexDirection: 'row', gap: theme.spacing.sm, alignItems: 'flex-start', marginTop: theme.spacing.lg, paddingTop: theme.spacing.md, borderTopWidth: 1, borderTopColor: theme.colors.border.subtle },
+  nextText: { flex: 1 },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm, marginTop: theme.spacing.lg },
 }));
 
+/** Recomendação explicável: o que fazer, por quê (evidências) e a próxima ação. */
 export function RecommendationCard({ recommendation, onViewSubject, onOpenDetail, hideValidationBanner = false, testID }: RecommendationCardProps) {
   const theme = useTheme();
   const styles = useStyles();
-  const typeLabel = recommendationTypeLabel(recommendation.type);
   const confidence = formatConfidence(recommendation.confidence);
   const evidence = recommendation.evidence ?? [];
+  const subjectId = recommendation.subjectId;
 
   return (
-    <Card style={styles.card} testID={testID}>
+    <Surface style={styles.card} testID={testID}>
       <View style={styles.top}>
-        <Pill label={typeLabel} icon={recommendationTypeIcon(recommendation.type)} tone={recommendationTypeTone(recommendation.type)} />
+        <Badge label={recommendationTypeLabel(recommendation.type)} icon={recommendationTypeIcon(recommendation.type)} tone={recommendationTypeTone(recommendation.type)} />
         {confidence ? (
           <AppText variant="caption" tone="muted" accessibilityLabel={confidence}>
             {confidence}
@@ -50,15 +51,12 @@ export function RecommendationCard({ recommendation, onViewSubject, onOpenDetail
         ) : null}
       </View>
 
-      <AppText variant="h4" accessibilityRole="header" style={{ marginTop: theme.spacing.md + 1 }}>
+      <AppText variant="h4" accessibilityRole="header" style={{ marginTop: theme.spacing.md }}>
         {recommendation.message}
       </AppText>
 
-      <View style={styles.details}>
-        <AppText variant="label" tone="brand" style={{ marginBottom: 2 }}>
-          POR QUE ESTOU VENDO ISSO?
-        </AppText>
-        <AppText variant="bodySmall" tone="muted" style={{ marginBottom: theme.spacing.sm + 2 }}>
+      <View style={styles.why}>
+        <AppText variant="bodySmallStrong" tone="secondary">
           Por que estou vendo isso?
         </AppText>
         {evidence.length > 0 ? (
@@ -71,45 +69,34 @@ export function RecommendationCard({ recommendation, onViewSubject, onOpenDetail
             </View>
           ))
         ) : (
-          <AppText variant="bodySmall" tone="muted" style={{ fontStyle: 'italic' }}>
+          <AppText variant="bodySmall" tone="muted">
             Sem evidências adicionais registradas.
           </AppText>
         )}
+      </View>
 
-        {recommendation.nextAction ? (
-          <View style={styles.nextBox}>
-            <AppText variant="label" tone="brand" uppercase>
+      {recommendation.nextAction ? (
+        <View style={styles.next}>
+          <Ionicons name="arrow-forward" size={16} color={theme.colors.brand.primaryStrong} style={{ marginTop: 1 }} />
+          <View style={styles.nextText}>
+            <AppText variant="caption" tone="muted">
               Próxima ação
             </AppText>
-            <AppText variant="bodySmallStrong" style={{ marginTop: 5 }}>
-              {recommendation.nextAction}
-            </AppText>
+            <AppText variant="bodySmallStrong">{recommendation.nextAction}</AppText>
           </View>
-        ) : null}
-      </View>
+        </View>
+      ) : null}
 
       {recommendation.requiresHumanValidation && !hideValidationBanner ? <HumanValidationBanner compact /> : null}
 
-      {(recommendation.subjectId && onViewSubject) || onOpenDetail ? (
+      {(subjectId && onViewSubject) || onOpenDetail ? (
         <View style={styles.actions}>
-          {recommendation.subjectId && onViewSubject ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Ver disciplina" accessibilityHint="Abre a aba Acadêmico com a disciplina em destaque" onPress={() => onViewSubject(recommendation.subjectId as string)} style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-              <Ionicons name="school-outline" size={16} color={theme.colors.brand.primaryStrong} />
-              <AppText variant="bodySmallStrong" tone="brand">
-                Ver disciplina
-              </AppText>
-            </Pressable>
+          {subjectId && onViewSubject ? (
+            <AppButton label="Ver disciplina" icon="school-outline" variant="secondary" size="small" accessibilityHint="Abre a aba Acadêmico com a disciplina em destaque" onPress={() => onViewSubject(subjectId)} />
           ) : null}
-          {onOpenDetail ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Ver detalhes da recomendação" onPress={() => onOpenDetail(recommendation.id)} style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-              <Ionicons name="open-outline" size={16} color={theme.colors.brand.primaryStrong} />
-              <AppText variant="bodySmallStrong" tone="brand">
-                Ver detalhes
-              </AppText>
-            </Pressable>
-          ) : null}
+          {onOpenDetail ? <AppButton label="Ver detalhes" accessibilityLabel="Ver detalhes da recomendação" icon="open-outline" variant="secondary" size="small" onPress={() => onOpenDetail(recommendation.id)} /> : null}
         </View>
       ) : null}
-    </Card>
+    </Surface>
   );
 }

@@ -10,7 +10,6 @@ import { AssistantMessage, UserBubble } from './ChatBubble';
 export interface AssistantTranscriptProps {
   /** Turnos anteriores (o turno atual é exibido em detalhe pelo VoiceResponse). */
   turns: AssistantTurn[];
-  onDark?: boolean;
   testID?: string;
 }
 
@@ -19,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
   meta: { marginTop: theme.spacing.xxs },
 }));
 
-/** Histórico da conversa atual em balões (mantém o contexto visível, como uma conversa natural). */
-export function AssistantTranscript({ turns, onDark = false, testID = 'assistant-transcript' }: AssistantTranscriptProps) {
+/** Histórico da conversa atual (mantém o contexto visível, como uma conversa natural). */
+export function AssistantTranscript({ turns, testID = 'assistant-transcript' }: AssistantTranscriptProps) {
   const styles = useStyles();
   if (turns.length === 0) return null;
   return (
@@ -29,10 +28,10 @@ export function AssistantTranscript({ turns, onDark = false, testID = 'assistant
         const items = turn.response.display.items.length;
         return (
           <React.Fragment key={turn.id}>
-            {turn.transcript ? <UserBubble text={turn.transcript} onDark={onDark} testID={`chat-user-${turn.id}`} /> : null}
-            <AssistantMessage text={turn.response.display.message || turn.response.display.title} animate={false} onDark={onDark} testID={`chat-assistant-${turn.id}`}>
+            {turn.transcript ? <UserBubble text={turn.transcript} testID={`chat-user-${turn.id}`} /> : null}
+            <AssistantMessage text={turn.response.display.message || turn.response.display.title} animate={false} testID={`chat-assistant-${turn.id}`}>
               {items > 0 ? (
-                <AppText variant="caption" tone={onDark ? 'inverseMuted' : 'muted'} style={styles.meta}>
+                <AppText variant="caption" tone="muted" style={styles.meta}>
                   {items} {items === 1 ? 'item' : 'itens'}
                 </AppText>
               ) : null}

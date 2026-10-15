@@ -7,12 +7,12 @@ import { formatConfidence, formatDateTime, pluralize, runStatusIcon, runStatusLa
 import { MESSAGES } from '../utils/messages';
 
 import { AbstentionCard } from './AbstentionCard';
-import { Card } from './Card';
 import { HumanValidationBanner } from './HumanValidationBanner';
-import { Pill } from './Pill';
 import { RecommendationCard } from './RecommendationCard';
 import { TechnicalDetails } from './TechnicalDetails';
 import { AppText } from './ui/AppText';
+import { Badge } from './ui/Badge';
+import { Surface } from './ui/Surface';
 
 interface AnalysisResultProps {
   analysis: AgentAnalysis;
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   summaryCard: { marginTop: theme.spacing.md },
   summaryTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm },
   noActionCard: { marginTop: theme.spacing.md },
-  list: { marginTop: theme.spacing.xl },
+  list: { marginTop: theme.spacing.xxxl },
 }));
 
 /** Renderização completa de uma análise: resumo, abstenção, validação humana e recomendações. */
@@ -42,40 +42,40 @@ export function AnalysisResult({ analysis, onViewSubject, onOpenRecommendation, 
 
   return (
     <View>
-      <Card style={styles.summaryCard}>
+      <Surface style={styles.summaryCard}>
         <View style={styles.summaryTop}>
-          <Pill label={runStatusLabel(analysis.status)} icon={runStatusIcon(analysis.status)} tone={runStatusTone(analysis.status)} />
+          <Badge label={runStatusLabel(analysis.status)} icon={runStatusIcon(analysis.status)} tone={runStatusTone(analysis.status)} />
           {confidence ? (
             <AppText variant="caption" tone="muted">
               {confidence}
             </AppText>
           ) : null}
         </View>
-        <AppText variant="label" tone="brand" uppercase style={{ marginTop: theme.spacing.lg }}>
+        <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.lg }}>
           Resumo da análise
         </AppText>
-        <AppText variant="bodyStrong" accessibilityLiveRegion="polite" style={{ marginTop: theme.spacing.xs }}>
+        <AppText variant="bodyStrong" accessibilityLiveRegion="polite" style={{ marginTop: theme.spacing.xxs }}>
           {analysis.summary}
         </AppText>
-        <AppText variant="bodySmall" tone="muted" style={{ marginTop: theme.spacing.sm + 2 }}>
+        <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.md }}>
           {formatDateTime(analysis.createdAt)} · {pluralize(recommendations.length, 'recomendação', 'recomendações')}
         </AppText>
-      </Card>
+      </Surface>
 
       {isAbstained ? <AbstentionCard reason={analysis.abstentionReason} onRequestAgain={onRequestAgain} requesting={requesting} /> : null}
 
       {!isAbstained && analysis.requiresHumanValidation ? <HumanValidationBanner nextAction={validationNextAction} /> : null}
 
       {!isAbstained && analysis.status === 'no_action' && recommendations.length === 0 ? (
-        <Card tone="mint" style={styles.noActionCard} accessibilityLiveRegion="polite">
-          <Pill label="Em dia" icon="✓" tone="success" />
+        <Surface style={styles.noActionCard} accessibilityLiveRegion="polite">
+          <Badge label="Em dia" icon="✓" tone="success" />
           <AppText variant="h4" style={{ marginTop: theme.spacing.md }}>
             {MESSAGES.noAction}
           </AppText>
-          <AppText variant="bodySmall" tone="muted" style={{ marginTop: theme.spacing.xs }}>
+          <AppText variant="bodySmall" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
             Continue acompanhando suas disciplinas. Você pode solicitar uma nova análise a qualquer momento.
           </AppText>
-        </Card>
+        </Surface>
       ) : null}
 
       {recommendations.length > 0 ? (

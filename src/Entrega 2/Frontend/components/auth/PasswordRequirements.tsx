@@ -17,7 +17,7 @@ interface PasswordRequirementsProps {
 }
 
 const useStyles = makeStyles((theme) => ({
-  wrapper: { marginTop: theme.spacing.sm, padding: theme.spacing.md, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface.glass, borderWidth: 1, borderColor: theme.colors.surface.glassBorder },
+  wrapper: { marginTop: theme.spacing.sm, padding: theme.spacing.md, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface.secondary },
   header: { flexDirection: 'row', justifyContent: 'space-between' },
   meter: { flexDirection: 'row', gap: theme.spacing.xxs, marginTop: theme.spacing.xs },
   bar: { flex: 1, height: 4, borderRadius: 2 },
@@ -49,7 +49,7 @@ export function PasswordRequirements({ password, policy, testID = 'password-requ
   const evaluation = evaluatePassword(password, policy);
   const strength = password ? passwordStrength(password, policy) : null;
   const level = strength === 'strong' ? 3 : strength === 'medium' ? 2 : strength === 'weak' ? 1 : 0;
-  const color = level === 3 ? theme.colors.status.success : level === 2 ? theme.colors.brand.primary : theme.colors.status.warning;
+  const color = level === 3 ? theme.colors.status.success : level === 2 ? theme.colors.brand.primaryStrong : theme.colors.status.warning;
   const progress = useSharedValue(level);
   const baseMs = theme.motion.duration.base;
 
@@ -77,7 +77,7 @@ export function PasswordRequirements({ password, policy, testID = 'password-requ
       {evaluation.requirements.map((requirement) => (
         <View key={requirement.key} style={styles.item} accessible accessibilityLabel={`${requirement.label}: ${requirement.met ? 'atendido' : 'pendente'}`}>
           <Ionicons name={requirement.met ? 'checkmark-circle' : 'ellipse-outline'} size={15} color={requirement.met ? theme.colors.status.success : theme.colors.text.muted} />
-          <AppText variant="caption" tone={requirement.met ? 'success' : 'muted'} style={{ fontWeight: '500' }}>
+          <AppText variant="caption" tone={requirement.met ? 'success' : 'secondary'}>
             {requirement.label}
           </AppText>
         </View>

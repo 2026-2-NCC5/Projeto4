@@ -29,27 +29,25 @@ interface VoiceStatusProps {
   /** Transcrição parcial exibida enquanto o aluno fala. */
   partialTranscript?: string;
   showPartial?: boolean;
-  /** Sobre fundo escuro. */
-  onDark?: boolean;
   /** Texto alternativo (ex.: estado derivado do assistente global). */
   overrideText?: string;
 }
 
 const useStyles = makeStyles((theme) => ({
-  wrapper: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, minHeight: 28 },
+  wrapper: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, minHeight: 20 },
 }));
 
-export function VoiceStatus({ phase, voiceAvailable = true, partialTranscript = '', showPartial = true, onDark = false, overrideText }: VoiceStatusProps) {
+export function VoiceStatus({ phase, voiceAvailable = true, partialTranscript = '', showPartial = true, overrideText }: VoiceStatusProps) {
   const theme = useTheme();
   const styles = useStyles();
   const partial = partialTranscript.trim();
   return (
     <View style={styles.wrapper}>
-      <AppText variant="h4" tone={onDark ? 'inverse' : 'primary'} align="center" accessibilityRole="text" accessibilityLiveRegion="polite" testID="voice-status">
+      <AppText variant="bodySmall" tone="secondary" align="center" accessibilityRole="text" accessibilityLiveRegion="polite" testID="voice-status">
         {overrideText ?? voiceStatusText(phase, voiceAvailable)}
       </AppText>
       {showPartial && phase === 'listening' && partial ? (
-        <AppText variant="body" tone={onDark ? 'inverseMuted' : 'muted'} align="center" style={{ fontStyle: 'italic', marginTop: theme.spacing.xs }} accessibilityLabel={`Transcrição parcial: ${partial}`} testID="voice-partial">
+        <AppText variant="body" align="center" style={{ marginTop: theme.spacing.xs }} accessibilityLabel={`Transcrição parcial: ${partial}`} testID="voice-partial">
           “{partial}”
         </AppText>
       ) : null}

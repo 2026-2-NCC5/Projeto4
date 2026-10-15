@@ -1,11 +1,11 @@
 export { AppButton, type AppButtonProps, type AppButtonVariant } from './AppButton';
 export { AppText, toneColor, type AppTextProps, type TextTone } from './AppText';
-export { AuroraBackground, type AuroraVariant } from './AuroraBackground';
 export { Avatar } from './Avatar';
 export { Badge, type BadgeTone } from './Badge';
+export { Divider } from './Divider';
 export { EmptyState } from './EmptyState';
-export { GradientSurface } from './GradientSurface';
 export { IconButton } from './IconButton';
+export { List, ListItem, type ListItemProps } from './ListItem';
 export { AcademicCardSkeleton, CardSkeleton, NotificationSkeleton, ScheduleSkeleton, Skeleton } from './LoadingSkeleton';
 export { OfflineBanner } from './OfflineBanner';
 export { PressableScale } from './PressableScale';

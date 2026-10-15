@@ -7,6 +7,8 @@ import { NATIVE_DRIVER, useTheme } from '../../theme';
 
 export interface PressableScaleProps extends Omit<PressableProps, 'style'> {
   style?: StyleProp<ViewStyle>;
+  /** Estilo aplicado enquanto o toque está ativo (ex.: fundo um tom mais escuro). */
+  pressedStyle?: StyleProp<ViewStyle>;
   /**
    * Estilo do contêiner externo, que participa do layout do pai. Use para larguras em %, flexBasis e
    * alignSelf: em `style` elas seriam relativas ao próprio botão (o `style` vai na camada animada interna).
@@ -16,14 +18,16 @@ export interface PressableScaleProps extends Omit<PressableProps, 'style'> {
   pressedScale?: number;
   /** Feedback tátil leve ao pressionar (respeita a preferência do aluno). */
   haptic?: boolean;
+  /** Reduz a opacidade quando desabilitado (padrão: true; botões em carregamento ficam nítidos). */
+  dimWhenDisabled?: boolean;
   children?: React.ReactNode;
 }
 
 /**
- * Pressable com microinteração de escala (Animated + native driver) e opacidade sutil.
- * Com "Reduzir movimento" o toque só muda a opacidade.
+ * Pressable com microinteração discreta: escala amortecida (Animated + native driver) e, opcionalmente,
+ * um estilo de "pressionado". Com "Reduzir movimento" o toque só muda a opacidade.
  */
-export function PressableScale({ style, containerStyle, pressedScale, haptic = false, onPressIn, onPressOut, onPress, disabled, children, ...rest }: PressableScaleProps) {
+export function PressableScale({ style, pressedStyle, containerStyle, pressedScale, haptic = false, dimWhenDisabled = true, onPressIn, onPressOut, onPress, disabled, children, ...rest }: PressableScaleProps) {
   const theme = useTheme();
   const reduceMotion = useReducedMotion();
   const [scale] = useState(() => new Animated.Value(1));
@@ -56,7 +60,7 @@ export function PressableScale({ style, containerStyle, pressedScale, haptic = f
       }}
     >
       {({ pressed }) => (
-        <Animated.View style={[style, { transform: [{ scale }] }, pressed && !reduceMotion ? null : pressed ? { opacity: 0.82 } : null, disabled ? { opacity: 0.5 } : null]}>
+        <Animated.View style={[style, { transform: [{ scale }] }, pressed ? pressedStyle : null, pressed && reduceMotion ? { opacity: 0.8 } : null, disabled && dimWhenDisabled ? { opacity: 0.5 } : null]}>
           {children}
         </Animated.View>
       )}
