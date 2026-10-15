@@ -1,10 +1,12 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import type { AgentFeedbackRequest } from '../contracts/mobileApi.v1.js';
 import type { AgentService } from '../services/agentService.js';
 import { ok } from './respond.js';
 
 /** Corpo vazio: a identidade do estudante vem da sessão; student_id no corpo é rejeitado. */
 export const analyzeSchema = z.object({}).strict();
+export const feedbackSchema = z.object({ helpful: z.boolean(), comment: z.string().trim().max(500).nullable().optional() }).strict();
 
 export function createAgentController(agents: AgentService) {
   return {
@@ -21,6 +23,9 @@ export function createAgentController(agents: AgentService) {
     async history(req: Request, res: Response): Promise<void> {
       const limit = Number(req.query.limit ?? 20);
       ok(req, res, await agents.listHistory(req.student!.id, Number.isFinite(limit) ? limit : 20));
+    },
+    async feedback(req: Request, res: Response): Promise<void> {
+      ok(req, res, await agents.giveFeedback(req.student!.id, String(req.params.id), req.body as AgentFeedbackRequest), 201);
     },
     async run(req: Request, res: Response): Promise<void> {
       ok(req, res, await agents.getRun(req.student!.id, String(req.params.runId)));

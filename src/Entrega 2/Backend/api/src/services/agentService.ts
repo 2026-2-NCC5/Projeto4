@@ -3,8 +3,9 @@ import type { AgentClient } from '../clients/agentClient.js';
 import type { AppConfig } from '../config/env.js';
 import type { Logger } from '../config/logger.js';
 import { AGENT_CONTRACT_VERSION, type AgentResponse } from '../contracts/agentContract.js';
-import type { AgentAnalysis, AgentHistoryItem, AgentRecommendation, AgentRecommendationDetail } from '../contracts/mobileApi.v1.js';
-import { ForbiddenError, NotFoundError } from '../errors/AppError.js';
+import type { AgentAnalysis, AgentFeedbackRequest, AgentHistoryItem, AgentRecommendation, AgentRecommendationDetail, AgentRecommendationFeedback } from '../contracts/mobileApi.v1.js';
+import { localDate } from '../lib/zonedTime.js';
+import { ConflictError, ForbiddenError, NotFoundError } from '../errors/AppError.js';
 import type { Repositories } from '../repositories/types.js';
 import type { AgentRecommendationRecord, AgentRunRecord, AgentRunWithRecommendations, RequestContext } from '../types/domain.js';
 import type { StudentService } from './studentService.js';
@@ -109,6 +110,7 @@ export class AgentService {
     private readonly students: StudentService,
     private readonly client: AgentClient,
     private readonly config: AppConfig,
+    private readonly now: () => Date = () => new Date(),
   ) {}
 
   /**
@@ -125,7 +127,8 @@ export class AgentService {
         request_id: agentRequestId,
         correlation_id: ctx.correlationId,
         student_id: studentId,
-        reference_date: new Date().toISOString().slice(0, 10),
+        // data de referência no calendário da instituição (UTC adiantava um dia após as 21h em São Paulo)
+        reference_date: localDate(this.now(), this.config.assistant.timezone),
         academic_context: academicContext,
       },
       logger,
@@ -149,12 +152,24 @@ export class AgentService {
     const found = await this.repos.agentRuns.findRecommendation(recommendationId);
     if (!found) throw new NotFoundError('Recomendação não encontrada.');
     if (found.run.studentId !== studentId) throw new ForbiddenError('Esta recomendação pertence a outro estudante.');
+    const feedback = await this.repos.agentRuns.findFeedback(recommendationId, studentId);
     return {
       ...toRecommendation(found.recommendation),
       runId: found.run.runId,
       runStatus: found.run.status,
       createdAt: found.run.createdAt.toISOString(),
+      feedback: feedback ? { helpful: feedback.helpful, comment: feedback.comment, createdAt: feedback.createdAt.toISOString() } : null,
     };
+  }
+
+  /** Avaliação do estudante sobre uma recomendação própria (uma por recomendação; insumo de melhoria, não muda nada). */
+  async giveFeedback(studentId: string, recommendationId: string, input: AgentFeedbackRequest): Promise<AgentRecommendationFeedback> {
+    const found = await this.repos.agentRuns.findRecommendation(recommendationId);
+    if (!found) throw new NotFoundError('Recomendação não encontrada.');
+    if (found.run.studentId !== studentId) throw new ForbiddenError('Esta recomendação pertence a outro estudante.');
+    if (await this.repos.agentRuns.findFeedback(recommendationId, studentId)) throw new ConflictError('Você já avaliou esta recomendação.', 'already_rated');
+    const saved = await this.repos.agentRuns.saveFeedback({ recommendationId, studentId, helpful: input.helpful, comment: input.comment?.trim() || null, now: this.now() });
+    return { helpful: saved.helpful, comment: saved.comment, createdAt: saved.createdAt.toISOString() };
   }
 
   async listHistory(studentId: string, limit = 20): Promise<AgentHistoryItem[]> {

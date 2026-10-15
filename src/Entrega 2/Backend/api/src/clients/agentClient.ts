@@ -8,9 +8,19 @@ export interface AgentClientOptions {
   fetchImpl?: typeof fetch;
 }
 
+export interface AgentServiceConfigInfo {
+  agent_version: string;
+  config_version: string;
+  contract_version: string;
+  thresholds: { minimum_confidence: number };
+  rules: string[];
+}
+
 export interface AgentClient {
   evaluate(request: AgentRequest, logger: Logger): Promise<AgentResponse>;
   health(): Promise<boolean>;
+  /** versões e limiares ativos (somente leitura); null se o serviço não responder */
+  config?(): Promise<AgentServiceConfigInfo | null>;
 }
 
 /**
@@ -99,6 +109,28 @@ export function createAgentClient(options: AgentClientOptions): AgentClient {
         return response.ok;
       } catch {
         return false;
+      } finally {
+        clearTimeout(timer);
+      }
+    },
+
+    async config() {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), Math.min(options.timeoutMs, 2000));
+      try {
+        const response = await fetchImpl(`${options.baseUrl.replace(/\/+$/, '')}/internal/v1/student-agent/config`, { signal: controller.signal });
+        if (!response.ok) return null;
+        const body = (await response.json()) as Partial<AgentServiceConfigInfo>;
+        if (typeof body.agent_version !== 'string' || typeof body.config_version !== 'string') return null;
+        return {
+          agent_version: body.agent_version,
+          config_version: body.config_version,
+          contract_version: String(body.contract_version ?? ''),
+          thresholds: { minimum_confidence: Number(body.thresholds?.minimum_confidence ?? NaN) },
+          rules: Array.isArray(body.rules) ? body.rules.map(String) : [],
+        };
+      } catch {
+        return null;
       } finally {
         clearTimeout(timer);
       }

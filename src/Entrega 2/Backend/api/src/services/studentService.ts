@@ -19,7 +19,14 @@ export function round(value: number, digits = 2): number {
 }
 
 export class StudentService {
-  constructor(private readonly repos: Repositories) {}
+  constructor(
+    private readonly repos: Repositories,
+    /**
+     * Fonte acadêmica disponível? (plataforma). Sem fonte (modo demonstração desligado e nenhuma integração
+     * institucional), lança 503 `academic_source_unavailable` em vez de mostrar dados fictícios.
+     */
+    private readonly academicGuard: () => void = () => undefined,
+  ) {}
 
   /** Deriva o estudante exclusivamente da sessão autenticada (TASK-004 §33-34). */
   async resolveStudent(auth: AuthContext): Promise<StudentRecord> {
@@ -47,6 +54,7 @@ export class StudentService {
   }
 
   async listSubjects(studentId: string): Promise<StudentSubject[]> {
+    this.academicGuard();
     const [enrollments, assessments, attendance, pending, latestRun] = await Promise.all([
       this.repos.students.listEnrollments(studentId),
       this.repos.students.listAssessments(studentId),
@@ -74,10 +82,12 @@ export class StudentService {
   }
 
   async listAssessments(studentId: string): Promise<StudentAssessment[]> {
+    this.academicGuard();
     return this.repos.students.listAssessments(studentId);
   }
 
   async listAttendance(studentId: string): Promise<StudentAttendance[]> {
+    this.academicGuard();
     const rows = await this.repos.students.listAttendance(studentId);
     return rows.map((row) => ({
       ...row,
@@ -86,10 +96,12 @@ export class StudentService {
   }
 
   async listPendingItems(studentId: string): Promise<StudentPendingItem[]> {
+    this.academicGuard();
     return this.repos.students.listPendingItems(studentId);
   }
 
   async getSummary(studentId: string): Promise<StudentSummary> {
+    this.academicGuard();
     const [enrollments, assessments, attendance, pending, latestRun] = await Promise.all([
       this.repos.students.listEnrollments(studentId),
       this.repos.students.listAssessments(studentId),
@@ -125,6 +137,7 @@ export class StudentService {
 
   /** Monta o contexto acadêmico enviado ao Agent Service (somente dados necessários). */
   async buildAcademicContext(studentId: string): Promise<AgentAcademicContext> {
+    this.academicGuard();
     const [enrollments, assessments, attendance, pending] = await Promise.all([
       this.repos.students.listEnrollments(studentId),
       this.repos.students.listAssessments(studentId),
