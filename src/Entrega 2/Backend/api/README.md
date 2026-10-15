@@ -1,5 +1,10 @@
 # API principal — ASA Conecta (Node.js + TypeScript)
 
+> Portal web, sessões por cookie, agendamentos, base de conhecimento, operação do ASA e administração (contrato
+> v1.5–v1.8): ver `documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/plataforma/API_CONTRACTS.md`
+> e o runbook `plataforma/DEPLOYMENT_RUNBOOK.md` (variáveis novas: modo demonstração, `WEB_ORIGINS`, `AI_PROVIDER`,
+> `ASA_QUEUE_SOURCE_AUTHORIZED`, `AUTOMATION_SCAN_INTERVAL_SECONDS`).
+
 Responsável por autenticação, autorização, sessão, acesso ao PostgreSQL, integração com o
 Agent Service e composição das respostas para o mobile. Referência de rotas em
 [`documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/api/README.md`](<../../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/api/README.md>).
@@ -52,6 +57,24 @@ responde com dados reais ou com o Agente para o Estudante. Para trocar o interpr
 injete um `IntentInterpreter` em `createApp({ intentInterpreter })`; a validação continua obrigatória.
 Referência: [`documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/voice-assistant.md`](<../../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/voice-assistant.md>).
 
+## Atendimento ASA (chamados)
+
+`/api/support/*` (estudante) e `/api/support/staff/*` (equipe): abertura com protocolo e idempotência, histórico
+somente-inserção, mensagens, anexos em duas fases (envio pendente → vínculo) com download por link assinado,
+prazo em dias úteis com pausa enquanto aguarda o estudante, avisos (e push quando há aparelhos registrados),
+avaliação, reabertura e cancelamento. Migration `004_support_tickets.sql`. Rotas: [`api/README.md`](<../../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/api/README.md#atendimento-asa-chamados>);
+decisões: [ADR-006](<../../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-006-support-tickets.md>).
+
+## Fila presencial do ASA
+
+Um monitor (`src/queue/`) lê a fila pública <https://presencial.fecap.br/> pelo endpoint JSON do próprio portal
+(fallback HTML), a cada `ASA_QUEUE_POLL_INTERVAL_SECONDS`, para todos os alunos de uma vez; detecta quando a senha
+acompanhada se aproxima ou é chamada e envia push pelo Expo (`src/notifications/`), sem duplicar alertas.
+Rotas `/api/queue/*`, `/api/notifications/push-token`, `GET /health/queue`; migration `005_queue_tracking.sql`.
+Desenvolvimento sem a fonte real: `ASA_QUEUE_PROVIDER=mock PUSH_PROVIDER=log npm run dev`. Arquitetura, variáveis
+e limitações: [`architecture/queue-presencial.md`](<../../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/queue-presencial.md>);
+decisões: [ADR-007](<../../../../documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-007-queue-presencial.md>).
+
 ## Estrutura
 
 ```text
@@ -63,6 +86,10 @@ src/
 ├── auth/                      passwordPolicy, rateLimiter (em memória), secrets (tokens, HMAC, códigos)
 ├── mail/                      mailer (SMTP/nodemailer ou desabilitado) e templates
 ├── services/                  authService, passwordResetService, biometricService, studentService, agentService, assistantService
+├── support/                   Atendimento ASA: catalog, sla, statuses, attachments, mappers, supportService (estudante), supportStaffService (equipe)
+├── queue/                     fila presencial: providers (portal FECAP, HTML, mock), parsers, monitor, tracker,
+│                              alertas, tempo real (SSE), service, rotas e repositórios (memória/PostgreSQL)
+├── notifications/             push (Expo): NotificationService, provedores, aparelhos e registro de entregas
 ├── assistant/                 intents (allow-list), text, subjects, interpretation (validação),
 │                              ruleBasedInterpreter (pt-BR), phrasing, responders
 ├── clients/agentClient.ts     HTTP → Agent Service com timeout e classificação de erros

@@ -3,6 +3,7 @@ import { withTransaction } from '../db/pool.js';
 import { ConflictError } from '../errors/AppError.js';
 import type {
   AgentRecommendationRecord,
+  AgentFeedbackRecord,
   AgentRunRecord,
   AgentRunWithRecommendations,
   AssessmentRecord,
@@ -14,12 +15,16 @@ import type {
   PendingItemRecord,
   ProgramRecord,
   RefreshSessionRecord,
+  SessionFamilyRecord,
   StudentRecord,
   SubjectRecord,
   UserRecord,
 } from '../types/domain.js';
+import type { SessionChannel } from '../contracts/mobileApi.v1.js';
+import type { UserAdminRecord, UserListQuery } from '../platform/types.js';
 import type {
   AccountRepository,
+  NewSessionInput,
   AgentRunRepository,
   AssistantInteractionRepository,
   DeviceCredentialRepository,
@@ -30,6 +35,14 @@ import type {
   StudentRepository,
   UserRepository,
 } from './types.js';
+// ---- support (Atendimento)
+import { createPgSupportRepository } from './pgSupportRepository.js';
+// ---- platform (portal web, auditoria, avisos)
+import { createPgPlatformRepositories } from './pgPlatformRepositories.js';
+import { PgAnalyticsRepository } from '../operations/analyticsRepository.js';
+import { PgAppointmentRepository } from '../appointments/pgRepository.js';
+import { PgKnowledgeRepository } from '../knowledge/pgRepository.js';
+import { PgAdminRepository } from '../admin/repository.js';
 
 interface UserRow {
   id: string;
@@ -38,7 +51,12 @@ interface UserRow {
   full_name: string;
   role: UserRecord['role'];
   is_active: boolean;
+  is_demo: boolean;
+  last_login_at: Date | null;
+  created_at: Date;
 }
+
+const USER_COLUMNS = 'id, email, password_hash, full_name, role, is_active, is_demo, last_login_at, created_at';
 
 const mapUser = (row: UserRow): UserRecord => ({
   id: row.id,
@@ -47,25 +65,144 @@ const mapUser = (row: UserRow): UserRecord => ({
   fullName: row.full_name,
   role: row.role,
   isActive: row.is_active,
+  isDemo: row.is_demo,
+  lastLoginAt: row.last_login_at,
+  createdAt: row.created_at,
 });
+
+interface UserAdminRow {
+  id: string;
+  email: string;
+  full_name: string;
+  role: UserRecord['role'];
+  is_active: boolean;
+  is_demo: boolean;
+  created_at: Date;
+  last_login_at: Date | null;
+  invited_at: Date | null;
+  student_id: string | null;
+  registration_number: string | null;
+  active_sessions: number;
+  total?: number;
+}
+
+const mapUserAdmin = (row: UserAdminRow): UserAdminRecord => ({
+  id: row.id,
+  email: row.email,
+  fullName: row.full_name,
+  role: row.role,
+  isActive: row.is_active,
+  isDemo: row.is_demo,
+  createdAt: row.created_at,
+  lastLoginAt: row.last_login_at,
+  invitedAt: row.invited_at,
+  studentId: row.student_id,
+  registrationNumber: row.registration_number,
+  activeSessions: row.active_sessions,
+});
+
+/** Remove acentos em SQL para a busca por nome/e-mail (sem depender da extensão unaccent). */
+const FOLD = (column: string) => `translate(lower(${column}), 'áàâãäéèêëíìîïóòôõöúùûüçñ', 'aaaaaeeeeiiiiooooouuuucn')`;
+
+const USER_ADMIN_SELECT = `
+  select u.id, u.email, u.full_name, u.role, u.is_active, u.is_demo, u.created_at, u.last_login_at, u.invited_at,
+         s.id as student_id, s.registration_number,
+         (select count(distinct rs.family_id)::int from refresh_sessions rs
+           where rs.user_id = u.id and rs.revoked_at is null and rs.expires_at > now()) as active_sessions`;
 
 class PgUserRepository implements UserRepository {
   constructor(private readonly pool: DbPool) {}
 
   async findByEmail(email: string): Promise<UserRecord | null> {
-    const { rows } = await this.pool.query<UserRow>(
-      'select id, email, password_hash, full_name, role, is_active from users where lower(email) = lower($1)',
-      [email],
-    );
+    const { rows } = await this.pool.query<UserRow>(`select ${USER_COLUMNS} from users where lower(email) = lower($1)`, [email]);
     return rows[0] ? mapUser(rows[0]) : null;
   }
 
   async findById(id: string): Promise<UserRecord | null> {
-    const { rows } = await this.pool.query<UserRow>(
-      'select id, email, password_hash, full_name, role, is_active from users where id = $1',
-      [id],
-    );
+    const { rows } = await this.pool.query<UserRow>(`select ${USER_COLUMNS} from users where id = $1`, [id]);
     return rows[0] ? mapUser(rows[0]) : null;
+  }
+
+  async touchLogin(userId: string, at: Date): Promise<void> {
+    await this.pool.query('update users set last_login_at = $2 where id = $1', [userId, at]);
+  }
+
+  async list(query: UserListQuery): Promise<{ items: UserAdminRecord[]; total: number }> {
+    const where: string[] = [];
+    const params: unknown[] = [];
+    if (query.search) {
+      params.push(`%${query.search}%`);
+      where.push(`(${FOLD('u.full_name')} like $${params.length} or lower(u.email) like $${params.length})`);
+    }
+    if (query.role) {
+      params.push(query.role);
+      where.push(`u.role = $${params.length}`);
+    }
+    if (query.status) where.push(query.status === 'active' ? 'u.is_active' : 'not u.is_active');
+    if (!query.includeDemo) where.push('not u.is_demo');
+    const clause = where.length > 0 ? `where ${where.join(' and ')}` : '';
+    params.push(query.limit, query.offset);
+    const { rows } = await this.pool.query<UserAdminRow>(
+      `${USER_ADMIN_SELECT}, count(*) over ()::int as total
+         from users u left join students s on s.user_id = u.id
+         ${clause}
+         order by u.created_at desc, u.id
+         limit $${params.length - 1} offset $${params.length}`,
+      params,
+    );
+    return { items: rows.map(mapUserAdmin), total: rows[0]?.total ?? (query.offset > 0 ? await this.count(clause, params.slice(0, -2)) : 0) };
+  }
+
+  private async count(clause: string, params: unknown[]): Promise<number> {
+    const { rows } = await this.pool.query<{ total: number }>(`select count(*)::int as total from users u ${clause}`, params);
+    return rows[0]?.total ?? 0;
+  }
+
+  async findAdminById(id: string): Promise<UserAdminRecord | null> {
+    const { rows } = await this.pool.query<UserAdminRow>(`${USER_ADMIN_SELECT} from users u left join students s on s.user_id = u.id where u.id = $1`, [id]);
+    return rows[0] ? mapUserAdmin(rows[0]) : null;
+  }
+
+  async createInvited(input: Parameters<UserRepository['createInvited']>[0]): Promise<UserRecord> {
+    try {
+      const { rows } = await this.pool.query<UserRow>(
+        `insert into users (email, password_hash, full_name, role, is_demo, invited_by, invited_at) values ($1, $2, $3, $4, $5, $6, $7)
+         returning ${USER_COLUMNS}`,
+        [input.email, input.passwordHash, input.fullName, input.role, input.isDemo, input.invitedBy, input.now],
+      );
+      return mapUser(rows[0]!);
+    } catch (error) {
+      if ((error as { code?: string }).code === '23505') throw new ConflictError('Já existe uma conta com este e-mail.', 'account_exists');
+      throw error;
+    }
+  }
+
+  async update(id: string, patch: { role?: UserRecord['role']; isActive?: boolean }, options: { keepActiveAdmin?: boolean } = {}): Promise<UserRecord | null> {
+    return withTransaction(this.pool, async (client) => {
+      if (options.keepActiveAdmin) {
+        // trava as administrações ativas antes de contar: uma segunda transação concorrente espera e recalcula
+        const { rows: admins } = await client.query<{ id: string }>("select id from users where role = 'technical_admin' and is_active order by id for update");
+        if (admins.filter((row) => row.id !== id).length === 0) throw new ConflictError('É preciso manter pelo menos uma conta de administração ativa.', 'last_admin');
+      }
+      const { rows } = await client.query<UserRow>(
+        `update users set role = coalesce($2, role), is_active = coalesce($3, is_active) where id = $1 returning ${USER_COLUMNS}`,
+        [id, patch.role ?? null, patch.isActive ?? null],
+      );
+      return rows[0] ? mapUser(rows[0]) : null;
+    });
+  }
+
+  async countActiveByRole(role: UserRecord['role']): Promise<number> {
+    const { rows } = await this.pool.query<{ total: number }>('select count(*)::int as total from users where role = $1 and is_active', [role]);
+    return rows[0]?.total ?? 0;
+  }
+
+  async listActiveIdsByRole(role: UserRecord['role'], includeDemo: boolean): Promise<string[]> {
+    const { rows } = await this.pool.query<{ id: string }>(
+      `select id from users where role = $1 and is_active ${includeDemo ? '' : 'and not is_demo'} order by created_at`,
+      [role],
+    );
+    return rows.map((row) => row.id);
   }
 }
 
@@ -76,9 +213,14 @@ interface SessionRow {
   expires_at: Date;
   revoked_at: Date | null;
   remember_me: boolean;
+  channel: SessionChannel;
+  family_id: string;
+  device_label: string | null;
+  last_used_at: Date | null;
+  created_at: Date;
 }
 
-const SESSION_COLUMNS = 'id, user_id, token_hash, expires_at, revoked_at, remember_me';
+const SESSION_COLUMNS = 'id, user_id, token_hash, expires_at, revoked_at, remember_me, channel, family_id, device_label, last_used_at, created_at';
 
 const mapSession = (row: SessionRow): RefreshSessionRecord => ({
   id: row.id,
@@ -87,16 +229,34 @@ const mapSession = (row: SessionRow): RefreshSessionRecord => ({
   expiresAt: row.expires_at,
   revokedAt: row.revoked_at,
   rememberMe: row.remember_me,
+  channel: row.channel,
+  familyId: row.family_id,
+  deviceLabel: row.device_label,
+  lastUsedAt: row.last_used_at,
+  createdAt: row.created_at,
 });
+
+interface SessionFamilyRow {
+  family_id: string;
+  user_id: string;
+  channel: SessionChannel;
+  device_label: string | null;
+  remember_me: boolean;
+  created_at: Date;
+  last_used_at: Date | null;
+  expires_at: Date;
+  active_session_id: string;
+}
 
 class PgSessionRepository implements SessionRepository {
   constructor(private readonly pool: DbPool) {}
 
-  async create(input: { userId: string; tokenHash: string; expiresAt: Date; rememberMe: boolean }): Promise<RefreshSessionRecord> {
+  async create(input: NewSessionInput): Promise<RefreshSessionRecord> {
     const { rows } = await this.pool.query<SessionRow>(
-      `insert into refresh_sessions (user_id, token_hash, expires_at, remember_me) values ($1, $2, $3, $4)
+      `insert into refresh_sessions (user_id, token_hash, expires_at, remember_me, channel, family_id, device_label, last_used_at)
+       values ($1, $2, $3, $4, $5, coalesce($6::uuid, gen_random_uuid()), $7, now())
        returning ${SESSION_COLUMNS}`,
-      [input.userId, input.tokenHash, input.expiresAt, input.rememberMe],
+      [input.userId, input.tokenHash, input.expiresAt, input.rememberMe, input.channel ?? 'mobile', input.familyId ?? null, input.deviceLabel ?? null],
     );
     return mapSession(rows[0]!);
   }
@@ -117,6 +277,54 @@ class PgSessionRepository implements SessionRepository {
 
   async revokeAllForUser(userId: string): Promise<void> {
     await this.pool.query('update refresh_sessions set revoked_at = now() where user_id = $1 and revoked_at is null', [userId]);
+  }
+
+  async listFamilies(userId: string, now: Date): Promise<SessionFamilyRecord[]> {
+    // linha ativa de cada família + início da família (primeira linha) para "conectado desde"
+    const { rows } = await this.pool.query<SessionFamilyRow>(
+      `select active.family_id, active.user_id, active.channel, active.device_label, active.remember_me,
+              first.created_at, active.last_used_at, active.expires_at, active.id as active_session_id
+         from refresh_sessions active
+         join lateral (select min(created_at) as created_at from refresh_sessions f where f.family_id = active.family_id) first on true
+        where active.user_id = $1 and active.revoked_at is null and active.expires_at > $2
+        order by coalesce(active.last_used_at, active.created_at) desc`,
+      [userId, now],
+    );
+    return rows.map((row) => ({
+      familyId: row.family_id,
+      userId: row.user_id,
+      channel: row.channel,
+      deviceLabel: row.device_label,
+      rememberMe: row.remember_me,
+      createdAt: row.created_at,
+      lastUsedAt: row.last_used_at,
+      expiresAt: row.expires_at,
+      activeSessionId: row.active_session_id,
+    }));
+  }
+
+  async revokeFamily(userId: string, familyId: string): Promise<number> {
+    const result = await this.pool.query('update refresh_sessions set revoked_at = now() where user_id = $1 and family_id = $2 and revoked_at is null', [userId, familyId]);
+    return result.rowCount ?? 0;
+  }
+
+  async revokeAllExcept(userId: string, keepFamilyId: string | null): Promise<number> {
+    const { rows } = await this.pool.query<{ families: number }>(
+      `with revoked as (
+         update refresh_sessions set revoked_at = now()
+          where user_id = $1 and revoked_at is null and ($2::uuid is null or family_id <> $2::uuid)
+          returning family_id)
+       select count(distinct family_id)::int as families from revoked`,
+      [userId, keepFamilyId],
+    );
+    return rows[0]?.families ?? 0;
+  }
+
+  async revokeAllForDemoUsers(): Promise<number> {
+    const result = await this.pool.query(
+      'update refresh_sessions set revoked_at = now() where revoked_at is null and user_id in (select id from users where is_demo)',
+    );
+    return result.rowCount ?? 0;
   }
 }
 
@@ -410,6 +618,23 @@ class PgAgentRunRepository implements AgentRunRepository {
     return { run, recommendation };
   }
 
+  async findFeedback(recommendationId: string, studentId: string): Promise<AgentFeedbackRecord | null> {
+    const { rows } = await this.pool.query<{ feedback_type: string; comment: string | null; created_at: Date }>(
+      'select feedback_type, comment, created_at from agent_feedback where recommendation_id = $1 and student_id = $2 order by created_at limit 1',
+      [recommendationId, studentId],
+    );
+    const row = rows[0];
+    return row ? { recommendationId, studentId, helpful: row.feedback_type === 'helpful', comment: row.comment, createdAt: row.created_at } : null;
+  }
+
+  async saveFeedback(input: { recommendationId: string; studentId: string; helpful: boolean; comment: string | null; now: Date }): Promise<AgentFeedbackRecord> {
+    await this.pool.query(
+      'insert into agent_feedback (recommendation_id, student_id, feedback_type, comment, created_at) values ($1, $2, $3, $4, $5)',
+      [input.recommendationId, input.studentId, input.helpful ? 'helpful' : 'not_helpful', input.comment, input.now],
+    );
+    return { recommendationId: input.recommendationId, studentId: input.studentId, helpful: input.helpful, comment: input.comment, createdAt: input.now };
+  }
+
   async listByStudent(studentId: string, limit: number): Promise<Array<AgentRunRecord & { recommendationsCount: number }>> {
     const { rows } = await this.pool.query<RunRow & { recommendations_count: number }>(
       `select r.${RUN_COLUMNS.split(', ').join(', r.')},
@@ -459,8 +684,8 @@ class PgAccountRepository implements AccountRepository {
     try {
       return await withTransaction(this.pool, async (client) => {
         const user = await client.query<UserRow>(
-          `insert into users (email, password_hash, full_name, role) values ($1, $2, $3, 'student')
-           returning id, email, password_hash, full_name, role, is_active`,
+          `insert into users (email, password_hash, full_name, role, is_demo) values ($1, $2, $3, 'student', lower($1) like '%@demo.asa')
+           returning ${USER_COLUMNS}`,
           [input.user.email, input.user.passwordHash, input.user.fullName],
         );
         const created = mapUser(user.rows[0]!);
@@ -652,6 +877,14 @@ export function createPgRepositories(pool: DbPool): Repositories {
     accounts: new PgAccountRepository(pool),
     passwordResets: new PgPasswordResetRepository(pool),
     deviceCredentials: new PgDeviceCredentialRepository(pool),
+    // ---- support (Atendimento)
+    support: createPgSupportRepository(pool),
+    // ---- platform (portal web, auditoria, avisos)
+    ...createPgPlatformRepositories(pool),
+    analytics: new PgAnalyticsRepository(pool),
+    appointments: new PgAppointmentRepository(pool),
+    knowledge: new PgKnowledgeRepository(pool),
+    admin: new PgAdminRepository(pool),
     ping: async () => {
       try {
         await pool.query('select 1');
