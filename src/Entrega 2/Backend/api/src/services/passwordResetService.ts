@@ -7,7 +7,7 @@ import type { Logger } from '../config/logger.js';
 import type { ForgotPasswordResponse, ResetPasswordResponse, VerifyResetCodeResponse } from '../contracts/mobileApi.v1.js';
 import { DependencyError, ValidationError } from '../errors/AppError.js';
 import type { Mailer } from '../mail/mailer.js';
-import { passwordResetCodeEmail } from '../mail/templates.js';
+import { invitationEmail, passwordResetCodeEmail } from '../mail/templates.js';
 import type { Repositories } from '../repositories/types.js';
 import type { UserRecord } from '../types/domain.js';
 import { normalizeEmail } from './authService.js';
@@ -65,6 +65,28 @@ export class PasswordResetService {
       logger.info({ status: 'reset_code_skipped' }, 'password reset requested');
     }
     return this.genericResponse();
+  }
+
+  /**
+   * Convite de conta da equipe/administração: gera um código de definição de senha (mesmo fluxo e mesmas
+   * proteções da recuperação) e envia o e-mail de convite. Sem e-mail configurado, informa que não enviou.
+   */
+  async sendInvitation(user: UserRecord, input: { roleLabel: string; invitedBy: string }, logger: Logger): Promise<{ sent: boolean; message: string }> {
+    if (!this.mailer.available) {
+      return { sent: false, message: 'E-mail não configurado neste ambiente: a pessoa pode definir a senha em "Esqueci minha senha" quando o envio estiver ativo.' };
+    }
+    const { resetCode } = this.config.auth;
+    const now = this.now();
+    const code = numericCode(resetCode.length);
+    await this.repos.passwordResets.create({ userId: user.id, codeHash: this.codeHash(user.id, code), codeExpiresAt: new Date(now.getTime() + resetCode.ttlMinutes * 60_000), now });
+    try {
+      await this.mailer.send(invitationEmail({ to: user.email, fullName: user.fullName, roleLabel: input.roleLabel, invitedBy: input.invitedBy, code, ttlMinutes: resetCode.ttlMinutes }));
+      logger.info({ user_id: user.id, status: 'invitation_sent' }, 'invitation email sent');
+      return { sent: true, message: `Convite enviado para ${user.email}.` };
+    } catch (error) {
+      logger.error({ user_id: user.id, status: 'mail_failed', error_type: error instanceof Error ? error.name : 'unknown' }, 'invitation email failed');
+      return { sent: false, message: 'Não foi possível enviar o e-mail agora. Tente reenviar o convite.' };
+    }
   }
 
   private async issueCode(user: UserRecord, logger: Logger): Promise<void> {

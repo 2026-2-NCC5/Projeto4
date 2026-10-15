@@ -22,7 +22,8 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
     "db:reset": "tsx src/db/reset.ts",
-    "agent:stub": "tsx scripts/agentStub.ts"
+    "agent:stub": "tsx scripts/agentStub.ts",
+    "docs:permissions": "tsx scripts/permission-matrix.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

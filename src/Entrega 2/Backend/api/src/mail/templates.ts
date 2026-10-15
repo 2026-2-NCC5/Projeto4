@@ -32,3 +32,34 @@ export function passwordResetCodeEmail(input: { to: string; fullName: string; co
 </td></tr></table></body></html>`;
   return { to: input.to, subject: `${input.code} é seu código do ASA Conecta`, text, html };
 }
+
+/** Convite da administração: a pessoa define a própria senha com o código (fluxo "Esqueci minha senha"). */
+export function invitationEmail(input: { to: string; fullName: string; roleLabel: string; invitedBy: string; code: string; ttlMinutes: number }): MailMessage {
+  const firstName = input.fullName.trim().split(/\s+/)[0] || 'olá';
+  const text = [
+    `Olá, ${firstName}.`,
+    '',
+    `${input.invitedBy} criou seu acesso ao ASA Conecta com o perfil "${input.roleLabel}".`,
+    `Para definir sua senha, abra o portal em "Esqueci minha senha", informe este e-mail e use o código: ${input.code}`,
+    '',
+    `O código expira em ${input.ttlMinutes} minutos. Depois disso, peça um novo código na mesma tela.`,
+    'Se você não esperava este convite, ignore este e-mail e avise a administração.',
+    '',
+    'ASA Conecta · Área do Sucesso Alvarista · FECAP',
+  ].join('\n');
+  const html = `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#F6F8F7;font-family:Arial,Helvetica,sans-serif;color:#17201D">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
+<table role="presentation" width="100%" style="max-width:480px;background:#FFFFFF;border-radius:16px;border:1px solid #DDE5E2" cellpadding="0" cellspacing="0">
+<tr><td style="background:#023327;border-radius:16px 16px 0 0;padding:20px 28px;color:#FFFFFF;font-size:18px;font-weight:bold">ASA Conecta</td></tr>
+<tr><td style="padding:28px">
+<p style="margin:0 0 12px">Olá, ${escapeHtml(firstName)}.</p>
+<p style="margin:0 0 12px">${escapeHtml(input.invitedBy)} criou seu acesso ao ASA Conecta com o perfil <strong>${escapeHtml(input.roleLabel)}</strong>.</p>
+<p style="margin:0 0 16px">No portal, abra <strong>Esqueci minha senha</strong>, informe este e-mail e use o código:</p>
+<p style="margin:0 0 16px;font-size:32px;letter-spacing:8px;font-weight:bold;color:#023327">${escapeHtml(input.code)}</p>
+<p style="margin:0 0 12px;color:#66736F">O código expira em ${input.ttlMinutes} minutos. Depois disso, peça um novo código na mesma tela.</p>
+<p style="margin:0;color:#66736F">Se você não esperava este convite, ignore este e-mail e avise a administração.</p>
+</td></tr></table>
+<p style="color:#66736F;font-size:12px;margin-top:16px">Área do Sucesso Alvarista · FECAP</p>
+</td></tr></table></body></html>`;
+  return { to: input.to, subject: 'Seu acesso ao ASA Conecta', text, html };
+}
