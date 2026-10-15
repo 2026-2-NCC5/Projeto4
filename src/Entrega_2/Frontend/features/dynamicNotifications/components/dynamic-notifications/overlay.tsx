@@ -12,7 +12,11 @@ const Overlay: React.FC<INotificationOverlay> &
   }: INotificationOverlay):
     | (React.ReactNode & React.ReactElement & React.JSX.Element)
     | null => {
-    const { layout } = useDynamicNotifications();
+    const { layout, notification } = useDynamicNotifications();
+
+    if (!notification) {
+      return null;
+    }
 
     return (
       <View
