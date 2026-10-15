@@ -6,12 +6,7 @@
     "orientation": "portrait",
     "scheme": "asaconecta",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "backgroundColor": "#F4F7F9",
-    "splash": {
-      "backgroundColor": "#023327",
-      "resizeMode": "contain"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.asaconecta.app"
@@ -56,7 +51,15 @@
           "color": "#0D6D53"
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-image",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#023327",
+          "resizeMode": "contain"
+        }
+      ]
     ]
   }
 }

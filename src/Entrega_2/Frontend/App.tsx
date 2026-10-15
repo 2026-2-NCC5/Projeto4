@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AsaLogo from './assets/branding/Asa_Logo.svg';
@@ -28,6 +29,8 @@ import { SupportPushRouter } from './screens/support/SupportPushRouter';
 import { SupportRouter } from './screens/support/SupportRouter';
 // ---- queue (Fila presencial do ASA)
 import { QueueAlertLayer, QueueProvider, QueueScreen } from './features/queue';
+import { DynamicNotifications } from './features/dynamicNotifications';
+import { NativeNotificationBridge } from './features/dynamicNotifications/NativeNotificationBridge';
 // ---- appointments (Agendamentos com o ASA) · notifications (Central de avisos)
 import { isAppointmentRoute } from './navigation';
 import { AppointmentsRouter } from './screens/appointments/AppointmentsRouter';
@@ -39,15 +42,19 @@ import { MESSAGES } from './utils/messages';
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <PreferencesProvider>
-        <ThemeProvider>
-          <SessionProvider>
-            <AppShell />
-          </SessionProvider>
-        </ThemeProvider>
-      </PreferencesProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={styles.app}>
+      <SafeAreaProvider>
+        <DynamicNotifications duration={4200}>
+          <PreferencesProvider>
+            <ThemeProvider>
+              <SessionProvider>
+                <AppShell />
+              </SessionProvider>
+            </ThemeProvider>
+          </PreferencesProvider>
+        </DynamicNotifications>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -178,6 +185,7 @@ function AppContent() {
       <AssistantOverlay />
       {/* ---- queue (Fila presencial do ASA): aviso de proximidade e "É a sua vez!" sobre qualquer tela */}
       <QueueAlertLayer />
+      <NativeNotificationBridge />
       {/* ---- support (Atendimento): toque em notificação de chamado abre o detalhe */}
       <SupportPushRouter />
       {/* ---- notifications (Central de avisos): toque em push de agendamento/aviso abre o registro */}
