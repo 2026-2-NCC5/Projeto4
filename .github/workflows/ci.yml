@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/Entrega 2/Backend
+        working-directory: src/Entrega_2/Backend
     steps:
       - uses: actions/checkout@v4
       - run: ./scripts/check-contracts-sync.sh
@@ -25,14 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/Entrega 2/Backend/agent-service
+        working-directory: src/Entrega_2/Backend/agent-service
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: src/Entrega 2/Backend/agent-service/requirements-dev.txt
+          cache-dependency-path: src/Entrega_2/Backend/agent-service/requirements-dev.txt
       - run: pip install -r requirements-dev.txt
       - run: ruff check .
       - run: ruff format --check .
@@ -64,14 +64,14 @@ jobs:
       AGENT_SERVICE_PYTHON: python3
     defaults:
       run:
-        working-directory: src/Entrega 2/Backend/api
+        working-directory: src/Entrega_2/Backend/api
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: src/Entrega 2/Backend/api/package-lock.json
+          cache-dependency-path: src/Entrega_2/Backend/api/package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -92,14 +92,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/Entrega 2/Frontend
+        working-directory: src/Entrega_2/Frontend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: src/Entrega 2/Frontend/package-lock.json
+          cache-dependency-path: src/Entrega_2/Frontend/package-lock.json
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
@@ -110,14 +110,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/Entrega 2/Web
+        working-directory: src/Entrega_2/Web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: src/Entrega 2/Web/package-lock.json
+          cache-dependency-path: src/Entrega_2/Web/package-lock.json
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
@@ -156,17 +156,17 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: |
-            src/Entrega 2/Backend/api/package-lock.json
-            src/Entrega 2/Web/package-lock.json
+            src/Entrega_2/Backend/api/package-lock.json
+            src/Entrega_2/Web/package-lock.json
       - name: API — build, migrations e seeds fictícios
-        working-directory: src/Entrega 2/Backend/api
+        working-directory: src/Entrega_2/Backend/api
         run: |
           npm ci
           npm run build
           npm run db:migrate
           npm run db:seed
       - name: API — sobe duas instâncias (demonstração ligada :3000 e desligada :3001)
-        working-directory: src/Entrega 2/Backend/api
+        working-directory: src/Entrega_2/Backend/api
         run: |
           nohup node dist/server.js > api.log 2>&1 &
           PORT=3001 DEMO_DATA_ENABLED=false nohup node dist/server.js > api-demo-off.log 2>&1 &
@@ -175,13 +175,13 @@ jobs:
             curl -sf "http://localhost:$port/health" > /dev/null
           done
       - name: Portal web — dependências e navegador
-        working-directory: src/Entrega 2/Web
+        working-directory: src/Entrega_2/Web
         run: |
           npm ci
           npx playwright install --with-deps chromium
           npm run build
       - name: E2E
-        working-directory: src/Entrega 2/Web
+        working-directory: src/Entrega_2/Web
         env:
           E2E_START_PREVIEW: "1"
         run: npm run test:e2e
@@ -191,10 +191,10 @@ jobs:
         with:
           name: web-e2e-report
           path: |
-            src/Entrega 2/Web/playwright-report
-            src/Entrega 2/Web/test-results
-            src/Entrega 2/Backend/api/api.log
-            src/Entrega 2/Backend/api/api-demo-off.log
+            src/Entrega_2/Web/playwright-report
+            src/Entrega_2/Web/test-results
+            src/Entrega_2/Backend/api/api.log
+            src/Entrega_2/Backend/api/api-demo-off.log
           retention-days: 7
 
   docker:
@@ -203,7 +203,7 @@ jobs:
     needs: [api, agent-service, web]
     defaults:
       run:
-        working-directory: src/Entrega 2/Backend
+        working-directory: src/Entrega_2/Backend
     steps:
       - uses: actions/checkout@v4
       - run: docker compose build api agent-service web

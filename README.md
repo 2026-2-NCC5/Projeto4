@@ -273,7 +273,7 @@ desligado.
 
 O mesmo login vale no app e no portal web. O papel de cada conta define a área que ela abre, e a **API** confere
 cada permissão. Os menus só escondem o que o perfil não pode usar. Detalhes em
-[ROLE_PERMISSION_MATRIX.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/ROLE_PERMISSION_MATRIX.md).
+[ROLE_PERMISSION_MATRIX.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/ROLE_PERMISSION_MATRIX.md).
 
 ## Estudante (app Expo e portal `/aluno`)
 
@@ -307,7 +307,7 @@ Como o sistema poderá manipular informações relacionadas à jornada acadêmic
 O que está implementado (sessões por cookie HttpOnly + CSRF no portal, revogação imediata, autorização por
 permissões no servidor, auditoria somente de inserção com pseudônimos, separação entre demonstração e dados reais)
 e o que ainda falta (retenção, direitos do titular) está em
-[SECURITY_AND_LGPD.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/SECURITY_AND_LGPD.md).
+[SECURITY_AND_LGPD.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/SECURITY_AND_LGPD.md).
 
 O desenvolvimento deverá considerar:
 
@@ -335,7 +335,7 @@ O tratamento de dados deverá observar os princípios da **Lei Geral de Proteç�
 # 🏗️ Arquitetura Geral
 
 Como a solução está implementada hoje (detalhes e diagramas em
-[ARCHITECTURE_TARGET.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/ARCHITECTURE_TARGET.md)):
+[ARCHITECTURE_TARGET.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/ARCHITECTURE_TARGET.md)):
 
 ```text
 ┌──────────────────────┐      ┌───────────────────────────────────────┐
@@ -360,7 +360,7 @@ Como a solução está implementada hoje (detalhes e diagramas em
 Não há LLM nem RAG com embeddings no MVP. O assistente combina regras determinísticas com busca lexical do
 PostgreSQL na base de conhecimento, e só responde com fontes. A integração com o JEV está documentada e
 desligada até existir contrato técnico
-([JEV_INTEGRATION_ADR.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/adr/JEV_INTEGRATION_ADR.md)).
+([JEV_INTEGRATION_ADR.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/JEV_INTEGRATION_ADR.md)).
 
 A arquitetura poderá evoluir durante o desenvolvimento conforme os requisitos levantados junto ao parceiro e à coordenação do Projeto Integrador.
 
@@ -376,35 +376,35 @@ entregues em cada disciplina e `src/` guarda o código de cada entrega, separado
 Projeto4/
 │
 ├── documentos/
-│   ├── Entrega 1/
-│   │   ├── Álgebra Linear, Vetores e Geometria Analítica/   # notebook e relatório da entrega
-│   │   ├── Inteligência Artificial e Aprendizado de Máquina/
-│   │   ├── Projeto Interdisciplinar - Inteligência Artificial/
+│   ├── Entrega_1/
+│   │   ├── Algebra_Linear_Vetores_e_Geometria_Analitica/   # notebook e relatório da entrega
+│   │   ├── Inteligencia_Artificial_e_Aprendizado_de_Maquina/
+│   │   ├── Projeto_Interdisciplinar_Inteligencia_Artificial/
 │   │   │   ├── pipelines/                 # TASK-001 … TASK-005 (fontes de verdade do escopo)
 │   │   │   ├── escopo-completo/           # escopo do protótipo da primeira entrega
 │   │   │   └── PRESENTATION_SCRIPT.md     # roteiro da apresentação
-│   │   ├── Psicologia, Liderança e Soft Skills/             # relatório da entrega
-│   │   └── Sistemas Operacionais e Computação em Nuvem/     # relatório, protótipo e logs
-│   └── Entrega 2/
-│       ├── Álgebra Linear, Vetores e Geometria Analítica/
-│       ├── Inteligência Artificial e Aprendizado de Máquina/
-│       ├── Projeto Interdisciplinar - Inteligência Artificial/
+│   │   ├── Psicologia_Lideranca_e_Soft_Skills/             # relatório da entrega
+│   │   └── Sistemas_Operacionais_e_Computacao_em_Nuvem/     # relatório, protótipo e logs
+│   └── Entrega_2/
+│       ├── Algebra_Linear_Vetores_e_Geometria_Analitica/
+│       ├── Inteligencia_Artificial_e_Aprendizado_de_Maquina/
+│       ├── Projeto_Interdisciplinar_Inteligencia_Artificial/
 │       │   ├── adr/                       # decisões de arquitetura (ADR-001 … ADR-008 e JEV_INTEGRATION_ADR)
 │       │   ├── architecture/              # arquitetura, autenticação, voz e regras do agente
 │       │   ├── api/                       # referência da API
 │       │   ├── assistant/                 # assistente ASA: voz, "Hey Asa" e privacidade
 │       │   ├── plataforma/                # portal web + app: arquitetura, contratos, permissões, LGPD, runbook, testes
 │       │   └── evidence/                  # indicadores da PoC e evidências E2E geradas
-│       ├── Psicologia, Liderança e Soft Skills/
-│       └── Sistemas Operacionais e Computação em Nuvem/
+│       ├── Psicologia_Lideranca_e_Soft_Skills/
+│       └── Sistemas_Operacionais_e_Computacao_em_Nuvem/
 │
 ├── imagens/                               # logos e recursos visuais
 │
 ├── src/
-│   ├── Entrega 1/                         # protótipo da primeira entrega (Supabase + mocks), mantido como histórico
+│   ├── Entrega_1/                         # protótipo da primeira entrega (Supabase + mocks), mantido como histórico
 │   │   ├── Backend/                       # scripts SQL do Supabase
 │   │   └── Frontend/                      # app Expo do protótipo
-│   └── Entrega 2/                         # ASA Conecta
+│   └── Entrega_2/                         # ASA Conecta
 │       ├── Backend/
 │       │   ├── api/                       # API principal / BFF — Node.js + TypeScript + PostgreSQL
 │       │   ├── agent-service/             # Agent Service (FastAPI) + Student Agent Engine (Python puro)
@@ -428,7 +428,7 @@ Projeto4/
 ## Pré-requisitos
 
 > Os blocos abaixo partem da **raiz do repositório** (`Projeto4/`). O código da Entrega 2 fica em
-> `src/Entrega 2/` — use aspas no `cd`, porque o nome da pasta tem espaço.
+> `src/Entrega_2/` — use aspas no `cd`, porque o nome da pasta tem espaço.
 > As linhas com `( cd … && … )` rodam em subshell, então o diretório atual não muda entre elas.
 
 * Node.js 20+ e npm (o portal web exige Node.js 22.12+)
@@ -439,7 +439,7 @@ Projeto4/
 ## Opção A — tudo com Docker (PostgreSQL + API + Agent Service + Mailpit + portal web)
 
 ```bash
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 docker compose up -d --build
 docker compose logs -f api        # aguarde "api listening"
 curl -s localhost:3000/health     # {"data":{"status":"ok",...}}
@@ -452,13 +452,13 @@ O **portal web** fica em <http://localhost:8080>. O nginx serve o build e repass
 ### Portal web em desenvolvimento (com a API rodando em :3000)
 
 ```bash
-cd "src/Entrega 2/Web"
+cd "src/Entrega_2/Web"
 npm install
 npm run dev                       # http://localhost:5173 (o Vite repassa /api e /health para a API)
 ```
 
 Runbook completo (produção, proxy, variáveis, reversão):
-[DEPLOYMENT_RUNBOOK.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/DEPLOYMENT_RUNBOOK.md).
+[DEPLOYMENT_RUNBOOK.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/DEPLOYMENT_RUNBOOK.md).
 
 > Se o app mostrar `ERR_CONNECTION_REFUSED` em `:3000/api/auth/login`, a API não está rodando:
 > suba a stack com o comando acima.
@@ -467,7 +467,7 @@ Runbook completo (produção, proxy, variáveis, reversão):
 
 ```bash
 # 1. Banco e caixa de e-mail local
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 docker compose up -d db mailpit
 
 # 2. Agent Service (Python)
@@ -477,7 +477,7 @@ pip install -r requirements-dev.txt
 uvicorn app.main:app --reload --port 8000
 
 # 3. API (Node.js) — em outro terminal, a partir da raiz
-cd "src/Entrega 2/Backend/api"
+cd "src/Entrega_2/Backend/api"
 cp .env.example .env
 npm install
 npm run db:migrate && npm run db:seed
@@ -490,24 +490,24 @@ O projeto **ASA Conecta** no Supabase é o banco online da equipe. Reative-o no 
 pausado, pegue a senha em *Project Settings → Database* e aponte a API para o pooler (modo sessão):
 
 ```bash
-# src/Entrega 2/Backend/api/.env (ou src/Entrega 2/Backend/.env, para o Compose)
+# src/Entrega_2/Backend/api/.env (ou src/Entrega_2/Backend/.env, para o Compose)
 DATABASE_URL=postgresql://postgres.lxfssnqxsxiywfndsfdn:[SENHA]@aws-0-sa-east-1.pooler.supabase.com:5432/postgres
 DATABASE_SSL=auto
 ```
 
 ```bash
-cd "src/Entrega 2/Backend"
+cd "src/Entrega_2/Backend"
 ( cd api && npm run db:migrate && npm run db:seed )    # schema + contas fictícias no Supabase
 docker compose up -d --build api agent-service mailpit # ou: ( cd api && npm run dev )
 ```
 
 Passo a passo, limites e regras (sem `db:reset` remoto, sem `TEST_DATABASE_URL` no Supabase) em
-[`src/Entrega 2/Backend/database/README.md`](<src/Entrega 2/Backend/database/README.md#banco-online-supabase>).
+[`src/Entrega_2/Backend/database/README.md`](<src/Entrega_2/Backend/database/README.md#banco-online-supabase>).
 
 ## Aplicativo mobile (Expo Go)
 
 ```bash
-cd "src/Entrega 2/Frontend"
+cd "src/Entrega_2/Frontend"
 cp .env.example .env               # opcional: EXPO_PUBLIC_API_URL=http://<IP-da-sua-máquina>:3000
 npm install
 npx expo start
@@ -519,12 +519,12 @@ falada**; a **entrada por voz** e o **"Hey Asa"** exigem um development build (a
 
 A aba Assistente segue um layout de chat (respostas reveladas caractere a caractere, balões, campo que
 cresce até 5 linhas e botão microfone ⇄ enviar); as telas de autenticação usam o fundo radial roxo → verde
-das cores do logo ASA. Detalhes e decisões: [ADR-005](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-005-assistant-experience.md>).
+das cores do logo ASA. Detalhes e decisões: [ADR-005](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-005-assistant-experience.md>).
 
 ## Development build (voz e "Hey Asa")
 
 ```bash
-cd "src/Entrega 2/Frontend"
+cd "src/Entrega_2/Frontend"
 npx expo prebuild                  # gera android/ e ios/ aplicando os config plugins (microfone, fala)
 npx expo run:android               # ou: npx expo run:ios
 # ou, na nuvem: eas build --profile development --platform android
@@ -535,7 +535,7 @@ microfone antes de pedir a permissão). A detecção funciona apenas com o app e
 
 ## Contas fictícias (senha: `Demo@2026`)
 
-As contas abaixo existem apenas no seed (`src/Entrega 2/Backend/database/seeds/001_demo_students.sql`); a tela de login não
+As contas abaixo existem apenas no seed (`src/Entrega_2/Backend/database/seeds/001_demo_students.sql`); a tela de login não
 exibe atalhos nem senhas — entra-se com e-mail e senha, como em produção.
 
 | E-mail | Cenário demonstrado |
@@ -554,19 +554,19 @@ exibe atalhos nem senhas — entra-se com e-mail e senha, como em produção.
 
 Essas contas só entram com o modo demonstração ligado (`DEMO_DATA_ENABLED=true`). Todas as telas mostram
 "DEMONSTRAÇÃO — Dados fictícios"
-([DEMO_DATA_POLICY.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/DEMO_DATA_POLICY.md)).
+([DEMO_DATA_POLICY.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/DEMO_DATA_POLICY.md)).
 
 ## Testes
 
 ```bash
-cd "src/Entrega 2"
+cd "src/Entrega_2"
 ( cd Backend/agent-service && .venv/bin/pytest -q && .venv/bin/ruff check . )
 ( cd Backend/api && npm run lint && npm run typecheck && npm run test:unit )
 ( cd Backend/api && npm run test:integration && npm run test:e2e )   # exigem TEST_DATABASE_URL (banco asa_conecta_test) e Mailpit
 ( cd Frontend && npm run typecheck && npm run lint && npm test )     # inclui máquina de estados, "Hey Asa", provider e tema
 ( cd Web && npm run typecheck && npm run lint && npm test )          # portal web (Vitest + Testing Library)
 ( cd Web && npx playwright test )                                    # E2E do portal contra a pilha local (API :3000 + Vite :5173)
-Backend/scripts/e2e.sh                                               # cenários E2E oficiais + evidências em documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/evidence/e2e/
+Backend/scripts/e2e.sh                                               # cenários E2E oficiais + evidências em documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/evidence/e2e/
 Backend/scripts/check-contracts-sync.sh                              # cópias do contrato mobile ↔ API idênticas
 ```
 
@@ -577,8 +577,8 @@ Backend/scripts/check-contracts-sync.sh                              # cópias d
 - **Esqueci minha senha:** o código de 6 dígitos chega por e-mail (em desenvolvimento, no Mailpit em <http://localhost:8025>), depois defina a nova senha.
 - **Biometria:** após entrar com senha, o app oferece Face ID, impressão digital ou biometria do aparelho. Funciona no Expo Go Android e em development builds; não funciona no navegador nem com Face ID no Expo Go iOS.
 
-Segurança e fluxos: [architecture/authentication.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/authentication.md>) e
-[ADR-004](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-004-authentication.md>).
+Segurança e fluxos: [architecture/authentication.md](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/architecture/authentication.md>) e
+[ADR-004](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-004-authentication.md>).
 
 ## Assistente ASA (voz, texto e "Hey Asa")
 
@@ -607,9 +607,9 @@ Como testar o assistente:
 
 A interpretação acontece na API (regras pt-BR, sem provedor externo) e reutiliza o Agente para o
 Estudante quando a pergunta pede análise. O áudio não é gravado; só o texto é enviado. Documentação:
-[assistant/architecture.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/architecture.md>) ·
-[voice.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/voice.md>) · [wake-word.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/wake-word.md>) ·
-[privacy.md](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/assistant/privacy.md>) · [ADR-005](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-005-assistant-experience.md>).
+[assistant/architecture.md](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/assistant/architecture.md>) ·
+[voice.md](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/assistant/voice.md>) · [wake-word.md](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/assistant/wake-word.md>) ·
+[privacy.md](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/assistant/privacy.md>) · [ADR-005](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-005-assistant-experience.md>).
 
 ### Permissões e privacidade
 
@@ -624,7 +624,7 @@ Estudante quando a pergunta pede análise. O áudio não é gravado; só o texto
 ## Reproduzindo falhas controladas
 
 ```bash
-cd "src/Entrega 2/Backend/api"
+cd "src/Entrega_2/Backend/api"
 AGENT_STUB_MODE=slow AGENT_STUB_PORT=8001 npm run agent:stub                 # terminal 1
 AGENT_SERVICE_URL=http://localhost:8001 AGENT_SERVICE_TIMEOUT_MS=1000 npm run dev   # terminal 2 → 504 TIMEOUT
 ```
@@ -633,9 +633,9 @@ Modos do stub: `slow` (timeout), `incompatible` (contrato 2.0 → 502), `error` 
 Agent Service real também produz `503 DEPENDENCY_ERROR`. A abstenção e a validação humana
 são demonstradas com as contas `estudante.semdados@demo.asa` e `estudante.validacao@demo.asa`.
 
-Documentação detalhada (em `documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/`): [architecture/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/architecture/README.md>) ·
-[api/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/api/README.md>) · [evidence/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/evidence/README.md>) ·
-[adr/](<documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/adr/ADR-001-agent-selection.md>).
+Documentação detalhada (em `documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/`): [architecture/](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/architecture/README.md>) ·
+[api/](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/api/README.md>) · [evidence/](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/evidence/README.md>) ·
+[adr/](<documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-001-agent-selection.md>).
 
 ---
 
@@ -649,9 +649,9 @@ cd Projeto4
 ```
 
 Siga a seção [🚀 Como executar o ASA Conecta](#-como-executar-o-asa-conecta). Cada módulo
-possui um README próprio: [`Frontend`](<src/Entrega 2/Frontend/README.md>),
-[`Backend/api`](<src/Entrega 2/Backend/api/README.md>), [`Backend/agent-service`](<src/Entrega 2/Backend/agent-service/README.md>),
-[`Backend/database`](<src/Entrega 2/Backend/database/README.md>) — todos em `src/Entrega 2/`.
+possui um README próprio: [`Frontend`](<src/Entrega_2/Frontend/README.md>),
+[`Backend/api`](<src/Entrega_2/Backend/api/README.md>), [`Backend/agent-service`](<src/Entrega_2/Backend/agent-service/README.md>),
+[`Backend/database`](<src/Entrega_2/Backend/database/README.md>) — todos em `src/Entrega_2/`.
 
 ---
 
@@ -662,10 +662,10 @@ Credenciais e configurações sensíveis não são armazenadas no código. Cada 
 
 | Arquivo | Principais variáveis |
 | --- | --- |
-| `src/Entrega 2/Backend/.env.example` (Docker Compose) | `POSTGRES_*`, `JWT_SECRET`, `AGENT_SERVICE_TIMEOUT_MS`, portas |
-| `src/Entrega 2/Backend/api/.env.example` | `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `REFRESH_TOKEN_TTL_DAYS`, `AGENT_SERVICE_URL`, `AGENT_SERVICE_TIMEOUT_MS`, `CORS_ORIGIN`, `VOICE_ASSISTANT_ENABLED`, `INTENT_MIN_CONFIDENCE`, `APP_TIMEZONE` |
-| `src/Entrega 2/Backend/agent-service/.env.example` | `AGENT_SERVICE_PORT`, `AGENT_LOG_LEVEL`, `AGENT_CONFIG_DIR` |
-| `src/Entrega 2/Frontend/.env.example` | `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_API_TIMEOUT_MS`, `EXPO_PUBLIC_ANALYSIS_TIMEOUT_MS`, `EXPO_PUBLIC_VOICE_ASSISTANT_ENABLED`, `EXPO_PUBLIC_SPEECH_PROVIDER`, `EXPO_PUBLIC_SPEECH_LANGUAGE`, `EXPO_PUBLIC_SPEECH_ON_DEVICE_ONLY`, `EXPO_PUBLIC_TTS_ENABLED_DEFAULT`, `EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS`, `EXPO_PUBLIC_WAKE_WORD_ENABLED`, `EXPO_PUBLIC_BARGE_IN_ENABLED` |
+| `src/Entrega_2/Backend/.env.example` (Docker Compose) | `POSTGRES_*`, `JWT_SECRET`, `AGENT_SERVICE_TIMEOUT_MS`, portas |
+| `src/Entrega_2/Backend/api/.env.example` | `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `REFRESH_TOKEN_TTL_DAYS`, `AGENT_SERVICE_URL`, `AGENT_SERVICE_TIMEOUT_MS`, `CORS_ORIGIN`, `VOICE_ASSISTANT_ENABLED`, `INTENT_MIN_CONFIDENCE`, `APP_TIMEZONE` |
+| `src/Entrega_2/Backend/agent-service/.env.example` | `AGENT_SERVICE_PORT`, `AGENT_LOG_LEVEL`, `AGENT_CONFIG_DIR` |
+| `src/Entrega_2/Frontend/.env.example` | `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_API_TIMEOUT_MS`, `EXPO_PUBLIC_ANALYSIS_TIMEOUT_MS`, `EXPO_PUBLIC_VOICE_ASSISTANT_ENABLED`, `EXPO_PUBLIC_SPEECH_PROVIDER`, `EXPO_PUBLIC_SPEECH_LANGUAGE`, `EXPO_PUBLIC_SPEECH_ON_DEVICE_ONLY`, `EXPO_PUBLIC_TTS_ENABLED_DEFAULT`, `EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS`, `EXPO_PUBLIC_WAKE_WORD_ENABLED`, `EXPO_PUBLIC_BARGE_IN_ENABLED` |
 
 > Nunca faça commit de tokens, senhas, chaves privadas ou credenciais reais.
 
