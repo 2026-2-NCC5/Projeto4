@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M266 286h322c48 0 72 24 72 61v13c0 26 20 46 46 46h35c25 0 45 20 45 45v8c0 25-20 45-45 45H420c-54 0-82-24-90-66" stroke="#fff" stroke-width="34"/>
-    <path d="M314 374h263c42 0 65 22 67 58M354 462h254" stroke="#fff" stroke-width="34"/>
+  <g transform="translate(170.4 175.3) scale(1.22)" fill="none" stroke="#299B60" stroke-width="23.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M62 36L408 206C455.2 228.8 480 262 460 312.8C447.2 342.8 433.6 363.6 449.2 392.4C456 406 481.2 414.8 491.2 427.2C528.4 472.4 492 530.4 438.8 504.4L188 387.2C146.8 368 127.6 323.2 148.4 270.8"/>
+    <path d="M321.6 352.4L150.4 270.4C103.6 248.4 78.8 205.2 103.6 154.8"/>
+    <path d="M275.2 234L106 155.2C58 132.8 30.8 91.2 62 36"/>
   </g>
-  <text x="512" y="758" text-anchor="middle" fill="#fff" font-family="DejaVu Sans, sans-serif" font-size="205" font-weight="800" letter-spacing="8">ASA</text>
 </svg>

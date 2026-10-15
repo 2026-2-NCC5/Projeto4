@@ -16,8 +16,8 @@
       "package": "com.asaconecta.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/branding/asa-app-icon-foreground.png",
-        "monochromeImage": "./assets/branding/asa-app-icon-foreground.png",
-        "backgroundColor": "#299B60"
+        "monochromeImage": "./assets/branding/asa-app-icon-monochrome.png",
+        "backgroundColor": "#116238"
       },
       "predictiveBackGestureEnabled": false,
       "permissions": []
