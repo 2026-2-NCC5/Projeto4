@@ -1,0 +1,141 @@
+# ASA Conecta — ambiente local (PostgreSQL + API Node.js + Agent Service Python + portal web).
+# Rode os comandos a partir desta pasta (src/Entrega_2/Backend).
+# O aplicativo Expo roda fora do container: cd ../Frontend && npx expo start
+# Portal web (aluno, equipe ASA, administração): http://localhost:8080 (nginx repassa /api para a API).
+#
+#   docker compose up -d --build
+#   docker compose logs -f api agent-service
+#
+# Banco online (Supabase): defina DATABASE_URL no .env desta pasta (ver database/README.md) e suba só
+# o que precisa: docker compose up -d --build api agent-service mailpit
+# Sem DATABASE_URL a API usa o PostgreSQL local do serviço `db`.
+#
+# Credenciais abaixo são apenas para desenvolvimento local. Banco, Mailpit e Agent Service ficam só em
+# 127.0.0.1 (a API os acessa pela rede interna do Compose); a API fica na rede local para o app Expo no celular.
+# Nome fixo do projeto: mantém os mesmos containers e o volume do banco (projeto4_*)
+# independentemente da pasta de onde o Compose é executado.
+name: projeto4
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: asa-conecta-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-asa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-asa_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-asa_conecta}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - asa-conecta-pgdata:/var/lib/postgresql/data
+      - ./database/docker:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-asa} -d ${POSTGRES_DB:-asa_conecta}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Caixa de e-mail local (SMTP de desenvolvimento). Interface: http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.27
+    container_name: asa-conecta-mailpit
+    ports:
+      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+    environment:
+      MP_MAX_MESSAGES: 500
+
+  agent-service:
+    build:
+      context: ./agent-service
+    container_name: asa-conecta-agent-service
+    environment:
+      AGENT_SERVICE_PORT: "8000"
+      AGENT_LOG_LEVEL: ${AGENT_LOG_LEVEL:-INFO}
+    ports:
+      - "127.0.0.1:${AGENT_SERVICE_PORT:-8000}:8000"
+
+  api:
+    build:
+      context: ./api
+    container_name: asa-conecta-api
+    depends_on:
+      db:
+        condition: service_healthy
+        required: false
+      agent-service:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: "3000"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-asa}:${POSTGRES_PASSWORD:-asa_dev_password}@db:5432/${POSTGRES_DB:-asa_conecta}}
+      DATABASE_SSL: ${DATABASE_SSL:-auto}
+      DATABASE_SSL_CA_FILE: ${DATABASE_SSL_CA_FILE:-}
+      DATABASE_DIR: /srv/database
+      JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-local-com-pelo-menos-32-caracteres}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      REFRESH_TOKEN_TTL_DAYS: ${REFRESH_TOKEN_TTL_DAYS:-30}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-12}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      SIGNUP_ALLOWED_EMAIL_DOMAINS: ${SIGNUP_ALLOWED_EMAIL_DOMAINS:-edu.fecap.br,fecap.br,demo.asa}
+      BIOMETRIC_LOGIN_ENABLED: ${BIOMETRIC_LOGIN_ENABLED:-true}
+      MAIL_TRANSPORT: smtp
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      MAIL_FROM: ${MAIL_FROM:-ASA Conecta <nao-responda@asa-conecta.local>}
+      AGENT_SERVICE_URL: http://agent-service:8000
+      AGENT_SERVICE_TIMEOUT_MS: ${AGENT_SERVICE_TIMEOUT_MS:-5000}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      VOICE_ASSISTANT_ENABLED: ${VOICE_ASSISTANT_ENABLED:-true}
+      INTENT_MIN_CONFIDENCE: ${INTENT_MIN_CONFIDENCE:-0.6}
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
+      # Fila presencial do ASA: UM monitor na API abastece todos os alunos. Padrão: simulador identificado
+      # como demonstração; o painel público (fecap) só com autorização da FECAP registrada.
+      ASA_QUEUE_ENABLED: ${ASA_QUEUE_ENABLED:-true}
+      ASA_QUEUE_PROVIDER: ${ASA_QUEUE_PROVIDER:-mock}
+      ASA_QUEUE_SOURCE_AUTHORIZED: ${ASA_QUEUE_SOURCE_AUTHORIZED:-false}
+      ASA_QUEUE_SOURCE_URL: ${ASA_QUEUE_SOURCE_URL:-https://presencial.fecap.br/}
+      ASA_QUEUE_POLL_INTERVAL_SECONDS: ${ASA_QUEUE_POLL_INTERVAL_SECONDS:-10}
+      ASA_QUEUE_CACHE_TTL_SECONDS: ${ASA_QUEUE_CACHE_TTL_SECONDS:-30}
+      ASA_QUEUE_MOCK_SCENARIO: ${ASA_QUEUE_MOCK_SCENARIO:-progression}
+      PUSH_PROVIDER: ${PUSH_PROVIDER:-expo}
+      EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:-}
+      # ---- plataforma (portal web, modo demonstração, recursos) — ver api/.env.example
+      APP_ENV: ${APP_ENV:-development}
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+      DEMO_SEED_ENABLED: ${DEMO_SEED_ENABLED:-true}
+      ACADEMIC_DATA_PROVIDER: ${ACADEMIC_DATA_PROVIDER:-demo}
+      FEATURE_APPOINTMENTS_ENABLED: ${FEATURE_APPOINTMENTS_ENABLED:-true}
+      FEATURE_KB_ENABLED: ${FEATURE_KB_ENABLED:-true}
+      AUTOMATION_SCAN_INTERVAL_SECONDS: ${AUTOMATION_SCAN_INTERVAL_SECONDS:-300}
+      WEB_ORIGINS: ${WEB_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173}
+      WEB_COOKIE_SECURE: ${WEB_COOKIE_SECURE:-auto}
+      AI_PROVIDER: ${AI_PROVIDER:-existing}
+      JEV_ENABLED: ${JEV_ENABLED:-false}
+    volumes:
+      - ./database:/srv/database:ro
+    ports:
+      - "${API_PORT:-3000}:3000"
+    # aplica migrations e seeds ficticios antes de subir
+    command: sh -c "node dist/db/migrate.js && node dist/db/seed.js && node dist/server.js"
+
+  # Portal web: build estático do Vite servido pelo nginx, que repassa /api e /health para a API
+  # (mesma origem → cookies de sessão HttpOnly, sem CORS aberto). http://localhost:8080
+  web:
+    build:
+      context: ../Web
+    container_name: asa-conecta-web
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      API_UPSTREAM: http://api:3000
+    ports:
+      - "${WEB_HTTP_PORT:-8080}:80"
+
+volumes:
+  asa-conecta-pgdata:
