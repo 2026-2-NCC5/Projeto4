@@ -1,5 +1,10 @@
 # Arquitetura do ASA Conecta (Entrega 2)
 
+> **Portal web (aluno, equipe ASA, administração):** a mesma API também atende o portal em `src/Entrega 2/Web`,
+> com sessão por cookie HttpOnly + CSRF e autorização por permissões. A visão completa (diagramas, módulos,
+> dados, segurança, runbook) está em [../plataforma/README.md](../plataforma/README.md). O diagrama abaixo mostra
+> o caminho do app até o Agente para o Estudante, que continua igual.
+
 ```text
 ┌───────────────────────────────┐
 │      ASA Conecta Mobile       │  src/Entrega 2/Frontend — Expo / React Native / TypeScript
@@ -91,3 +96,5 @@ que são execuções válidas.
 Detalhes do agente (regras, limiares, confiança): [agent-engine.md](agent-engine.md).
 Assistente por voz/texto (intenções, segurança, privacidade): [voice-assistant.md](voice-assistant.md).
 Autenticação (cadastro, recuperação, sessão, biometria, controles de segurança): [authentication.md](authentication.md).
+Atendimento ASA (chamados, prazos, anexos, avisos): [support-tickets.md](support-tickets.md).
+Fila presencial do ASA (monitor, push, alertas, voz, estimativa): [queue-presencial.md](queue-presencial.md).

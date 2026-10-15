@@ -2,6 +2,11 @@
 
 Base URL local: `http://localhost:3000`. Todas as respostas são JSON.
 
+> **Rotas da plataforma (v1.5–v1.8):** portal web, sessões, avisos, agendamentos, base de conhecimento,
+> operação do ASA e administração estão em
+> [../plataforma/API_CONTRACTS.md](../plataforma/API_CONTRACTS.md), com a permissão exigida por rota em
+> [../plataforma/ROLE_PERMISSION_MATRIX.md](../plataforma/ROLE_PERMISSION_MATRIX.md).
+
 ## Envelopes
 
 ```jsonc
@@ -44,6 +49,8 @@ A resposta sempre devolve `x-request-id` e `x-correlation-id`.
 | GET | `/api/agent/history?limit=20` | Bearer (estudante) | `AgentHistoryItem[]` |
 | GET | `/api/agent/history/:runId` | Bearer (estudante) | `AgentAnalysis` |
 | POST | `/api/assistant/message` | Bearer (estudante) | `AssistantResponse` |
+| — | `/api/support/*` | Bearer | Atendimento ASA (chamados) — ver [seção abaixo](#atendimento-asa-chamados) |
+| — | `/api/queue/*`, `/api/notifications/push-token`, `/health/queue` | Bearer (saúde: pública) | Fila presencial do ASA — ver [architecture/queue-presencial.md](../architecture/queue-presencial.md#api) |
 
 Tipos: `src/Entrega 2/Backend/contracts/api/mobile-api.v1.ts`.
 
@@ -138,6 +145,47 @@ curl -s -X POST localhost:3000/api/assistant/message \
   -d '{"inputType":"voice","text":"Abre minha frequência","currentScreen":"home"}'
 # → { "intent": "open_screen", "navigation": { "target": "academic.attendance" }, "speech": { "text": "Claro. Abrindo sua frequência." }, ... }
 ```
+
+## Atendimento ASA (chamados)
+
+Contrato v1.3 (`Support*` em `mobile-api.v1.ts`). Arquitetura e regras: [architecture/support-tickets.md](../architecture/support-tickets.md) · [ADR-006](../adr/ADR-006-support-tickets.md).
+
+| Método | Rota | Auth | Resposta (`data`) |
+| --- | --- | --- | --- |
+| GET | `/api/support/catalog` | Bearer | `SupportCatalog` (categorias, artigos da Central de ajuda, limites) |
+| GET | `/api/support/overview` | Bearer (estudante) | `SupportOverview` (contagens + um chamado em destaque para a Home) |
+| GET | `/api/support/tickets?status=a,b&search=&limit=20&cursor=` | Bearer (estudante) | `SupportTicketList` (paginação por cursor; busca por protocolo, assunto e categoria, sem acento) |
+| POST | `/api/support/tickets` `SupportTicketCreateRequest` | Bearer (estudante) | `SupportTicket` (`201`; `200` com o mesmo `clientRequestId`) |
+| GET | `/api/support/tickets/:id` | Bearer (estudante) | `SupportTicket` (eventos públicos, mensagens, arquivos, prazo, permissões) |
+| GET | `/api/support/tickets/:id/events` | Bearer (estudante) | `SupportTicketEvent[]` |
+| POST | `/api/support/tickets/:id/messages` `{clientMessageId, content, attachmentIds?}` | Bearer (estudante) | `SupportTicket` (`201`; responde a `waiting_student` e retoma o prazo) |
+| POST | `/api/support/tickets/:id/read` | Bearer (estudante) | `SupportTicket` (marca mensagens e avisos do chamado como lidos) |
+| POST | `/api/support/tickets/:id/cancel` `{reason?}` | Bearer (estudante) | `SupportTicket` (`409 cancel_not_allowed` se finalizado) |
+| POST | `/api/support/tickets/:id/reopen` `{reason}` | Bearer (estudante) | `SupportTicket` (só `resolved`, até 7 dias; `409 reopen_not_allowed`) |
+| POST | `/api/support/tickets/:id/rating` `{rating 1–5, comment?}` | Bearer (estudante) | `SupportTicket` (`201`; `409 already_rated`) |
+| GET | `/api/support/tickets/:id/attachments/:attachmentId/link` | Bearer (estudante) | `SupportAttachmentLink` (URL assinada, 5 min) |
+| GET | `/api/support/files/:attachmentId?exp=&sig=` | link assinado | arquivo (`Content-Type` original, `Cache-Control: private, no-store`) |
+| POST | `/api/support/uploads` `{name, mimeType, contentBase64}` | Bearer (estudante) | `SupportUpload` (`201`; PDF/imagem/DOC/TXT até 5 MB; conteúdo conferido) |
+| DELETE | `/api/support/uploads/:uploadId` | Bearer (estudante) | `204` (só envio pendente do próprio usuário) |
+| GET | `/api/support/notifications?limit=20` | Bearer (estudante) | `SupportNotificationList` |
+| POST | `/api/support/notifications/read` `{ids?}` | Bearer (estudante) | `SupportNotificationList` (sem `ids`: todos) |
+
+Equipe (`institutional_staff`, `technical_admin`):
+
+| Método | Rota | Corpo | Efeito |
+| --- | --- | --- | --- |
+| GET | `/api/support/staff/tickets` / `:id` | — | fila de todos os estudantes / detalhe com eventos internos e o estudante |
+| POST | `/api/support/staff/tickets/:id/status` | `{status, publicNote?}` | `triage`, `assigned`, `in_analysis`, `in_progress`, `waiting_department`, `waiting_external`, `closed`, `cancelled` |
+| POST | `/api/support/staff/tickets/:id/assign` | `{team, publicNote?}` | encaminha para uma equipe da lista |
+| POST | `/api/support/staff/tickets/:id/messages` | `{content, attachmentIds?, requestAction?}` | mensagem; com `requestAction` → `waiting_student` (prazo pausado) |
+| POST | `/api/support/staff/tickets/:id/notes` | `{content}` | nota interna (nunca vista pelo estudante) |
+| POST | `/api/support/staff/tickets/:id/priority` | `{priority}` | `normal`, `high`, `urgent` (evento interno) |
+| POST | `/api/support/staff/tickets/:id/resolve` | `{resolution}` | `resolved` + aviso ao estudante |
+| POST / DELETE | `/api/support/staff/uploads` / `:uploadId` | como o do estudante | arquivos enviados pela equipe |
+
+Regras: corpos estritos (`studentId`, `status`, `priority` no corpo do estudante → `400`); chamado de outro
+estudante → `403`; alteração concorrente → `409 ticket_changed`; erros com mensagem em português pronta para o
+app (`Conte um pouco mais sobre sua solicitação.`, `O arquivo é maior que 5 MB.`...).
 
 ## Agent Service (interno)
 

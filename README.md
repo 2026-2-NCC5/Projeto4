@@ -256,47 +256,58 @@ O projeto poderá utilizar diferentes conceitos e técnicas de Inteligência Art
 
 O uso de modelos generativos deverá considerar mecanismos que minimizem respostas incorretas e permitam identificar adequadamente as fontes utilizadas.
 
+**O que o MVP implementa hoje:**
+
+* o Agente para o Estudante, com regras determinísticas e explicáveis (evidências e próxima ação);
+* intenções em português por regras;
+* recuperação de informações por busca full-text do PostgreSQL na base de conhecimento, com **citações** e
+  **abstenção** quando não há resposta confiável;
+* recomendações a partir de dados acadêmicos de demonstração.
+
+LLMs, embeddings e RAG generativo **não** fazem parte do MVP. O provedor generativo (JEV) está planejado e
+desligado.
+
 ---
 
 # 👤 Perfis de Usuário
 
-A arquitetura poderá contemplar diferentes perfis.
+O mesmo login vale no app e no portal web. O papel de cada conta define a área que ela abre, e a **API** confere
+cada permissão. Os menus só escondem o que o perfil não pode usar. Detalhes em
+[ROLE_PERMISSION_MATRIX.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/ROLE_PERMISSION_MATRIX.md).
 
-## Estudante
+## Estudante (app Expo e portal `/aluno`)
 
-Poderá utilizar o sistema para:
+* vida acadêmica (disciplinas, notas, frequência) e pendências;
+* Agente para o Estudante: análise com evidências, histórico e avaliação "foi útil?";
+* Assistente ASA (texto; voz no app), com respostas da base de conhecimento **com fontes** e encaminhamento para
+  um chamado quando não há resposta confiável;
+* chamados ao ASA, com protocolo, conversa, anexos, prazo e avaliação;
+* agendamentos (presencial e online), central de ajuda, avisos, fila presencial (app) e sessões.
 
-* realizar perguntas;
-* consultar informações;
-* receber orientações;
-* localizar serviços;
-* interagir com os agentes inteligentes.
+## Equipe ASA (portal `/asa`)
 
-## Atendente ASA
+* painel, fila de chamados (filtros, assumir e encaminhar, notas internas, prazos) e conversas;
+* agenda, confirmação, conclusão e ausência, e a própria disponibilidade;
+* contexto de alunos atendidos (cada consulta é auditada);
+* base de conhecimento (edição versionada), métricas, relatórios CSV sem dados pessoais e indicadores do agente.
 
-Poderá utilizar o sistema para:
+## Administração (portal `/admin`)
 
-* consultar informações;
-* compreender melhor o contexto de um atendimento;
-* visualizar informações permitidas;
-* receber apoio dos agentes;
-* acompanhar situações sinalizadas.
-
-## Administrador
-
-Quando previsto pela arquitetura, poderá possuir funcionalidades destinadas a:
-
-* administração de usuários;
-* gerenciamento de permissões;
-* configuração do sistema;
-* acompanhamento operacional;
-* gerenciamento de fontes de conhecimento.
+* contas e convites, papéis, encerramento de sessões, matriz de permissões;
+* metas de SLA, automações (nunca escrevem para o aluno), parâmetros e recursos ativos;
+* integrações (estado honesto: operacional, demonstração, planejado), saúde dos serviços, auditoria completa;
+* chamados só como **metadados**: a administração não lê o conteúdo dos atendimentos.
 
 ---
 
 # 🔐 Segurança, Privacidade e LGPD
 
 Como o sistema poderá manipular informações relacionadas à jornada acadêmica dos estudantes, segurança e privacidade representam requisitos fundamentais do projeto.
+
+O que está implementado (sessões por cookie HttpOnly + CSRF no portal, revogação imediata, autorização por
+permissões no servidor, auditoria somente de inserção com pseudônimos, separação entre demonstração e dados reais)
+e o que ainda falta (retenção, direitos do titular) está em
+[SECURITY_AND_LGPD.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/SECURITY_AND_LGPD.md).
 
 O desenvolvimento deverá considerar:
 
@@ -323,38 +334,33 @@ O tratamento de dados deverá observar os princípios da **Lei Geral de Proteç�
 
 # 🏗️ Arquitetura Geral
 
-Uma representação conceitual da solução é:
+Como a solução está implementada hoje (detalhes e diagramas em
+[ARCHITECTURE_TARGET.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/ARCHITECTURE_TARGET.md)):
 
 ```text
-┌─────────────────────────────────────────┐
-│              Aplicação                 │
-│                                        │
-│        Estudante / Atendente ASA       │
-└────────────────────┬────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────┐
-│               Backend / API             │
-│                                         │
-│ Auth • Serviços • Regras de Negócio    │
-└────────────┬────────────────┬───────────┘
-             │                │
-             ▼                ▼
-┌────────────────────┐   ┌────────────────────┐
-│   Banco de Dados   │   │   Camada de IA     │
-│                    │   │                    │
-│ Usuários           │   │ LLM                │
-│ Atendimentos       │   │ Agentes            │
-│ Histórico          │   │ RAG                │
-│ Informações        │   │ Embeddings         │
-└────────────────────┘   └─────────┬──────────┘
-                                   │
-                                   ▼
-                         ┌─────────────────────┐
-                         │ Base de Conhecimento│
-                         │     Institucional   │
-                         └─────────────────────┘
+┌──────────────────────┐      ┌───────────────────────────────────────┐
+│ App Expo (estudante) │      │ Portal web React                       │
+│ Bearer + SecureStore │      │ /aluno · /asa · /admin                 │
+└──────────┬───────────┘      │ cookies HttpOnly + CSRF (mesma origem)  │
+           │                  └───────────────────┬────────────────────┘
+           ▼                                      ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│ API Node.js (Express + TypeScript) — uma API para os dois clientes    │
+│ sessões • permissões • chamados/SLA • agendamentos • base de          │
+│ conhecimento (busca full-text com citações) • assistente • auditoria  │
+└──────┬───────────────────────────┬───────────────────────┬───────────┘
+       ▼                           ▼                       ▼
+┌──────────────┐        ┌─────────────────────┐   ┌─────────────────────┐
+│ PostgreSQL   │        │ Agent Service       │   │ Opcionais/planejados│
+│ migrations   │        │ (FastAPI, regras    │   │ Expo Push • SMTP    │
+│ 001–011      │        │ explicáveis)        │   │ JEV (desligado)     │
+└──────────────┘        └─────────────────────┘   └─────────────────────┘
 ```
+
+Não há LLM nem RAG com embeddings no MVP. O assistente combina regras determinísticas com busca lexical do
+PostgreSQL na base de conhecimento, e só responde com fontes. A integração com o JEV está documentada e
+desligada até existir contrato técnico
+([JEV_INTEGRATION_ADR.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/adr/JEV_INTEGRATION_ADR.md)).
 
 A arquitetura poderá evoluir durante o desenvolvimento conforme os requisitos levantados junto ao parceiro e à coordenação do Projeto Integrador.
 
@@ -383,10 +389,11 @@ Projeto4/
 │       ├── Álgebra Linear, Vetores e Geometria Analítica/
 │       ├── Inteligência Artificial e Aprendizado de Máquina/
 │       ├── Projeto Interdisciplinar - Inteligência Artificial/
-│       │   ├── adr/                       # decisões de arquitetura (ADR-001 … ADR-005)
+│       │   ├── adr/                       # decisões de arquitetura (ADR-001 … ADR-008 e JEV_INTEGRATION_ADR)
 │       │   ├── architecture/              # arquitetura, autenticação, voz e regras do agente
 │       │   ├── api/                       # referência da API
 │       │   ├── assistant/                 # assistente ASA: voz, "Hey Asa" e privacidade
+│       │   ├── plataforma/                # portal web + app: arquitetura, contratos, permissões, LGPD, runbook, testes
 │       │   └── evidence/                  # indicadores da PoC e evidências E2E geradas
 │       ├── Psicologia, Liderança e Soft Skills/
 │       └── Sistemas Operacionais e Computação em Nuvem/
@@ -404,11 +411,12 @@ Projeto4/
 │       │   ├── database/                  # migrations (npm run db:migrate) e seeds sintéticos (npm run db:seed)
 │       │   ├── contracts/                 # contratos Node ↔ Python (JSON Schema) e Mobile ↔ Node (TypeScript)
 │       │   ├── scripts/                   # e2e.sh, check-contracts-sync.sh
-│       │   ├── docker-compose.yml         # PostgreSQL + API + Agent Service + Mailpit (e-mail local)
+│       │   ├── docker-compose.yml         # PostgreSQL + API + Agent Service + Mailpit + portal web (nginx)
 │       │   └── .env.example               # variáveis do Docker Compose
-│       └── Frontend/                      # app mobile — Expo / React Native / TypeScript
+│       ├── Frontend/                      # app mobile — Expo / React Native / TypeScript
+│       └── Web/                           # portal web — React 19 / Vite / TypeScript (aluno, equipe ASA, administração)
 │
-├── .github/workflows/ci.yml               # CI: contratos, Python, Node (unit/integração/E2E), mobile, Docker
+├── .github/workflows/ci.yml               # CI: contratos, Python, API, mobile, portal web (+ E2E Playwright), Docker
 ├── .gitignore
 └── README.md
 ```
@@ -423,12 +431,12 @@ Projeto4/
 > `src/Entrega 2/` — use aspas no `cd`, porque o nome da pasta tem espaço.
 > As linhas com `( cd … && … )` rodam em subshell, então o diretório atual não muda entre elas.
 
-* Node.js 20+ e npm
+* Node.js 20+ e npm (o portal web exige Node.js 22.12+)
 * Python 3.11+ (recomendado 3.12)
 * Docker com Docker Compose v2 (para o PostgreSQL; opcionalmente para API e agente)
 * Expo Go **para o SDK 57** no celular (versão atual das lojas) ou emulador
 
-## Opção A — tudo com Docker (PostgreSQL + API + Agent Service + Mailpit)
+## Opção A — tudo com Docker (PostgreSQL + API + Agent Service + Mailpit + portal web)
 
 ```bash
 cd "src/Entrega 2/Backend"
@@ -438,7 +446,19 @@ curl -s localhost:3000/health     # {"data":{"status":"ok",...}}
 ```
 
 O container da API aplica as migrations e os seeds fictícios automaticamente. Os e-mails de
-recuperação de senha chegam na caixa local do Mailpit: <http://localhost:8025>.
+recuperação de senha e de convite chegam na caixa local do Mailpit: <http://localhost:8025>.
+O **portal web** fica em <http://localhost:8080>. O nginx serve o build e repassa `/api` para a API.
+
+### Portal web em desenvolvimento (com a API rodando em :3000)
+
+```bash
+cd "src/Entrega 2/Web"
+npm install
+npm run dev                       # http://localhost:5173 (o Vite repassa /api e /health para a API)
+```
+
+Runbook completo (produção, proxy, variáveis, reversão):
+[DEPLOYMENT_RUNBOOK.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/DEPLOYMENT_RUNBOOK.md).
 
 > Se o app mostrar `ERR_CONNECTION_REFUSED` em `:3000/api/auth/login`, a API não está rodando:
 > suba a stack com o comando acima.
@@ -528,6 +548,13 @@ exibe atalhos nem senhas — entra-se com e-mail e senha, como em produção.
 | `estudante.semdados@demo.asa` | dados insuficientes → abstenção |
 | `estudante.inconsistente@demo.asa` | dados inconsistentes → validação humana |
 | `estudante.validacao@demo.asa` | frequência abaixo do mínimo → validação humana |
+| `atendente.asa@demo.asa` | equipe ASA no portal (`/asa`): fila, agenda, base de conhecimento |
+| `responsavel.exemplo@demo.asa` | segunda pessoa da equipe ASA |
+| `admin.plataforma@demo.asa` | administração no portal (`/admin`) |
+
+Essas contas só entram com o modo demonstração ligado (`DEMO_DATA_ENABLED=true`). Todas as telas mostram
+"DEMONSTRAÇÃO — Dados fictícios"
+([DEMO_DATA_POLICY.md](documentos/Entrega%202/Projeto%20Interdisciplinar%20-%20Intelig%C3%AAncia%20Artificial/plataforma/DEMO_DATA_POLICY.md)).
 
 ## Testes
 
@@ -537,6 +564,8 @@ cd "src/Entrega 2"
 ( cd Backend/api && npm run lint && npm run typecheck && npm run test:unit )
 ( cd Backend/api && npm run test:integration && npm run test:e2e )   # exigem TEST_DATABASE_URL (banco asa_conecta_test) e Mailpit
 ( cd Frontend && npm run typecheck && npm run lint && npm test )     # inclui máquina de estados, "Hey Asa", provider e tema
+( cd Web && npm run typecheck && npm run lint && npm test )          # portal web (Vitest + Testing Library)
+( cd Web && npx playwright test )                                    # E2E do portal contra a pilha local (API :3000 + Vite :5173)
 Backend/scripts/e2e.sh                                               # cenários E2E oficiais + evidências em documentos/Entrega 2/Projeto Interdisciplinar - Inteligência Artificial/evidence/e2e/
 Backend/scripts/check-contracts-sync.sh                              # cópias do contrato mobile ↔ API idênticas
 ```
@@ -553,7 +582,7 @@ Segurança e fluxos: [architecture/authentication.md](<documentos/Entrega 2/Proj
 
 ## Assistente ASA (voz, texto e "Hey Asa")
 
-O assistente é uma camada global do app: **Home** ("Falar agora"/"Digitar"), **botão central** da
+O assistente é uma camada global do app: **Home** (linha do assistente e botão de microfone), **botão central** da
 navegação (toque = abrir; toque e segure = falar agora), **overlay** sobre qualquer tela e a frase
 **"Hey Asa"** (development build/web, primeiro plano, opt-in). Exemplos:
 "Hey Asa, qual minha próxima prova?", "Como estão minhas notas?", "Tenho alguma pendência?",
@@ -567,7 +596,8 @@ navegação (toque = abrir; toque e segure = falar agora), **overlay** sobre qua
 
 Como testar o assistente:
 
-1. Entre com uma conta de demonstração e, na Home, toque em **Falar agora** (ou **Digitar** no Expo Go).
+1. Entre com uma conta de demonstração e, na Home, toque no **microfone** da linha "Como posso ajudar hoje?"
+   (ou na própria linha para digitar, no Expo Go).
 2. Pergunte "Tenho alguma atividade pendente?" e depois "E essa semana?" (contexto conversacional).
 3. Na tela **Acadêmico → Avaliações**, toque e segure o botão central e pergunte "Qual foi a menor?"
    (contexto da tela).

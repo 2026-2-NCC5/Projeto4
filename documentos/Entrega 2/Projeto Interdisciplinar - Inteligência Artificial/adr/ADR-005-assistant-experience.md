@@ -99,6 +99,31 @@ Por decisão do grupo, as telas **Entrar**, **Criar conta** e **Redefinir senha*
   título, `StatTile` e atalhos quebram linha em telas estreitas, Serviços usa 2 colunas em tablets,
   `BottomNav` e o overlay do assistente têm largura máxima e o orb do assistente se adapta à paisagem.
 
+## Adendo (2026-10-06) — Refatoração visual (UI/UX)
+
+Revisão de toda a interface para um visual institucional mais maduro, sem efeitos decorativos. Substitui
+as partes visuais dos adendos anteriores (aurora, vidro, foco roxo, hero com gradiente); funcionalidades,
+navegação, contratos e rótulos acessíveis foram preservados.
+
+- **Cor**: fundos e textos em cinzas neutros; o verde marca só ação e seleção. Ações usam o verde
+  institucional `#0D6D53` (mesmo matiz do logo, 6,3:1 com texto branco); o verde do logo (`#00AB7E`,
+  2,95:1) fica restrito à marca. Removidos `AuroraBackground`, `GradientSurface`, superfícies de vidro,
+  sombras coloridas ("glow") e o roxo como cor de foco.
+- **Tokens**: raios 4/6/10/12/16 (antes até 34), sombras neutras só no que flutua, tipografia com peso 700
+  apenas em títulos de tela, movimento de 150–250 ms sem rebote.
+- **Composição**: `Surface` (branco, borda de 1 px, sem sombra) é o card padrão; itens da mesma natureza
+  ficam num único `List` com divisores (notas, frequência, pendências, avisos, serviços, configurações)
+  em vez de um card por item. Ícones Ionicons simples, sem círculos coloridos; status em `Badge` com ícone
+  vetorial (os glifos ⚠/✓/ⓘ dos utilitários viram ícones, sem emoji).
+- **Navegação**: barra inferior fixa (fundo branco, borda superior, ativo verde/inativo cinza) no lugar
+  da barra flutuante com sombra; o botão do assistente é um círculo de 34 px dentro da barra, com um anel
+  discreto quando o assistente está ouvindo ou ocupado.
+- **Home**: cabeçalho compacto, linha do assistente (abrir/falar) no lugar do hero com gradiente,
+  indicadores em uma faixa única (`MetricStrip`), compromissos, avisos e atalhos em listas.
+- **Assistente**: orb de um único matiz (respiração, anéis ao ouvir/falar, arco ao processar) no lugar do
+  núcleo multicolorido com auroras e partículas; balão neutro do estudante; resposta sem cards aninhados.
+- **Frequência**: verde saudável, amarelo até 5 p.p. acima do mínimo, vermelho abaixo do mínimo (visual).
+
 ## Consequências
 
 - Voz real (STT e "Hey Asa") exige development build; Expo Go segue 100% funcional por texto + TTS.

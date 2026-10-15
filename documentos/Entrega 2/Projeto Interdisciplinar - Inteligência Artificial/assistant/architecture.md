@@ -33,8 +33,8 @@
 | Camada | Arquivos | Responsabilidade |
 | --- | --- | --- |
 | Design System | `theme/` (`palette`, `colors`, `typography`, `spacing`, `radius`, `shadows`, `animations`, `theme`, `ThemeProvider`) | Tokens semânticos com Light e Dark projetados separadamente; `useTheme()` e `makeStyles()` (cache por tema). Cores da marca extraídas dos SVGs oficiais (`assets/branding`). |
-| UI base | `components/ui/` | `AppText`, `AppButton` (primary/secondary/ghost/danger/assistant/inverse), `Surface` (inclui vidro), `GradientSurface` (SVG), `Badge`, `Avatar`, `SectionHeader`, `EmptyState`, `Skeleton`s, `SettingRow`, `IconButton`, `PressableScale`, `OfflineBanner`. |
-| Acadêmico | `components/academic/`, `hooks/useAcademicOverview.ts` | `StatTile`, `ScheduleCard` (compromissos derivados de pendências + avaliações reais), `InsightCard` (alertas), `SubjectCard`, `GradeCard`, `AttendanceCard`, `PendingCard`. |
+| UI base | `components/ui/` | `AppText`, `AppButton` (primary/secondary/ghost/danger), `Surface`, `List`/`ListItem`, `Divider`, `Badge`, `Avatar`, `SectionHeader`, `EmptyState`, `Skeleton`s, `SettingRow`, `IconButton`, `PressableScale`, `OfflineBanner`. |
+| Acadêmico | `components/academic/`, `hooks/useAcademicOverview.ts` | `MetricStrip` (indicadores), `UpcomingList` (compromissos derivados de pendências + avaliações reais), `InsightList` (alertas), `SubjectCard`, `GradeRow`, `AttendanceRow`, `PendingRow`. |
 | Navegação | `navigation/` | `navigationReducer` (puro, testado), `NavigationProvider`/`useAppNavigation`, `currentScreenKey`, `actionForTarget` (allow-list do contrato → ação). |
 | Assistente | `features/assistant/` | máquina de estados da casca (`assistantStateMachine.ts`), `wakeWordMatcher.ts`, `wakeWordService.ts`, `conversationHistory.ts`, `assistantTelemetry.ts`, `useAssistant.tsx`. |
 | Assistente (UI) | `components/assistant/` | `AssistantOrb`, `AssistantOverlay`, `VoiceWaveform`, `MicrophoneIndicator`, `AssistantTranscript`, `HeyAsaOnboarding`, `AssistantSettingsSection`. |
@@ -82,7 +82,7 @@ para a detecção antes de ouvir a pergunta e a religa quando a conversa volta a
 ## Overlay vs. experiência completa
 
 - **Overlay (`AssistantOverlay`)**: aparece sobre a tela atual (wake word, toque longo no botão central,
-  "Falar agora" na Home, indicador de microfone). Mostra orb + waveform + status, a pergunta em balão,
+  botão de microfone na Home, indicador de microfone). Mostra orb + waveform + status, a pergunta em balão,
   a resposta em streaming com cards compactos (até 2 itens, até 3 ações) e a `ChatInputBar` (mic ⇄ enviar).
   "Ver detalhes" leva à aba Assistente **sem perder a conversa** (mesmo provider).
 - **Aba Assistente (`AssistantScreen`)**: layout de chat — cabeçalho fixo (Nova conversa · Assistente ASA ·

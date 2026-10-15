@@ -26,7 +26,7 @@ consequências reais:
    com notificação persistente; iOS não oferece API pública para wake word em background). Documentado
    como pendência para um módulo nativo/config plugin futuro.
 3. **Fallback** (sempre disponível): botão central da navegação (toque = abrir; toque longo = falar
-   agora), "Falar agora"/"Digitar" na Home, campo de texto em todo lugar.
+   agora), linha do assistente e botão de microfone na Home, campo de texto em todo lugar.
 
 ## Detecção
 
