@@ -70,9 +70,28 @@ Acrescentado ao pipeline existente, sem duplicar jobs:
 
 | Item | Motivo | Como validar |
 |---|---|---|
-| Deploy em produção (backend e portal) | aguardando a liberação do responsável (o projeto backend e as variáveis já existem) | [04-deploy-vercel.md](04-deploy-vercel.md) §3–4 e smoke nas URLs |
-| IP do visitante pelo proxy do portal | só na URL publicada | [04 §4](04-deploy-vercel.md#4-frontend--asa-conecta) passo 5 |
 | Pooler em modo transação (6543) | só existe no Supabase | smoke no preview com a URL 6543 |
 | Daemon (worker residente na Vercel) | beta, só produção, exige deploy | ativar o bloco `daemons` (04 §8) e ver o log `worker started` |
 | E-mail real | sem SMTP configurado | cadastrar SMTP e testar "Esqueci a senha" |
 | App em aparelho físico contra a Vercel | depende da URL publicada | `EXPO_PUBLIC_API_URL=<url>` + Expo Go/development build |
+
+## 5. Produção (27/10/2026)
+
+Executado contra as URLs públicas, depois do deploy dos dois projetos.
+
+| Teste | URL | Resultado |
+|---|---|---|
+| Smoke público + autenticado (aluno fictício) | `https://asa-conecta-api.vercel.app` | **19/19**: banco (Supabase, papel `asa_api`) e agente "up"; 401, 400 e 404 em JSON; tarefas protegidas; dados do aluno; catálogo (anexo de 3 MiB); assistente; logout com refresh revogado |
+| Smoke com portal (`SMOKE_WEB=1`) | `https://asa-conecta.vercel.app` | **22/22**: página com CSP, rota do SPA, CSRF e todas as chamadas da API pelo proxy |
+| Análise do agente | backend | `POST /api/agent/analyze` → **201**, 1 recomendação com 2 evidências (API → binding → função Python com segredo) |
+| Agente por rota pública | backend | `/internal/v1/student-agent/evaluate` → **404** (só a API o alcança) |
+| Login por cookie pelo proxy | portal | **200**: `asa_at`/`asa_rt` `HttpOnly; Secure; SameSite=Strict` no domínio do portal; `/api/auth/me` com cookie 200; escrita com `Origin` de outro site **403**; logout 204 |
+| IP do visitante pelo proxy | portal e backend | tentativas pelo portal chegaram a **429**, e a chamada direta ao backend, do mesmo IP, também deu 429: o backend enxerga o IP real pelo proxy, então o limite vale por pessoa |
+| Senha pública nas contas de equipe e admin | backend | login de `admin.plataforma@demo.asa` com `Demo@2026` → **401** |
+| Cron | projeto backend | `vercel crons ls` → `/api/internal/jobs/sla-scan`, `0 9 * * *` |
+
+Endpoints exercitados em produção: 19 (saúde, plataforma, fila, autenticação do app e do portal, dados do aluno,
+catálogo, assistente, agente e tarefas).
+
+Observação de latência: as primeiras chamadas de cada instância levaram ~1 s (cold start + primeira conexão ao
+banco); as seguintes ficaram em ~80–130 ms.

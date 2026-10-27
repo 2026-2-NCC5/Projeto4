@@ -1,14 +1,14 @@
 # 04 — Implantação na Vercel (e execução sem Docker)
 
-**Estado em 27/10/2026**
+**Estado em 27/10/2026: em produção.**
 
-- **Banco de produção:** pronto. Schema `asa` no Supabase "ASA Conecta", migrations 001–012 e dados de demonstração
-  (ver [07](07-migracao-banco.md)).
-- **Projeto backend `asa-conecta-api`:** criado no time `ux-brasils-projects` (plano Hobby), com as variáveis de
-  produção cadastradas e **nenhum deploy**.
-- **Projeto frontend:** ainda não criado.
-- **Deploy:** aguarda a liberação do responsável. A configuração dos dois projetos foi validada localmente, com build
-  a partir de cópia limpa e o pacote da API executado (smoke 19/19).
+| Projeto (time `ux-brasils-projects`, Hobby) | URL de produção | Validação |
+|---|---|---|
+| `asa-conecta` (portal) | **https://asa-conecta.vercel.app** | smoke 22/22 pela URL do portal; login por cookie com CSRF pelo proxy |
+| `asa-conecta-api` (backend) | **https://asa-conecta-api.vercel.app** | smoke 19/19; análise da IA 201; agente sem rota pública; Cron registrado |
+
+Banco: schema `asa` no Supabase "ASA Conecta", migrations 001–012 e dados de demonstração (ver
+[07](07-migracao-banco.md)). Os resultados detalhados estão em [06](06-testes-validacao.md#5-produção-27102026).
 
 Comandos a partir da raiz do repositório (`Projeto4/`), salvo indicação.
 
@@ -16,8 +16,8 @@ Comandos a partir da raiz do repositório (`Projeto4/`), salvo indicação.
 
 | Projeto Vercel | Pasta (Root Directory) | Conteúdo | Endereço esperado |
 |---|---|---|---|
-| **`asa-conecta-api`** (backend) | `src/Entrega_2/Backend` | [`vercel.json`](../../src/Entrega_2/Backend/vercel.json) com Services: `api` (Express, `src/index.ts`, Node 24, 300 s) e `agent` (FastAPI, Python 3.12, **sem rota pública**, alcançado pela API por binding). Região `gru1`. Cron diário | `https://asa-conecta-api.vercel.app` (confirmar no 1º deploy) |
-| **`asa-conecta`** (frontend, o portal) | `src/Entrega_2/Web` | [`vercel.json`](../../src/Entrega_2/Web/vercel.json): build do Vite no CDN, CSP e cabeçalhos, rotas do SPA, e **`/api/*` e `/health*` encaminhados ao backend** (proxy na mesma origem) | `https://asa-conecta.vercel.app` (confirmar no 1º deploy) |
+| **`asa-conecta-api`** (backend) | `src/Entrega_2/Backend` | [`vercel.json`](../../src/Entrega_2/Backend/vercel.json) com Services: `api` (Express, `src/index.ts`, Node 24, 300 s) e `agent` (FastAPI, Python 3.12, **sem rota pública**, alcançado pela API por binding). Região `gru1`. Cron diário | `https://asa-conecta-api.vercel.app` |
+| **`asa-conecta`** (frontend, o portal) | `src/Entrega_2/Web` | [`vercel.json`](../../src/Entrega_2/Web/vercel.json): build do Vite no CDN, CSP e cabeçalhos, rotas do SPA, e **`/api/*` e `/health*` encaminhados ao backend** (proxy na mesma origem) | `https://asa-conecta.vercel.app` |
 
 ```text
 Navegador ──https──▶ asa-conecta (portal)  ──rewrite /api, /health──▶ asa-conecta-api ──binding──▶ agent (privado)
@@ -64,14 +64,14 @@ entrada padrão, sem aparecer em tela nem em histórico:
 | `APP_ENV` / `DEMO_DATA_ENABLED` / `ACADEMIC_DATA_PROVIDER` | `production` / `1` / `demo` |
 | `MAIL_TRANSPORT` / `PUSH_PROVIDER` / `LOG_LEVEL` / `RATE_LIMIT_ENABLED` | `disabled` / `expo` / `info` / `true` |
 
-Falta, depois que o frontend tiver endereço:
+Cadastradas depois que o portal ganhou endereço (feito):
 
 ```bash
 printf 'https://asa-conecta.vercel.app' | vercel env add WEB_ORIGINS production   # origem do portal (CSRF)
 printf 'https://asa-conecta.vercel.app' | vercel env add CORS_ORIGIN production
 ```
 
-Deploy (só com a liberação do responsável):
+Deploy (cada mudança de variável exige um deploy novo):
 
 ```bash
 cd src/Entrega_2/Backend
@@ -82,9 +82,9 @@ SMOKE_EMAIL=estudante.exemplo@demo.asa SMOKE_PASSWORD='Demo@2026' \
 
 ## 4. Frontend — `asa-conecta`
 
-1. Confirme o endereço de produção do backend (`vercel project inspect asa-conecta-api` ou a saída do deploy). Se não
-   for `asa-conecta-api.vercel.app`, troque as três URLs em `src/Entrega_2/Web/vercel.json`.
-2. Crie, vincule e implante:
+1. O endereço de produção do backend (`asa-conecta-api.vercel.app`) é o que está nas três URLs de
+   `src/Entrega_2/Web/vercel.json`. Se o backend mudar de domínio, troque-as.
+2. Crie, vincule e implante (feito em 27/10/2026):
 
    ```bash
    cd src/Entrega_2/Web

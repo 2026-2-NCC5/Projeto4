@@ -1,12 +1,11 @@
 # 10 — Relatório final da migração
 
-**Estado em 27/10/2026:**
+**Estado em 27/10/2026: em produção e validado.**
 
-- **Banco de produção:** migrado (schema `asa`, migrations 001–012, dados de demonstração).
-- **Projeto backend:** criado na Vercel, com as variáveis de produção.
-- **Projetos backend e frontend:** configurados e validados localmente a partir de cópia limpa. O pacote da API foi
-  executado (smoke 19/19).
-- **Deploy:** **ainda não feito.** Aguarda a liberação do responsável (ver §5).
+- Portal: **https://asa-conecta.vercel.app** (smoke 22/22).
+- Backend: **https://asa-conecta-api.vercel.app** (smoke 19/19, análise da IA 201).
+- Banco: Supabase "ASA Conecta", schema `asa`.
+- Código: 10 commits no branch `feat/migracao-vercel` (envio ao GitHub pendente, §5).
 
 ## 1. Resumo
 
@@ -54,7 +53,7 @@ O banco é o PostgreSQL do Supabase "ASA Conecta", num schema próprio (`asa`), 
 | Validados também pelo smoke test (inclusive no pacote de produção) | 18 |
 | Sem teste dedicado (anterior à migração) | 6 |
 | Com falha | 0 |
-| Validados na nuvem | 0 (sem deploy ainda) |
+| Exercitados em produção (smoke, análise da IA, login por cookie) | 19 |
 
 ## 4. Checklist de aceitação
 
@@ -79,8 +78,10 @@ Legenda: ✅ comprovado · ⏳ pronto, aguardando liberação ou acesso · ⚠�
 - ✅ Configuração dos 2 projetos válida; build reproduzível a partir de checkout limpo (também no CI)
 - ✅ Runtimes Node 24 e Python 3.12; região `gru1`; variáveis do backend cadastradas
 - ✅ Pacote da API executado localmente com configuração de produção (19/19)
-- ⏳ Deploy e smoke em produção (backend e portal), quando o responsável liberar
-- ⏳ `WEB_ORIGINS`/`CORS_ORIGIN` do backend: dependem do domínio do portal (definido no 1º deploy)
+- ✅ Deploy em produção dos dois projetos; smoke 19/19 (backend) e 22/22 (portal)
+- ✅ `WEB_ORIGINS`/`CORS_ORIGIN` com o domínio do portal; login por cookie e CSRF validados pelo proxy
+- ✅ IP real do visitante chega ao backend pelo proxy do portal (limite de login por pessoa)
+- ✅ Cron diário registrado; agente sem rota pública; senha pública recusada nas contas de equipe e admin
 
 **Qualidade**
 - ✅ Testes automatizados: API 333 + 53 + 16, agente 51, portal 262, app 567
@@ -93,19 +94,16 @@ Legenda: ✅ comprovado · ⏳ pronto, aguardando liberação ou acesso · ⚠�
 
 | # | Descrição | Causa | Impacto | Requisito | Prioridade |
 |---|---|---|---|---|---|
-| 1 | Deploy do backend e do portal em produção | aguardando liberação do responsável | sistema sem URL pública | ok do responsável → 04 §3–4 | P0 |
-| 2 | Confirmar o domínio do backend no `Web/vercel.json` | definido no 1º deploy (esperado `asa-conecta-api.vercel.app`) | rewrite do portal para o endereço errado | conferir depois do deploy do backend | P0 |
-| 3 | `WEB_ORIGINS` e `CORS_ORIGIN` no backend | dependem do domínio do portal | escritas do portal recusadas pelo CSRF | cadastrar e implantar o backend de novo | P0 |
-| 4 | Conferir o IP repassado pelo proxy do portal | só verificável publicado | se vier o IP do proxy, todos os usuários do portal dividem o limite de login | teste em 04 §4 passo 5 | P1 |
-| 5 | SMTP de produção | nenhum provedor configurado | recuperação de senha e convites indisponíveis (com aviso) | credenciais do provedor | P1 |
-| 6 | Push da fila com o app fechado | sem processo residente | sem alertas em segundo plano (só com a fila ativa) | Daemon (04 §7) ou Pro; fila depende de autorização da FECAP | P1 |
-| 7 | `EXPO_PUBLIC_API_URL` no EAS | depende do deploy | app de loja sem servidor | cadastrar no projeto Expo | P1 |
-| 8 | Cron de SLA diário no Hobby | limite do plano | automações com atraso de até 1 dia | Pro ou agendador externo | P2 |
-| 9 | Pooler em modo transação (6543) | só verificável no Supabase | opcional (escala) | smoke com a URL 6543 | P2 |
-| 10 | Limitadores de taxa compartilhados | contadores em memória por instância | proteção mais fraca com muitas instâncias | tabela de contadores ou Redis | P2 |
-| 11 | Verificação da cadeia TLS do banco | CA do Supabase fora do pacote | TLS cifrado sem verificar o certificado | incluir o PEM | P2 |
-| 12 | Backend de preview para o portal | o rewrite do portal aponta para produção | previews do portal não fazem escrita | backend de preview + `WEB_ORIGINS` próprio | P3 |
-| 13 | 6 endpoints sem teste dedicado | anterior à migração | menor cobertura | testes de integração | P3 |
+| 1 | Enviar os 10 commits ao GitHub (`git push -u origin feat/migracao-vercel`) e abrir o PR | a credencial do Git nesta máquina é da conta UX-Brasil, sem permissão no repositório | código em produção ainda não está no GitHub | push com uma conta do grupo | P0 |
+| 2 | SMTP de produção | nenhum provedor configurado | recuperação de senha e convites indisponíveis (com aviso) | credenciais do provedor | P1 |
+| 3 | Push da fila com o app fechado | sem processo residente | sem alertas em segundo plano (só com a fila ativa) | Daemon (04 §7) ou Pro; fila depende de autorização da FECAP | P1 |
+| 4 | `EXPO_PUBLIC_API_URL=https://asa-conecta-api.vercel.app` no EAS | build de loja ainda não gerado | app de loja sem servidor | cadastrar no projeto Expo | P1 |
+| 5 | Cron de SLA diário no Hobby | limite do plano | automações com atraso de até 1 dia | Pro ou agendador externo | P2 |
+| 6 | Pooler em modo transação (6543) | só verificável no Supabase | opcional (escala) | smoke com a URL 6543 | P2 |
+| 7 | Limitadores de taxa compartilhados | contadores em memória por instância | proteção mais fraca com muitas instâncias | tabela de contadores ou Redis | P2 |
+| 8 | Verificação da cadeia TLS do banco | CA do Supabase fora do pacote | TLS cifrado sem verificar o certificado | incluir o PEM | P2 |
+| 9 | Backend de preview para o portal | o rewrite do portal aponta para produção | previews do portal não fazem escrita | backend de preview + `WEB_ORIGINS` próprio | P3 |
+| 10 | 6 endpoints sem teste dedicado | anterior à migração | menor cobertura | testes de integração | P3 |
 
 ## 6. Comandos
 
@@ -138,7 +136,7 @@ Legenda: ✅ comprovado · ⏳ pronto, aguardando liberação ou acesso · ⚠�
 # migrations em produção (papel dono do schema asa)
 ( cd src/Entrega_2/Backend/api && DATABASE_URL="$(grep '^ASA_MIGRATOR_DATABASE_URL=' ~/.config/asa-conecta/production.env | cut -d= -f2-)" npm run db:migrate )
 
-# deploy (só com liberação)
+# deploy
 ( cd src/Entrega_2/Backend && vercel deploy --prod )
 ( cd src/Entrega_2/Web && vercel deploy --prod )
 
