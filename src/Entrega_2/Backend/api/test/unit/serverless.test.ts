@@ -1,4 +1,6 @@
 import { EventEmitter } from 'node:events';
+import { readdirSync } from 'node:fs';
+import path from 'node:path';
 import type { Request, Response } from 'express';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -12,7 +14,10 @@ import { MemoryQueueRepository } from '../../src/queue/repository.js';
 import type { QueueService } from '../../src/queue/service.js';
 import { buildSnapshot } from '../../src/queue/snapshot.js';
 import { QueueSourceError, type QueueProvider, type QueueSnapshot } from '../../src/queue/types.js';
-import { createTestApp } from '../support/testApp.js';
+import { EXPECTED_MIGRATIONS } from '../../src/db/migrationManifest.js';
+import { resolveDatabaseDir } from '../../src/db/paths.js';
+import { decodeUpload } from '../../src/support/attachments.js';
+import { bearer, createTestApp, loginAs } from '../support/testApp.js';
 
 /**
  * Execução sem processo residente (Vercel Functions): fila sob demanda, tempo real que se atualiza sozinho,
@@ -238,4 +243,30 @@ describe('tarefas periódicas por rota (/api/internal/jobs/*)', () => {
     expect(queue.status).toBe(200);
     expect(queue.body.data).toMatchObject({ job: 'queue-refresh', queue: 'disabled' });
   });
+});
+
+describe('pacote da função (sem a pasta database/)', () => {
+  it('a lista de migrations esperadas no código é exatamente a da pasta database/migrations', () => {
+    const onDisk = readdirSync(path.join(resolveDatabaseDir(), 'migrations')).filter((file) => file.endsWith('.sql')).sort();
+    expect([...EXPECTED_MIGRATIONS]).toEqual(onDisk);
+  });
+});
+
+describe('limites que cabem na plataforma', () => {
+  it('anexo maior que o limite configurado é recusado com o limite na mensagem', () => {
+    const limit = 3 * 1024 * 1024;
+    const pdf = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.alloc(limit)]);
+    expect(() => decodeUpload({ name: 'grande.pdf', mimeType: 'application/pdf', contentBase64: pdf.toString('base64') }, limit)).toThrow('O arquivo é maior que 3 MB.');
+    const small = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.alloc(1024)]);
+    expect(decodeUpload({ name: 'ok.pdf', mimeType: 'application/pdf', contentBase64: small.toString('base64') }, limit).sizeBytes).toBe(small.length);
+  });
+
+  it('o catálogo informa aos clientes o limite vigente (o app e o portal validam antes de enviar)', async () => {
+    const { app } = createTestApp({ configOverrides: { support: { maxAttachmentBytes: 3 * 1024 * 1024 } } });
+    const session = await loginAs(app);
+    const catalog = await request(app).get('/api/support/catalog').set(bearer(session.accessToken));
+    expect(catalog.status).toBe(200);
+    expect(catalog.body.data.limits.maxAttachmentBytes).toBe(3 * 1024 * 1024);
+  });
+
 });

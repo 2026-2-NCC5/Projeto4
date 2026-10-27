@@ -47,6 +47,8 @@ export interface SupportServiceConfig {
   /** chave dos links assinados de download (derivada do segredo do servidor) */
   signingSecret: string;
   rateLimitEnabled: boolean;
+  /** tamanho máximo de cada anexo (padrão: o do catálogo; menor na Vercel, onde o corpo da função tem 4,5 MB) */
+  maxAttachmentBytes?: number;
 }
 
 /** Quem age: o usuário autenticado e o nome público que aparece no histórico. */
@@ -188,7 +190,7 @@ export class SupportCore {
 
   async upload(actor: SupportActor, uploadedByType: 'student' | 'agent', body: SupportUploadRequest): Promise<SupportUpload> {
     this.limit('upload', actor.userId);
-    const decoded = decodeUpload(body);
+    const decoded = decodeUpload(body, this.config.maxAttachmentBytes);
     const now = this.now();
     const record = await this.repos.support.createUpload({
       id: randomUUID(),
@@ -289,7 +291,8 @@ export class SupportService {
       })),
     );
     const articles = this.helpArticles ? await this.helpArticles().catch(() => null) : null;
-    return { ...base, categories, ...(articles && articles.length > 0 ? { articles } : {}) };
+    const limits = { ...base.limits, maxAttachmentBytes: this.core.config.maxAttachmentBytes ?? base.limits.maxAttachmentBytes };
+    return { ...base, categories, limits, ...(articles && articles.length > 0 ? { articles } : {}) };
   }
 
   /** fonte dos artigos da Central de ajuda (base de conhecimento) */

@@ -122,6 +122,7 @@ export function createApp(deps: AppDeps): Express {
       // chave própria dos links de download, derivada do segredo do servidor (nunca a chave do JWT diretamente)
       signingSecret: hmacHex(deps.config.jwt.secret, 'asa-conecta:support-attachment-links'),
       rateLimitEnabled: deps.config.rateLimit.enabled,
+      maxAttachmentBytes: deps.config.support.maxAttachmentBytes,
     },
     now,
     // Push do sistema pelos aparelhos registrados (módulo de notificações); o centro de avisos funciona sem ele.

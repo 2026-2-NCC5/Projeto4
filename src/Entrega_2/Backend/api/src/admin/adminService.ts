@@ -1,5 +1,3 @@
-import { readdirSync } from 'node:fs';
-import path from 'node:path';
 import bcrypt from 'bcryptjs';
 import { ALL_PERMISSIONS, PERMISSION_DESCRIPTIONS, ROLE_LABELS, ROLE_PERMISSIONS } from '../auth/permissions.js';
 import { randomToken } from '../auth/secrets.js';
@@ -28,7 +26,7 @@ import type {
   SupportTicketStatus,
   UserRole,
 } from '../contracts/mobileApi.v1.js';
-import { resolveDatabaseDir } from '../db/paths.js';
+import { EXPECTED_MIGRATIONS } from '../db/migrationManifest.js';
 import { ConflictError, DependencyError, ForbiddenError, NotFoundError, ValidationError } from '../errors/AppError.js';
 import type { AiProviderRegistry } from '../ai/providers.js';
 import type { Mailer } from '../mail/mailer.js';
@@ -436,12 +434,7 @@ export class AdminService {
     let pending: string[] = [];
     if (dbUp && this.deps.repo) {
       applied = await this.deps.repo.appliedMigrations();
-      try {
-        const onDisk = readdirSync(path.join(resolveDatabaseDir(), 'migrations')).filter((file) => file.endsWith('.sql')).sort();
-        pending = onDisk.filter((file) => !applied.includes(file));
-      } catch {
-        pending = [];
-      }
+      pending = EXPECTED_MIGRATIONS.filter((file) => !applied.includes(file));
     }
     const agentStarted = Date.now();
     const [agentUp, agentConfig] = await Promise.all([this.deps.agentClient.health(), this.deps.agentClient.config?.() ?? Promise.resolve(null), this.deps.queue.refresh()]);
