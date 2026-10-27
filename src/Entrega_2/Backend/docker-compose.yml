@@ -1,4 +1,6 @@
-# ASA Conecta — ambiente local (PostgreSQL + API Node.js + Agent Service Python + portal web).
+# ASA Conecta — ambiente local OPCIONAL em containers (PostgreSQL + API Node.js + Agent Service Python + portal web).
+# Nada aqui é necessário em produção: a implantação é na Vercel (vercel.json na raiz) com PostgreSQL gerenciado,
+# e o desenvolvimento também roda sem Docker (docs/migration/04-deploy-vercel.md, seção "Sem Docker").
 # Rode os comandos a partir desta pasta (src/Entrega_2/Backend).
 # O aplicativo Expo roda fora do container: cd ../Frontend && npx expo start
 # Portal web (aluno, equipe ASA, administração): http://localhost:8080 (nginx repassa /api para a API).
@@ -52,6 +54,7 @@ services:
     environment:
       AGENT_SERVICE_PORT: "8000"
       AGENT_LOG_LEVEL: ${AGENT_LOG_LEVEL:-INFO}
+      AGENT_SERVICE_TOKEN: ${AGENT_SERVICE_TOKEN:-}
     ports:
       - "127.0.0.1:${AGENT_SERVICE_PORT:-8000}:8000"
 
@@ -74,6 +77,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-asa}:${POSTGRES_PASSWORD:-asa_dev_password}@db:5432/${POSTGRES_DB:-asa_conecta}}
       DATABASE_SSL: ${DATABASE_SSL:-auto}
       DATABASE_SSL_CA_FILE: ${DATABASE_SSL_CA_FILE:-}
+      DATABASE_POOL_MAX: ${DATABASE_POOL_MAX:-10}
       DATABASE_DIR: /srv/database
       JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-local-com-pelo-menos-32-caracteres}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
@@ -89,6 +93,8 @@ services:
       MAIL_FROM: ${MAIL_FROM:-ASA Conecta <nao-responda@asa-conecta.local>}
       AGENT_SERVICE_URL: http://agent-service:8000
       AGENT_SERVICE_TIMEOUT_MS: ${AGENT_SERVICE_TIMEOUT_MS:-5000}
+      AGENT_SERVICE_TOKEN: ${AGENT_SERVICE_TOKEN:-}
+      CRON_SECRET: ${CRON_SECRET:-}
       CORS_ORIGIN: ${CORS_ORIGIN:-*}
       VOICE_ASSISTANT_ENABLED: ${VOICE_ASSISTANT_ENABLED:-true}
       INTENT_MIN_CONFIDENCE: ${INTENT_MIN_CONFIDENCE:-0.6}

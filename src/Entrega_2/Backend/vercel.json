@@ -1,0 +1,32 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["gru1"],
+  "services": {
+    "api": {
+      "root": "api/",
+      "framework": "express",
+      "entrypoint": "src/index.ts",
+      "installCommand": "npm ci --no-audit --no-fund",
+      "buildCommand": "npm run build",
+      "outputDirectory": ".",
+      "devCommand": "npm run start:vercel-entry",
+      "bindings": [{ "type": "service", "service": "agent", "format": "url", "env": "AGENT_SERVICE_URL" }],
+      "functions": {
+        "src/index.ts": { "maxDuration": 300 }
+      }
+    },
+    "agent": {
+      "root": "agent-service/",
+      "framework": "fastapi",
+      "entrypoint": "app.main:app",
+      "functions": {
+        "app/main.py": {
+          "maxDuration": 30,
+          "excludeFiles": "{tests/**,.venv/**,.pytest_cache/**,.ruff_cache/**,Dockerfile,requirements-dev.txt}"
+        }
+      }
+    }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": { "service": "api" } }],
+  "crons": [{ "path": "/api/internal/jobs/sla-scan", "schedule": "0 9 * * *" }]
+}

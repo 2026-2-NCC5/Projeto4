@@ -1,0 +1,8 @@
+# Projeto Vercel do FRONTEND (portal web). A Vercel instala e compila do zero.
+node_modules/
+dist/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example
