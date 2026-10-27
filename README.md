@@ -353,9 +353,17 @@ Como a solução está implementada hoje (detalhes e diagramas em
 ┌──────────────┐        ┌─────────────────────┐   ┌─────────────────────┐
 │ PostgreSQL   │        │ Agent Service       │   │ Opcionais/planejados│
 │ migrations   │        │ (FastAPI, regras    │   │ Expo Push • SMTP    │
-│ 001–011      │        │ explicáveis)        │   │ JEV (desligado)     │
+│ 001–012      │        │ explicáveis)        │   │ JEV (desligado)     │
 └──────────────┘        └─────────────────────┘   └─────────────────────┘
 ```
+
+**Implantação:** dois projetos na **Vercel**:
+
+- **backend** (`src/Entrega_2/Backend`): a API vira uma Vercel Function (Node 24), e o Agent Service vira uma
+  função Python privada, alcançada só pela API;
+- **portal** (`src/Entrega_2/Web`): fica no CDN e encaminha `/api` ao backend na mesma origem. O banco é PostgreSQL gerenciado
+(Supabase). Nada de produção depende de Docker. Migração, decisões, variáveis, testes e pendências estão em
+[`docs/migration/`](docs/migration/10-relatorio-final.md).
 
 Não há LLM nem RAG com embeddings no MVP. O assistente combina regras determinísticas com busca lexical do
 PostgreSQL na base de conhecimento, e só responde com fontes. A integração com o JEV está documentada e
@@ -410,13 +418,15 @@ Projeto4/
 │       │   ├── agent-service/             # Agent Service (FastAPI) + Student Agent Engine (Python puro)
 │       │   ├── database/                  # migrations (npm run db:migrate) e seeds sintéticos (npm run db:seed)
 │       │   ├── contracts/                 # contratos Node ↔ Python (JSON Schema) e Mobile ↔ Node (TypeScript)
-│       │   ├── scripts/                   # e2e.sh, check-contracts-sync.sh
-│       │   ├── docker-compose.yml         # PostgreSQL + API + Agent Service + Mailpit + portal web (nginx)
+│       │   ├── scripts/                   # e2e.sh, check-contracts-sync.sh, smoke.mjs (verifica uma implantação)
+│       │   ├── vercel.json                # projeto Vercel do backend: Services api + agent (privado) + Cron
+│       │   ├── docker-compose.yml         # opcional: PostgreSQL + API + Agent Service + Mailpit + portal web (nginx)
 │       │   └── .env.example               # variáveis do Docker Compose
 │       ├── Frontend/                      # app mobile — Expo / React Native / TypeScript
 │       └── Web/                           # portal web — React 19 / Vite / TypeScript (aluno, equipe ASA, administração)
 │
-├── .github/workflows/ci.yml               # CI: contratos, Python, API, mobile, portal web (+ E2E Playwright), Docker
+├── docs/migration/                        # migração Docker → Vercel: auditoria, decisões, matriz, deploy, testes
+├── .github/workflows/ci.yml               # CI: contratos, Python, API (+ smoke da entrada Vercel), mobile, portal (+ E2E), build Vercel, Docker
 ├── .gitignore
 └── README.md
 ```
@@ -431,12 +441,34 @@ Projeto4/
 > `src/Entrega_2/` — use aspas no `cd`, porque o nome da pasta tem espaço.
 > As linhas com `( cd … && … )` rodam em subshell, então o diretório atual não muda entre elas.
 
-* Node.js 20+ e npm (o portal web exige Node.js 22.12+)
-* Python 3.11+ (recomendado 3.12)
-* Docker com Docker Compose v2 (para o PostgreSQL; opcionalmente para API e agente)
+* Node.js 24 e npm (API e portal web)
+* Python 3.12
+* PostgreSQL 16+ instalado na máquina **ou** um banco gerenciado de desenvolvimento. Docker com Compose v2 é
+  opcional (Opção A)
 * Expo Go **para o SDK 57** no celular (versão atual das lojas) ou emulador
 
-## Opção A — tudo com Docker (PostgreSQL + API + Agent Service + Mailpit + portal web)
+## Produção — Vercel
+
+Dois projetos:
+
+- **backend:** `src/Entrega_2/Backend/vercel.json` (API + agente privado);
+- **portal:** `src/Entrega_2/Web/vercel.json` (encaminha `/api` ao backend).
+
+O banco é PostgreSQL gerenciado (Supabase, schema `asa`). Passo a passo (projetos, variáveis, migrations, produção,
+reversão e app apontando para a URL):
+[`docs/migration/04-deploy-vercel.md`](docs/migration/04-deploy-vercel.md).
+
+```bash
+( cd src/Entrega_2/Backend && vercel link && vercel deploy --prod )   # backend
+( cd src/Entrega_2/Web && vercel link && vercel deploy --prod )       # portal
+SMOKE_WEB=1 node src/Entrega_2/Backend/scripts/smoke.mjs <url>   # verifica a implantação (código 1 em falha)
+```
+
+Para reproduzir o backend da Vercel localmente (API + agente com binding), rode
+`npx vercel@65.4.0 dev --local` em `src/Entrega_2/Backend`
+([04 §10](docs/migration/04-deploy-vercel.md#10-sem-docker-desenvolvimento-local)).
+
+## Opção A — tudo com Docker (opcional: PostgreSQL + API + Agent Service + Mailpit + portal web)
 
 ```bash
 cd "src/Entrega_2/Backend"
@@ -463,12 +495,13 @@ Runbook completo (produção, proxy, variáveis, reversão):
 > Se o app mostrar `ERR_CONNECTION_REFUSED` em `:3000/api/auth/login`, a API não está rodando:
 > suba a stack com o comando acima.
 
-## Opção B — serviços locais (desenvolvimento)
+## Opção B — serviços locais, sem Docker (desenvolvimento)
 
 ```bash
-# 1. Banco e caixa de e-mail local
+# 1. Banco: um PostgreSQL 16+ seu (instalado, cluster próprio ou gerenciado) — ou, se preferir, o do Compose:
+#    ( cd "src/Entrega_2/Backend" && docker compose up -d db mailpit )
+#    Sem Docker e sem SMTP local, use MAIL_TRANSPORT=disabled no .env da API.
 cd "src/Entrega_2/Backend"
-docker compose up -d db mailpit
 
 # 2. Agent Service (Python)
 cd agent-service
@@ -481,7 +514,8 @@ cd "src/Entrega_2/Backend/api"
 cp .env.example .env
 npm install
 npm run db:migrate && npm run db:seed
-npm run dev                        # http://localhost:3000
+npm run dev                        # http://localhost:3000 (processo tradicional)
+# npm run start:vercel-entry       # alternativa: a MESMA entrada da Vercel (sem laços, fila sob demanda)
 ```
 
 ## Opção C — banco online no Supabase (API e agente locais ou em Docker)

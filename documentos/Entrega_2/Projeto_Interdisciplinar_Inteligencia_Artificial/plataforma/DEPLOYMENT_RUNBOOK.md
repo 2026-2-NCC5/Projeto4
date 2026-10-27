@@ -1,5 +1,10 @@
 # Runbook de implantação e operação
 
+> **Atualização (27/10/2026):** a implantação passou a ser na **Vercel**, em dois projetos: backend
+> (`src/Entrega_2/Backend`: API + agente privado) e portal (`src/Entrega_2/Web`), com PostgreSQL gerenciado. Nada de produção depende de Docker, e o ambiente abaixo vale
+> como alternativa local opcional. Procedimento atual, variáveis, banco, testes e reversão:
+> [`docs/migration/`](../../../../docs/migration/04-deploy-vercel.md).
+
 ## 1. Desenvolvimento local
 
 Pré-requisitos: Node.js 22.12+ (portal; o CI usa 24), Node 20+ (API), Python 3.12 (Agent Service), Docker com

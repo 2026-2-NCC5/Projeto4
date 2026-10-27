@@ -18,8 +18,13 @@ npm run preview      # serve dist/ com o mesmo proxy
 ```
 
 A API precisa estar no ar (ver o runbook em
-`documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/DEPLOYMENT_RUNBOOK.md`). No
-Compose, o serviço `web` (este `Dockerfile`, nginx) publica o portal em http://localhost:8080.
+`documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/DEPLOYMENT_RUNBOOK.md`).
+
+**Produção:** projeto Vercel próprio (`asa-conecta`, [`vercel.json`](vercel.json) desta pasta). O build estático vai
+para o CDN, e `/api` e `/health` são encaminhados (rewrite) ao projeto do backend, na mesma origem: os cookies
+HttpOnly funcionam sem CORS. Os cabeçalhos de segurança e a CSP são os mesmos do nginx. Nenhuma variável é necessária em produção
+([`docs/migration/04-deploy-vercel.md`](../../../docs/migration/04-deploy-vercel.md)). No Compose, que é opcional,
+o serviço `web` (este `Dockerfile`, nginx) publica o portal em http://localhost:8080.
 
 ## Verificações
 
