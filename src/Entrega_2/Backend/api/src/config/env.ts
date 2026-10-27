@@ -13,13 +13,16 @@ const envSchema = z.object({
   // auto: TLS só para hosts remotos (Supabase); require: sempre; disable: nunca
   DATABASE_SSL: z.enum(['auto', 'require', 'disable']).default('auto'),
   DATABASE_SSL_CA_FILE: z.string().min(1).optional(),
+  // Conexões por instância. Em funções serverless cada instância tem o próprio pool: mantenha baixo (ex.: 3)
+  DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
   // db:reset apaga o schema inteiro: em bancos remotos exige opt-in explícito
   ALLOW_REMOTE_DB_RESET: z.enum(['true', 'false', '1', '0']).default('false'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET deve ter pelo menos 32 caracteres'),
   JWT_EXPIRES_IN: z.string().default('15m'),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),
   SESSION_TTL_HOURS: z.coerce.number().int().positive().default(12),
-  TRUST_PROXY: z.string().default('false'),
+  // Sem valor: true na Vercel (o proxy dela sobrescreve X-Forwarded-For com o IP real), false fora dela
+  TRUST_PROXY: z.string().optional(),
   RATE_LIMIT_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   SIGNUP_ALLOWED_EMAIL_DOMAINS: z.string().default('edu.fecap.br,fecap.br,demo.asa'),
   REGISTRATION_NUMBER_PATTERN: z.string().min(1).default('^\\d{8}$'),
@@ -43,6 +46,8 @@ const envSchema = z.object({
   MAIL_FROM: z.string().default('ASA Conecta <nao-responda@asa-conecta.local>'),
   AGENT_SERVICE_URL: z.string().url().default('http://localhost:8000'),
   AGENT_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
+  // Segredo compartilhado com o Agent Service (Authorization: Bearer); o serviço exige quando também o define
+  AGENT_SERVICE_TOKEN: z.string().min(16, 'AGENT_SERVICE_TOKEN deve ter pelo menos 16 caracteres').optional(),
   CORS_ORIGIN: z.string().default('*'),
   VOICE_ASSISTANT_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   INTENT_MIN_CONFIDENCE: z.coerce.number().min(0).max(1).default(0.6),
@@ -61,6 +66,8 @@ const envSchema = z.object({
   ASA_QUEUE_MAX_BACKOFF_SECONDS: z.coerce.number().int().min(10).max(3600).default(300),
   ASA_QUEUE_FAILURE_THRESHOLD: z.coerce.number().int().min(1).max(50).default(5),
   ASA_QUEUE_SUBSCRIPTION_RATE_LIMIT: z.coerce.number().int().min(1).max(100).default(10),
+  // Duração de cada conexão de tempo real (SSE); o app reconecta. Sem valor: 240 s na Vercel (limite da função: 300 s), 300 s fora
+  ASA_QUEUE_STREAM_MAX_SECONDS: z.coerce.number().int().min(30).max(3600).optional(),
   ASA_QUEUE_MOCK_SCENARIO: z.enum(['empty', 'waiting', '5_ahead', '3_ahead', 'next', 'called', 'completed', 'offline', 'progression']).default('progression'),
   ASA_QUEUE_MOCK_STEP_SECONDS: z.coerce.number().int().min(2).max(600).default(20),
   // Push: expo (Expo Push Service) | log (desenvolvimento, só registra) | disabled
@@ -87,7 +94,13 @@ const envSchema = z.object({
   FEATURE_REALTIME_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
   // Varredura dos prazos para as automações (segundos; 0 desliga). As regras continuam desligadas até a administração ativar.
   AUTOMATION_SCAN_INTERVAL_SECONDS: z.coerce.number().int().min(0).max(86_400).default(300),
-  // Origens do portal web aceitas nas requisições com cookie de sessão (verificação de CSRF)
+  // Rotas /api/internal/jobs/* (Vercel Cron, agendador externo): exigem Authorization: Bearer <CRON_SECRET>. Sem valor: desativadas
+  CRON_SECRET: z.string().min(16, 'CRON_SECRET deve ter pelo menos 16 caracteres').optional(),
+  // Tamanho máximo de cada anexo de chamado. Sem valor: 3 MiB na Vercel (corpo da função limitado a 4,5 MB; o envio
+  // vai em base64), 5 MiB fora dela
+  SUPPORT_MAX_ATTACHMENT_BYTES: z.coerce.number().int().min(64 * 1024).max(5 * 1024 * 1024).optional(),
+  // Origens do portal web aceitas nas requisições com cookie de sessão (verificação de CSRF). Na Vercel as URLs do
+  // próprio deploy entram automaticamente (VERCEL_URL, VERCEL_BRANCH_URL, VERCEL_PROJECT_PRODUCTION_URL)
   WEB_ORIGINS: z.string().default('http://localhost:5173,http://127.0.0.1:5173'),
   // auto: cookies Secure só em produção (HTTPS); true/false força
   WEB_COOKIE_SECURE: z.enum(['auto', 'true', 'false']).default('auto'),
@@ -122,12 +135,17 @@ export interface AppConfig {
     biometric: { enabled: boolean; credentialTtlDays: number };
     legal: { termsUrl: string | null; privacyUrl: string | null };
   };
+  /** onde a API está rodando (padrões que dependem da plataforma) */
+  platform: { vercel: boolean; region: string | null };
+  database: { poolMax: number };
+  jobs: { cronSecret: string | null };
+  support: { maxAttachmentBytes: number };
   mail: {
     transport: 'smtp' | 'disabled';
     smtp: { host: string; port: number; secure: boolean; user: string | undefined; pass: string | undefined } | null;
     from: string;
   };
-  agentService: { url: string; timeoutMs: number; contractMajor: number; contractVersion: string };
+  agentService: { url: string; timeoutMs: number; token: string | null; contractMajor: number; contractVersion: string };
   corsOrigin: string;
   assistant: { enabled: boolean; intentMinConfidence: number; timezone: string; maxTextLength: number };
   // ---- queue (Fila presencial do ASA)
@@ -144,6 +162,8 @@ export interface AppConfig {
     pollIntervalSeconds: number;
     /** snapshot mais velho que isto aparece como desatualizado (e seguidores releem o banco) */
     cacheTtlSeconds: number;
+    /** duração de cada conexão SSE (o app reconecta) */
+    streamMaxSeconds: number;
     requestTimeoutMs: number;
     maxBackoffSeconds: number;
     failureThreshold: number;
@@ -173,6 +193,11 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   }
   const env = parsed.data;
   const flag = (value: string) => value === 'true' || value === '1';
+  // Variável de sistema da Vercel (build e funções); ausente em qualquer outro ambiente
+  const onVercel = source.VERCEL === '1';
+  if (env.NODE_ENV === 'production' && !cleaned.AGENT_SERVICE_URL) {
+    throw new Error('Configuração inválida: defina AGENT_SERVICE_URL em produção (na Vercel ela vem do binding do serviço `agent`)');
+  }
   let registrationNumberPattern: RegExp;
   try {
     registrationNumberPattern = new RegExp(env.REGISTRATION_NUMBER_PATTERN);
@@ -182,7 +207,8 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   if (env.MAIL_TRANSPORT === 'smtp' && !env.SMTP_HOST) {
     throw new Error('Configuração inválida: MAIL_TRANSPORT=smtp exige SMTP_HOST');
   }
-  const trustProxy = env.TRUST_PROXY === 'true' ? true : env.TRUST_PROXY === 'false' ? false : /^\d+$/.test(env.TRUST_PROXY) ? Number(env.TRUST_PROXY) : env.TRUST_PROXY;
+  const trustProxyRaw = env.TRUST_PROXY ?? (onVercel ? 'true' : 'false');
+  const trustProxy = trustProxyRaw === 'true' ? true : trustProxyRaw === 'false' ? false : /^\d+$/.test(trustProxyRaw) ? Number(trustProxyRaw) : trustProxyRaw;
   const queueProviderRaw = env.ASA_QUEUE_PROVIDER === 'demo' ? 'mock' : env.ASA_QUEUE_PROVIDER;
   if (env.NODE_ENV === 'production' && queueProviderRaw === 'mock') {
     throw new Error('Configuração inválida: ASA_QUEUE_PROVIDER=mock não é permitido em produção');
@@ -196,6 +222,15 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   for (const origin of webOrigins) {
     if (!/^https?:\/\/[^/\s]+$/.test(origin)) throw new Error(`Configuração inválida: WEB_ORIGINS contém uma origem inválida (${origin})`);
   }
+  // Vercel (Services): o portal e a API respondem no MESMO deploy. As URLs dele (a do deploy, a do branch e a
+  // de produção) vêm das variáveis de sistema; cada preview tem uma URL nova, que não dá para listar à mão.
+  // Domínios próprios continuam em WEB_ORIGINS.
+  if (onVercel) {
+    for (const host of [source.VERCEL_URL, source.VERCEL_BRANCH_URL, source.VERCEL_PROJECT_PRODUCTION_URL]) {
+      const origin = host && /^[a-z0-9.-]+$/i.test(host) ? `https://${host.toLowerCase()}` : null;
+      if (origin && !webOrigins.includes(origin)) webOrigins.push(origin);
+    }
+  }
   try {
     new Intl.DateTimeFormat('en-CA', { timeZone: env.APP_TIMEZONE });
   } catch {
@@ -208,6 +243,10 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     databaseUrl: env.DATABASE_URL,
     databaseSsl: { mode: env.DATABASE_SSL, caFile: env.DATABASE_SSL_CA_FILE },
     allowRemoteDbReset: flag(env.ALLOW_REMOTE_DB_RESET),
+    platform: { vercel: onVercel, region: source.VERCEL_REGION ?? null },
+    database: { poolMax: env.DATABASE_POOL_MAX },
+    jobs: { cronSecret: env.CRON_SECRET ?? null },
+    support: { maxAttachmentBytes: env.SUPPORT_MAX_ATTACHMENT_BYTES ?? (onVercel ? 3 * 1024 * 1024 : 5 * 1024 * 1024) },
     jwt: { secret: env.JWT_SECRET, expiresIn: env.JWT_EXPIRES_IN, issuer: 'asa-conecta-api', audience: 'asa-conecta-mobile' },
     refreshTokenTtlDays: env.REFRESH_TOKEN_TTL_DAYS,
     sessionTtlHours: env.SESSION_TTL_HOURS,
@@ -240,6 +279,7 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     agentService: {
       url: env.AGENT_SERVICE_URL.replace(/\/+$/, ''),
       timeoutMs: env.AGENT_SERVICE_TIMEOUT_MS,
+      token: env.AGENT_SERVICE_TOKEN ?? null,
       contractMajor: 1,
       contractVersion: '1.0',
     },
@@ -259,6 +299,7 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
       sourceUrl: env.ASA_QUEUE_SOURCE_URL,
       pollIntervalSeconds: env.ASA_QUEUE_POLL_INTERVAL_SECONDS,
       cacheTtlSeconds: env.ASA_QUEUE_CACHE_TTL_SECONDS,
+      streamMaxSeconds: env.ASA_QUEUE_STREAM_MAX_SECONDS ?? (onVercel ? 240 : 300),
       requestTimeoutMs: env.ASA_QUEUE_REQUEST_TIMEOUT_MS,
       maxBackoffSeconds: env.ASA_QUEUE_MAX_BACKOFF_SECONDS,
       failureThreshold: env.ASA_QUEUE_FAILURE_THRESHOLD,

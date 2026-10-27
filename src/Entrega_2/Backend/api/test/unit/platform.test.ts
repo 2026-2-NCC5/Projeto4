@@ -13,6 +13,8 @@ import { MemorySettingsRepository } from '../support/inMemoryPlatform.js';
 import { bearer, buildTestConfig, createTestApp, loginAs } from '../support/testApp.js';
 import { WebClient, WEB_ORIGIN } from '../support/webClient.js';
 
+const AGENT_URL = 'http://agent-service:8000';
+
 const TICKET = {
   categoryId: 'financial',
   subcategoryId: 'bill',
@@ -82,17 +84,66 @@ describe('configuração da plataforma', () => {
   it('fila presencial: simulador por padrão fora de produção; em produção fica desativada até escolher a fonte', () => {
     const dev = loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40) });
     expect(dev.queue).toMatchObject({ provider: 'mock', providerExplicit: false, sourceAuthorized: false, enabled: true });
-    const prod = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40) });
+    const prod = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL });
     expect(prod.queue.enabled).toBe(false);
     expect(prod.queue.disabledReason).toMatch(/ASA_QUEUE_PROVIDER/);
-    const explicit = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_PROVIDER: 'fecap' });
+    const explicit = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'fecap' });
     expect(explicit.queue).toMatchObject({ provider: 'fecap', enabled: true, providerExplicit: true });
-    expect(() => loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_PROVIDER: 'demo' })).toThrow(/mock não é permitido/);
+    expect(() => loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'demo' })).toThrow(/mock não é permitido/);
     expect(loadConfig({ NODE_ENV: 'test', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_PROVIDER: 'demo' }).queue.provider).toBe('mock');
   });
 
+  it('produção exige AGENT_SERVICE_URL explícita (sem cair no localhost)', () => {
+    expect(() => loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_ENABLED: 'false' })).toThrow(/AGENT_SERVICE_URL/);
+    expect(loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40) }).agentService.url).toBe('http://localhost:8000');
+  });
+
+  it('padrões da Vercel: proxy confiável, SSE abaixo do limite da função, anexos que cabem em 4,5 MB', () => {
+    const vercel = loadConfig({ JWT_SECRET: 'x'.repeat(40), VERCEL: '1', VERCEL_REGION: 'gru1' });
+    expect(vercel.platform).toEqual({ vercel: true, region: 'gru1' });
+    expect(vercel.trustProxy).toBe(true);
+    expect(vercel.queue.streamMaxSeconds).toBe(240);
+    expect(vercel.support.maxAttachmentBytes).toBe(3 * 1024 * 1024);
+    // base64 do maior anexo + JSON cabe no corpo de 4,5 MB da função
+    expect(Math.ceil((vercel.support.maxAttachmentBytes * 4) / 3) + 1024).toBeLessThan(4_500_000);
+    const local = loadConfig({ JWT_SECRET: 'x'.repeat(40) });
+    expect(local.platform.vercel).toBe(false);
+    expect(local.trustProxy).toBe(false);
+    expect(local.queue.streamMaxSeconds).toBe(300);
+    expect(local.support.maxAttachmentBytes).toBe(5 * 1024 * 1024);
+    expect(local.jobs.cronSecret).toBeNull();
+    expect(local.database.poolMax).toBe(10);
+    // valores explícitos vencem os padrões da plataforma
+    const explicit = loadConfig({ JWT_SECRET: 'x'.repeat(40), VERCEL: '1', TRUST_PROXY: 'false', ASA_QUEUE_STREAM_MAX_SECONDS: '120', DATABASE_POOL_MAX: '3', CRON_SECRET: 'c'.repeat(32) });
+    expect(explicit.trustProxy).toBe(false);
+    expect(explicit.queue.streamMaxSeconds).toBe(120);
+    expect(explicit.database.poolMax).toBe(3);
+    expect(explicit.jobs.cronSecret).toBe('c'.repeat(32));
+    expect(() => loadConfig({ JWT_SECRET: 'x'.repeat(40), CRON_SECRET: 'curto' })).toThrow(/CRON_SECRET/);
+  });
+
+  it('na Vercel o portal do próprio deploy (preview, branch e produção) é origem aceita no CSRF; fora dela, não', () => {
+    const preview = loadConfig({
+      JWT_SECRET: 'x'.repeat(40),
+      VERCEL: '1',
+      WEB_ORIGINS: 'https://asa.fecap.br',
+      VERCEL_URL: 'asa-conecta-abc123-nucleo.vercel.app',
+      VERCEL_BRANCH_URL: 'asa-conecta-git-main-nucleo.vercel.app',
+      VERCEL_PROJECT_PRODUCTION_URL: 'asa-conecta.vercel.app',
+    });
+    expect(preview.web.origins).toEqual([
+      'https://asa.fecap.br',
+      'https://asa-conecta-abc123-nucleo.vercel.app',
+      'https://asa-conecta-git-main-nucleo.vercel.app',
+      'https://asa-conecta.vercel.app',
+    ]);
+    // valor estranho na variável de sistema não vira origem
+    expect(loadConfig({ JWT_SECRET: 'x'.repeat(40), VERCEL: '1', VERCEL_URL: 'evil.com/path' }).web.origins).not.toContain('https://evil.com/path');
+    expect(loadConfig({ JWT_SECRET: 'x'.repeat(40), VERCEL_URL: 'asa-conecta.vercel.app' }).web.origins).not.toContain('https://asa-conecta.vercel.app');
+  });
+
   it('cookies Secure em produção, origens do portal validadas e modo demonstração ligado por padrão', () => {
-    expect(loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_ENABLED: 'false' }).web.cookieSecure).toBe(true);
+    expect(loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_ENABLED: 'false' }).web.cookieSecure).toBe(true);
     const dev = loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40) });
     expect(dev.web.cookieSecure).toBe(false);
     expect(dev.web.origins).toContain(WEB_ORIGIN);
