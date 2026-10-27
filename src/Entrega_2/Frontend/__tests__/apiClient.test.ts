@@ -30,6 +30,12 @@ describe('apiClient', () => {
 
   afterEach(() => resetApiClientForTests());
 
+  it('build sem URL da API configurada: erro explícito, sem tentar o localhost do aparelho', async () => {
+    configureApiClient({ baseUrl: '', getAccessToken: () => token, refreshSession, onUnauthorized, fetchFn: fetchFn as unknown as typeof fetch });
+    await expect(request('/api/student/me')).rejects.toMatchObject({ kind: 'network', reason: 'api_url_not_configured' });
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
   it('devolve data do envelope e envia Authorization + x-correlation-id', async () => {
     fetchFn.mockResolvedValueOnce(fakeResponse(200, okEnvelope({ id: 'me' })));
     const data = await request<{ id: string }>('/api/student/me', { correlationId: 'corr-flow' });

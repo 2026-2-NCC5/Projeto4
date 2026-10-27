@@ -15,6 +15,11 @@ describe('config/env', () => {
     expect(resolveApiBaseUrl({ hostUri: null, port: 4000 })).toBe('http://localhost:3000');
   });
 
+  it('em release não cai no localhost: sem EXPO_PUBLIC_API_URL a URL fica vazia (erro explícito no apiClient)', () => {
+    expect(resolveApiBaseUrl({ isDevelopment: false, hostUri: '192.168.0.10:8081' })).toBe('');
+    expect(resolveApiBaseUrl({ isDevelopment: false, envUrl: 'https://asa-conecta.vercel.app/' })).toBe('https://asa-conecta.vercel.app');
+  });
+
   it('extrai host de hostUri', () => {
     expect(hostFromHostUri('10.0.0.5:8081')).toBe('10.0.0.5');
     expect(hostFromHostUri('[::1]:8081')).toBe('[::1]');

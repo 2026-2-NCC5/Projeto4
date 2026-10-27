@@ -214,7 +214,7 @@ function AppContent() {
 const styles = StyleSheet.create({
   app: { flex: 1 },
   splash: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, overflow: 'hidden', backgroundColor: '#299B60' },
-  splashBackground: { ...StyleSheet.absoluteFillObject, backgroundColor: '#299B60' },
+  splashBackground: { ...StyleSheet.absoluteFill, backgroundColor: '#299B60' },
   splashGlow: { position: 'absolute', width: 360, height: 360, borderRadius: 180, backgroundColor: '#62C68B', opacity: 0.12, top: '17%', left: '50%', marginLeft: -180 },
   splashContent: { width: '100%', alignItems: 'center', justifyContent: 'center' },
   splashDivider: { width: 36, height: 2, borderRadius: 1, backgroundColor: '#FFFFFF', opacity: 0.62, marginTop: 28, marginBottom: 18 },

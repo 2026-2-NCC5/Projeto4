@@ -36,10 +36,16 @@ export function inferMimeType(name: string, declared: string | null | undefined)
   return EXTENSION_TYPES[extension] ?? 'application/octet-stream';
 }
 
+/** "5 MB", "3 MB", "1,5 MB" — o limite vem do catálogo da API (menor quando ela roda na Vercel). */
+export function formatLimitMegabytes(bytes: number): string {
+  const value = Math.round((bytes / (1024 * 1024)) * 10) / 10;
+  return `${String(value).replace('.', ',')} MB`;
+}
+
 /** Validação amigável antes do envio (o servidor confere de novo, inclusive o conteúdo). */
 export function validatePickedFile(file: Pick<PickedFile, 'mimeType' | 'sizeBytes'>, limits: Pick<SupportLimits, 'allowedMimeTypes' | 'maxAttachmentBytes'>): string | null {
   if (!limits.allowedMimeTypes.includes(file.mimeType)) return 'Esse tipo de arquivo não é aceito. Envie PDF, imagem (JPG, PNG) ou documento (DOC, DOCX, TXT).';
-  if (file.sizeBytes > limits.maxAttachmentBytes) return 'O arquivo é maior que 5 MB. Tente uma versão menor ou uma foto com menos resolução.';
+  if (file.sizeBytes > limits.maxAttachmentBytes) return `O arquivo é maior que ${formatLimitMegabytes(limits.maxAttachmentBytes)}. Tente uma versão menor ou uma foto com menos resolução.`;
   if (file.sizeBytes <= 0) return 'O arquivo está vazio.';
   return null;
 }

@@ -232,6 +232,10 @@ async function performFetch(
 ): Promise<Response> {
   const external = options.signal;
   if (external?.aborted) throw cancelledError(correlationId);
+  if (!cfg.baseUrl) {
+    // build de release sem EXPO_PUBLIC_API_URL: falha explícita (nunca o localhost do próprio aparelho)
+    throw new ApiClientError({ kind: 'network', reason: 'api_url_not_configured', message: 'O endereço do servidor não foi configurado neste aplicativo.', correlationId });
+  }
 
   const controller = new AbortController();
   const timeoutMs = options.timeoutMs ?? TIMEOUTS.API_TIMEOUT_MS;

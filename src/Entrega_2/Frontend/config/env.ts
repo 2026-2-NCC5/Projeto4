@@ -24,18 +24,22 @@ export interface ResolveApiBaseUrlOptions {
   envUrl?: string | undefined;
   hostUri?: string | null | undefined;
   port?: number;
+  /** build de desenvolvimento (Metro). Em release não existe API local para onde cair. */
+  isDevelopment?: boolean;
 }
 
 /**
  * Resolve a URL base da API:
- * 1. EXPO_PUBLIC_API_URL (override explícito);
- * 2. host do Metro (Constants.expoConfig.hostUri) na porta padrão da API — permite
+ * 1. EXPO_PUBLIC_API_URL (override explícito; obrigatório em builds de release, ex.: a URL da Vercel);
+ * 2. só em desenvolvimento: host do Metro (Constants.expoConfig.hostUri) na porta padrão da API — permite
  *    que o Expo Go no celular alcance a API rodando na mesma máquina do Metro;
- * 3. http://localhost:3000.
+ * 3. só em desenvolvimento: http://localhost:3000.
+ * Release sem EXPO_PUBLIC_API_URL → '' (o apiClient recusa com erro claro em vez de chamar o localhost do aparelho).
  */
 export function resolveApiBaseUrl(options: ResolveApiBaseUrlOptions = {}): string {
   const envUrl = options.envUrl?.trim();
   if (envUrl) return trimTrailingSlash(envUrl);
+  if (options.isDevelopment === false) return '';
 
   const host = hostFromHostUri(options.hostUri);
   const port = options.port ?? DEFAULT_API_PORT;
@@ -52,6 +56,7 @@ function readHostUri(): string | null {
 export const API_BASE_URL: string = resolveApiBaseUrl({
   envUrl: process.env.EXPO_PUBLIC_API_URL,
   hostUri: readHostUri(),
+  isDevelopment: typeof __DEV__ === 'undefined' ? true : __DEV__,
 });
 
 export const env = {
