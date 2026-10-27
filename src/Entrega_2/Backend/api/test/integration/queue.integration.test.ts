@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PgDeliveryRepository, PgPushDeviceRepository } from '../../src/notifications/repository.js';
 import { createLogger } from '../../src/config/logger.js';
-import { PgAdvisoryLeaderLock } from '../../src/queue/leaderLock.js';
+import { PgLeaseLeaderLock } from '../../src/queue/leaderLock.js';
+import { createQueueModule } from '../../src/queue/module.js';
+import type { NotificationService } from '../../src/notifications/notificationService.js';
+import { buildTestConfig } from '../support/testApp.js';
 import { PgQueueRepository } from '../../src/queue/pgRepository.js';
 import { buildSnapshot } from '../../src/queue/snapshot.js';
 import { endOfLocalDay } from '../../src/queue/time.js';
@@ -91,16 +94,62 @@ describeDb('integração fila presencial ↔ PostgreSQL', () => {
     expect(state?.snapshot?.upcoming[0]).toEqual({ ticket: '0027', position: 1, sourceId: null });
   });
 
-  it('liderança: só uma instância obtém o advisory lock; ao liberar, outra assume', async () => {
+  it('liderança: concessão no banco — uma instância por vez, renovação pela dona, expiração e liberação', async () => {
     const logger = createLogger('silent');
-    const a = new PgAdvisoryLeaderLock(db.pool, logger, 'asa_conecta.queue_monitor.test');
-    const b = new PgAdvisoryLeaderLock(db.pool, logger, 'asa_conecta.queue_monitor.test');
+    const name = 'asa_conecta.queue_monitor.test';
+    const a = new PgLeaseLeaderLock(db.pool, logger, { name, ttlMs: 60_000, holder: 'a' });
+    const b = new PgLeaseLeaderLock(db.pool, logger, { name, ttlMs: 60_000, holder: 'b' });
     expect(await a.acquire()).toBe(true);
+    expect(a.held).toBe(true);
+    expect(await a.acquire()).toBe(true); // renovação
+    expect(await b.acquire()).toBe(false);
+    expect(b.held).toBe(false);
+    await a.release();
+    expect(a.held).toBe(false);
+    expect(await b.acquire()).toBe(true);
+
+    // concessão vencida (dona sumiu sem liberar): outra instância assume sem esperar ninguém
+    await db.pool.query("update job_leases set lease_until = now() - interval '1 second' where name = $1", [name]);
     expect(await a.acquire()).toBe(true);
     expect(await b.acquire()).toBe(false);
     await a.release();
-    expect(await b.acquire()).toBe(true);
-    await b.release();
+    const { rows } = await db.pool.query<{ holder: string }>('select holder from job_leases where name = $1', [name]);
+    expect(rows).toEqual([{ holder: 'a' }]);
+  });
+
+  it('modo sob demanda: duas instâncias sem laço — uma consulta a fonte, a outra segue o banco', async () => {
+    const logger = createLogger('silent');
+    await db.pool.query("delete from job_leases where name = 'asa_conecta.queue_monitor'");
+    await db.pool.query('delete from queue_monitor_state');
+    let clock = new Date();
+    const now = () => clock;
+    let fetches = 0;
+    const provider = {
+      name: 'fake',
+      async getCurrentQueue() {
+        fetches += 1;
+        return buildSnapshot({ provider: 'fake', calls: [{ ticket: String(fetches).padStart(4, '0'), desk: 'Mesa 01', calledAt: now().toISOString(), serviceStatus: 'in_service' as const, sourceId: `f-${fetches}` }], upcoming: [], upcomingComplete: true, callsTotal: 1, now: now(), timeZone: TZ });
+      },
+    };
+    const base = buildTestConfig();
+    const config = { ...base, queue: { ...base.queue, enabled: true, pollIntervalSeconds: 10 } };
+    const notifications = { sendToUser: async () => ({ status: 'skipped' as const, devices: 0 }) } as unknown as NotificationService;
+    const make = () => createQueueModule({ config, logger, pool: db.pool, notifications, provider, mode: 'on-demand', now });
+    const first = make();
+    const second = make();
+    await first.service.refresh();
+    expect(fetches).toBe(1);
+    expect(first.service.overview().latestCall?.ticket).toBe('0001');
+    // a outra instância não consulta a fonte: o intervalo não venceu e a concessão é da primeira
+    await second.service.refresh();
+    expect(fetches).toBe(1);
+    expect(second.service.overview().latestCall?.ticket).toBe('0001');
+    // vencido o intervalo, uma consulta só (a concessão da primeira também venceu)
+    clock = new Date(clock.getTime() + 11_000);
+    await Promise.all([first.service.refresh(), second.service.refresh()]);
+    expect(fetches).toBe(2);
+    await first.stop();
+    await second.stop();
   });
 
   it('push: token por aparelho (troca de usuário), desativação e registro de entrega com idempotência', async () => {

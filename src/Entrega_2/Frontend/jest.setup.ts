@@ -1,5 +1,7 @@
 // Mocks globais de módulos nativos do Expo para o ambiente de testes (jest-expo).
 
+import 'react-native-gesture-handler/jestSetup';
+
 // Reanimated 4: o módulo nativo de worklets não existe no Jest — usamos o mock oficial do pacote
 // (worklets rodam na thread JS) e setUpTests registra os matchers/timer do Reanimated.
 jest.mock('react-native-worklets', () => jest.requireActual('react-native-worklets/src/mock'));
@@ -76,6 +78,27 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy', Soft: 'soft', Rigid: 'rigid' },
   NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
 }));
+
+// Dynamic Notifications usa módulos visuais nativos que não são executados nos testes de lógica/telas.
+jest.mock('@shopify/react-native-skia', () => {
+  const Component = () => null;
+  return { Blur: Component, Canvas: Component, ColorMatrix: Component, Group: Component, Paint: Component, RoundedRect: Component, Shadow: Component };
+});
+
+jest.mock('expo-image', () => {
+  const { View } = jest.requireActual<typeof import('react-native')>('react-native');
+  return { Image: View };
+});
+
+jest.mock('expo-symbols', () => {
+  const { View } = jest.requireActual<typeof import('react-native')>('react-native');
+  return { SymbolView: View };
+});
+
+jest.mock('expo-blur', () => {
+  const { View } = jest.requireActual<typeof import('react-native')>('react-native');
+  return { BlurView: View };
+});
 
 // Reconhecimento de fala: módulo inerte. Testes do adapter injetam um emissor de eventos próprio.
 jest.mock('expo-speech-recognition', () => ({

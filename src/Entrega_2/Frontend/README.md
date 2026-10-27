@@ -27,9 +27,14 @@ npx expo run:android      # ou npx expo run:ios
 
 ## Apontando para a API
 
-1. `EXPO_PUBLIC_API_URL` no `.env` (override explícito);
-2. sem a variável, o app usa o host do Metro na porta 3000 (Expo Go no celular alcança a API da mesma máquina);
-3. fallback `http://localhost:3000`.
+1. `EXPO_PUBLIC_API_URL` no `.env` (override explícito). **Obrigatória em build de release**, por exemplo a URL
+   da Vercel (`https://<projeto>.vercel.app`). No EAS, cadastre a variável no projeto Expo;
+2. só em desenvolvimento: sem a variável, o app usa o host do Metro na porta 3000 (Expo Go no celular alcança a
+   API da mesma máquina);
+3. só em desenvolvimento: fallback `http://localhost:3000`.
+
+Em release sem `EXPO_PUBLIC_API_URL`, o app mostra "O endereço do servidor não foi configurado neste aplicativo"
+em vez de tentar o localhost do próprio aparelho.
 
 ## Contas fictícias
 
@@ -123,7 +128,7 @@ Documentação completa em [`documentos/Entrega_2/Projeto_Interdisciplinar_Intel
 
 | Variável | Padrão | Uso |
 | --- | --- | --- |
-| `EXPO_PUBLIC_API_URL` | (derivada do Metro) | URL da API |
+| `EXPO_PUBLIC_API_URL` | (derivada do Metro só em desenvolvimento) | URL da API; obrigatória em release |
 | `EXPO_PUBLIC_API_TIMEOUT_MS` / `EXPO_PUBLIC_ANALYSIS_TIMEOUT_MS` / `EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS` | 10000 / 15000 / 15000 | timeouts |
 | `EXPO_PUBLIC_VOICE_ASSISTANT_ENABLED` | `true` | modo "Conversar" |
 | `EXPO_PUBLIC_SPEECH_PROVIDER` | `device` | `device` / `none` |

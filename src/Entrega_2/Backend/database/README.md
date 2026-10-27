@@ -51,8 +51,12 @@ Regras para o banco online:
 
 - `npm run db:reset` é **bloqueado** para hosts remotos; só roda com `ALLOW_REMOTE_DB_RESET=true`.
 - Nunca aponte `TEST_DATABASE_URL` para o Supabase: os testes recriam o schema a cada execução.
-- Não use o modo transação do pooler (porta 6543): a API abre transações e usa `set`/prepared
-  statements que exigem sessão dedicada.
+- Migrations, seeds e `pg_dump` usam o pooler em **modo sessão** (porta 5432).
+- A API não depende mais de sessão dedicada: o advisory lock de sessão da fila virou concessão em tabela
+  (`012_job_leases.sql`), e não há `SET` nem prepared statement nomeado. Isso torna viável o modo
+  **transação** (porta 6543) para a API na Vercel, desde que validado num preview com o smoke test antes de
+  produção. Até lá, use o modo sessão com `DATABASE_POOL_MAX=3`. Procedimento, backup e reversão:
+  [`docs/migration/07-migracao-banco.md`](../../../../docs/migration/07-migracao-banco.md).
 - A senha do banco fica apenas no `.env` (ignorado pelo git). Chaves `anon`/`service_role` não são
   usadas: o app fala só com a API Node.js, que é quem acessa o Postgres.
 
@@ -61,6 +65,7 @@ Regras para o banco online:
 - Nunca edite uma migration já aplicada em outro ambiente: crie `NNN_descricao.sql` nova.
 - Seeds contêm apenas pessoas e dados acadêmicos fictícios. A senha das contas de
   demonstração (`Demo@2026`) é armazenada somente como hash bcrypt.
+- `012_job_leases.sql` (concessões de tarefas compartilhadas, como a leitura da fila) é aditiva.
 - Entidades: `users`, `refresh_sessions` (com `remember_me`), `students`, `subjects`,
   `enrollments`, `assessments`, `attendance`, `pending_items`, `agent_runs`,
   `agent_recommendations`, `agent_evidence`, `agent_feedback`, `assistant_interactions`

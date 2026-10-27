@@ -43,6 +43,8 @@ import { createKnowledgeRouter } from './routes/knowledge.js';
 import { AdminService } from './admin/adminService.js';
 import { AutomationEngine } from './admin/automationEngine.js';
 import { createAdminRouter } from './routes/admin.js';
+// ---- jobs (tarefas periódicas acionadas de fora: Vercel Cron, agendador externo)
+import { createJobsRouter } from './routes/jobs.js';
 
 export const API_VERSION = '1.0.0';
 
@@ -77,7 +79,7 @@ export interface AppDeps {
 /** Fábrica da aplicação Express com injeção de dependências (testável sem rede/banco). */
 export function createApp(deps: AppDeps): Express {
   const logger = deps.logger ?? createLogger(deps.config.logLevel);
-  const agentClient = deps.agentClient ?? createAgentClient({ baseUrl: deps.config.agentService.url, timeoutMs: deps.config.agentService.timeoutMs });
+  const agentClient = deps.agentClient ?? createAgentClient({ baseUrl: deps.config.agentService.url, timeoutMs: deps.config.agentService.timeoutMs, token: deps.config.agentService.token });
   const now = deps.now ?? (() => new Date());
   const mailer = deps.mailer ?? createMailer(deps.config);
   const authService = new AuthService(deps.repos, deps.config, now);
@@ -120,6 +122,7 @@ export function createApp(deps: AppDeps): Express {
       // chave própria dos links de download, derivada do segredo do servidor (nunca a chave do JWT diretamente)
       signingSecret: hmacHex(deps.config.jwt.secret, 'asa-conecta:support-attachment-links'),
       rateLimitEnabled: deps.config.rateLimit.enabled,
+      maxAttachmentBytes: deps.config.support.maxAttachmentBytes,
     },
     now,
     // Push do sistema pelos aparelhos registrados (módulo de notificações); o centro de avisos funciona sem ele.
@@ -224,6 +227,20 @@ export function createApp(deps: AppDeps): Express {
   app.use(createAdminRouter({ admin, audit, authed: platformAuthed, onDenied, operationalCounts: (viewerUserId) => operations.operationalCounts(viewerUserId) }));
   app.use(notifications.router(queueRouteDeps));
   app.use(queue.router(queueRouteDeps));
+  // ---- jobs: o que o servidor residente faz com timers, para quando a API roda em funções serverless
+  app.use(
+    createJobsRouter({
+      secret: deps.config.jobs.cronSecret,
+      jobs: {
+        'sla-scan': async () => ({ executed: automationEngine ? await automationEngine.scanSla() : 0 }),
+        'queue-refresh': async () => {
+          await queue.service.refresh();
+          return { queue: queue.service.sync().status };
+        },
+      },
+    }),
+  );
+  // ---- end jobs
   app.use(notFoundHandler);
   app.use(errorHandler);
   return app;

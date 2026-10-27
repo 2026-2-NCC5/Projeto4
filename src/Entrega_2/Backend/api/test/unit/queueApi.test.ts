@@ -1,7 +1,7 @@
 import type { AddressInfo } from 'node:net';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import { createApp } from '../../src/app.js';
+import { createApp } from '../../src/createApp.js';
 import { createLogger } from '../../src/config/logger.js';
 import type { AssistantResponse, QueueHealth, QueueStatus, QueueSubscription } from '../../src/contracts/mobileApi.v1.js';
 import { createNotificationsModule } from '../../src/notifications/module.js';

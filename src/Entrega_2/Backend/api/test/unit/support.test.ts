@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import { createApp } from '../../src/app.js';
+import { createApp } from '../../src/createApp.js';
 import { createLogger } from '../../src/config/logger.js';
 import { ConflictError } from '../../src/errors/AppError.js';
 import { contentMatchesType, sanitizeFileName, signAttachmentLink } from '../../src/support/attachments.js';

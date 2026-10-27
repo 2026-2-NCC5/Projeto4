@@ -58,8 +58,9 @@ export function resolveSsl(databaseUrl: string, options: DatabaseSslOptions = {}
   return { rejectUnauthorized: false };
 }
 
-export function createPool(databaseUrl: string, ssl: DatabaseSslOptions = {}): DbPool {
-  return new Pool({ connectionString: databaseUrl, ssl: resolveSsl(databaseUrl, ssl), max: 10, idleTimeoutMillis: 10_000 });
+/** `max`: conexões por processo — em funções serverless cada instância tem o seu pool (DATABASE_POOL_MAX). */
+export function createPool(databaseUrl: string, ssl: DatabaseSslOptions = {}, options: { max?: number } = {}): DbPool {
+  return new Pool({ connectionString: databaseUrl, ssl: resolveSsl(databaseUrl, ssl), max: options.max ?? 10, idleTimeoutMillis: 10_000 });
 }
 
 export async function withTransaction<T>(pool: DbPool, fn: (client: DbClient) => Promise<T>): Promise<T> {

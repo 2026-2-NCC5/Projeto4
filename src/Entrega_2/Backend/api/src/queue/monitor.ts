@@ -27,6 +27,8 @@ export interface QueueMonitorOptions {
   leaderRetryMs?: number;
   /** grava o snapshot no banco ao mudar ou, sem mudanças, a cada X ms (cache entre instâncias) */
   persistEveryMs?: number;
+  /** refresh() sob demanda: intervalo mínimo entre duas verificações do banco nesta instância */
+  refreshThrottleMs?: number;
 }
 
 export interface QueueMonitorHealth {
@@ -47,10 +49,15 @@ export interface QueueMonitorHealth {
  * - Falha → mantém o último snapshot válido (não apaga o estado), backoff exponencial e circuito
  *   aberto após `failureThreshold` falhas; volta ao intervalo normal na primeira leitura boa.
  * - Várias instâncias → só a líder consulta a fonte; as outras seguem o estado gravado no banco.
+ * - Sem processo residente (funções serverless) → refresh() a cada requisição faz o mesmo papel do laço.
  */
 export class QueueMonitor {
   private snapshot: QueueSnapshot | null = null;
   private lastSuccessAt: Date | null = null;
+  /** última consulta à fonte (com ou sem sucesso) feita por qualquer instância */
+  private lastAttemptAt: Date | null = null;
+  private refreshing: Promise<void> | null = null;
+  private lastRefreshAt = 0;
   private lastError: string | null = null;
   private consecutiveFailures = 0;
   private outageSince: Date | null = null;
@@ -144,9 +151,45 @@ export class QueueMonitor {
     return Math.min(this.options.pollIntervalMs * 2 ** Math.min(this.consecutiveFailures, 10), this.options.maxBackoffMs);
   }
 
+  /**
+   * Modo sob demanda (funções serverless, sem laço residente): adota o estado gravado no banco e, se a última
+   * consulta já venceu o intervalo (normal ou de backoff), consulta a fonte — só a instância que obtiver a
+   * concessão. Chamadas simultâneas nesta instância compartilham a mesma execução; a promessa só termina
+   * depois que acompanhamentos, alertas e tempo real processaram a leitura.
+   */
+  refresh(): Promise<void> {
+    if (this.refreshing) return this.refreshing;
+    const nowMs = this.now().getTime();
+    const throttleMs = this.options.refreshThrottleMs ?? Math.min(this.options.pollIntervalMs, 5000);
+    if (this.lastRefreshAt > 0 && nowMs - this.lastRefreshAt < throttleMs) return Promise.resolve();
+    this.lastRefreshAt = nowMs;
+    this.refreshing = this.runRefresh().finally(() => {
+      this.refreshing = null;
+    });
+    return this.refreshing;
+  }
+
+  private async runRefresh(): Promise<void> {
+    try {
+      await this.followState();
+      if (this.isDue() && (await this.options.lock.acquire())) await this.pollOnce();
+    } catch (error) {
+      this.options.logger.error({ status: 'queue_refresh_failed', error_message: error instanceof Error ? error.message : 'unknown' }, 'queue refresh failed');
+    } finally {
+      await this.options.bus.idle();
+    }
+  }
+
+  /** A próxima consulta já venceu? Respeita o backoff de falhas registrado por qualquer instância. */
+  private isDue(): boolean {
+    if (!this.lastAttemptAt) return true;
+    return this.now().getTime() - this.lastAttemptAt.getTime() >= this.nextDelayMs();
+  }
+
   /** Uma leitura da fonte (o líder chama a cada ciclo; testes chamam diretamente). */
   async pollOnce(): Promise<void> {
     const { logger, metrics } = this.options;
+    this.lastAttemptAt = this.now();
     if (this.circuit === 'open') this.circuit = 'half_open';
     let snapshot: QueueSnapshot;
     try {
@@ -267,7 +310,10 @@ export class QueueMonitor {
     this.consecutiveFailures = state.consecutiveFailures;
     this.lastError = state.lastError;
     this.lastSuccessAt = state.lastSuccessAt;
+    if (!this.lastAttemptAt || state.updatedAt > this.lastAttemptAt) this.lastAttemptAt = state.updatedAt;
     if (!state.snapshot || state.snapshot.capturedAt === this.snapshot?.capturedAt) return;
+    // snapshot de outro dia (instância nova lendo o banco de manhã): não é a fila de hoje
+    if (localDate(new Date(state.snapshot.capturedAt), this.options.timeZone) !== localDate(this.now(), this.options.timeZone)) return;
     const changes = diffSnapshots(this.snapshot, state.snapshot);
     this.snapshot = state.snapshot;
     this.options.bus.emit('queue.updated', { snapshot: state.snapshot, changes, source: 'follower' });

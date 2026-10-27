@@ -130,6 +130,8 @@ describe('formulário de abertura', () => {
     const limits = { allowedMimeTypes: ['application/pdf'], maxAttachmentBytes: 5_242_880 };
     expect(validatePickedFile({ mimeType: 'application/zip', sizeBytes: 10 }, limits)).toMatch(/não é aceito/);
     expect(validatePickedFile({ mimeType: 'application/pdf', sizeBytes: 6_000_000 }, limits)).toMatch(/maior que 5 MB/);
+    // limite vigente informado pela API (ex.: 3 MiB na Vercel)
+    expect(validatePickedFile({ mimeType: 'application/pdf', sizeBytes: 3_200_000 }, { ...limits, maxAttachmentBytes: 3 * 1024 * 1024 })).toMatch(/maior que 3 MB/);
     expect(validatePickedFile({ mimeType: 'application/pdf', sizeBytes: 1000 }, limits)).toBeNull();
   });
 });

@@ -1,5 +1,5 @@
-import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { loadNativeNotifications } from '../dynamicNotifications/nativeNotifications';
 
 /**
  * Toque em uma notificação de chamado (payload enviado pela API: `{ type: 'support_ticket', ticketId, kind }`).
@@ -17,21 +17,26 @@ export function addSupportPushListener(onOpenTicket: (ticketId: string) => void)
   if (Platform.OS !== 'ios' && Platform.OS !== 'android') return () => undefined;
   const subscriptions: { remove(): void }[] = [];
   try {
-    subscriptions.push(
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const ticketId = supportTicketIdFromPush(response.notification.request.content.data);
-        if (ticketId) onOpenTicket(ticketId);
-      }),
-    );
-    const last = Notifications.getLastNotificationResponse();
-    const ticketId = supportTicketIdFromPush(last?.notification.request.content.data);
-    if (ticketId) {
-      onOpenTicket(ticketId);
-      // Limpa só quando o toque é de um chamado: o da fila presencial é tratado (e limpo) pelo módulo dela.
-      Notifications.clearLastNotificationResponse();
+    const Notifications = loadNativeNotifications();
+    if (Notifications) {
+      subscriptions.push(
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          const ticketId = supportTicketIdFromPush(response.notification.request.content.data);
+          if (ticketId) onOpenTicket(ticketId);
+        }),
+      );
+      const last = Notifications.getLastNotificationResponse();
+      const ticketId = supportTicketIdFromPush(last?.notification.request.content.data);
+      if (ticketId) {
+        onOpenTicket(ticketId);
+        // Limpa só quando o toque é de um chamado: o da fila presencial é tratado (e limpo) pelo módulo dela.
+        Notifications.clearLastNotificationResponse();
+      }
     }
-  } catch {
-    // módulo de notificações indisponível (ex.: Expo Go no Android): o app segue sem abrir pelo push
+  } catch (error) {
+    console.warn('[notifications] Falha ao configurar o roteamento de chamados.', error);
   }
-  return () => subscriptions.forEach((subscription) => subscription.remove());
+  return () => {
+    subscriptions.forEach((subscription) => subscription.remove());
+  };
 }

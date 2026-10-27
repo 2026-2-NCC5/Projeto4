@@ -67,8 +67,14 @@ export interface DecodedUpload {
   sha256: string;
 }
 
+/** "5 MB", "3 MB", "1,5 MB" (mebibytes, como o cliente exibe). */
+export function formatMegabytes(bytes: number): string {
+  const value = Math.round((bytes / (1024 * 1024)) * 10) / 10;
+  return `${String(value).replace('.', ',')} MB`;
+}
+
 /** Decodifica e valida um envio (tipo permitido, tamanho, assinatura binária). */
-export function decodeUpload(input: { name: string; mimeType: string; contentBase64: string }): DecodedUpload {
+export function decodeUpload(input: { name: string; mimeType: string; contentBase64: string }, maxBytes: number = SUPPORT_LIMITS.maxAttachmentBytes): DecodedUpload {
   const mimeType = input.mimeType.trim().toLowerCase();
   if (!SUPPORT_LIMITS.allowedMimeTypes.includes(mimeType)) {
     throw new ValidationError('Tipo de arquivo não permitido. Envie PDF, imagem ou documento.', [{ field: 'mimeType', message: 'tipo não permitido' }], { reason: 'file_type_not_allowed' });
@@ -81,8 +87,8 @@ export function decodeUpload(input: { name: string; mimeType: string; contentBas
   if (content.length === 0) {
     throw new ValidationError('O arquivo está vazio.', [{ field: 'contentBase64', message: 'arquivo vazio' }], { reason: 'file_empty' });
   }
-  if (content.length > SUPPORT_LIMITS.maxAttachmentBytes) {
-    throw new ValidationError('O arquivo é maior que 5 MB.', [{ field: 'contentBase64', message: 'arquivo maior que o limite' }], { reason: 'file_too_large' });
+  if (content.length > maxBytes) {
+    throw new ValidationError(`O arquivo é maior que ${formatMegabytes(maxBytes)}.`, [{ field: 'contentBase64', message: 'arquivo maior que o limite' }], { reason: 'file_too_large' });
   }
   if (!contentMatchesType(mimeType, content)) {
     throw new ValidationError('O conteúdo do arquivo não corresponde ao tipo informado.', [{ field: 'contentBase64', message: 'conteúdo não corresponde ao tipo' }], { reason: 'file_type_mismatch' });

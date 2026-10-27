@@ -52,6 +52,8 @@ type Listener<K extends keyof QueueEvents> = (...args: QueueEvents[K]) => void |
  */
 export class QueueEventBus {
   private readonly emitter = new EventEmitter();
+  /** ouvintes assíncronos ainda em execução (idle() espera por eles) */
+  private readonly pending = new Set<Promise<void>>();
 
   constructor(private readonly logger: Logger) {
     this.emitter.setMaxListeners(50);
@@ -62,7 +64,9 @@ export class QueueEventBus {
       try {
         const result = listener(...args);
         if (result && typeof (result as Promise<void>).catch === 'function') {
-          (result as Promise<void>).catch((error: unknown) => this.logListenerError(event, error));
+          const tracked = (result as Promise<void>).catch((error: unknown) => this.logListenerError(event, error));
+          this.pending.add(tracked);
+          void tracked.finally(() => this.pending.delete(tracked));
         }
       } catch (error) {
         this.logListenerError(event, error);
@@ -74,6 +78,14 @@ export class QueueEventBus {
 
   emit<K extends keyof QueueEvents>(event: K, ...args: QueueEvents[K]): void {
     this.emitter.emit(event, ...args);
+  }
+
+  /**
+   * Espera os ouvintes assíncronos terminarem, inclusive os disparados por eles (ex.: leitura → acompanhamento
+   * → alerta). Em funções serverless a instância pode ser suspensa logo após a resposta: o push sai antes disso.
+   */
+  async idle(): Promise<void> {
+    while (this.pending.size > 0) await Promise.allSettled([...this.pending]);
   }
 
   private logListenerError(event: string, error: unknown) {

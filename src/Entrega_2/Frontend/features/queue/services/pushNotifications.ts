@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 
+import { loadNativeNotifications } from '../../dynamicNotifications/nativeNotifications';
 import type { PushPlatform, QueuePushData } from '../../../types/api';
 import { QUEUE } from '../config';
 
@@ -22,24 +22,29 @@ export function isQueuePushData(data: unknown): data is QueuePushData {
 let handlerInstalled = false;
 
 /**
- * App aberto: a notificação da fila não vira banner do sistema (a tela mostra o próprio aviso), mas a
- * chamada ("É a sua vez!") toca o som curto da notificação. Outras notificações seguem o padrão.
+ * Com o app aberto, a fila usa o próprio aviso e os demais pushes usam o overlay dinâmico.
  */
 export function installNotificationHandler(): void {
   if (handlerInstalled || !pushPlatform()) return;
   handlerInstalled = true;
   try {
+    const Notifications = loadNativeNotifications();
+    if (!Notifications) {
+      handlerInstalled = false;
+      return;
+    }
     Notifications.setNotificationHandler({
       handleNotification: async (notification) => {
         const data = notification.request.content.data;
         if (isQueuePushData(data)) {
           return { shouldShowBanner: false, shouldShowList: true, shouldPlaySound: data.milestone === 'QUEUE_CALLED', shouldSetBadge: false };
         }
-        return { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
+        return { shouldShowBanner: false, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
       },
     });
-  } catch {
+  } catch (error) {
     handlerInstalled = false;
+    console.warn('[notifications] Falha ao instalar o handler de notificações.', error);
   }
 }
 
@@ -47,6 +52,8 @@ export function installNotificationHandler(): void {
 export async function ensureQueueChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
   try {
+    const Notifications = loadNativeNotifications();
+    if (!Notifications) return;
     await Notifications.setNotificationChannelAsync(QUEUE.ANDROID_CHANNEL_ID, {
       name: 'Fila presencial do ASA',
       description: 'Avisos quando sua senha está próxima e quando ela é chamada.',
@@ -72,6 +79,8 @@ function toPermission(status: { granted?: boolean; status?: string; canAskAgain?
 export async function getPushPermission(): Promise<PushPermission> {
   if (!pushPlatform()) return 'unavailable';
   try {
+    const Notifications = loadNativeNotifications();
+    if (!Notifications) return 'unavailable';
     return toPermission(await Notifications.getPermissionsAsync());
   } catch {
     return 'unavailable';
@@ -83,6 +92,8 @@ export async function requestPushPermission(): Promise<PushPermission> {
   if (!pushPlatform()) return 'unavailable';
   try {
     await ensureQueueChannel();
+    const Notifications = loadNativeNotifications();
+    if (!Notifications) return 'unavailable';
     return toPermission(await Notifications.requestPermissionsAsync({ ios: { allowAlert: true, allowSound: true, allowBadge: false } }));
   } catch {
     return 'unavailable';
@@ -101,6 +112,8 @@ export async function getExpoPushToken(): Promise<{ token: string | null; reason
   const id = projectId();
   if (!id) return { token: null, reason: 'no_project_id' };
   try {
+    const Notifications = loadNativeNotifications();
+    if (!Notifications) return { token: null, reason: 'token_failed' };
     const result = await Notifications.getExpoPushTokenAsync({ projectId: id });
     return { token: result.data };
   } catch {
@@ -120,26 +133,31 @@ export function addQueueNotificationListeners(listeners: QueueNotificationListen
   if (!pushPlatform()) return () => undefined;
   const subscriptions: { remove(): void }[] = [];
   try {
-    subscriptions.push(
-      Notifications.addNotificationReceivedListener((notification) => {
-        const data = notification.request.content.data;
-        if (isQueuePushData(data)) listeners.onReceived(data);
-      }),
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const data = response.notification.request.content.data;
-        if (isQueuePushData(data)) listeners.onOpened(data);
-      }),
-    );
-    const last = Notifications.getLastNotificationResponse();
-    const data = last?.notification.request.content.data;
-    if (isQueuePushData(data)) {
-      listeners.onOpened(data);
-      Notifications.clearLastNotificationResponse();
+    const Notifications = loadNativeNotifications();
+    if (Notifications) {
+      subscriptions.push(
+        Notifications.addNotificationReceivedListener((notification) => {
+          const data = notification.request.content.data;
+          if (isQueuePushData(data)) listeners.onReceived(data);
+        }),
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          const data = response.notification.request.content.data;
+          if (isQueuePushData(data)) listeners.onOpened(data);
+        }),
+      );
+      const last = Notifications.getLastNotificationResponse();
+      const data = last?.notification.request.content.data;
+      if (isQueuePushData(data)) {
+        listeners.onOpened(data);
+        Notifications.clearLastNotificationResponse();
+      }
     }
-  } catch {
-    // módulo de notificações indisponível (ex.: Expo Go no Android): sem deep link por push
+  } catch (error) {
+    console.warn('[notifications] Falha ao configurar os avisos da fila.', error);
   }
-  return () => subscriptions.forEach((subscription) => subscription.remove());
+  return () => {
+    subscriptions.forEach((subscription) => subscription.remove());
+  };
 }
 
 /** Configurações do sistema para reativar notificações negadas. */

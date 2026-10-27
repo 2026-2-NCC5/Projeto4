@@ -2,7 +2,24 @@
 name = "asa-agent-service"
 version = "1.0.0"
 description = "ASA Conecta - Agent Service (FastAPI) + Student Agent Engine"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
+# Mesmas dependências de requirements.txt (Docker, CI): a Vercel aceita os dois manifestos; tests/test_packaging.py
+# garante que as listas não divergem.
+dependencies = [
+  "fastapi>=0.115,<1.0",
+  "uvicorn[standard]>=0.30,<1.0",
+  "pydantic>=2.7,<3.0",
+  "PyYAML>=6.0,<7.0",
+]
+
+# Vercel (serviço `agent` do vercel.json da raiz): objeto FastAPI `app` em app/main.py.
+[tool.vercel]
+entrypoint = "app.main:app"
+
+# Aplicação, não biblioteca: o uv (usado no build da Vercel) instala só as dependências, sem empacotar o projeto.
+# uv.lock fixa as versões instaladas na Vercel (atualize com `uv lock` ao mudar as dependências).
+[tool.uv]
+package = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

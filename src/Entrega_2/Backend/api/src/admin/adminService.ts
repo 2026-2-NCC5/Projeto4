@@ -1,5 +1,3 @@
-import { readdirSync } from 'node:fs';
-import path from 'node:path';
 import bcrypt from 'bcryptjs';
 import { ALL_PERMISSIONS, PERMISSION_DESCRIPTIONS, ROLE_LABELS, ROLE_PERMISSIONS } from '../auth/permissions.js';
 import { randomToken } from '../auth/secrets.js';
@@ -28,7 +26,7 @@ import type {
   SupportTicketStatus,
   UserRole,
 } from '../contracts/mobileApi.v1.js';
-import { resolveDatabaseDir } from '../db/paths.js';
+import { EXPECTED_MIGRATIONS } from '../db/migrationManifest.js';
 import { ConflictError, DependencyError, ForbiddenError, NotFoundError, ValidationError } from '../errors/AppError.js';
 import type { AiProviderRegistry } from '../ai/providers.js';
 import type { Mailer } from '../mail/mailer.js';
@@ -348,7 +346,7 @@ export class AdminService {
   async integrations(): Promise<IntegrationView[]> {
     const { config } = this.deps;
     const checkedAt = this.deps.now().toISOString();
-    const [agentUp, jev] = await Promise.all([this.deps.agentClient.health(), this.deps.ai.jev.health()]);
+    const [agentUp, jev] = await Promise.all([this.deps.agentClient.health(), this.deps.ai.jev.health(), this.deps.queue.refresh()]);
     const queueHealth = this.deps.queue.health().body;
     const academic = this.deps.platform.academicSource();
     const queueState = !config.queue.enabled ? 'disabled' : config.queue.provider === 'mock' ? 'demo' : queueHealth.status === 'healthy' ? 'operational' : queueHealth.status === 'degraded' ? 'degraded' : 'error';
@@ -436,15 +434,10 @@ export class AdminService {
     let pending: string[] = [];
     if (dbUp && this.deps.repo) {
       applied = await this.deps.repo.appliedMigrations();
-      try {
-        const onDisk = readdirSync(path.join(resolveDatabaseDir(), 'migrations')).filter((file) => file.endsWith('.sql')).sort();
-        pending = onDisk.filter((file) => !applied.includes(file));
-      } catch {
-        pending = [];
-      }
+      pending = EXPECTED_MIGRATIONS.filter((file) => !applied.includes(file));
     }
     const agentStarted = Date.now();
-    const [agentUp, agentConfig] = await Promise.all([this.deps.agentClient.health(), this.deps.agentClient.config?.() ?? Promise.resolve(null)]);
+    const [agentUp, agentConfig] = await Promise.all([this.deps.agentClient.health(), this.deps.agentClient.config?.() ?? Promise.resolve(null), this.deps.queue.refresh()]);
     const agentLatency = Date.now() - agentStarted;
     const queue = this.deps.queue.health().body;
     const queueStatus: ServiceHealth['status'] = !config.queue.enabled ? 'disabled' : queue.status === 'healthy' ? 'up' : queue.status === 'degraded' ? 'degraded' : 'down';

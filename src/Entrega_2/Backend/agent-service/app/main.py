@@ -7,6 +7,7 @@ vive aqui.
 
 from __future__ import annotations
 
+import hmac
 import os
 
 from fastapi import FastAPI, Request
@@ -19,9 +20,15 @@ from app.api.routes import router
 from app.logging_config import configure_logging
 from app.services.evaluation_service import EvaluationService
 
+# Rotas abertas mesmo com segredo configurado: só a verificação de saúde (sem dados).
+_PUBLIC_PATHS = frozenset({"/health"})
 
-def create_app(config_dir: str | None = None) -> FastAPI:
+
+def create_app(config_dir: str | None = None, token: str | None = None) -> FastAPI:
     logger = configure_logging()
+    # Segredo compartilhado com a API Node.js. Na Vercel o serviço já é privado (só o binding da API o alcança);
+    # o segredo protege também implantações em que ele fique público.
+    expected_token = token if token is not None else (os.environ.get("AGENT_SERVICE_TOKEN") or None)
     config = load_config(config_dir or os.environ.get("AGENT_CONFIG_DIR") or None)
     engine = StudentAgentEngine(config)
 
@@ -36,6 +43,26 @@ def create_app(config_dir: str | None = None) -> FastAPI:
     app.state.engine = engine
     app.state.evaluation_service = EvaluationService(engine)
     app.include_router(router)
+
+    if expected_token:
+
+        @app.middleware("http")
+        async def _require_token(request: Request, call_next):
+            if request.url.path not in _PUBLIC_PATHS:
+                received = request.headers.get("authorization", "")
+                if not hmac.compare_digest(received.encode(), f"Bearer {expected_token}".encode()):
+                    return JSONResponse(
+                        status_code=401,
+                        content={
+                            "error": {
+                                "code": "UNAUTHORIZED",
+                                "message": "Credencial do serviço inválida.",
+                                "request_id": request.headers.get("x-request-id"),
+                                "correlation_id": request.headers.get("x-correlation-id"),
+                            }
+                        },
+                    )
+            return await call_next(request)
 
     @app.exception_handler(RequestValidationError)
     async def _validation_handler(request: Request, exc: RequestValidationError) -> JSONResponse:

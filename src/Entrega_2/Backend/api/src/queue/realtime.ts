@@ -21,6 +21,12 @@ export interface QueueRealtimeHubOptions {
   maxStreamMs?: number;
   /** limite de conexões simultâneas por usuário (abas/aparelhos) */
   maxStreamsPerUser?: number;
+  /**
+   * Sem laço residente (funções serverless): enquanto houver conexões abertas nesta instância, chamado a cada
+   * `tickMs` — atualiza a fila e, pelo barramento, as próprias conexões.
+   */
+  onTick?: () => Promise<void>;
+  tickMs?: number;
 }
 
 function toRealtime(event: QueueTicketEvent): QueueTicketRealtimeEvent {
@@ -49,6 +55,7 @@ function toRealtime(event: QueueTicketEvent): QueueTicketRealtimeEvent {
 export class QueueRealtimeHub {
   private readonly clients = new Map<string, Set<Client>>();
   private detach: Array<() => void> = [];
+  private ticker: ReturnType<typeof setInterval> | null = null;
 
   constructor(private readonly options: QueueRealtimeHubOptions) {}
 
@@ -103,6 +110,7 @@ export class QueueRealtimeHub {
     const set = this.clients.get(userId) ?? new Set<Client>();
     set.add(client);
     this.clients.set(userId, set);
+    this.startTicker();
     req.on('close', () => this.remove(client));
     req.log.debug({ status: 'queue_stream_opened', connections: this.connections }, 'queue stream opened');
     await this.sendStatus(userId);
@@ -144,6 +152,23 @@ export class QueueRealtimeHub {
     const set = this.clients.get(client.userId);
     set?.delete(client);
     if (set && set.size === 0) this.clients.delete(client.userId);
+    if (this.clients.size === 0) this.stopTicker();
+  }
+
+  private startTicker() {
+    const { onTick, tickMs } = this.options;
+    if (!onTick || this.ticker) return;
+    this.ticker = setInterval(() => {
+      onTick().catch((error: unknown) => {
+        this.options.logger.warn({ status: 'queue_stream_tick_failed', error_message: error instanceof Error ? error.message : 'unknown' }, 'queue stream tick failed');
+      });
+    }, tickMs ?? 10_000);
+    this.ticker.unref?.();
+  }
+
+  private stopTicker() {
+    if (this.ticker) clearInterval(this.ticker);
+    this.ticker = null;
   }
 
   private close(client: Client) {
@@ -152,6 +177,7 @@ export class QueueRealtimeHub {
   }
 
   stop(): void {
+    this.stopTicker();
     for (const off of this.detach) off();
     this.detach = [];
     for (const set of [...this.clients.values()]) for (const client of [...set]) this.close(client);

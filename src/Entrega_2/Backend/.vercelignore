@@ -1,0 +1,15 @@
+# Projeto Vercel do BACKEND (Services: api + agent, ver vercel.json desta pasta). A Vercel instala e compila do zero.
+**/node_modules/
+**/.venv/
+**/dist/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+fecap-collector/
+api/test/
+agent-service/tests/
+
+# segredos locais (o .env da API apontaria para o banco local e para o SMTP de desenvolvimento)
+**/.env
+**/.env.*
+!**/.env.example

@@ -1,6 +1,6 @@
 import type { Express } from 'express';
 import request from 'supertest';
-import { createApp } from '../../src/app.js';
+import { createApp } from '../../src/createApp.js';
 import type { IntentInterpreter } from '../../src/assistant/interpretation.js';
 import type { Mailer } from '../../src/mail/mailer.js';
 import { createAgentClient, type AgentClient } from '../../src/clients/agentClient.js';

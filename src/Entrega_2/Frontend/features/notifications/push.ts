@@ -1,5 +1,5 @@
-import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { loadNativeNotifications } from '../dynamicNotifications/nativeNotifications';
 
 /** Para onde o toque em um aviso leva: o registro do aviso ou, sem registro, a própria central. */
 export type InboxTarget = { kind: 'ticket'; id: string } | { kind: 'appointment'; id: string } | { kind: 'recommendation'; id: string } | { kind: 'inbox' };
@@ -27,21 +27,26 @@ export function addInboxPushListener(onOpen: (target: InboxTarget) => void): () 
   if (Platform.OS !== 'ios' && Platform.OS !== 'android') return () => undefined;
   const subscriptions: { remove(): void }[] = [];
   try {
-    subscriptions.push(
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const target = inboxTargetFromPush(response.notification.request.content.data);
-        if (target) onOpen(target);
-      }),
-    );
-    const last = Notifications.getLastNotificationResponse();
-    const target = inboxTargetFromPush(last?.notification.request.content.data);
-    if (target) {
-      onOpen(target);
-      // Limpa só o toque da central: chamados e fila tratam (e limpam) os próprios toques.
-      Notifications.clearLastNotificationResponse();
+    const Notifications = loadNativeNotifications();
+    if (Notifications) {
+      subscriptions.push(
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          const target = inboxTargetFromPush(response.notification.request.content.data);
+          if (target) onOpen(target);
+        }),
+      );
+      const last = Notifications.getLastNotificationResponse();
+      const target = inboxTargetFromPush(last?.notification.request.content.data);
+      if (target) {
+        onOpen(target);
+        // Limpa só o toque da central: chamados e fila tratam (e limpam) os próprios toques.
+        Notifications.clearLastNotificationResponse();
+      }
     }
-  } catch {
-    // módulo de notificações indisponível (ex.: Expo Go no Android): a central continua acessível pelo sino
+  } catch (error) {
+    console.warn('[notifications] Falha ao configurar o roteamento da central.', error);
   }
-  return () => subscriptions.forEach((subscription) => subscription.remove());
+  return () => {
+    subscriptions.forEach((subscription) => subscription.remove());
+  };
 }

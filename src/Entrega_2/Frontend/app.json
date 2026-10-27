@@ -5,19 +5,20 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "asaconecta",
+    "icon": "./assets/branding/asa-app-icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "backgroundColor": "#F4F7F9",
-    "splash": {
-      "backgroundColor": "#023327",
-      "resizeMode": "contain"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.asaconecta.app"
     },
     "android": {
       "package": "com.asaconecta.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/branding/asa-app-icon-foreground.png",
+        "monochromeImage": "./assets/branding/asa-app-icon-monochrome.png",
+        "backgroundColor": "#116238"
+      },
       "predictiveBackGestureEnabled": false,
       "permissions": []
     },
@@ -56,7 +57,17 @@
           "color": "#0D6D53"
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-image",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#299B60",
+          "image": "./assets/branding/asa-splash.png",
+          "imageWidth": 250,
+          "resizeMode": "contain"
+        }
+      ]
     ]
   }
 }
