@@ -6,6 +6,8 @@ import type { ResponderInput, ResponderOutput } from './responders.js';
 /** Fonte de dados da fila para o assistente (implementada por QueueService). */
 export interface QueueAssistantSource {
   readonly enabled: boolean;
+  /** sem processo residente (serverless): traz o estado atual antes de responder */
+  refresh?(): Promise<void>;
   status(userId: string): Promise<QueueStatus>;
   isTracking(userId: string): Promise<boolean>;
 }
@@ -45,6 +47,7 @@ function callItem(call: QueueCallView, index: number): AssistantDisplayItem {
 
 async function load(input: ResponderInput, queue: QueueAssistantSource | null): Promise<QueueStatus | null> {
   if (!queue?.enabled) return null;
+  await queue.refresh?.();
   return queue.status(input.userId);
 }
 

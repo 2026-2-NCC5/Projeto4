@@ -32,6 +32,8 @@ export interface QueueServiceOptions {
   now?: () => Date;
   // ---- platform: origem dos dados (simulador identificado × painel público) e autorização institucional
   source?: QueueDataSource;
+  /** modo sob demanda (serverless): atualiza o estado antes das leituras; ausente quando há laço residente */
+  refresh?: () => Promise<void>;
 }
 
 const DEFAULT_PREFERENCES: QueuePreferences = { pushEnabled: true, voiceEnabled: true, vibrationEnabled: true };
@@ -55,6 +57,14 @@ export class QueueService {
 
   private snapshot(): QueueSnapshot | null {
     return this.options.enabled ? this.options.monitor.getSnapshot() : null;
+  }
+
+  /**
+   * Sem processo residente (funções serverless): traz o estado mais recente antes de responder. Chamado pela
+   * borda (rotas, assistente, saúde) — nunca de dentro de um ouvinte do barramento, que esperaria por si mesmo.
+   */
+  async refresh(): Promise<void> {
+    if (this.options.enabled && this.options.refresh) await this.options.refresh();
   }
 
   sync(): QueueSyncInfo {

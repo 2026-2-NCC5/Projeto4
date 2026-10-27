@@ -58,23 +58,28 @@ export function createQueueRouter(deps: QueueRouteDeps): Router {
   const subscribeLimit = rateLimitByUser('queue-subscribe', new FixedWindowLimiter({ windowMs: 10 * 60_000, max: deps.subscriptionRateLimit }, clock), deps.rateLimitEnabled);
   const writeLimit = rateLimitByUser('queue-write', new FixedWindowLimiter({ windowMs: 10 * 60_000, max: 60 }, clock), deps.rateLimitEnabled);
   const streamLimit = rateLimitByUser('queue-stream', new FixedWindowLimiter({ windowMs: 10 * 60_000, max: 120 }, clock), deps.rateLimitEnabled);
+  // Sem processo residente (serverless), cada leitura atualiza o estado antes (depois da autenticação);
+  // com o laço residente não faz nada.
+  const fresh: RequestHandler = (_req, _res, next) => {
+    deps.service.refresh().then(() => next(), next);
+  };
 
   // Saúde do monitor (sem dados de estudantes).
-  router.get('/health/queue', (req, res) => {
+  router.get('/health/queue', fresh, (req, res) => {
     const { body, httpStatus } = deps.service.health();
     ok(req, res, body, httpStatus);
   });
 
-  router.get('/api/queue', authed, (req, res) => ok(req, res, deps.service.overview()));
-  router.get('/api/queue/status', authed, wrap(async (req, res) => ok(req, res, await deps.service.status(req.auth!.userId))));
-  router.get('/api/queue/stream', authed, streamLimit, wrap((req, res) => deps.hub.handle(req, res)));
+  router.get('/api/queue', authed, fresh, (req, res) => ok(req, res, deps.service.overview()));
+  router.get('/api/queue/status', authed, fresh, wrap(async (req, res) => ok(req, res, await deps.service.status(req.auth!.userId))));
+  router.get('/api/queue/stream', authed, streamLimit, fresh, wrap((req, res) => deps.hub.handle(req, res)));
 
-  router.post('/api/queue/subscriptions', authed, subscribeLimit, validateBody(subscribeSchema), wrap(async (req, res) => {
+  router.post('/api/queue/subscriptions', authed, subscribeLimit, validateBody(subscribeSchema), fresh, wrap(async (req, res) => {
     const body = req.body as z.infer<typeof subscribeSchema>;
     ok(req, res, await deps.service.subscribe(req.auth!.userId, body, req.log), 201);
   }));
-  router.get('/api/queue/subscriptions/current', authed, wrap(async (req, res) => ok(req, res, await deps.service.current(req.auth!.userId))));
-  router.patch('/api/queue/subscriptions/current', authed, writeLimit, validateBody(preferencesSchema), wrap(async (req, res) => {
+  router.get('/api/queue/subscriptions/current', authed, fresh, wrap(async (req, res) => ok(req, res, await deps.service.current(req.auth!.userId))));
+  router.patch('/api/queue/subscriptions/current', authed, writeLimit, validateBody(preferencesSchema), fresh, wrap(async (req, res) => {
     ok(req, res, await deps.service.updatePreferences(req.auth!.userId, req.body as z.infer<typeof preferencesSchema>));
   }));
   router.delete('/api/queue/subscriptions/current', authed, writeLimit, wrap(async (req, res) => {

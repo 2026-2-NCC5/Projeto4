@@ -1,5 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import type { Logger } from '../config/logger.js';
-import type { DbClient, DbPool } from '../db/pool.js';
+import type { DbPool } from '../db/pool.js';
 
 /**
  * Garante UM monitor consultando a fonte, mesmo com várias instâncias da API
@@ -26,57 +27,76 @@ export class LocalLeaderLock implements LeaderLock {
   }
 }
 
+export interface PgLeaseLeaderLockOptions {
+  /** nome da tarefa em job_leases */
+  name?: string;
+  /** validade de cada concessão; o líder renova a cada ciclo, antes de expirar */
+  ttlMs: number;
+  /** identificação desta instância (padrão: aleatória) */
+  holder?: string;
+  now?: () => Date;
+}
+
 /**
- * Advisory lock de sessão do PostgreSQL (já faz parte da arquitetura; dispensa Redis). A conexão fica
- * reservada enquanto a instância é líder; se ela cair, o lock é liberado pelo banco e outra assume.
+ * Concessão com prazo na tabela job_leases (migration 012). Tomar ou renovar é um UPDATE condicional
+ * atômico: não reserva conexão, funciona pelo pooler em modo transação e entre funções serverless,
+ * worker residente e réplicas. Se o líder some, a concessão expira e outra instância assume.
  */
-export class PgAdvisoryLeaderLock implements LeaderLock {
-  private client: DbClient | null = null;
-  held = false;
+export class PgLeaseLeaderLock implements LeaderLock {
+  private leaseUntil = 0;
+  private readonly name: string;
+  private readonly holder: string;
+  private readonly now: () => Date;
 
   constructor(
     private readonly pool: DbPool,
     private readonly logger: Logger,
-    private readonly lockName = 'asa_conecta.queue_monitor',
-  ) {}
+    private readonly options: PgLeaseLeaderLockOptions,
+  ) {
+    this.name = options.name ?? 'asa_conecta.queue_monitor';
+    this.holder = options.holder ?? `instance-${randomUUID()}`;
+    this.now = options.now ?? (() => new Date());
+  }
+
+  get held(): boolean {
+    return this.leaseUntil > this.now().getTime();
+  }
 
   async acquire(): Promise<boolean> {
-    if (this.held && this.client) return true;
-    let client: DbClient | null = null;
+    const wasHeld = this.held;
     try {
-      client = await this.pool.connect();
-      const { rows } = await client.query<{ locked: boolean }>('select pg_try_advisory_lock(hashtext($1)) as locked', [this.lockName]);
-      if (!rows[0]?.locked) {
-        client.release();
+      // o relógio do banco decide a expiração: instâncias com relógios diferentes não disputam a mesma janela
+      const { rows } = await this.pool.query<{ lease_until: Date }>(
+        `insert into job_leases (name, holder, lease_until)
+         values ($1, $2, now() + $3::double precision * interval '1 millisecond')
+         on conflict (name) do update set holder = excluded.holder, lease_until = excluded.lease_until, updated_at = now()
+           where job_leases.lease_until <= now() or job_leases.holder = excluded.holder
+         returning lease_until`,
+        [this.name, this.holder, this.options.ttlMs],
+      );
+      if (!rows[0]) {
+        if (wasHeld) this.logger.warn({ status: 'queue_leader_lost' }, 'queue monitor leadership lost');
+        this.leaseUntil = 0;
         return false;
       }
-      client.on('error', (error) => {
-        this.logger.warn({ status: 'queue_leader_lost', error_message: error.message }, 'queue monitor leadership lost');
-        this.held = false;
-        this.client = null;
-      });
-      this.client = client;
-      this.held = true;
-      this.logger.info({ status: 'queue_leader_acquired' }, 'queue monitor leadership acquired');
+      // margem local: a instância deixa de se considerar líder um pouco antes de o banco liberar a vaga
+      this.leaseUntil = this.now().getTime() + Math.max(0, this.options.ttlMs - 1000);
+      if (!wasHeld) this.logger.info({ status: 'queue_leader_acquired' }, 'queue monitor leadership acquired');
       return true;
     } catch (error) {
-      client?.release();
-      this.logger.warn({ status: 'queue_leader_unavailable', error_message: error instanceof Error ? error.message : 'unknown' }, 'queue leader lock unavailable');
+      this.leaseUntil = 0;
+      this.logger.warn({ status: 'queue_leader_unavailable', error_message: error instanceof Error ? error.message : 'unknown' }, 'queue leader lease unavailable');
       return false;
     }
   }
 
   async release(): Promise<void> {
-    const client = this.client;
-    this.client = null;
-    this.held = false;
-    if (!client) return;
+    if (this.leaseUntil === 0) return;
+    this.leaseUntil = 0;
     try {
-      await client.query('select pg_advisory_unlock(hashtext($1))', [this.lockName]);
+      await this.pool.query('update job_leases set lease_until = now(), updated_at = now() where name = $1 and holder = $2', [this.name, this.holder]);
     } catch {
-      // conexão já encerrada: o banco liberou o lock
-    } finally {
-      client.release();
+      // a concessão expira sozinha
     }
   }
 }

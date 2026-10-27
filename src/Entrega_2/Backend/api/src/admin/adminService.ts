@@ -348,7 +348,7 @@ export class AdminService {
   async integrations(): Promise<IntegrationView[]> {
     const { config } = this.deps;
     const checkedAt = this.deps.now().toISOString();
-    const [agentUp, jev] = await Promise.all([this.deps.agentClient.health(), this.deps.ai.jev.health()]);
+    const [agentUp, jev] = await Promise.all([this.deps.agentClient.health(), this.deps.ai.jev.health(), this.deps.queue.refresh()]);
     const queueHealth = this.deps.queue.health().body;
     const academic = this.deps.platform.academicSource();
     const queueState = !config.queue.enabled ? 'disabled' : config.queue.provider === 'mock' ? 'demo' : queueHealth.status === 'healthy' ? 'operational' : queueHealth.status === 'degraded' ? 'degraded' : 'error';
@@ -444,7 +444,7 @@ export class AdminService {
       }
     }
     const agentStarted = Date.now();
-    const [agentUp, agentConfig] = await Promise.all([this.deps.agentClient.health(), this.deps.agentClient.config?.() ?? Promise.resolve(null)]);
+    const [agentUp, agentConfig] = await Promise.all([this.deps.agentClient.health(), this.deps.agentClient.config?.() ?? Promise.resolve(null), this.deps.queue.refresh()]);
     const agentLatency = Date.now() - agentStarted;
     const queue = this.deps.queue.health().body;
     const queueStatus: ServiceHealth['status'] = !config.queue.enabled ? 'disabled' : queue.status === 'healthy' ? 'up' : queue.status === 'degraded' ? 'degraded' : 'down';
