@@ -43,6 +43,8 @@ import { createKnowledgeRouter } from './routes/knowledge.js';
 import { AdminService } from './admin/adminService.js';
 import { AutomationEngine } from './admin/automationEngine.js';
 import { createAdminRouter } from './routes/admin.js';
+// ---- jobs (tarefas periódicas acionadas de fora: Vercel Cron, agendador externo)
+import { createJobsRouter } from './routes/jobs.js';
 
 export const API_VERSION = '1.0.0';
 
@@ -224,6 +226,20 @@ export function createApp(deps: AppDeps): Express {
   app.use(createAdminRouter({ admin, audit, authed: platformAuthed, onDenied, operationalCounts: (viewerUserId) => operations.operationalCounts(viewerUserId) }));
   app.use(notifications.router(queueRouteDeps));
   app.use(queue.router(queueRouteDeps));
+  // ---- jobs: o que o servidor residente faz com timers, para quando a API roda em funções serverless
+  app.use(
+    createJobsRouter({
+      secret: deps.config.jobs.cronSecret,
+      jobs: {
+        'sla-scan': async () => ({ executed: automationEngine ? await automationEngine.scanSla() : 0 }),
+        'queue-refresh': async () => {
+          await queue.service.refresh();
+          return { queue: queue.service.sync().status };
+        },
+      },
+    }),
+  );
+  // ---- end jobs
   app.use(notFoundHandler);
   app.use(errorHandler);
   return app;

@@ -1,5 +1,6 @@
 import { EventEmitter } from 'node:events';
 import type { Request, Response } from 'express';
+import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createLogger } from '../../src/config/logger.js';
 import { QueueEventBus } from '../../src/queue/eventBus.js';
@@ -11,6 +12,7 @@ import { MemoryQueueRepository } from '../../src/queue/repository.js';
 import type { QueueService } from '../../src/queue/service.js';
 import { buildSnapshot } from '../../src/queue/snapshot.js';
 import { QueueSourceError, type QueueProvider, type QueueSnapshot } from '../../src/queue/types.js';
+import { createTestApp } from '../support/testApp.js';
 
 /**
  * Execução sem processo residente (Vercel Functions): fila sob demanda, tempo real que se atualiza sozinho,
@@ -209,5 +211,31 @@ describe('tempo real sem laço residente (QueueRealtimeHub)', () => {
     await vi.advanceTimersByTimeAsync(1_000);
     expect((stream.res as unknown as { writableEnded: boolean }).writableEnded).toBe(true);
     expect(stream.chunks[0]).toBe('retry: 5000\n\n');
+  });
+});
+
+describe('tarefas periódicas por rota (/api/internal/jobs/*)', () => {
+  const SECRET = 'cron-secret-for-tests-0123456789';
+
+  it('sem CRON_SECRET as rotas não existem', async () => {
+    const { app } = createTestApp();
+    const response = await request(app).get('/api/internal/jobs/sla-scan').set('Authorization', `Bearer ${SECRET}`);
+    expect(response.status).toBe(404);
+  });
+
+  it('exigem o segredo; tarefa desconhecida é 404; a varredura roda e responde um resumo', async () => {
+    const base = createTestApp().config;
+    const { app } = createTestApp({ configOverrides: { jobs: { cronSecret: SECRET }, queue: { ...base.queue, enabled: false } } });
+    expect((await request(app).get('/api/internal/jobs/sla-scan')).status).toBe(401);
+    expect((await request(app).get('/api/internal/jobs/sla-scan').set('Authorization', 'Bearer errado-errado-errado')).status).toBe(401);
+    expect((await request(app).get('/api/internal/jobs/desconhecida').set('Authorization', `Bearer ${SECRET}`)).status).toBe(404);
+    expect((await request(app).get('/api/internal/jobs/constructor').set('Authorization', `Bearer ${SECRET}`)).status).toBe(404);
+
+    const scan = await request(app).get('/api/internal/jobs/sla-scan').set('Authorization', `Bearer ${SECRET}`);
+    expect(scan.status).toBe(200);
+    expect(scan.body.data).toMatchObject({ job: 'sla-scan', executed: expect.any(Number), durationMs: expect.any(Number) });
+    const queue = await request(app).post('/api/internal/jobs/queue-refresh').set('Authorization', `Bearer ${SECRET}`);
+    expect(queue.status).toBe(200);
+    expect(queue.body.data).toMatchObject({ job: 'queue-refresh', queue: 'disabled' });
   });
 });
