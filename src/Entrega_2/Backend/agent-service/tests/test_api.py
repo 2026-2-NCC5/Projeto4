@@ -112,3 +112,26 @@ def test_config_endpoint_exposes_versions(client):
     body = response.json()
     assert body["agent_version"] == "1.0.0"
     assert body["thresholds"]["minimum_confidence"] == 0.7
+
+
+def test_shared_secret_required_when_configured():
+    secured = TestClient(create_app(token="agent-token-0123456789"), raise_server_exceptions=False)
+    payload = _request_payload()
+    # saúde continua aberta (sem dados)
+    assert secured.get("/health").status_code == 200
+    denied = secured.post("/internal/v1/student-agent/evaluate", json=payload)
+    assert denied.status_code == 401
+    assert denied.json()["error"]["code"] == "UNAUTHORIZED"
+    wrong = secured.post(
+        "/internal/v1/student-agent/evaluate", json=payload, headers={"Authorization": "Bearer outro-token-qualquer"}
+    )
+    assert wrong.status_code == 401
+    assert secured.get("/internal/docs").status_code == 401
+    allowed = secured.post(
+        "/internal/v1/student-agent/evaluate", json=payload, headers={"Authorization": "Bearer agent-token-0123456789"}
+    )
+    assert allowed.status_code == 200
+
+
+def test_no_secret_configured_keeps_previous_behaviour(client):
+    assert client.post("/internal/v1/student-agent/evaluate", json=_request_payload()).status_code == 200

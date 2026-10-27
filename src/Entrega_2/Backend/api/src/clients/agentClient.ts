@@ -5,6 +5,8 @@ import { ContractError, DependencyError, TimeoutError } from '../errors/AppError
 export interface AgentClientOptions {
   baseUrl: string;
   timeoutMs: number;
+  /** segredo compartilhado (AGENT_SERVICE_TOKEN): enviado como Authorization: Bearer */
+  token?: string | null;
   fetchImpl?: typeof fetch;
 }
 
@@ -35,6 +37,7 @@ export function createAgentClient(options: AgentClientOptions): AgentClient {
   const fetchImpl = options.fetchImpl ?? fetch;
   const evaluateUrl = `${options.baseUrl}/internal/v1/student-agent/evaluate`;
   const healthUrl = `${options.baseUrl}/health`;
+  const auth: Record<string, string> = options.token ? { authorization: `Bearer ${options.token}` } : {};
 
   return {
     async evaluate(request, logger) {
@@ -50,6 +53,7 @@ export function createAgentClient(options: AgentClientOptions): AgentClient {
             accept: 'application/json',
             'x-request-id': request.request_id,
             'x-correlation-id': request.correlation_id,
+            ...auth,
           },
           body: JSON.stringify(request),
           signal: controller.signal,
@@ -105,7 +109,7 @@ export function createAgentClient(options: AgentClientOptions): AgentClient {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), Math.min(options.timeoutMs, 2000));
       try {
-        const response = await fetchImpl(healthUrl, { signal: controller.signal });
+        const response = await fetchImpl(healthUrl, { headers: auth, signal: controller.signal });
         return response.ok;
       } catch {
         return false;
@@ -118,7 +122,7 @@ export function createAgentClient(options: AgentClientOptions): AgentClient {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), Math.min(options.timeoutMs, 2000));
       try {
-        const response = await fetchImpl(`${options.baseUrl.replace(/\/+$/, '')}/internal/v1/student-agent/config`, { signal: controller.signal });
+        const response = await fetchImpl(`${options.baseUrl.replace(/\/+$/, '')}/internal/v1/student-agent/config`, { headers: auth, signal: controller.signal });
         if (!response.ok) return null;
         const body = (await response.json()) as Partial<AgentServiceConfigInfo>;
         if (typeof body.agent_version !== 'string' || typeof body.config_version !== 'string') return null;

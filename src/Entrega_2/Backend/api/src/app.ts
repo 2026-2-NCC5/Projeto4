@@ -79,7 +79,7 @@ export interface AppDeps {
 /** Fábrica da aplicação Express com injeção de dependências (testável sem rede/banco). */
 export function createApp(deps: AppDeps): Express {
   const logger = deps.logger ?? createLogger(deps.config.logLevel);
-  const agentClient = deps.agentClient ?? createAgentClient({ baseUrl: deps.config.agentService.url, timeoutMs: deps.config.agentService.timeoutMs });
+  const agentClient = deps.agentClient ?? createAgentClient({ baseUrl: deps.config.agentService.url, timeoutMs: deps.config.agentService.timeoutMs, token: deps.config.agentService.token });
   const now = deps.now ?? (() => new Date());
   const mailer = deps.mailer ?? createMailer(deps.config);
   const authService = new AuthService(deps.repos, deps.config, now);

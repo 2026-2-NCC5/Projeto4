@@ -23,6 +23,18 @@ uvicorn app.main:app --reload --port 8000
 # docs: http://localhost:8000/internal/docs
 ```
 
+## Implantação (Vercel) e segredo compartilhado
+
+Na Vercel, é o serviço `agent` do projeto backend (`src/Entrega_2/Backend/vercel.json`). A função Python (3.12, `.python-version`) carrega
+`app.main:app` (`[tool.vercel]` no `pyproject.toml`), e as versões instaladas vêm do `uv.lock`. O serviço **não
+tem rota pública**: só a API o alcança, pelo binding que injeta `AGENT_SERVICE_URL`.
+
+`AGENT_SERVICE_TOKEN`, se definido aqui e na API, passa a exigir `Authorization: Bearer <token>` em tudo, exceto
+`GET /health`. É obrigatório se o serviço ficar público (por exemplo, como projeto Vercel separado).
+
+As dependências ficam em `pyproject.toml` (Vercel) e em `requirements.txt` (Docker, CI), iguais. O teste
+`tests/test_packaging.py` garante isso. Ao mudar uma dependência, atualize os dois arquivos e rode `uv lock`.
+
 ## Testes e qualidade
 
 ```bash

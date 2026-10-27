@@ -4,6 +4,7 @@ import path from 'node:path';
 import type { Request, Response } from 'express';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createAgentClient } from '../../src/clients/agentClient.js';
 import { createLogger } from '../../src/config/logger.js';
 import { QueueEventBus } from '../../src/queue/eventBus.js';
 import { LocalLeaderLock, type LeaderLock } from '../../src/queue/leaderLock.js';
@@ -269,4 +270,14 @@ describe('limites que cabem na plataforma', () => {
     expect(catalog.body.data.limits.maxAttachmentBytes).toBe(3 * 1024 * 1024);
   });
 
+  it('cliente do Agent Service envia o segredo compartilhado quando configurado', async () => {
+    const seen: Array<string | null> = [];
+    const fetchImpl = (async (_url: string | URL | Request, init?: RequestInit) => {
+      seen.push(new Headers(init?.headers).get('authorization'));
+      return new Response(JSON.stringify({ status: 'ok' }), { status: 200 });
+    }) as typeof fetch;
+    await createAgentClient({ baseUrl: 'http://agent', timeoutMs: 1000, token: 'agent-token-0123456789', fetchImpl }).health();
+    await createAgentClient({ baseUrl: 'http://agent', timeoutMs: 1000, fetchImpl }).health();
+    expect(seen).toEqual(['Bearer agent-token-0123456789', null]);
+  });
 });
