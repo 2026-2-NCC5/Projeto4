@@ -79,7 +79,11 @@ decisões: [ADR-007](<../../../../documentos/Entrega_2/Projeto_Interdisciplinar_
 
 ```text
 src/
-├── app.ts, server.ts          fábrica Express (injeção de dependências) e bootstrap
+├── createApp.ts               fábrica Express (injeção de dependências)
+├── runtime.ts                 composição única (config, pool, repositórios, fila, push, app)
+├── index.ts                   entrada da Vercel (export default app; sem laços, fila sob demanda)
+├── server.ts                  servidor tradicional (npm start / Docker: laço da fila e timers)
+├── worker.ts                  worker residente sem HTTP (npm run worker / Vercel Daemon)
 ├── config/                    env (zod) e logger (pino com redact)
 ├── contracts/                 agentContract.ts (zod, v1) · mobileApi.v1.ts (cópia do contrato canônico)
 ├── controllers/, routes/      handlers finos e rotas
@@ -95,7 +99,7 @@ src/
 ├── clients/agentClient.ts     HTTP → Agent Service com timeout e classificação de erros
 ├── repositories/              interfaces + implementação PostgreSQL
 ├── middlewares/               requestContext, auth, validate, errorHandler
-├── db/                        pool, migrate, seed, reset
+├── db/                        pool, migrate, seed, reset, migrationManifest (migrations esperadas)
 └── errors/AppError.ts         códigos de erro e status
 test/unit, integration, e2e, support/
 ```

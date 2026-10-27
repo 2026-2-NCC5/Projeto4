@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { SlaPolicyResolver } from '../../src/admin/adminService.js';
-import { automationEngineOf } from '../../src/app.js';
+import { automationEngineOf } from '../../src/createApp.js';
 import { buildFixtureData, DEMO_PASSWORD, USERS } from '../support/fixtures.js';
 import { MemoryAdminRepository } from '../support/inMemoryAdmin.js';
 import { createInMemoryRepositories } from '../support/inMemoryRepositories.js';

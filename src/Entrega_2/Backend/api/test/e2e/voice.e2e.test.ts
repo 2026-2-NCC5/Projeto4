@@ -10,7 +10,7 @@
  */
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { API_VERSION } from '../../src/app.js';
+import { API_VERSION } from '../../src/createApp.js';
 import type { AssistantConversationContext, AssistantResponse } from '../../src/contracts/mobileApi.v1.js';
 import { startAgentService, type AgentServiceHandle } from '../support/agentServiceProcess.js';
 import { prepareDatabase, TEST_DATABASE_URL, type DatabaseHandle } from '../support/database.js';

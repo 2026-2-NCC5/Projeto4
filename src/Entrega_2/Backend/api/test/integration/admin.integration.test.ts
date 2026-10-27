@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { automationEngineOf } from '../../src/app.js';
+import { automationEngineOf } from '../../src/createApp.js';
 import { addBusinessDays } from '../../src/support/sla.js';
 import { prepareDatabase, TEST_DATABASE_URL, type DatabaseHandle } from '../support/database.js';
 import { DEMO_PASSWORD } from '../support/fixtures.js';

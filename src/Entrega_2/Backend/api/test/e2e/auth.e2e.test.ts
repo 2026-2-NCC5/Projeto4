@@ -7,7 +7,7 @@
  */
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { API_VERSION } from '../../src/app.js';
+import { API_VERSION } from '../../src/createApp.js';
 import { createMailer } from '../../src/mail/mailer.js';
 import { prepareDatabase, TEST_DATABASE_URL, type DatabaseHandle } from '../support/database.js';
 import { flushEvidence, recordEvidence } from '../support/evidence.js';

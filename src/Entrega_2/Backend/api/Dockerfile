@@ -1,5 +1,5 @@
 # ---- build ---------------------------------------------------------------
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /srv/api
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
@@ -8,7 +8,7 @@ COPY src ./src
 RUN npm run build
 
 # ---- runtime -------------------------------------------------------------
-FROM node:20-alpine
+FROM node:24-alpine
 ENV NODE_ENV=production
 WORKDIR /srv/api
 COPY package.json package-lock.json ./
