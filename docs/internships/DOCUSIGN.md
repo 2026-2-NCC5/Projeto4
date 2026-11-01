@@ -1,0 +1,3 @@
+# DocuSign
+
+**Não integrado.** Não há credenciais, conta de demonstração autorizada, escopos OAuth, chave privada ou segredo de webhook configurados. O código não chama DocuSign. O adaptador atual é explicitamente manual (`manual_assisted`): prepara os dados e registra que não houve transmissão oficial. Para implementar o modo real será necessário provisionar OAuth conforme a conta, decidir signatários/ordem institucional, armazenamento seguro de segredos, persistência de envelopes, HMAC de Connect, deduplicação, retentativas e recuperação do PDF/certificado. Nenhum signatário FECAP é presumido.

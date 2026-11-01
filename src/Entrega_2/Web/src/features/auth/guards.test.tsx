@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import LoginPage from '@/pages/auth/LoginPage';
@@ -53,8 +53,8 @@ describe('login', () => {
       throw new ApiError('unauthorized', 'E-mail ou senha inválidos.', { status: 401, reason: 'invalid_credentials' });
     });
     renderRoutes(routes, { initialPath: '/login', session: makeSession(null, { login }) });
-    await userEvent.type(await screen.findByLabelText(/E-mail/), 'aluno@demo.asa');
-    await userEvent.type(screen.getByLabelText(/^Senha/), 'errada');
+    fireEvent.change(await screen.findByLabelText(/E-mail/), { target: { value: 'aluno@demo.asa' } });
+    fireEvent.change(screen.getByLabelText(/^Senha/), { target: { value: 'errada' } });
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('E-mail ou senha inválidos.');
     expect(login).toHaveBeenCalledWith('aluno@demo.asa', 'errada', false);
@@ -64,8 +64,8 @@ describe('login', () => {
     mockApi({ 'GET /api/platform/info': () => ({ data: undefined }) });
     const login = vi.fn(async () => makeMe('institutional_staff'));
     const { router } = renderRoutes(routes, { initialPath: `/login?next=${encodeURIComponent('/admin/usuarios')}`, session: makeSession(null, { login }) });
-    await userEvent.type(await screen.findByLabelText(/E-mail/), 'atendente.asa@demo.asa');
-    await userEvent.type(screen.getByLabelText(/^Senha/), 'Demo@2026');
+    fireEvent.change(await screen.findByLabelText(/E-mail/), { target: { value: 'atendente.asa@demo.asa' } });
+    fireEvent.change(screen.getByLabelText(/^Senha/), { target: { value: 'Demo@2026' } });
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
     expect(await screen.findByText('área da equipe')).toBeInTheDocument();
     expect(router.state.location.pathname).toBe('/asa');

@@ -22,7 +22,7 @@ describe('Visão geral da administração', () => {
   it('mostra contas, contagens de atendimento, segurança, serviços, integrações e a origem dos dados', async () => {
     mockApi({
       'GET /api/admin/overview': () => ({ data: overview }),
-      'GET /api/platform/info': () => ({ data: { dataMode: 'demo', dataModeLabel: 'DEMONSTRAÇÃO — Dados fictícios' } }),
+      'GET /api/platform/info': () => ({ data: { dataMode: 'demo', dataModeLabel: 'MODO DE DEMONSTRAÇÃO' } }),
     });
     renderRoutes(routes, { initialPath: '/admin', session: adminSession() });
 
@@ -59,7 +59,7 @@ describe('Visão geral da administração', () => {
     expect(within(integrations).getByRole('link', { name: 'Ver detalhes das integrações' })).toHaveAttribute('href', '/admin/integracoes');
 
     expect(screen.getByText(/Fonte: Contas, sessões, chamados/)).toBeInTheDocument();
-    expect(await screen.findByText('DEMONSTRAÇÃO — Dados fictícios')).toBeInTheDocument();
+    expect(await screen.findByText('MODO DE DEMONSTRAÇÃO')).toBeInTheDocument();
   });
 
   it('agendamentos indisponíveis aparecem como indisponíveis, sem número inventado', async () => {
@@ -69,7 +69,7 @@ describe('Visão geral da administração', () => {
     expect(statValue('Agendamentos hoje')).toBe('—');
     expect(screen.getByText(/Indisponível: agendamentos desligados ou sem banco de dados/)).toBeInTheDocument();
     // sem a informação da plataforma, o rótulo do modo vem da própria fonte dos números
-    expect(screen.getByText('Modo demonstração: dados fictícios')).toBeInTheDocument();
+    expect(screen.getByText('Modo de demonstração')).toBeInTheDocument();
   });
 
   it('securityLinks começa no dia de 24 h antes, no fuso da instituição', () => {

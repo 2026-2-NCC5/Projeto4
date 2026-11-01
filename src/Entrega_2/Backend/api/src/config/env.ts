@@ -25,6 +25,8 @@ const envSchema = z.object({
   TRUST_PROXY: z.string().optional(),
   RATE_LIMIT_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   SIGNUP_ALLOWED_EMAIL_DOMAINS: z.string().default('edu.fecap.br,fecap.br,demo.asa'),
+  STUDENT_EMAIL_DOMAIN: z.string().default('edu.fecap.br'),
+  STAFF_EMAIL_DOMAIN: z.string().default('fecap.br'),
   REGISTRATION_NUMBER_PATTERN: z.string().min(1).default('^\\d{8}$'),
   REGISTRATION_NUMBER_EXAMPLE: z.string().min(1).default('24026962'),
   RESET_CODE_LENGTH: z.coerce.number().int().min(4).max(10).default(6),
@@ -54,13 +56,14 @@ const envSchema = z.object({
   APP_TIMEZONE: z.string().min(1).default('America/Sao_Paulo'),
   // ---- queue (Fila presencial do ASA): UM monitor no backend consulta a fonte pública
   ASA_QUEUE_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
-  // fecap: endpoint JSON do portal com fallback para o HTML | fecap-html: só HTML | mock/demo: simulador (nunca em produção).
-  // Sem valor: simulador fora de produção; em produção a fila fica desativada até a fonte ser escolhida (não presume autorização).
+  // A fonte real permanece desativada sem aprovação e opt-in. mock/demo só pode ser usado pelo ambiente de testes.
   ASA_QUEUE_PROVIDER: z.enum(['fecap', 'fecap-html', 'mock', 'demo']).optional(),
   // A leitura de presencial.fecap.br só é tratada como integração autorizada quando a instituição confirmar (painel admin)
   ASA_QUEUE_SOURCE_AUTHORIZED: z.enum(['true', 'false', '1', '0']).default('false'),
+  // A inspeção/leitura do painel público por scraping exige opt-in separado da aprovação institucional.
+  ASA_QUEUE_ALLOW_PUBLIC_SCRAPING: z.enum(['true', 'false', '1', '0']).default('false'),
   ASA_QUEUE_SOURCE_URL: z.string().url().default('https://presencial.fecap.br/'),
-  ASA_QUEUE_POLL_INTERVAL_SECONDS: z.coerce.number().int().min(5).max(300).default(10),
+  ASA_QUEUE_POLL_INTERVAL_SECONDS: z.coerce.number().int().min(5).max(300).default(30),
   ASA_QUEUE_CACHE_TTL_SECONDS: z.coerce.number().int().min(5).max(3600).default(30),
   ASA_QUEUE_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1000).max(60_000).default(8000),
   ASA_QUEUE_MAX_BACKOFF_SECONDS: z.coerce.number().int().min(10).max(3600).default(300),
@@ -79,13 +82,13 @@ const envSchema = z.object({
   // Ambiente lógico exibido nos clientes; padrão derivado de NODE_ENV
   APP_ENV: z.enum(['development', 'test', 'staging', 'demo', 'production']).optional(),
   // Dados fictícios identificados como DEMONSTRAÇÃO. false: contas demo não entram e nada fictício é exibido
-  DEMO_DATA_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  DEMO_DATA_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
   // Seeds fictícios (database/seeds) — nunca em produção; banco remoto só com DEMO_SEED_ALLOW_REMOTE=true
-  DEMO_SEED_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  DEMO_SEED_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
   DEMO_SEED_ALLOW_REMOTE: z.enum(['true', 'false', '1', '0']).default('false'),
   DEMO_SCENARIO: z.string().regex(/^[a-z0-9-]{1,40}$/).default('academic-full'),
   // demo: disciplinas/notas/frequência do seed fictício | institutional: fonte oficial (ainda não configurada)
-  ACADEMIC_DATA_PROVIDER: z.enum(['demo', 'institutional']).default('demo'),
+  ACADEMIC_DATA_PROVIDER: z.enum(['demo', 'institutional']).default('institutional'),
   FEATURE_TICKETS_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   FEATURE_APPOINTMENTS_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   FEATURE_KB_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
@@ -107,6 +110,9 @@ const envSchema = z.object({
   // Provedor de IA do assistente: existing (regras + base de conhecimento) | jev (integração futura, desligada)
   AI_PROVIDER: z.enum(['existing', 'jev']).default('existing'),
   JEV_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
+  GAMEFY_SUPABASE_URL: z.string().url().optional(),
+  GAMEFY_SUPABASE_SERVICE_ROLE_KEY: z.string().min(20).optional(),
+  GAMEFY_INSTITUTION_SLUG: z.string().min(1).default('fecap'),
 });
 
 export type AppEnvironment = NonNullable<z.infer<typeof envSchema>['APP_ENV']>;
@@ -127,6 +133,8 @@ export interface AppConfig {
   rateLimit: { enabled: boolean };
   auth: {
     allowedEmailDomains: string[];
+    studentEmailDomain: string;
+    staffEmailDomain: string;
     registrationNumberPattern: RegExp;
     registrationNumberPatternSource: string;
     registrationNumberExample: string;
@@ -156,7 +164,9 @@ export interface AppConfig {
     providerExplicit: boolean;
     /** instituição confirmou a autorização de uso da fonte (ASA_QUEUE_SOURCE_AUTHORIZED) */
     sourceAuthorized: boolean;
-    /** motivo quando a fila foi desativada pela configuração (ex.: produção sem fonte escolhida) */
+    /** scraping explícito e aprovado para a página pública */
+    allowPublicScraping: boolean;
+    /** motivo quando a fila foi desativada pela configuração (ex.: aprovação pendente) */
     disabledReason: string | null;
     sourceUrl: string;
     pollIntervalSeconds: number;
@@ -179,6 +189,7 @@ export interface AppConfig {
   automations: { scanIntervalSeconds: number };
   web: { origins: string[]; cookieSecure: boolean };
   ai: { provider: Env['AI_PROVIDER']; jevEnabled: boolean };
+  gamefy: { url: string | null; serviceRoleKey: string | null; institutionSlug: string };
 }
 
 export type QueueProviderName = 'fecap' | 'fecap-html' | 'mock';
@@ -193,6 +204,9 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   }
   const env = parsed.data;
   const flag = (value: string) => value === 'true' || value === '1';
+  if (env.NODE_ENV !== 'test' && (flag(env.DEMO_DATA_ENABLED) || flag(env.DEMO_SEED_ENABLED) || env.ACADEMIC_DATA_PROVIDER === 'demo')) {
+    throw new Error('Configuração inválida: dados e seeds fictícios são exclusivos de testes automatizados; use fontes institucionais reais.');
+  }
   // Variável de sistema da Vercel (build e funções); ausente em qualquer outro ambiente
   const onVercel = source.VERCEL === '1';
   if (env.NODE_ENV === 'production' && !cleaned.AGENT_SERVICE_URL) {
@@ -210,13 +224,21 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   const trustProxyRaw = env.TRUST_PROXY ?? (onVercel ? 'true' : 'false');
   const trustProxy = trustProxyRaw === 'true' ? true : trustProxyRaw === 'false' ? false : /^\d+$/.test(trustProxyRaw) ? Number(trustProxyRaw) : trustProxyRaw;
   const queueProviderRaw = env.ASA_QUEUE_PROVIDER === 'demo' ? 'mock' : env.ASA_QUEUE_PROVIDER;
-  if (env.NODE_ENV === 'production' && queueProviderRaw === 'mock') {
-    throw new Error('Configuração inválida: ASA_QUEUE_PROVIDER=mock não é permitido em produção');
+  if (queueProviderRaw === 'mock' && env.NODE_ENV !== 'test') {
+    throw new Error('Configuração inválida: ASA_QUEUE_PROVIDER=mock só é permitido em testes automatizados');
   }
-  // Sem fonte escolhida: simulador identificado fora de produção; em produção a fila fica desativada (não presume autorização).
-  const queueProvider: QueueProviderName = queueProviderRaw ?? 'mock';
+  // Sem fonte escolhida, assume-se a integração real pendente; nunca se preenchem dados fictícios no app.
+  const queueProvider: QueueProviderName = queueProviderRaw ?? 'fecap';
   const queueDisabledReason =
-    !queueProviderRaw && env.NODE_ENV === 'production' ? 'Defina ASA_QUEUE_PROVIDER para ativar a fila presencial (a fonte exige autorização institucional).' : null;
+    !flag(env.ASA_QUEUE_ENABLED)
+      ? 'ASA_QUEUE_ENABLED=false'
+      : !queueProviderRaw && env.NODE_ENV === 'production'
+        ? 'Defina ASA_QUEUE_PROVIDER para ativar a fila presencial (a fonte exige autorização institucional).'
+        : queueProvider !== 'mock' && !flag(env.ASA_QUEUE_SOURCE_AUTHORIZED)
+          ? 'ASA_QUEUE_SOURCE_AUTHORIZED=true (aprovação institucional pendente)'
+          : queueProvider !== 'mock' && !flag(env.ASA_QUEUE_ALLOW_PUBLIC_SCRAPING)
+            ? 'ASA_QUEUE_ALLOW_PUBLIC_SCRAPING=true (scraping permanece desligado)'
+            : null;
   const appEnv: AppEnvironment = env.APP_ENV ?? (env.NODE_ENV === 'production' ? 'production' : env.NODE_ENV === 'test' ? 'test' : 'development');
   const webOrigins = env.WEB_ORIGINS.split(',').map((origin) => origin.trim().replace(/\/+$/, '')).filter(Boolean);
   for (const origin of webOrigins) {
@@ -254,6 +276,8 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     rateLimit: { enabled: flag(env.RATE_LIMIT_ENABLED) },
     auth: {
       allowedEmailDomains: env.SIGNUP_ALLOWED_EMAIL_DOMAINS.split(',').map((domain) => domain.trim().toLowerCase().replace(/^@/, '')).filter(Boolean),
+      studentEmailDomain: env.STUDENT_EMAIL_DOMAIN.trim().toLowerCase().replace(/^@/, ''),
+      staffEmailDomain: env.STAFF_EMAIL_DOMAIN.trim().toLowerCase().replace(/^@/, ''),
       registrationNumberPattern,
       registrationNumberPatternSource: env.REGISTRATION_NUMBER_PATTERN,
       registrationNumberExample: env.REGISTRATION_NUMBER_EXAMPLE,
@@ -291,11 +315,12 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
       maxTextLength: 500,
     },
     queue: {
-      enabled: flag(env.ASA_QUEUE_ENABLED) && queueDisabledReason === null,
+      enabled: queueDisabledReason === null,
       provider: queueProvider,
       providerExplicit: queueProviderRaw !== undefined,
       sourceAuthorized: flag(env.ASA_QUEUE_SOURCE_AUTHORIZED),
-      disabledReason: flag(env.ASA_QUEUE_ENABLED) ? queueDisabledReason : 'ASA_QUEUE_ENABLED=false',
+      allowPublicScraping: flag(env.ASA_QUEUE_ALLOW_PUBLIC_SCRAPING),
+      disabledReason: queueDisabledReason,
       sourceUrl: env.ASA_QUEUE_SOURCE_URL,
       pollIntervalSeconds: env.ASA_QUEUE_POLL_INTERVAL_SECONDS,
       cacheTtlSeconds: env.ASA_QUEUE_CACHE_TTL_SECONDS,
@@ -328,5 +353,10 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
       cookieSecure: env.WEB_COOKIE_SECURE === 'auto' ? env.NODE_ENV === 'production' : env.WEB_COOKIE_SECURE === 'true',
     },
     ai: { provider: env.AI_PROVIDER, jevEnabled: flag(env.JEV_ENABLED) },
+    gamefy: {
+      url: env.GAMEFY_SUPABASE_URL?.replace(/\/+$/, '') ?? null,
+      serviceRoleKey: env.GAMEFY_SUPABASE_SERVICE_ROLE_KEY ?? null,
+      institutionSlug: env.GAMEFY_INSTITUTION_SLUG.trim().toLowerCase(),
+    },
   };
 }

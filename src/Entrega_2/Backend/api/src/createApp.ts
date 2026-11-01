@@ -24,7 +24,7 @@ import { SUPPORT_UPLOAD_BODY_LIMIT, SUPPORT_UPLOAD_PATHS } from './routes/suppor
 import { SupportCore, SupportService, type SupportPushNotifier } from './support/supportService.js';
 import { SupportStaffService } from './support/supportStaffService.js';
 // ---- queue (Fila presencial do ASA)
-import { authenticate } from './middlewares/auth.js';
+import { authenticate, requirePermission } from './middlewares/auth.js';
 import { createNotificationsModule, type NotificationsModule } from './notifications/module.js';
 import { createQueueModule, type QueueModule } from './queue/module.js';
 // ---- platform (portal web, sessões, auditoria, avisos)
@@ -45,6 +45,12 @@ import { AutomationEngine } from './admin/automationEngine.js';
 import { createAdminRouter } from './routes/admin.js';
 // ---- jobs (tarefas periódicas acionadas de fora: Vercel Cron, agendador externo)
 import { createJobsRouter } from './routes/jobs.js';
+import type { DbPool } from './db/pool.js';
+import { createInternshipRouter } from './internships/routes.js';
+import { createPortalRouter } from './portal/routes.js';
+import { CareerMatchService } from './career/service.js';
+import { createCareerRouter } from './career/routes.js';
+import { GamefyDirectory } from './academic/gamefyDirectory.js';
 
 export const API_VERSION = '1.0.0';
 
@@ -74,6 +80,8 @@ export interface AppDeps {
   notifications?: NotificationsModule;
   /** Fila presencial; padrão: módulo em memória sem monitor iniciado (server.ts usa o do banco e o inicia). */
   queue?: QueueModule;
+  /** Banco da runtime. Opcional para manter a fábrica de testes sem banco. */
+  pool?: DbPool;
 }
 
 /** Fábrica da aplicação Express com injeção de dependências (testável sem rede/banco). */
@@ -82,7 +90,8 @@ export function createApp(deps: AppDeps): Express {
   const agentClient = deps.agentClient ?? createAgentClient({ baseUrl: deps.config.agentService.url, timeoutMs: deps.config.agentService.timeoutMs, token: deps.config.agentService.token });
   const now = deps.now ?? (() => new Date());
   const mailer = deps.mailer ?? createMailer(deps.config);
-  const authService = new AuthService(deps.repos, deps.config, now);
+  const gamefyDirectory = new GamefyDirectory(deps.config.gamefy, now);
+  const authService = new AuthService(deps.repos, deps.config, now, gamefyDirectory);
   const passwordResetService = new PasswordResetService(deps.repos, deps.config, mailer, now);
   const biometricService = new BiometricService(deps.repos, authService, deps.config, now);
   // ---- platform (portal web, sessões, auditoria, avisos)
@@ -180,6 +189,8 @@ export function createApp(deps: AppDeps): Express {
   app.use(cors({ origin: deps.config.corsOrigin === '*' ? true : deps.config.corsOrigin.split(',').map((item) => item.trim()) }));
   // ---- support (Atendimento): envio de arquivos em base64 aceita corpo maior só nestas rotas
   app.use(SUPPORT_UPLOAD_PATHS, express.json({ limit: SUPPORT_UPLOAD_BODY_LIMIT }));
+  // Inventário do crawler é limitado e validado; requer corpo maior que as rotas comuns.
+  app.use('/api/v1/portal/sync', express.json({ limit: '2mb' }));
   app.use(express.json({ limit: '64kb' }));
   app.use(requestContext(logger));
   // ---- platform: respostas da API nunca ficam em cache compartilhado e informam o modo de dados
@@ -211,6 +222,7 @@ export function createApp(deps: AppDeps): Express {
       audit,
       settings,
       web: { origins: deps.config.web.origins, secure: deps.config.web.cookieSecure },
+      academicDirectory: gamefyDirectory,
     }),
   );
   // ---- queue (Fila presencial do ASA): /api/queue/*, /api/notifications/push-token, /health/queue
@@ -218,6 +230,7 @@ export function createApp(deps: AppDeps): Express {
   // ---- platform: operação do ASA e auditoria (rotas em routes/operations.ts)
   const platformAuthed = authenticate(authService, { allowedOrigins: deps.config.web.origins });
   const onDenied = (req: express.Request, permission: string) => void audit.recordFor(req, { action: 'authz.denied', outcome: 'denied', metadata: { permission, route: req.route?.path ?? req.path } });
+  const careerMatch = deps.pool ? new CareerMatchService(deps.pool, now) : null;
   app.use(createOperationsRouter({ operations, audit, authed: platformAuthed, onDenied, agentInsights: (input) => operations.agentInsights(input, { agentClient, ai: aiRegistry }) }));
   // ---- platform: base de conhecimento (rotas em routes/knowledge.ts)
   app.use(createKnowledgeRouter({ knowledge, audit, authed: platformAuthed, onDenied }));
@@ -225,6 +238,9 @@ export function createApp(deps: AppDeps): Express {
   app.use(createAppointmentRouter({ appointments, audit, authed: platformAuthed, asStudent: requireStudent(studentService), onDenied }));
   // ---- admin (rotas em routes/admin.ts)
   app.use(createAdminRouter({ admin, audit, authed: platformAuthed, onDenied, operationalCounts: (viewerUserId) => operations.operationalCounts(viewerUserId) }));
+  if (deps.pool) app.use(createInternshipRouter({ pool: deps.pool, authed: platformAuthed, asStudent: requireStudent(studentService), dataMode: platform.dataMode }));
+  if (deps.pool) app.use(createPortalRouter({ pool: deps.pool, authed: platformAuthed, asStudent: requireStudent(studentService) }));
+  if (careerMatch) app.use(createCareerRouter({ service: careerMatch, authed: platformAuthed, asStudent: requireStudent(studentService), admin: requirePermission('settings:manage', onDenied) }));
   app.use(notifications.router(queueRouteDeps));
   app.use(queue.router(queueRouteDeps));
   // ---- jobs: o que o servidor residente faz com timers, para quando a API roda em funções serverless
@@ -237,6 +253,7 @@ export function createApp(deps: AppDeps): Express {
           await queue.service.refresh();
           return { queue: queue.service.sync().status };
         },
+        ...(careerMatch ? { 'asa-match-collect': async () => ({ ...await careerMatch.enqueueDueSources(), ...await careerMatch.processCollectionQueue(5), ...await careerMatch.deliverDueAlerts(200) }) } : {}),
       },
     }),
   );

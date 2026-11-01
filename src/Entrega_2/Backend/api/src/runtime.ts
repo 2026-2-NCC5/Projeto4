@@ -63,6 +63,6 @@ export function createRuntime(kind: RuntimeKind): Runtime {
   if (config.nodeEnv === 'production' && config.corsOrigin === '*') {
     logger.warn({ status: 'cors_open' }, 'CORS_ORIGIN=* em produção: defina as origens permitidas (o portal usa a mesma origem e não precisa de CORS)');
   }
-  const app = createApp({ config, repos, logger, notifications, queue });
+  const app = createApp({ config, repos, logger, notifications, queue, pool });
   return { config, logger, pool, repos, notifications, queue, app, automationEngine: automationEngineOf(app) };
 }

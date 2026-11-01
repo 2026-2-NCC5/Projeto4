@@ -85,13 +85,22 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:unit
       - run: npm run db:migrate
-      - run: npm run db:seed
+      - name: Seed de demonstração (banco descartável do CI)
+        env:
+          NODE_ENV: test
+          DEMO_DATA_ENABLED: "true"
+          DEMO_SEED_ENABLED: "true"
+        run: npm run db:seed
       - run: npm run test:integration
       - run: npm run test:e2e
       - run: npm run build
       # A MESMA entrada da Vercel (src/index.ts: sem laços, fila sob demanda) + Agent Service real, sem Docker
       - name: Smoke test — entrada serverless (src/index.ts) com PostgreSQL e Agent Service reais
         env:
+          # Este smoke usa fixtures e o provider de fila determinístico; nunca é configuração de deploy.
+          NODE_ENV: test
+          DEMO_DATA_ENABLED: "true"
+          ACADEMIC_DATA_PROVIDER: demo
           PORT: "3100"
           AGENT_SERVICE_URL: http://127.0.0.1:8000
           AGENT_SERVICE_TOKEN: ci-agent-token-0123456789abcdef
@@ -163,6 +172,8 @@ jobs:
           --health-cmd "pg_isready -U asa -d asa_conecta_ci"
           --health-interval 5s --health-timeout 3s --health-retries 20
     env:
+      NODE_ENV: test
+      DEMO_DATA_ENABLED: "true"
       DATABASE_URL: postgres://asa:asa_ci_password@localhost:5432/asa_conecta_ci
       JWT_SECRET: ci-secret-not-for-production-0123456789abcdef
       MAIL_TRANSPORT: disabled
@@ -181,18 +192,27 @@ jobs:
           cache-dependency-path: |
             src/Entrega_2/Backend/api/package-lock.json
             src/Entrega_2/Web/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Agent Service — dependências para a API usada no E2E
+        working-directory: src/Entrega_2/Backend/agent-service
+        run: pip install -r requirements.txt
       - name: API — build, migrations e seeds fictícios
         working-directory: src/Entrega_2/Backend/api
         run: |
           npm ci
           npm run build
           npm run db:migrate
-          npm run db:seed
+          NODE_ENV=test DEMO_DATA_ENABLED=true DEMO_SEED_ENABLED=true npm run db:seed
       - name: API — sobe duas instâncias (demonstração ligada :3000 e desligada :3001)
         working-directory: src/Entrega_2/Backend/api
         run: |
+          (cd ../agent-service && nohup python -m uvicorn app.main:app --port 8000 > agent-e2e.log 2>&1 &)
           nohup node dist/server.js > api.log 2>&1 &
           PORT=3001 DEMO_DATA_ENABLED=false nohup node dist/server.js > api-demo-off.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:8000/health > /dev/null && break; sleep 1; done
+          curl -sf http://localhost:8000/health > /dev/null
           for port in 3000 3001; do
             for i in $(seq 1 60); do curl -sf "http://localhost:$port/health" > /dev/null && break; sleep 1; done
             curl -sf "http://localhost:$port/health" > /dev/null

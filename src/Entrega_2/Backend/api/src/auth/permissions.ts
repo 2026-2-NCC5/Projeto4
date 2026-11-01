@@ -37,6 +37,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<UserRole, readonly Permission[]>>
     'kb:write',
     'kb:publish',
     'students:read:support_context',
+    'academic:directory:read',
     'metrics:read',
     'reports:export',
     'agent:insights:read',
@@ -56,6 +57,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<UserRole, readonly Permission[]>>
     'audit:read:own',
     'audit:read:any',
     'users:manage',
+    'academic:directory:read',
     'sessions:revoke:any',
     'settings:manage',
     'sla:manage',
@@ -68,7 +70,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<UserRole, readonly Permission[]>>
 
 export const ROLE_LABELS: Readonly<Record<UserRole, string>> = {
   student: 'Aluno',
-  institutional_staff: 'Equipe ASA',
+  institutional_staff: 'Professor(a) / Equipe ASA',
   technical_admin: 'Administração',
 };
 
@@ -97,6 +99,7 @@ export const PERMISSION_DESCRIPTIONS: Readonly<Record<Permission, { group: strin
   'kb:write': { group: 'Base de conhecimento', label: 'Criar e editar artigos' },
   'kb:publish': { group: 'Base de conhecimento', label: 'Publicar e arquivar artigos' },
   'students:read:support_context': { group: 'Operação', label: 'Ver dados de contato e histórico de atendimento de alunos atendidos' },
+  'academic:directory:read': { group: 'Acadêmico', label: 'Pesquisar o diretório acadêmico do GameFY' },
   'metrics:read': { group: 'Operação', label: 'Ver métricas e indicadores' },
   'reports:export': { group: 'Operação', label: 'Exportar relatórios (CSV sem dados pessoais)' },
   'agent:insights:read': { group: 'Operação', label: 'Ver indicadores agregados do Agente e do Assistente' },

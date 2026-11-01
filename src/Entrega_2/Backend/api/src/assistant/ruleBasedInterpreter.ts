@@ -92,7 +92,7 @@ const CONTROL_CLARIFY = /^(nao entendi( nada)?|como assim|hein|nao compreendi|ex
 // --------------------------------------------------------------- conversação
 
 const GREETING =
-  /^((oi|ola|ei|hey|e ai|alo|opa|bom dia|boa tarde|boa noite|tudo bem)( (asa|assistente))?( tudo bem)?|asa|assistente)$/;
+  /^((oi|ola|ei|hey|e ai|alo|opa|bom dia|boa tarde|boa noite|tudo bem)( (asa|assistente|hermes))?( tudo bem)?|asa|assistente|hermes)$/;
 const HELP =
   /\b(o que (voce )?(pode|sabe|consegue) fazer|como (voce )?funciona|como (te )?uso|o que (eu )?posso perguntar|quais perguntas|comandos)\b|^(ajuda|me ajuda|help)$/;
 const PREDICT =

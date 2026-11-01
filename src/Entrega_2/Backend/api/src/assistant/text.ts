@@ -1,6 +1,6 @@
 /** Normalização de linguagem natural em pt-BR para interpretação por regras. */
 
-const WAKE_PREFIX = /^(?:(?:oi|ola|ei|hey|ok|okay|alo|e ai)\s+)?(?:asa|assistente)\b\s*/;
+const WAKE_PREFIX = /^(?:(?:oi|ola|ei|hey|ok|okay|alo|e ai)\s+)?(?:asa|assistente|hermes)\b\s*/;
 
 /** minúsculas, sem acentos, sem pontuação e com espaços colapsados. */
 export function normalizeText(text: string): string {
@@ -13,7 +13,7 @@ export function normalizeText(text: string): string {
     .trim();
 }
 
-/** Remove "ASA,"/"oi assistente" do início, preservando o restante da pergunta. */
+/** Remove o nome do assistente ao início da pergunta, preservando o restante do texto. */
 export function stripWakeWord(normalized: string): string {
   const stripped = normalized.replace(WAKE_PREFIX, '').trim();
   return stripped.length > 0 ? stripped : normalized;

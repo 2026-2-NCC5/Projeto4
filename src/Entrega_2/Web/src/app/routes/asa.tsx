@@ -12,5 +12,6 @@ export const asaRoutes: RouteObject[] = [
   { path: 'conversas', element: page(() => import('@/pages/asa/ConversationsPage')) },
   { path: 'alunos', element: page(() => import('@/pages/asa/StudentsPage')) },
   { path: 'alunos/:id', element: page(() => import('@/pages/asa/StudentContextPage')) },
+  { path: 'diretorio-academico', element: page(() => import('@/pages/admin/AcademicDirectoryPage')) },
   { path: 'auditoria', element: page(() => import('@/pages/asa/MyAuditPage')) },
 ];

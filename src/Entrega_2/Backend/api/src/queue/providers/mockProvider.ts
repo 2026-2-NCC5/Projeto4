@@ -1,7 +1,7 @@
 import { buildSnapshot } from '../snapshot.js';
 import { QueueSourceError, type QueueCall, type QueueProvider, type QueueSnapshot, type QueueWaiting } from '../types.js';
 
-/** Cenários de desenvolvimento, sempre relativos à senha de referência 0029. */
+/** Fixtures automatizadas, sempre relativas à senha de referência fictícia 0029. */
 export const MOCK_SCENARIOS = ['empty', 'waiting', '5_ahead', '3_ahead', 'next', 'called', 'completed', 'offline', 'progression'] as const;
 export type MockScenario = (typeof MOCK_SCENARIOS)[number];
 
@@ -31,7 +31,7 @@ export interface MockQueueProviderOptions {
 }
 
 /**
- * MockQueueProvider: ativado somente com ASA_QUEUE_PROVIDER=mock (nunca é o padrão).
+ * MockQueueProvider: permitido somente em testes automatizados; nunca é fonte do app.
  * Simula duas mesas em paralelo; `progression` chama uma senha a cada `stepSeconds`
  * (0026 → 0027 → 0028 → 0029) para validar UI, push, voz, vibração e animações.
  */

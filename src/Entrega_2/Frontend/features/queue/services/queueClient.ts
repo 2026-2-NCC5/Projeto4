@@ -8,9 +8,7 @@ import type {
   QueueSyncEvent,
   QueueTicketRealtimeEvent,
 } from '../../../types/api';
-import { QUEUE, QUEUE_ROUTES } from '../config';
-
-import { createMockQueueClient } from './mockQueueClient';
+import { QUEUE_ROUTES } from '../config';
 import { openQueueStream } from './queueRealtime';
 
 export type QueueRealtimeEvent =
@@ -77,11 +75,7 @@ export const apiQueueClient: QueueClient = {
   simulate: (control) => request<{ scenario: string }>(QUEUE_ROUTES.devMock, { method: 'POST', body: control }),
 };
 
-let mockClient: QueueClient | null = null;
-
-/** Cliente real por padrão; a simulação local só com EXPO_PUBLIC_USE_MOCK_QUEUE=true. */
+/** App sempre consulta a API ASA; mocks de fila são injetados somente nos testes. */
 export function getQueueClient(): QueueClient {
-  if (!QUEUE.USE_MOCK) return apiQueueClient;
-  mockClient ??= createMockQueueClient();
-  return mockClient;
+  return apiQueueClient;
 }

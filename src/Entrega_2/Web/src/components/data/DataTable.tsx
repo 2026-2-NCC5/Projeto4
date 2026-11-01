@@ -46,7 +46,7 @@ export function DataTable<T>({
 }) {
   const navigate = useNavigate();
   return (
-    <div role="region" aria-label={regionLabel ?? caption} tabIndex={0} className="relative overflow-x-auto rounded-lg border border-line bg-white">
+    <div data-gsap-reveal role="region" aria-label={regionLabel ?? caption} tabIndex={0} className="relative overflow-x-auto rounded-lg border border-line bg-white">
       <table className="w-full min-w-[640px] border-collapse text-left">
         <caption className="sr-only">{caption}</caption>
         <thead className="bg-paper">

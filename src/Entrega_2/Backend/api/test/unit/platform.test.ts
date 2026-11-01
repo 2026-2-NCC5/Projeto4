@@ -65,7 +65,12 @@ describe('utilitários de sessão web e auditoria', () => {
 });
 
 describe('seeds de demonstração', () => {
-  const base = (overrides: Partial<AppConfig> = {}) => ({ ...buildTestConfig(), databaseUrl: 'postgres://asa:x@localhost:5432/asa_conecta', ...overrides });
+  const base = (overrides: Partial<AppConfig> = {}) => ({
+    ...buildTestConfig(),
+    databaseUrl: 'postgres://asa:x@localhost:5432/asa_conecta',
+    demo: { ...buildTestConfig().demo, dataEnabled: true, seedEnabled: true },
+    ...overrides,
+  });
 
   it('rodam só com a flag, fora de produção e em banco local (ou remoto com opt-in)', () => {
     const config = base();
@@ -81,15 +86,24 @@ describe('seeds de demonstração', () => {
 });
 
 describe('configuração da plataforma', () => {
-  it('fila presencial: simulador por padrão fora de produção; em produção fica desativada até escolher a fonte', () => {
+  it('fila presencial: somente integração real por padrão; fonte exige aprovação e opt-in, mock é exclusivo de testes', () => {
     const dev = loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40) });
-    expect(dev.queue).toMatchObject({ provider: 'mock', providerExplicit: false, sourceAuthorized: false, enabled: true });
+    expect(dev.queue).toMatchObject({ provider: 'fecap', providerExplicit: false, sourceAuthorized: false, enabled: false });
+    expect(dev.queue.disabledReason).toMatch(/ASA_QUEUE_SOURCE_AUTHORIZED/);
     const prod = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL });
     expect(prod.queue.enabled).toBe(false);
     expect(prod.queue.disabledReason).toMatch(/ASA_QUEUE_PROVIDER/);
     const explicit = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'fecap' });
-    expect(explicit.queue).toMatchObject({ provider: 'fecap', enabled: true, providerExplicit: true });
-    expect(() => loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'demo' })).toThrow(/mock não é permitido/);
+    expect(explicit.queue).toMatchObject({ provider: 'fecap', enabled: false, providerExplicit: true, sourceAuthorized: false, allowPublicScraping: false });
+    expect(explicit.queue.disabledReason).toMatch(/ASA_QUEUE_SOURCE_AUTHORIZED/);
+    const approvedButScrapingOff = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'fecap', ASA_QUEUE_SOURCE_AUTHORIZED: 'true' });
+    expect(approvedButScrapingOff.queue).toMatchObject({ enabled: false, sourceAuthorized: true, allowPublicScraping: false });
+    expect(approvedButScrapingOff.queue.disabledReason).toMatch(/ASA_QUEUE_ALLOW_PUBLIC_SCRAPING/);
+    const authorized = loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'fecap', ASA_QUEUE_SOURCE_AUTHORIZED: 'true', ASA_QUEUE_ALLOW_PUBLIC_SCRAPING: 'true' });
+    expect(authorized.queue).toMatchObject({ provider: 'fecap', enabled: true, sourceAuthorized: true, allowPublicScraping: true });
+    expect(dev.queue.pollIntervalSeconds).toBe(30);
+    expect(() => loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_PROVIDER: 'mock' })).toThrow(/só é permitido em testes automatizados/);
+    expect(() => loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_PROVIDER: 'demo' })).toThrow(/só é permitido em testes automatizados/);
     expect(loadConfig({ NODE_ENV: 'test', JWT_SECRET: 'x'.repeat(40), ASA_QUEUE_PROVIDER: 'demo' }).queue.provider).toBe('mock');
   });
 
@@ -142,12 +156,16 @@ describe('configuração da plataforma', () => {
     expect(loadConfig({ JWT_SECRET: 'x'.repeat(40), VERCEL_URL: 'asa-conecta.vercel.app' }).web.origins).not.toContain('https://asa-conecta.vercel.app');
   });
 
-  it('cookies Secure em produção, origens do portal validadas e modo demonstração ligado por padrão', () => {
+  it('cookies Secure em produção, origens do portal validadas e dados demonstrativos desligados por padrão', () => {
     expect(loadConfig({ NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40), AGENT_SERVICE_URL: AGENT_URL, ASA_QUEUE_ENABLED: 'false' }).web.cookieSecure).toBe(true);
     const dev = loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40) });
     expect(dev.web.cookieSecure).toBe(false);
     expect(dev.web.origins).toContain(WEB_ORIGIN);
-    expect(dev.demo.dataEnabled).toBe(true);
+    expect(dev.demo.dataEnabled).toBe(false);
+    expect(dev.demo.seedEnabled).toBe(false);
+    expect(dev.academic.provider).toBe('institutional');
+    expect(() => loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40), DEMO_DATA_ENABLED: 'true' })).toThrow(/exclusivos de testes automatizados/);
+    expect(() => loadConfig({ NODE_ENV: 'development', JWT_SECRET: 'x'.repeat(40), ACADEMIC_DATA_PROVIDER: 'demo' })).toThrow(/exclusivos de testes automatizados/);
     expect(dev.appEnv).toBe('development');
     expect(() => loadConfig({ JWT_SECRET: 'x'.repeat(40), WEB_ORIGINS: 'javascript:alert(1)' })).toThrow(/WEB_ORIGINS/);
   });
@@ -178,7 +196,7 @@ describe('GET /api/platform/info', () => {
     expect(response.body.data).toMatchObject({
       name: 'ASA Conecta',
       dataMode: 'demo',
-      dataModeLabel: 'DEMONSTRAÇÃO — Dados fictícios',
+      dataModeLabel: 'MODO DE DEMONSTRAÇÃO',
       academicSource: { provider: 'demo', status: 'demo' },
       features: { tickets: true, appointments: true, knowledgeBase: true, notifications: true, realtime: false },
       assistant: { provider: 'existing', jev: { status: 'planned', enabled: false } },
@@ -192,7 +210,7 @@ describe('GET /api/platform/info', () => {
     const config = buildTestConfig();
     const { app } = createTestApp({ configOverrides: { demo: { ...config.demo, dataEnabled: false } } });
     const response = await request(app).get('/api/platform/info');
-    expect(response.body.data).toMatchObject({ dataMode: 'institutional', dataModeLabel: 'INSTITUCIONAL — Dados autorizados', academicSource: { status: 'unavailable' } });
+    expect(response.body.data).toMatchObject({ dataMode: 'institutional', dataModeLabel: 'MODO SEM DADOS DE DEMONSTRAÇÃO', academicSource: { status: 'unavailable' } });
   });
 });
 

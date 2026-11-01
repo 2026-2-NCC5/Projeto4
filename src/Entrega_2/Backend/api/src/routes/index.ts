@@ -3,7 +3,7 @@ import { FixedWindowLimiter, rateLimitByIp } from '../auth/rateLimiter.js';
 import type { AgentClient } from '../clients/agentClient.js';
 import type { HealthStatus, Permission } from '../contracts/mobileApi.v1.js';
 import { analyzeSchema, createAgentController, feedbackSchema } from '../controllers/agentController.js';
-import { assistantEnabled, assistantMessageSchema, createAssistantController } from '../controllers/assistantController.js';
+import { assistantEnabled, assistantMessageSchema, createAssistantController, publicAssistantMessageSchema } from '../controllers/assistantController.js';
 import {
   biometricEnrollSchema,
   biometricLoginSchema,
@@ -39,6 +39,8 @@ import type { StudentService } from '../services/studentService.js';
 import type { SupportCore, SupportService } from '../support/supportService.js';
 import type { SupportStaffService } from '../support/supportStaffService.js';
 import { createSupportRouter } from './support.js';
+import type { GamefyDirectory } from '../academic/gamefyDirectory.js';
+import { DependencyError, ValidationError } from '../errors/AppError.js';
 
 export interface RouteDeps {
   repos: Repositories;
@@ -63,6 +65,7 @@ export interface RouteDeps {
   settings: SettingsService;
   /** cookies do portal (Secure em produção) e origens aceitas no CSRF */
   web: { origins: readonly string[]; secure: boolean };
+  academicDirectory?: GamefyDirectory;
 }
 
 const MINUTE = 60_000;
@@ -78,6 +81,8 @@ export const AUTH_RATE_LIMITS = {
   biometric: { windowMs: 10 * MINUTE, max: 20 },
   // abertura do portal web (uma por carregamento de página; redes compartilhadas usam o mesmo IP)
   session: { windowMs: 10 * MINUTE, max: 300 },
+  directory: { windowMs: MINUTE, max: 90 },
+  publicAssistant: { windowMs: MINUTE, max: 20 },
 } as const;
 
 type AsyncHandler = (req: Request, res: Response) => Promise<void>;
@@ -120,6 +125,21 @@ export function createRouter(deps: RouteDeps): Router {
 
   router.get('/api/auth/policy', wrap(auth.policy));
   router.get('/api/auth/programs', wrap(auth.programs));
+  router.get('/api/academic/catalog', authed, wrap(async (req, res) => {
+    if (!deps.academicDirectory) throw new DependencyError('O catálogo acadêmico não está configurado.', undefined, 'academic_catalog_unavailable');
+    ok(req, res, await deps.academicDirectory.catalog());
+  }));
+  router.get('/api/academic/directory', limit('directory'), authed, requirePermission('academic:directory:read', (req, denied) => void deps.audit.recordFor(req, { action: 'authz.denied', outcome: 'denied', metadata: { permission: denied, route: req.route?.path ?? req.path } })), wrap(async (req, res) => {
+    const kind = req.query.kind;
+    const query = typeof req.query.q === 'string' ? req.query.q : '';
+    if ((kind !== 'student' && kind !== 'professor') || query.trim().length < 2 || query.length > 80) {
+      throw new ValidationError('Informe o tipo de pessoa e pelo menos 2 caracteres para pesquisar.', [{ field: 'q', message: 'Use entre 2 e 80 caracteres.' }]);
+    }
+    if (!deps.academicDirectory) throw new DependencyError('O diretório acadêmico não está configurado.', undefined, 'academic_directory_unavailable');
+    const items = await deps.academicDirectory.searchPeople(kind, query);
+    await deps.audit.recordFor(req, { action: 'academic.directory.searched', resourceType: 'academic_directory', metadata: { kind, queryLength: query.trim().length, resultCount: items.length } });
+    ok(req, res, { items });
+  }));
   router.post('/api/auth/login', limit('login'), validateBody(loginSchema), wrap(auth.login));
   router.post('/api/auth/register', limit('register'), validateBody(registerSchema), wrap(auth.register));
   router.post('/api/auth/refresh', limit('refresh'), validateBody(refreshSchema), wrap(auth.refresh));
@@ -160,6 +180,13 @@ export function createRouter(deps: RouteDeps): Router {
     assistantEnabled(deps.assistantEnabled),
     validateBody(assistantMessageSchema),
     wrap(assistant.message),
+  );
+  router.post(
+    '/api/assistant/public/message',
+    limit('publicAssistant'),
+    assistantEnabled(deps.assistantEnabled),
+    validateBody(publicAssistantMessageSchema),
+    wrap(assistant.publicMessage),
   );
 
   // ---- support (Atendimento): chamados do estudante e fila da equipe (rotas em routes/support.ts)

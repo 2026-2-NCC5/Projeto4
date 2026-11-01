@@ -1,0 +1,67 @@
+openapi: 3.1.0
+info:
+  title: ASA Conecta — Conector Portal FECAP
+  version: 1.0.0
+  description: API própria do ASA Conecta. Não é API oficial FECAP/TOTVS.
+servers:
+  - url: /api/v1
+paths:
+  /portal/connect:
+    post:
+      summary: Emitir token pessoal de sincronização (somente uma vez)
+      security: [{ asaSession: [] }]
+      responses:
+        '201': { description: Token pessoal emitido para configuração local }
+  /portal/sync:
+    post:
+      summary: Receber inventário local do estudante
+      security: [{ personalSyncToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sessionId, startedAt, finishedAt, authStatus, scraplingVersion, parserVersion, recordsExtracted, pagesDiscovered, pagesVisited, errors, routes]
+              properties:
+                sessionId: { type: string, maxLength: 128 }
+                startedAt: { type: string, format: date-time }
+                finishedAt: { type: [string, 'null'], format: date-time }
+                authStatus: { type: string, maxLength: 40 }
+                scraplingVersion: { type: string }
+                parserVersion: { type: string }
+                recordsExtracted: { type: integer, minimum: 0 }
+                pagesDiscovered: { type: integer, minimum: 0 }
+                pagesVisited: { type: integer, minimum: 0 }
+                errors: { type: array, maxItems: 500, items: { type: object } }
+                routes: { type: array, maxItems: 300, items: { type: object } }
+      responses:
+        '202': { description: Inventário persistido }
+        '401': { description: Token ausente, inválido ou revogado }
+        '413': { description: Payload excede limite de 2 MiB }
+  /portal/status:
+    get:
+      security: [{ asaSession: [] }]
+      responses: { '200': { description: Estado da conexão do estudante autenticado } }
+  /portal/navigation:
+    get:
+      security: [{ asaSession: [] }]
+      responses: { '200': { description: Rotas da sincronização mais recente } }
+  /portal/sync-history:
+    get:
+      security: [{ asaSession: [] }]
+      responses: { '200': { description: Últimas 50 sessões } }
+  /portal/connection:
+    delete:
+      security: [{ asaSession: [] }]
+      responses: { '200': { description: Token revogado; histórico mantido } }
+components:
+  securitySchemes:
+    asaSession:
+      type: http
+      scheme: bearer
+      description: Sessão ASA Conecta autenticada
+    personalSyncToken:
+      type: http
+      scheme: bearer
+      description: Token aleatório pessoal, armazenado como hash e revogável

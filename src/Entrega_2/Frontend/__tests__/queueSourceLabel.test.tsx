@@ -40,12 +40,13 @@ function renderQueue(source?: QueueDataSource | null) {
 }
 
 describe('Fila presencial — origem dos dados', () => {
-  it('simulação (fonte demo): rótulo visível "Simulação — dados fictícios" junto do indicador de sincronização', async () => {
+  it('fonte demo: identifica a demonstração e não exibe senhas simuladas', async () => {
     renderQueue();
     expect(await screen.findByTestId('queue-source-demo')).toBeTruthy();
     expect(screen.getByText('Simulação — dados fictícios')).toBeTruthy();
     expect(screen.getByTestId('queue-sync-indicator')).toBeTruthy();
-    expect(screen.getByText(/Simulação do painel do ASA com senhas fictícias/)).toBeTruthy();
+    expect(screen.getByText(/Dados de demonstração não são exibidos no app/)).toBeTruthy();
+    expect(screen.queryByTestId('queue-ticket-card')).toBeNull();
     expect(screen.queryByTestId('queue-source-unauthorized')).toBeNull();
   });
 
@@ -59,7 +60,7 @@ describe('Fila presencial — origem dos dados', () => {
   it('painel público autorizado ou fonte não informada: nenhuma marcação extra', async () => {
     renderQueue({ kind: 'public_panel', label: 'Painel público do ASA', authorized: true });
     await screen.findByTestId('queue-sync-indicator');
-    expect(await screen.findByText('Qual é a sua senha?')).toBeTruthy();
+    expect(await screen.findByText('Qual senha você quer acompanhar?')).toBeTruthy();
     expect(screen.queryByTestId('queue-source-demo')).toBeNull();
     expect(screen.queryByTestId('queue-source-unauthorized')).toBeNull();
   });

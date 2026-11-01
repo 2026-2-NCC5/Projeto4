@@ -67,12 +67,12 @@ decisões: [ADR-006](<../../../../documentos/Entrega_2/Projeto_Interdisciplinar_
 
 ## Fila presencial do ASA
 
-Um monitor (`src/queue/`) lê a fila pública <https://presencial.fecap.br/> pelo endpoint JSON do próprio portal
-(fallback HTML), a cada `ASA_QUEUE_POLL_INTERVAL_SECONDS`, para todos os alunos de uma vez; detecta quando a senha
-acompanhada se aproxima ou é chamada e envia push pelo Expo (`src/notifications/`), sem duplicar alertas.
-Rotas `/api/queue/*`, `/api/notifications/push-token`, `GET /health/queue`; migration `005_queue_tracking.sql`.
-Desenvolvimento sem a fonte real: `ASA_QUEUE_PROVIDER=mock PUSH_PROVIDER=log npm run dev`. Arquitetura, variáveis
-e limitações: [`architecture/queue-presencial.md`](<../../../../documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/architecture/queue-presencial.md>);
+O módulo (`src/queue/`) contém um adaptador para o painel <https://presencial.fecap.br/>, mas não consulta a fonte
+até haver autorização institucional e opt-in de scraping (`ASA_QUEUE_SOURCE_AUTHORIZED=true` e
+`ASA_QUEUE_ALLOW_PUBLIC_SCRAPING=true`). O padrão usa a fonte institucional; se a integração não estiver ativa,
+a fila fica indisponível sem apresentar senhas fictícias. Rotas `/api/queue/*`, `/api/notifications/push-token`,
+`GET /health/queue`; migration `005_queue_tracking.sql`. Fixtures mock são exclusivas dos testes. Arquitetura,
+variáveis e limitações: [`architecture/queue-presencial.md`](<../../../../documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/architecture/queue-presencial.md>);
 decisões: [ADR-007](<../../../../documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-007-queue-presencial.md>).
 
 ## Estrutura

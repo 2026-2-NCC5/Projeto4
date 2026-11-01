@@ -174,9 +174,9 @@ export class AdminService {
     const email = normalizeEmail(input.email);
     const fullName = input.fullName.trim().replace(/\s+/g, ' ');
     const domain = email.split('@')[1] ?? '';
-    const domains = this.deps.config.auth.allowedEmailDomains.filter((item) => this.deps.config.demo.dataEnabled || item !== DEMO_EMAIL_DOMAIN);
-    if (domains.length > 0 && !domains.includes(domain)) {
-      throw new ValidationError('Use um e-mail institucional.', [{ field: 'email', message: `domínios aceitos: ${domains.map((item) => `@${item}`).join(', ')}` }]);
+    const allowedDomain = this.deps.config.auth.staffEmailDomain;
+    if (domain !== allowedDomain) {
+      throw new ValidationError('Use o e-mail institucional da equipe.', [{ field: 'email', message: `administradores e professores devem usar @${allowedDomain}` }]);
     }
     if (!STAFF_ROLES.includes(input.role)) throw new ValidationError('Papel inválido para convite.', [{ field: 'role', message: 'equipe ASA ou administração' }]);
     const inviter = await this.deps.repos.users.findById(actor.userId);
@@ -216,6 +216,12 @@ export class AdminService {
     if (id === actor.userId) throw new ForbiddenError('Você não pode alterar o próprio papel ou desativar a própria conta.', 'self_change');
     if (input.role && current.role === 'student') throw new ConflictError('Contas de aluno não mudam de papel. Convide uma conta de equipe separada.', 'invalid_transition');
     const roleChanged = input.role !== undefined && input.role !== current.role;
+    if (roleChanged) {
+      const domain = normalizeEmail(current.email).split('@')[1] ?? '';
+      const requiredDomain = this.deps.config.auth.staffEmailDomain;
+      const enabledDemoAccount = current.isDemo && this.deps.config.demo.dataEnabled;
+      if (!enabledDemoAccount && domain !== requiredDomain) throw new ValidationError('O domínio do e-mail não corresponde ao papel solicitado.', [{ field: 'role', message: `este papel exige uma conta @${requiredDomain}` }]);
+    }
     const activeChanged = input.isActive !== undefined && input.isActive !== current.isActive;
     if (!roleChanged && !activeChanged) return this.getUser(id);
     // checagem atômica no repositório (trava as administrações ativas): nunca fica sem administração

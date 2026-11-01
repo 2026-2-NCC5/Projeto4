@@ -318,6 +318,34 @@ describe('assistente conversacional — segurança e limites', () => {
     expect(response.status).toBe(403);
   });
 
+  it('Hermes público responde saudação sem sessão e não consulta nem grava dados acadêmicos', async () => {
+    const repos = createInMemoryRepositories(buildFixtureData());
+    const { app } = createTestApp({ repos, now: FIXED_NOW });
+    const response = await request(app).post('/api/assistant/public/message').send({ inputType: 'text', text: 'Oi, Hermes' });
+    expect(response.status).toBe(200);
+    expect(response.body.data.intent).toBe('greeting');
+    expect(response.body.data.display.message).toContain('serviços, documentos, plataformas e atendimento');
+    expect(repos.interactions).toHaveLength(0);
+  });
+
+  it('Hermes público pede sessão para dados próprios e recusa dados de terceiros', async () => {
+    const { app } = createTestApp({ now: FIXED_NOW });
+    const personal = await request(app).post('/api/assistant/public/message').send({ inputType: 'text', text: 'Qual foi minha última nota?' });
+    expect(personal.status).toBe(401);
+    expect(personal.body.error.reason).toBe('student_login_required');
+
+    const thirdParty = await request(app).post('/api/assistant/public/message').send({ inputType: 'text', text: 'Qual é a nota da Maria?' });
+    expect(thirdParty.status).toBe(200);
+    expect(thirdParty.body.data.status).toBe('refused');
+    expect(thirdParty.body.data.display.message).toContain('não divulga informações acadêmicas de outros estudantes');
+  });
+
+  it('Hermes público rejeita contexto ou identificadores não permitidos', async () => {
+    const { app } = createTestApp({ now: FIXED_NOW });
+    const response = await request(app).post('/api/assistant/public/message').send({ inputType: 'text', text: 'Oi', studentId: 'student-demo-005' });
+    expect(response.status).toBe(400);
+  });
+
   it('feature flag desabilita o assistente (404)', async () => {
     const base = createTestApp().config;
     const { ask } = await setup(USERS.student5.email, { configOverrides: { assistant: { ...base.assistant, enabled: false } } });

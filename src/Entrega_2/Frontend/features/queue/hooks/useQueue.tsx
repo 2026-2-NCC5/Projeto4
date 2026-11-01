@@ -151,7 +151,7 @@ export function QueueProvider({ children, onOpenQueue, client, push, store }: Qu
       experience,
       isOffline: network.isOffline,
       tracking: isActiveSubscription(state.status?.subscription),
-      simulationAvailable: __DEV__ || QUEUE.USE_MOCK,
+      simulationAvailable: QUEUE.USE_MOCK,
       subscribe: controller.subscribe,
       cancel: controller.cancel,
       updatePreferences: controller.updatePreferences,

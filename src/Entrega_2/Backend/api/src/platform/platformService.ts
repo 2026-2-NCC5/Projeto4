@@ -4,8 +4,8 @@ import { AppError, DependencyError } from '../errors/AppError.js';
 import type { SettingsService } from './settingsService.js';
 
 export const DATA_MODE_LABELS = {
-  demo: 'DEMONSTRAÇÃO — Dados fictícios',
-  institutional: 'INSTITUCIONAL — Dados autorizados',
+  demo: 'MODO DE DEMONSTRAÇÃO',
+  institutional: 'MODO SEM DADOS DE DEMONSTRAÇÃO',
 } as const;
 
 const WEEKDAY_LABELS = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];

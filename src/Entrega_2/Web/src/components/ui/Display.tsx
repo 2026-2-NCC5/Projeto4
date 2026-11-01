@@ -30,7 +30,7 @@ export function Badge({ tone = 'neutral', icon: IconGlyph, children, className }
 /** Superfície branca com borda de 1px e sem sombra (padrão visual do ASA Conecta). */
 export function Surface({ as: Tag = 'section', padded = true, className, children, ...rest }: HTMLAttributes<HTMLElement> & { as?: ElementType; padded?: boolean }) {
   return (
-    <Tag className={cn('rounded-lg border border-line bg-white', padded && 'p-4 sm:p-5', className)} {...rest}>
+    <Tag data-gsap-reveal data-gsap-card className={cn('rounded-lg border border-line bg-white', padded && 'p-4 sm:p-5', className)} {...rest}>
       {children}
     </Tag>
   );
@@ -38,7 +38,7 @@ export function Surface({ as: Tag = 'section', padded = true, className, childre
 
 export function PageHeader({ title, description, actions, eyebrow }: { title: string; description?: ReactNode; actions?: ReactNode; eyebrow?: ReactNode }) {
   return (
-    <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-6">
+    <header data-gsap-reveal className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-6">
       <div className="min-w-0">
         {eyebrow ? <div className="mb-1 text-small text-mist">{eyebrow}</div> : null}
         <h1 className="text-h1 font-bold text-ink">{title}</h1>
@@ -96,11 +96,11 @@ export function MetricCard({ label, value, hint, icon: IconGlyph, tone = 'neutra
     </>
   );
   return to ? (
-    <Link to={to} className="block rounded-lg border border-line bg-white p-4 transition-colors hover:border-line-strong">
+    <Link to={to} data-gsap-reveal data-gsap-card className="block rounded-lg border border-line bg-white p-4 transition-colors hover:border-line-strong">
       {body}
     </Link>
   ) : (
-    <div className="rounded-lg border border-line bg-white p-4">{body}</div>
+    <div data-gsap-reveal data-gsap-card className="rounded-lg border border-line bg-white p-4">{body}</div>
   );
 }
 
@@ -121,7 +121,7 @@ export function KeyValueList({ items, columns = 1 }: { items: Array<{ label: str
 /** Itens do mesmo tipo numa lista com divisórias (em vez de um card por item). */
 export function List({ children, className, label }: { children: ReactNode; className?: string; label?: string }) {
   return (
-    <ul aria-label={label} className={cn('divide-y divide-line-soft rounded-lg border border-line bg-white overflow-hidden', className)}>
+    <ul data-gsap-reveal className={cn('divide-y divide-line-soft rounded-lg border border-line bg-white overflow-hidden', className)} aria-label={label}>
       {children}
     </ul>
   );
@@ -159,7 +159,7 @@ export function ListItem({
     </div>
   );
   return (
-    <li className="flex items-center">
+    <li data-gsap-card className="flex items-center">
       {to ? (
         <Link to={to} className="block min-w-0 flex-1 transition-colors hover:bg-paper focus-visible:bg-paper">
           {content}

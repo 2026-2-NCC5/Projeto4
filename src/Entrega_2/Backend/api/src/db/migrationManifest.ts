@@ -16,4 +16,8 @@ export const EXPECTED_MIGRATIONS: readonly string[] = [
   '010_appointment_reschedule_link.sql',
   '011_first_response_target.sql',
   '012_job_leases.sql',
+  '013_internships.sql',
+  '014_fecap_portal.sql',
+  '015_asa_match.sql',
+  '016_fecap_portal_data_minimization.sql',
 ];

@@ -5,14 +5,37 @@ Portal com três áreas sobre a **mesma API** do app:
 - `/asa`: equipe da Área do Sucesso Alvarista;
 - `/admin`: administração.
 
-React 19, Vite 8, TypeScript, Tailwind CSS 4, React Router 7, TanStack Query 5 e lucide-react. Sem bibliotecas de
-componentes: diálogos nativos (`<dialog>`), gráficos SVG próprios.
+React 19, Vite 8, TypeScript, Tailwind CSS 4, React Router 7, TanStack Query 5, Radix UI e lucide-react. Componentes
+primitivos próprios sobre Radix; gráficos SVG próprios.
+
+## Portal institucional ASA
+
+Além das áreas autenticadas, a raiz (`/`) apresenta o portal público ASA em Light Mode, com rotas `/conheca-o-asa`,
+`/cesta-de-servicos`, `/carreira`, `/empresas`, `/equipe` e `/atendimento`. O inventário de conteúdo, fontes oficiais
+e limites da integração está em [`docs/asa-redesign/CONTENT_INVENTORY.md`](../../../docs/asa-redesign/CONTENT_INVENTORY.md);
+pendências de homologação e verificações executadas estão em [`docs/asa-redesign/HOMOLOGATION.md`](../../../docs/asa-redesign/HOMOLOGATION.md).
+Este projeto serve somente o produto ASA; páginas institucionais gerais da FECAP permanecem em seus domínios oficiais
+e são acessadas por links externos. Veja o [mapa de rotas ASA](docs/asa-route-map.md). O Hermes é acessível sem conta para
+orientações públicas e reconhece a sessão ativa para consultas acadêmicas autenticadas.
+O diálogo Hey ASA autenticado usa a mesma rota e o mesmo contrato do assistente do app mobile; visitantes usam a rota pública,
+limitada à base publicada. No navegador, voz é iniciada por ação do usuário e usa os recursos de fala disponíveis no browser.
+
+A busca local indexa serviços destacados confirmados e encaminha aos detalhes mantidos no site da FECAP. O catálogo
+completo ainda depende de uma fonte autorizada para sincronização; nenhum detalhe ausente é substituído por conteúdo fictício.
+
+## Área administrativa
+
+A área `/admin` mantém o shell autenticado, navegação condicionada por permissão e páginas conectadas à API para
+usuários, papéis, permissões, auditoria, SLA, automações, integrações e configurações. Modais, confirmações, menus,
+notificações e tooltips usam Radix UI. Consulte [`docs/asa-redesign/ADMIN_UI.md`](../../../docs/asa-redesign/ADMIN_UI.md)
+para componentes, fluxos e limites de autorização.
 
 ## Rodar
 
 ```bash
 npm install
-npm run dev          # http://localhost:5173 — o Vite repassa /api e /health para a API (VITE_API_PROXY_TARGET, padrão :3000)
+npm run dev:stack    # inicia API, PostgreSQL local via Docker se necessário, e Vite em http://localhost:5173
+npm run dev          # somente Vite; requer a API disponível em VITE_API_PROXY_TARGET (padrão :3000)
 npm run build        # tsc -b + vite build → dist/
 npm run preview      # serve dist/ com o mesmo proxy
 ```

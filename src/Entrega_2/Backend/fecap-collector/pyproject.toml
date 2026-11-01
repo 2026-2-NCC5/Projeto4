@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asa-fecap-portal-collector"
+version = "0.1.0"
+description = "Coletor local, somente leitura, do Portal Educacional FECAP para o ASA Conecta"
+requires-python = ">=3.11,<3.15"
+dependencies = [
+  "scrapling[fetchers]==0.4.15",
+  "fastapi>=0.115,<1.0",
+  "uvicorn>=0.30,<1.0",
+  "pydantic>=2.7,<3.0",
+  "python-dotenv>=1.0,<2.0",
+  "cryptography>=42,<47",
+  "httpx>=0.27,<1.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0,<10.0", "pytest-cov>=5.0,<8.0", "ruff>=0.6,<1.0"]
+
+[project.scripts]
+fecap-portal = "fecap_collector.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = [".venv", ".private"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

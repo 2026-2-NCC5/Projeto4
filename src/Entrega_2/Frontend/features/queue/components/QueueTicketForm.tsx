@@ -37,7 +37,7 @@ export interface QueueTicketFormProps {
   intro?: string;
 }
 
-/** "Qual é a sua senha?" — validação no aparelho com a mesma regra da API; erros sem jargão técnico. */
+/** Acompanhamento de uma senha pública — validação no aparelho com a mesma regra da API. */
 export function QueueTicketForm({ onSubmit, disabled = false, intro }: QueueTicketFormProps) {
   const theme = useTheme();
   const styles = useStyles();
@@ -65,10 +65,10 @@ export function QueueTicketForm({ onSubmit, disabled = false, intro }: QueueTick
   return (
     <Surface testID="queue-ticket-form">
       <AppText variant="h3" accessibilityRole="header">
-        Qual é a sua senha?
+        Qual senha você quer acompanhar?
       </AppText>
       <AppText variant="bodySmall" tone="secondary" style={{ marginTop: theme.spacing.xxs }}>
-        {intro ?? 'Digite a senha impressa no papel que você retirou no ASA.'}
+        {intro ?? 'Digite o número impresso no comprovante do ASA. Isso cria alertas na sua conta, mas não comprova titularidade do atendimento.'}
       </AppText>
       <TextInput
         value={value}

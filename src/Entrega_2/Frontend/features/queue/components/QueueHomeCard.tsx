@@ -22,7 +22,8 @@ export function QueueHomeCard({ style }: { style?: StyleProp<ViewStyle> }) {
   const queue = useOptionalQueue();
   const navigation = useOptionalAppNavigation();
   const sub = queue?.status?.subscription;
-  if (!queue?.tracking || !sub) return null;
+  const demoSource = queue?.status?.queue.sync.source?.kind === 'demo';
+  if (!queue?.tracking || !sub || demoSource) return null;
 
   const called = sub.status === 'called';
   const detail = called

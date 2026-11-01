@@ -34,6 +34,15 @@ export const assistantMessageSchema = z
   })
   .strict();
 
+/** Rota anônima deliberadamente sem contexto, identidade ou identificadores acadêmicos. */
+export const publicAssistantMessageSchema = z
+  .object({
+    inputType: z.enum(['voice', 'text']),
+    text: z.string().trim().min(1, 'A pergunta não pode ser vazia.').max(500, 'A pergunta deve ter no máximo 500 caracteres.'),
+    clientMetrics: z.object({ speechRecognitionMs: z.number().int().min(0).max(300_000).optional() }).strict().optional(),
+  })
+  .strict();
+
 export function assistantEnabled(enabled: boolean) {
   return (_req: Request, _res: Response, next: NextFunction): void => {
     if (!enabled) return next(new NotFoundError('O assistente conversacional está desabilitado neste ambiente.', 'feature_disabled'));
@@ -46,6 +55,10 @@ export function createAssistantController(assistant: AssistantService) {
     async message(req: Request, res: Response): Promise<void> {
       const body = req.body as AssistantMessageRequest;
       ok(req, res, await assistant.handleMessage(req.student!, body, req.ctx, req.log));
+    },
+    async publicMessage(req: Request, res: Response): Promise<void> {
+      const body = req.body as AssistantMessageRequest;
+      ok(req, res, await assistant.handlePublicMessage(body, req.ctx));
     },
   };
 }

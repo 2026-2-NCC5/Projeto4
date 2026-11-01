@@ -28,6 +28,9 @@ export function buildTestConfig(options: TestAppOptions = {}): AppConfig {
     JWT_EXPIRES_IN: '15m',
     AGENT_SERVICE_URL: options.agentServiceUrl ?? 'http://127.0.0.1:1',
     AGENT_SERVICE_TIMEOUT_MS: String(options.agentTimeoutMs ?? 1000),
+    ASA_QUEUE_PROVIDER: 'mock',
+    DEMO_DATA_ENABLED: 'true',
+    ACADEMIC_DATA_PROVIDER: 'demo',
     LOG_LEVEL: 'silent',
   });
   return { ...base, ...options.configOverrides };

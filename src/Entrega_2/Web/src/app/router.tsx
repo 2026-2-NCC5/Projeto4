@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
-import { createBrowserRouter, Outlet } from 'react-router';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router';
+import { RouteScrollReset } from './RouteScrollReset';
 import { FullPageLoading, RedirectIfAuthenticated, RequireAuth, RequireRole } from '@/features/auth/guards';
 import { AppShell } from '@/layouts/AppShell';
 import type { Area } from '@/layouts/nav';
@@ -13,6 +14,8 @@ import { studentRoutes } from './routes/student';
 
 function AreaRoot({ area, role }: { area: Area; role: UserRole }) {
   return (
+    <>
+    <RouteScrollReset />
     <RequireAuth>
       <RequireRole role={role}>
         <AppShell area={area}>
@@ -20,13 +23,21 @@ function AreaRoot({ area, role }: { area: Area; role: UserRole }) {
         </AppShell>
       </RequireRole>
     </RequireAuth>
+    </>
   );
 }
 
-const publicPage = (loader: () => Promise<{ default: ComponentType }>) => page(loader, <FullPageLoading />);
+const publicPage = (loader: () => Promise<{ default: ComponentType }>) => <><RouteScrollReset />{page(loader, <FullPageLoading />)}</>;
 
 export const routes = [
   { path: '/', element: publicPage(() => import('@/pages/public/LandingPage')) },
+  { path: '/asa-conecta', element: <Navigate to="/" replace /> },
+  { path: '/conheca-o-asa', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
+  { path: '/cesta-de-servicos', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
+  { path: '/carreira', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
+  { path: '/empresas', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
+  { path: '/equipe', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
+  { path: '/atendimento', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
   { path: '/login', element: <RedirectIfAuthenticated>{publicPage(() => import('@/pages/auth/LoginPage'))}</RedirectIfAuthenticated> },
   { path: '/cadastro', element: <RedirectIfAuthenticated>{publicPage(() => import('@/pages/auth/RegisterPage'))}</RedirectIfAuthenticated> },
   { path: '/recuperar-senha', element: publicPage(() => import('@/pages/auth/RecoverPasswordPage')) },

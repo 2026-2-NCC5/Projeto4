@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { RouterProvider } from 'react-router';
 import { ToastProvider } from '@/components/ui/Toast';
+import { AppErrorBoundary } from '@/components/feedback/AppErrorBoundary';
 import { SessionProvider } from '@/features/auth/session';
 import { isApiError } from '@/services/api/client';
 import { createRouter } from './router';
@@ -30,7 +31,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <SessionProvider>
-          <RouterProvider router={router} />
+          <AppErrorBoundary><RouterProvider router={router} /></AppErrorBoundary>
         </SessionProvider>
       </ToastProvider>
     </QueryClientProvider>

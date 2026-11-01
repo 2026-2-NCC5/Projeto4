@@ -1,0 +1,5 @@
+# Integração ASA Conecta
+
+A tela Expo aparece em Serviços > Portal Educacional FECAP. Ela cria e revoga token pessoal para o coletor local e exibe o último mapa sincronizado. Esse token não é autenticação acadêmica nem uma sessão FECAP. A tela web correspondente fica em `/aluno/portal-fecap` e direciona o usuário ao domínio oficial. A API é Express/PostgreSQL existente; a migration `014_fecap_portal.sql` registra o coletor e a migration `016_fecap_portal_data_minimization.sql` remove dados de páginas de inventários anteriores.
+
+Não há integração com API oficial FECAP/TOTVS ou SSO confirmado. Nenhuma navegação por scraper demonstra uma sincronização institucional oficial. A leitura local exibe textos e tabelas capturados na sessão do próprio estudante, mas esses dados não alimentam o banco do ASA, dashboard, notas, frequência, requerimentos ou assistente. O endpoint `/api/v1/portal/capabilities` e as interfaces devem continuar mostrando esse status até que a instituição forneça contrato e autorização. A sincronização remota opcional permanece desligada por padrão; o cliente envia somente métricas agregadas e um ID derivado, sem rotas ou conteúdo.

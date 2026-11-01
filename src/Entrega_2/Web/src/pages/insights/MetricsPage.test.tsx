@@ -91,7 +91,7 @@ describe('Métricas e relatórios', () => {
     expect(within(summary).getByText(/Chamados abertos no período \(support_tickets\)/)).toBeInTheDocument();
     expect(within(summary).getByText(/^Gerado/)).toHaveTextContent('15/10/2026 às 09:00');
     expect(within(summary).getByText('Fuso America/Sao_Paulo')).toBeInTheDocument();
-    expect(within(summary).getByText('DEMONSTRAÇÃO — Dados fictícios')).toBeInTheDocument();
+    expect(within(summary).getByText('Modo de demonstração')).toBeInTheDocument();
     // situação da fila com as palavras da equipe
     const byStatus = screen.getByRole('figure', { name: 'Em aberto agora, por situação' });
     expect(within(byStatus).getByText('Aguardando aluno')).toBeInTheDocument();

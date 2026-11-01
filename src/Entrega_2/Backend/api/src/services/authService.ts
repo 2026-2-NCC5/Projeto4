@@ -9,6 +9,7 @@ import { permissionsFor, ROLE_LABELS } from '../auth/permissions.js';
 import type { AuthMe, AuthPolicy, AuthSession, AuthSessionList, AuthSessionSummary, ProgramOption, RegisterRequest, SessionChannel } from '../contracts/mobileApi.v1.js';
 import { ForbiddenError, NotFoundError, RateLimitedError, UnauthorizedError, ValidationError, type ErrorDetail } from '../errors/AppError.js';
 import type { Repositories } from '../repositories/types.js';
+import type { GamefyDirectory } from '../academic/gamefyDirectory.js';
 import type { AuthContext, SessionFamilyRecord, UserRecord } from '../types/domain.js';
 
 interface AccessTokenClaims {
@@ -60,6 +61,7 @@ export class AuthService {
     private readonly repos: Repositories,
     private readonly config: AppConfig,
     private readonly now: () => Date = () => new Date(),
+    private readonly gamefy?: GamefyDirectory,
   ) {
     this.loginFailures = new FixedWindowLimiter({ windowMs: LOGIN_FAILURE_WINDOW_MS, max: LOGIN_MAX_FAILURES }, () => this.now().getTime());
   }
@@ -85,8 +87,16 @@ export class AuthService {
 
   /** Com o modo demonstração desligado, o domínio reservado demo.asa deixa de aceitar cadastros. */
   private allowedEmailDomains(): string[] {
-    const domains = this.config.auth.allowedEmailDomains;
-    return this.config.demo.dataEnabled ? domains : domains.filter((domain) => domain !== DEMO_EMAIL_DOMAIN);
+    return this.config.auth.allowedEmailDomains.filter((domain) => this.config.demo.dataEnabled || domain !== DEMO_EMAIL_DOMAIN);
+  }
+
+  private accountDomainAllowed(user: UserRecord): boolean {
+    const domain = normalizeEmail(user.email).split('@')[1] ?? '';
+    // Contas de fixture/seeds só entram quando o modo de demonstração está habilitado.
+    // As contas institucionais continuam estritamente separadas entre alunos e equipe.
+    if (isDemoAccount(user)) return this.config.demo.dataEnabled;
+    const expected = user.role === 'student' ? this.config.auth.studentEmailDomain : this.config.auth.staffEmailDomain;
+    return domain === expected;
   }
 
   /** Contas fictícias não entram quando DEMO_DATA_ENABLED=false (isolamento do modo demonstração). */
@@ -97,7 +107,7 @@ export class AuthService {
   }
 
   async listPrograms(): Promise<ProgramOption[]> {
-    return this.repos.programs.list();
+    return this.gamefy?.enabled ? this.gamefy.programs() : this.repos.programs.list();
   }
 
   private refreshTtlMs(rememberMe: boolean): number {
@@ -156,6 +166,8 @@ export class AuthService {
       if (this.config.rateLimit.enabled) this.loginFailures.hit(key);
       throw new UnauthorizedError('E-mail ou senha inválidos.', 'invalid_credentials');
     }
+    this.assertNotBlockedDemo(user);
+    if (!this.accountDomainAllowed(user)) throw new UnauthorizedError('E-mail ou senha inválidos.', 'invalid_credentials');
     // Só informa conta desativada a quem já provou conhecer a senha.
     if (!user.isActive) throw new ForbiddenError('Conta desativada.', 'account_disabled');
     this.loginFailures.reset(key);
@@ -175,7 +187,9 @@ export class AuthService {
       details.push(...detail);
     };
 
-    const domains = this.allowedEmailDomains();
+    // Esta rota sempre cria um aluno; o domínio @fecap.br é reservado à equipe,
+    // ainda que a política pública também o liste como domínio institucional aceito.
+    const domains = [this.config.auth.studentEmailDomain, ...(this.config.demo.dataEnabled ? [DEMO_EMAIL_DOMAIN] : [])];
     const domain = email.split('@')[1] ?? '';
     if (domains.length > 0 && !domains.includes(domain)) {
       fail('email_domain_not_allowed', [{ field: 'email', message: `Use um e-mail institucional (${domains.map((item) => `@${item}`).join(', ')}).` }]);
@@ -188,7 +202,8 @@ export class AuthService {
 
     let program: string | null = null;
     if (input.programCode) {
-      const found = await this.repos.programs.findByCode(input.programCode.trim().toUpperCase());
+      const code = input.programCode.trim().toUpperCase();
+      const found = this.gamefy?.enabled ? await this.gamefy.program(code) : await this.repos.programs.findByCode(code);
       if (!found) fail('unknown_program', [{ field: 'programCode', message: 'Curso não encontrado.' }]);
       else program = found.name;
     }
@@ -215,6 +230,7 @@ export class AuthService {
     if ((session.channel ?? 'mobile') !== channel) throw expired();
     const user = await this.repos.users.findById(session.userId);
     if (!user || !user.isActive) throw expired();
+    if (!this.accountDomainAllowed(user)) throw expired();
     if (!this.config.demo.dataEnabled && isDemoAccount(user)) throw expired();
     await this.repos.sessions.revoke(session.id); // rotação: o refresh token antigo deixa de valer
     return this.issueSession(user, session.rememberMe, { channel, deviceLabel: session.deviceLabel ?? null }, session.familyId);

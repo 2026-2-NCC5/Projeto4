@@ -5,10 +5,16 @@ import { page, pageWith } from './lazy';
 export const studentRoutes: RouteObject[] = [
   { index: true, element: page(() => import('@/pages/student/StudentDashboard')) },
   { path: 'notificacoes', element: pageWith(() => import('@/pages/shared/NotificationsPage'), { area: 'aluno' as const }) },
+  { path: 'conta', element: page(() => import('@/pages/shared/AccountPage')) },
+  // Alias legado para links já publicados.
   { path: 'perfil', element: page(() => import('@/pages/shared/AccountPage')) },
+  { path: 'oportunidades', element: page(() => import('@/pages/student/CareerMatchPage')) },
+  { path: 'jornada-profissional', element: page(() => import('@/pages/student/CareerOnboardingPage')) },
   // ---- vida acadêmica, pendências e Assistente ASA
   // ?aba=avaliacoes|frequencia|analise · ?disciplina=<id> · ?recomendacao=<id> (avisos) · ?analise=<runId>
   { path: 'academico', element: page(() => import('@/pages/student/academic/AcademicPage')) },
+  { path: 'portal-fecap', element: page(() => import('@/pages/student/FecapPortalPage')) },
+  { path: 'fila-presencial', element: page(() => import('@/pages/student/QueuePage')) },
   { path: 'pendencias', element: page(() => import('@/pages/student/PendingItemsPage')) },
   { path: 'assistente', element: page(() => import('@/pages/student/assistant/AssistantPage')) },
   // ---- atendimento (chamados e documentos)

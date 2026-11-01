@@ -137,7 +137,7 @@ export function makePlatformInfo(overrides: Partial<PlatformInfo> = {}): Platfor
     apiVersion: '1.0.0',
     contractVersion: '1.8',
     dataMode: 'demo',
-    dataModeLabel: 'DEMONSTRAÇÃO — Dados fictícios',
+    dataModeLabel: 'MODO DE DEMONSTRAÇÃO',
     academicSource: { provider: 'demo', status: 'demo', message: 'Disciplinas, notas, frequência e pendências fictícias, criadas para demonstração.' },
     features: { tickets: true, appointments: true, knowledgeBase: true, notifications: true, realtime: false, assistant: true },
     assistant: { provider: 'existing', providerLabel: 'Regras do ASA Conecta e base de conhecimento (sem LLM)', jev: { status: 'planned', enabled: false } },
