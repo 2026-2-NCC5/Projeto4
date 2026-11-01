@@ -20,6 +20,8 @@ export default defineConfig({
   timeout: 45_000,
   expect: { timeout: 10_000 },
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list']],
+  // Mantém os baselines existentes independentes do nome do projeto (portal/demo-off).
+  snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{platform}{ext}',
   use: {
     baseURL,
     locale: 'pt-BR',
