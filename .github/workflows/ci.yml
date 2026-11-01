@@ -85,7 +85,12 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:unit
       - run: npm run db:migrate
-      - run: npm run db:seed
+      - name: Seed de demonstração (banco descartável do CI)
+        env:
+          NODE_ENV: test
+          DEMO_DATA_ENABLED: "true"
+          DEMO_SEED_ENABLED: "true"
+        run: npm run db:seed
       - run: npm run test:integration
       - run: npm run test:e2e
       - run: npm run build
@@ -94,6 +99,7 @@ jobs:
         env:
           # Este smoke usa fixtures e o provider de fila determinístico; nunca é configuração de deploy.
           NODE_ENV: test
+          DEMO_DATA_ENABLED: "true"
           PORT: "3100"
           AGENT_SERVICE_URL: http://127.0.0.1:8000
           AGENT_SERVICE_TOKEN: ci-agent-token-0123456789abcdef
@@ -166,6 +172,7 @@ jobs:
           --health-interval 5s --health-timeout 3s --health-retries 20
     env:
       NODE_ENV: test
+      DEMO_DATA_ENABLED: "true"
       DATABASE_URL: postgres://asa:asa_ci_password@localhost:5432/asa_conecta_ci
       JWT_SECRET: ci-secret-not-for-production-0123456789abcdef
       MAIL_TRANSPORT: disabled
@@ -196,7 +203,7 @@ jobs:
           npm ci
           npm run build
           npm run db:migrate
-          npm run db:seed
+          NODE_ENV=test DEMO_DATA_ENABLED=true DEMO_SEED_ENABLED=true npm run db:seed
       - name: API — sobe duas instâncias (demonstração ligada :3000 e desligada :3001)
         working-directory: src/Entrega_2/Backend/api
         run: |
