@@ -92,6 +92,8 @@ jobs:
       # A MESMA entrada da Vercel (src/index.ts: sem laços, fila sob demanda) + Agent Service real, sem Docker
       - name: Smoke test — entrada serverless (src/index.ts) com PostgreSQL e Agent Service reais
         env:
+          # Este smoke usa fixtures e o provider de fila determinístico; nunca é configuração de deploy.
+          NODE_ENV: test
           PORT: "3100"
           AGENT_SERVICE_URL: http://127.0.0.1:8000
           AGENT_SERVICE_TOKEN: ci-agent-token-0123456789abcdef
@@ -163,6 +165,7 @@ jobs:
           --health-cmd "pg_isready -U asa -d asa_conecta_ci"
           --health-interval 5s --health-timeout 3s --health-retries 20
     env:
+      NODE_ENV: test
       DATABASE_URL: postgres://asa:asa_ci_password@localhost:5432/asa_conecta_ci
       JWT_SECRET: ci-secret-not-for-production-0123456789abcdef
       MAIL_TRANSPORT: disabled
