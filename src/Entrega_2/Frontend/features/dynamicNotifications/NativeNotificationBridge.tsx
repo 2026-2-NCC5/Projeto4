@@ -58,7 +58,7 @@ export function NativeNotificationBridge() {
     }
 
     return () => {
-      subscription?.remove();
+      subscription?.remove?.();
     };
   }, [navigation, trigger]);
 

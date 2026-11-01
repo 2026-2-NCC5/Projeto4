@@ -4,9 +4,11 @@ import React from 'react';
 
 import App from '../App';
 import { MESSAGES } from '../utils/messages';
+import { resetPlatformInfoForTests } from '../features/platform';
 
 import { errorEnvelope, fakeResponse, okEnvelope } from './support/fakeFetch';
 import { demoSession, makeAnalysis, summaryFixture } from './support/fixtures';
+import { makePlatformInfo } from './support/platformFixtures';
 
 const originalFetch = global.fetch;
 
@@ -32,6 +34,7 @@ describe('App (fluxo integrado)', () => {
     global.fetch = fetchMock as unknown as typeof fetch;
     await SecureStore.deleteItemAsync('asa.auth.refreshToken');
     await SecureStore.deleteItemAsync('asa.auth.profile');
+    resetPlatformInfoForTests();
   });
 
   afterAll(() => {
@@ -44,6 +47,17 @@ describe('App (fluxo integrado)', () => {
     expect(screen.queryByTestId('authenticated-area')).toBeNull();
     await screen.findByText('Bem-vindo ao ASA');
     expect(screen.queryByTestId('authenticated-area')).toBeNull();
+  });
+
+  it('bloqueia o app quando a plataforma declara fonte acadêmica de demonstração', async () => {
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url.endsWith('/api/platform/info')) return fakeResponse(200, okEnvelope(makePlatformInfo()));
+      return fakeResponse(404, errorEnvelope('NOT_FOUND', 'x'));
+    });
+    render(<App />);
+    await screen.findByTestId('data-readiness-gate');
+    expect(screen.getByText('Este ambiente usa dados de demonstração')).toBeTruthy();
+    expect(screen.queryByText('Bem-vindo ao ASA')).toBeNull();
   });
 
   it('login com sucesso entra na área autenticada; sair volta ao login', async () => {

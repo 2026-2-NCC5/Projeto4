@@ -1,12 +1,12 @@
 # ASA Conecta — App mobile (Expo)
 
 Aplicativo do estudante: Home personalizada, área acadêmica, **Assistente ASA** (voz + texto, overlay
-global e "Hey Asa"), serviços e perfil. Expo SDK 57 · React Native 0.86 · TypeScript · sem chaves no app.
+global e "Hey Asa"), serviços e perfil. Expo SDK 58 · React Native 0.88 · TypeScript · sem chaves no app.
 
 ## Pré-requisitos
 
 - Node.js 20+ e npm
-- Expo Go para o SDK 57 (texto + TTS) **ou** um development build (voz e "Hey Asa")
+- Expo Go para o SDK 58 (texto + TTS) **ou** um development build (voz e "Hey Asa")
 - API Node.js rodando (`src/Entrega_2/Backend/api`, porta 3000) — ver README raiz
 
 ## Instalação e execução
@@ -14,16 +14,21 @@ global e "Hey Asa"), serviços e perfil. Expo SDK 57 · React Native 0.86 · Typ
 ```bash
 cp .env.example .env      # opcional: EXPO_PUBLIC_API_URL=http://<IP-da-máquina>:3000
 npm install
-npx expo start            # Expo Go / web
+npm start                 # Expo Go / web (força o cliente Expo Go)
 ```
 
-### Development build (entrada por voz e "Hey Asa")
+### Development build (entrada por voz, "Hey Asa" e push remoto)
 
 ```bash
 npx expo prebuild         # aplica os config plugins (microfone, reconhecimento de fala, biometria)
 npx expo run:android      # ou npx expo run:ios
 # nuvem: eas build --profile development --platform android
 ```
+
+`expo-speech-recognition` contém código nativo: entrada por voz e “Hey Asa” precisam do development build.
+O Expo Go continua suportando login, texto, síntese de voz e as telas que usam apenas módulos do Expo Go. Push
+remoto em Android também precisa de um build próprio; no Expo Go as notificações locais/da caixa de entrada têm
+as limitações documentadas pela plataforma.
 
 ## Apontando para a API
 
@@ -36,20 +41,44 @@ npx expo run:android      # ou npx expo run:ios
 Em release sem `EXPO_PUBLIC_API_URL`, o app mostra "O endereço do servidor não foi configurado neste aplicativo"
 em vez de tentar o localhost do próprio aparelho.
 
-## Contas fictícias
+## Dados institucionais e segurança de distribuição
 
-As contas de demonstração vivem apenas no seed do banco (`src/Entrega_2/Backend/database/seeds`) e estão listadas no README
-raiz. A tela de login não exibe atalhos nem senhas: entra-se como em produção, com e-mail e senha.
+O app bloqueia o acesso quando a API informa modo acadêmico de demonstração. Em build de distribuição também
+exige que a API informe `dataMode: institutional` e fonte acadêmica institucional `available`. A integração
+GameFY do backend requer `GAMEFY_SUPABASE_URL`, `GAMEFY_SUPABASE_SERVICE_ROLE_KEY` e o slug institucional
+configurados **somente no servidor**. Não coloque essas credenciais no app ou em variáveis `EXPO_PUBLIC_*`.
+
+Antes de gerar um build de distribuição, execute:
+
+```bash
+EXPO_PUBLIC_API_URL=https://<api-institucional> npm run check:release
+```
+
+A verificação consulta apenas endpoints públicos de saúde, configuração e política; não busca informações de
+alunos. Ela falha se detectar dados demo, GameFY indisponível, domínios de demonstração, recuperação de senha
+desligada ou URLs legais ausentes. O endpoint público atualmente conhecido (`asa-conecta-api.vercel.app`)
+reportou modo demo; portanto não deve ser usado para distribuir o app até a configuração institucional ser
+corrigida e verificada.
+
+### Expo Go e distribuição
+
+Expo Go é o caminho de desenvolvimento/avaliação por QR Code, não um pacote distribuível com marca própria.
+Para distribuição interna ou lojas, associe o projeto a uma conta Expo e configure `EXPO_PUBLIC_API_URL` como
+variável pública de build no EAS. Use `eas.json` com os perfis `development`, `preview` e `production`.
+O projeto Expo ainda precisa ser associado à conta institucional com `eas init` antes do primeiro build.
 
 ## Scripts
 
 | Comando | Uso |
 | --- | --- |
-| `npm start` / `npm run android` / `npm run ios` / `npm run web` | Metro / plataformas |
+| `npm start` / `npm run start:go` | Inicia explicitamente no Expo Go |
+| `npm run start:dev-client` | Inicia o cliente nativo de desenvolvimento |
+| `npm run android` / `npm run ios` / `npm run web` | Metro / plataformas |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint (config Expo + regras React Compiler) |
 | `npm test` | Jest (jest-expo) — 32 suítes, 488 testes |
 | `npm run doctor` | `expo-doctor` |
+| `npm run check:release` | Confere se a API e os requisitos públicos permitem distribuição |
 
 ## Estrutura
 

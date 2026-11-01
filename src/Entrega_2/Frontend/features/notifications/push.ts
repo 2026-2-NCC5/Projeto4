@@ -47,6 +47,6 @@ export function addInboxPushListener(onOpen: (target: InboxTarget) => void): () 
     console.warn('[notifications] Falha ao configurar o roteamento da central.', error);
   }
   return () => {
-    subscriptions.forEach((subscription) => subscription.remove());
+    subscriptions.forEach((subscription) => subscription?.remove?.());
   };
 }

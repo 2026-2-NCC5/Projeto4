@@ -37,6 +37,6 @@ export function addSupportPushListener(onOpenTicket: (ticketId: string) => void)
     console.warn('[notifications] Falha ao configurar o roteamento de chamados.', error);
   }
   return () => {
-    subscriptions.forEach((subscription) => subscription.remove());
+    subscriptions.forEach((subscription) => subscription?.remove?.());
   };
 }
