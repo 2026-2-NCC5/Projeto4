@@ -151,6 +151,7 @@ __pycache__/
 .venv/
 .pytest_cache/
 .ruff_cache/
+.private/
 .expo/
 web-build/
 src/Entrega_2/Backend/api/dist/

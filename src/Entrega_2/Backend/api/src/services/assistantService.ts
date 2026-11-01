@@ -13,7 +13,7 @@ import type {
   AssistantResponse,
   AssistantIntent,
 } from '../contracts/mobileApi.v1.js';
-import { AppError } from '../errors/AppError.js';
+import { AppError, UnauthorizedError } from '../errors/AppError.js';
 import type { AiProviderRegistry } from '../ai/providers.js';
 import { queryTerms } from '../knowledge/text.js';
 import type { Repositories } from '../repositories/types.js';
@@ -222,6 +222,94 @@ export class AssistantService {
       'assistant interaction',
     );
     return response;
+  }
+
+  /**
+   * Hermes público: só saudação, orientação geral e artigos publicados. O interpretador precisa
+   * autorizar a pergunta como pública; intenções acadêmicas e operacionais sempre pedem sessão.
+   * Este fluxo não consulta cadastros de alunos, turmas, professores nem persiste a pergunta.
+   */
+  async handlePublicMessage(request: AssistantMessageRequest, ctx: RequestContext): Promise<AssistantResponse> {
+    const raw = await this.interpreter.interpret({ text: request.text, subjects: [], context: {} });
+    const interpretation = validateInterpretation(raw, { enrolledSubjectIds: new Set(), minConfidence: this.config.assistant.intentMinConfidence });
+
+    if (interpretation.intent === 'access_other_student') {
+      return this.publicResponse(request, ctx, {
+        intent: 'access_other_student', confidence: interpretation.confidence, status: 'refused',
+        title: 'Não posso consultar dados de outras pessoas',
+        message: 'O Hermes não divulga informações acadêmicas de outros estudantes. Para consultar somente os seus próprios dados, entre no ASA Conecta.',
+        speech: 'Não posso consultar dados acadêmicos de outras pessoas. Entre no ASA Conecta para ver os seus próprios dados.',
+      });
+    }
+
+    if (interpretation.intent === 'greeting') {
+      return this.publicResponse(request, ctx, {
+        intent: 'greeting', confidence: interpretation.confidence, status: 'success', title: 'Olá! Eu sou o Hermes.',
+        message: 'Posso orientar você sobre serviços, documentos, plataformas e atendimento da FECAP. Para consultar disciplinas, notas, frequência ou outros dados da sua vida acadêmica, entre no ASA Conecta.',
+        speech: 'Olá! Eu sou o Hermes. Posso ajudar com serviços e orientações gerais da FECAP. Para consultar seus dados acadêmicos, entre no ASA Conecta.',
+      });
+    }
+
+    if (interpretation.intent === 'help') {
+      return this.publicResponse(request, ctx, {
+        intent: 'help', confidence: interpretation.confidence, status: 'success', title: 'Como posso ajudar?',
+        message: 'Posso responder dúvidas gerais com base nos artigos publicados do ASA, como orientações sobre serviços, documentos, plataformas e atendimento. Para consultar informações acadêmicas pessoais, você precisa entrar no ASA Conecta.',
+        speech: 'Posso orientar sobre serviços, documentos, plataformas e atendimento. Para consultar notas, frequência ou disciplinas, entre no ASA Conecta.',
+      });
+    }
+
+    if (interpretation.intent === 'request_human_help') {
+      return this.publicResponse(request, ctx, {
+        intent: 'request_human_help', confidence: interpretation.confidence, status: 'success', title: 'Fale com o ASA',
+        message: 'O canal institucional do ASA é sucessoalvarista@fecap.br. Para abrir e acompanhar solicitações acadêmicas pessoais pelo portal, entre no ASA Conecta.',
+        speech: 'Você pode falar com o ASA pelo e-mail sucessoalvarista arroba fecap ponto br. Para solicitações acadêmicas pessoais, entre no ASA Conecta.',
+      });
+    }
+
+    // unknown pode ser uma pergunta geral elegível à base. Qualquer intenção de leitura ou ação pessoal exige sessão.
+    if (interpretation.intent !== 'unknown' && interpretation.intent !== 'knowledge_question') {
+      throw new UnauthorizedError('Entre no ASA Conecta para consultar informações da sua vida acadêmica.', 'student_login_required');
+    }
+
+    const result = this.ai
+      ? await this.ai.generate({ kind: 'knowledge_question', text: request.text, locale: 'pt-BR' }, { requestId: ctx.requestId, correlationId: ctx.correlationId, role: 'public', timeoutMs: 3000 })
+      : null;
+    if (result?.status === 'answered' && result.answer) {
+      return this.publicResponse(request, ctx, {
+        intent: 'knowledge_question', confidence: result.confidence, status: 'success', title: result.answer.title,
+        message: result.answer.message,
+        speech: result.answer.speech,
+        items: result.answer.steps.map((step, index) => ({ id: `kb-step-${index + 1}`, title: `Passo ${index + 1}`, description: step, meta: null, badge: null, tone: 'neutral', subjectId: null })),
+        sources: result.sources,
+      });
+    }
+    return this.publicResponse(request, ctx, {
+      intent: 'unknown', confidence: interpretation.confidence, status: 'abstained',
+      title: 'Não encontrei uma orientação pública confiável',
+      message: 'Não encontrei um artigo publicado do ASA que responda com segurança. Você pode reformular a pergunta ou consultar os canais institucionais. Para informações acadêmicas pessoais, entre no ASA Conecta.',
+      speech: 'Não encontrei uma orientação pública confiável. Você pode reformular a pergunta ou consultar os canais do ASA.',
+      abstained: true, abstentionReason: result?.abstentionReason ?? 'knowledge_unavailable',
+    });
+  }
+
+  private publicResponse(
+    request: AssistantMessageRequest,
+    ctx: RequestContext,
+    input: {
+      intent: AssistantIntent; confidence: number; status: AssistantResponse['status']; title: string; message: string; speech: string;
+      items?: AssistantResponse['display']['items']; sources?: AssistantResponse['sources']; abstained?: boolean; abstentionReason?: string | null;
+    },
+  ): AssistantResponse {
+    return {
+      interactionId: newInteractionId(), requestId: ctx.requestId, correlationId: ctx.correlationId,
+      inputType: request.inputType, intent: input.intent, intentConfidence: input.confidence, entities: {}, status: input.status,
+      display: { title: input.title, message: input.message, items: input.items ?? [], recommendations: [] },
+      speech: { text: limitSpeech(input.speech) }, nextActions: [], clientCommand: null, navigation: null,
+      requiresHumanValidation: false, abstained: input.abstained ?? false, abstentionReason: input.abstentionReason ?? null,
+      runId: null, context: {}, createdAt: this.clock().toISOString(),
+      ...(input.sources?.length ? { sources: input.sources } : {}),
+      provider: { id: this.ai?.selection.active ?? 'existing', label: this.ai?.active.label ?? 'Artigos publicados do ASA' },
+    };
   }
 
   /** Contexto vem do cliente: descarta disciplina que não pertence ao estudante. */

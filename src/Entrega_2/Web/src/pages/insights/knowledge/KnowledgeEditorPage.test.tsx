@@ -63,8 +63,8 @@ describe('Editor da base de conhecimento', () => {
       changeNote: null,
       reviewDueAt: null,
     });
-    expect(screen.getByText('Página do artigo')).toBeInTheDocument();
-    expect(screen.getByText('Rascunho criado. Ele só chega aos alunos depois de publicado.')).toBeInTheDocument();
+    expect(await screen.findByText('Página do artigo')).toBeInTheDocument();
+    expect(await screen.findByText('Rascunho criado. Ele só chega aos alunos depois de publicado.')).toBeInTheDocument();
   });
 
   it('criar: endereço já usado (409 slug_taken) marca o campo do endereço', async () => {

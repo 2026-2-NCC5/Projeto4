@@ -71,6 +71,11 @@ export const authApi = {
   logoutAll: () => api.post<void>('/api/auth/logout-all'),
 };
 
+export const academicApi = {
+  catalog: () => api.get<import('@/types/api').AcademicCatalog>('/api/academic/catalog'),
+  searchDirectory: (kind: 'student' | 'professor', q: string, signal?: AbortSignal) => api.get<{ items: import('@/types/api').AcademicDirectoryPerson[] }>('/api/academic/directory', { query: { kind, q }, ...(signal ? { signal } : {}) }),
+};
+
 export const notificationsApi = {
   list: (limit = 30) => api.get<InboxNotificationList>('/api/notifications', { query: { limit } }),
   markRead: (ids?: string[]) => api.patch<InboxNotificationList>('/api/notifications', ids ? { read: true, ids } : { read: true }),
@@ -97,6 +102,11 @@ export const agentApi = {
 
 export const assistantApi = {
   message: (body: AssistantMessageRequest, signal?: AbortSignal) => api.post<AssistantResponse>('/api/assistant/message', body, { timeoutMs: 20_000, ...(signal ? { signal } : {}) }),
+};
+
+/** Assistente anônimo: o servidor aceita somente dúvidas gerais e não recebe contexto pessoal. */
+export const publicAssistantApi = {
+  message: (body: Pick<AssistantMessageRequest, 'inputType' | 'text' | 'clientMetrics'>, signal?: AbortSignal) => api.post<AssistantResponse>('/api/assistant/public/message', body, { auth: false, timeoutMs: 20_000, ...(signal ? { signal } : {}) }),
 };
 
 export interface TicketListQuery {

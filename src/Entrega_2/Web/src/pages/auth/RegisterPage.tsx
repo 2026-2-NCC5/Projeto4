@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/Button';
-import { Checkbox, Select, TextInput } from '@/components/ui/Form';
+import { Checkbox, SearchableSelect, TextInput } from '@/components/ui/Form';
 import { homeFor, useSession } from '@/features/auth/session';
 import { isApiError } from '@/services/api/client';
 import { authApi } from '@/services/api/endpoints';
@@ -97,11 +97,13 @@ export default function RegisterPage() {
           hint={policy.data ? `Exemplo: ${policy.data.registrationNumber.example}` : undefined}
           required
         />
-        <Select
+        <SearchableSelect
           label="Curso (opcional)"
           value={form.programCode}
-          onChange={(event) => update('programCode')(event.target.value)}
-          placeholder="Selecione"
+          onChange={(value) => update('programCode')(value)}
+          placeholder="Pesquise e selecione seu curso"
+          searchPlaceholder="Buscar curso"
+          emptyLabel={programs.isLoading ? 'Carregando cursos...' : 'Nenhum curso encontrado.'}
           options={(programs.data ?? []).map((program) => ({ value: program.code, label: program.name }))}
           error={fieldErrors.programCode}
         />

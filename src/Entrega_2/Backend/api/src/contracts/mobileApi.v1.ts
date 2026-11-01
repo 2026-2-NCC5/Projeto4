@@ -1198,6 +1198,7 @@ export type Permission =
   | 'account:sessions:own'
   | 'notifications:read:own'
   | 'academic:read:own'
+  | 'academic:directory:read'
   | 'agent:run:own'
   | 'agent:feedback:own'
   | 'assistant:use'
@@ -1339,7 +1340,7 @@ export interface PlatformInfo {
   apiVersion: string;
   contractVersion: string;
   dataMode: DataMode;
-  /** "DEMONSTRAÇÃO — Dados fictícios" ou "INSTITUCIONAL — Dados autorizados" */
+  /** Indica se o ambiente permite registros explicitamente marcados como dados de demonstração. */
   dataModeLabel: string;
   academicSource: {
     provider: 'demo' | 'institutional';

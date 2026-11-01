@@ -80,8 +80,8 @@ export function TextLink({ to, children, className, ariaLabel }: { to: string; c
 }
 
 const FALLBACK_MODE_LABEL: Record<MetricSource['dataMode'], string> = {
-  demo: 'Modo demonstração: dados fictícios',
-  institutional: 'Modo institucional: dados autorizados',
+  demo: 'Modo de demonstração',
+  institutional: 'Modo sem dados de demonstração',
 };
 
 /** Origem e momento dos números + rótulo do modo de dados (nada de número sem fonte). */

@@ -184,7 +184,7 @@ function RecommendationDetailView({ detail }: { detail: AgentRecommendationDetai
 export function RecommendationDialog({ id, onClose }: { id: string | null; onClose: () => void }) {
   const detail = useRecommendation(id);
   return (
-    <Dialog open={Boolean(id)} onClose={onClose} side="right" title="Recomendação" description={detail.data ? recommendationTypeMeta(detail.data.type).label : undefined}>
+    <Dialog open={Boolean(id)} onClose={onClose} side="right" modal={false} title="Recomendação" description={detail.data ? recommendationTypeMeta(detail.data.type).label : undefined}>
       {detail.isPending ? (
         <LoadingRows rows={3} />
       ) : detail.error ? (
@@ -200,7 +200,7 @@ export function RecommendationDialog({ id, onClose }: { id: string | null; onClo
 export function RunDialog({ runId, onClose, onOpenRecommendation }: { runId: string | null; onClose: () => void; onOpenRecommendation: (id: string) => void }) {
   const run = useAgentRun(runId);
   return (
-    <Dialog open={Boolean(runId)} onClose={onClose} side="right" title="Análise do agente" description={run.data ? formatDateTime(run.data.createdAt) : undefined}>
+    <Dialog open={Boolean(runId)} onClose={onClose} side="right" modal={false} title="Análise do agente" description={run.data ? formatDateTime(run.data.createdAt) : undefined}>
       {run.isPending ? (
         <LoadingRows rows={3} />
       ) : run.error ? (

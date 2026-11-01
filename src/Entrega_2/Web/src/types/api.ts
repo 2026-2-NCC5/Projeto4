@@ -159,6 +159,18 @@ export interface ProgramOption {
   name: string;
 }
 
+export interface AcademicCatalog {
+  source: 'GameFY'; institution: string; updatedAt: string;
+  courses: Array<{ id: string; code: string; name: string; totalSemesters: number; periods: string[] }>;
+  subjects: Array<{ id: string; courseId: string; name: string; semester: number | null }>;
+  terms: Array<{ id: string; year: number; term: number; title: string; startsAt: string | null; endsAt: string | null; current: boolean }>;
+  classes: Array<{ id: string; courseId: string; semester: number; period: string; classCode: string }>;
+}
+
+export interface AcademicDirectoryPerson {
+  id: string; name: string; course?: string; semester?: number | null; period?: string | null; classCode?: string | null; department?: string | null;
+}
+
 export interface RegisterRequest {
   fullName: string;
   email: string;
@@ -1198,6 +1210,7 @@ export type Permission =
   | 'account:sessions:own'
   | 'notifications:read:own'
   | 'academic:read:own'
+  | 'academic:directory:read'
   | 'agent:run:own'
   | 'agent:feedback:own'
   | 'assistant:use'
@@ -1339,7 +1352,7 @@ export interface PlatformInfo {
   apiVersion: string;
   contractVersion: string;
   dataMode: DataMode;
-  /** "DEMONSTRAÇÃO — Dados fictícios" ou "INSTITUCIONAL — Dados autorizados" */
+  /** Modo de exposição dos registros de demonstração neste ambiente. */
   dataModeLabel: string;
   academicSource: {
     provider: 'demo' | 'institutional';

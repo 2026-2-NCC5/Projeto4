@@ -159,8 +159,8 @@ describe('Usuários e equipe', () => {
     const roleConfirm = await screen.findByRole('dialog', { name: 'Alterar papel?' });
     await userEvent.click(within(roleConfirm).getByRole('button', { name: 'Alterar papel' }));
     expect(await within(roleConfirm).findByText(message)).toBeInTheDocument();
-    // o aviso também sai como notificação (toast) de falha
-    expect(screen.getAllByText(message)).toHaveLength(2);
+    // O erro fica acessível no modal. O toast global fica fora da árvore modal do Radix.
+    expect(within(roleConfirm).getByRole('alert')).toHaveTextContent(message);
     expect(calls.find((call) => call.method === 'PATCH')!.body).toEqual({ role: 'institutional_staff' });
     await userEvent.click(within(roleConfirm).getByRole('button', { name: 'Voltar' }));
 

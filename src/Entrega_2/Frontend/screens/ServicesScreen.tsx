@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 
 import { InsightList, type Insight } from '../components/academic';
@@ -9,6 +9,8 @@ import { AppText, EmptyState, List, ListItem, OfflineBanner, ScheduleSkeleton, S
 import { useOptionalAssistant } from '../features/assistant/hooks/useAssistant';
 import { useAcademicOverview } from '../hooks/useAcademicOverview';
 import { useOptionalAppNavigation } from '../navigation/AppNavigator';
+import { InternshipScreen } from './InternshipScreen';
+import { PortalIntegrationScreen } from './PortalIntegrationScreen';
 import { makeStyles, useTheme } from '../theme';
 import { formatDateTime, formatPercent, pluralize } from '../utils/format';
 // ---- support (Atendimento)
@@ -39,11 +41,14 @@ const useStyles = makeStyles((theme) => ({
  * nunca são executadas pelo app — o assistente orienta e a decisão continua humana.
  */
 export function ServicesScreen() {
+  const [showInternships, setShowInternships] = useState(false);
+  const [showPortalIntegration, setShowPortalIntegration] = useState(false);
   const theme = useTheme();
   const styles = useStyles();
   const navigation = useOptionalAppNavigation();
   const assistant = useOptionalAssistant();
   const overview = useAcademicOverview();
+
 
   const ask = (text: string) => {
     if (!assistant) {
@@ -82,6 +87,8 @@ export function ServicesScreen() {
     { id: 'history', icon: 'time-outline', title: 'Histórico de análises', description: 'Análises anteriores, da mais recente para a mais antiga.', onPress: () => navigation?.openHistory() },
     { id: 'asa', icon: 'people-outline', title: 'Falar com o ASA', description: 'Contato da Área do Sucesso Alvarista, coordenação e professores.', onPress: () => ask('Como entro em contato com o ASA?') },
     { id: 'documents', icon: 'document-text-outline', title: 'Documentos e secretaria', description: 'Como solicitar documentos e corrigir registros (validação humana).', onPress: () => ask('Com quem eu falo para solicitar um documento?') },
+    { id: 'internships', icon: 'briefcase-outline', title: 'Gestão de Estágios', description: 'Cadastre seus dados, valide o endereço e revise as prévias documentais do estágio.', onPress: () => setShowInternships(true) },
+    { id: 'portal', icon: 'school-outline', title: 'Portal Educacional FECAP', description: 'Conecte seu coletor local somente leitura e acompanhe o mapa sincronizado.', onPress: () => setShowPortalIntegration(true) },
     { id: 'finance', icon: 'card-outline', title: 'Financeiro', description: 'O app não executa pagamentos; o assistente indica com quem falar.', onPress: () => ask('Preciso falar com o financeiro. Com quem eu falo?') },
     { id: 'settings', icon: 'options-outline', title: 'Configurações do assistente', description: 'Hey Asa, resposta por voz, histórico e privacidade.', onPress: () => navigation?.changeTab('profile') },
     // ---- queue (Fila presencial do ASA)
@@ -105,6 +112,9 @@ export function ServicesScreen() {
   if (last) {
     alerts.push({ id: 'analysis', tone: 'brand', title: 'Última análise', message: `${last.summary} (${formatDateTime(last.createdAt)})`, actionLabel: 'Ver no assistente', onAction: () => navigation?.openAssistant('analysis') });
   }
+
+  if (showInternships) return <InternshipScreen onBack={() => setShowInternships(false)} />;
+  if (showPortalIntegration) return <PortalIntegrationScreen onBack={() => setShowPortalIntegration(false)} />;
 
   return (
     <Screen testID="services-screen">

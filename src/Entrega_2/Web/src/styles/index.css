@@ -81,6 +81,9 @@
     color-scheme: light;
     -webkit-text-size-adjust: 100%;
   }
+  :root {
+    color-scheme: light;
+  }
   body {
     @apply bg-paper text-ink font-sans text-body antialiased;
     min-height: 100vh;
@@ -96,6 +99,12 @@
   textarea::placeholder {
     color: var(--color-mist);
     opacity: 1;
+  }
+  input,
+  textarea,
+  select,
+  button {
+    color-scheme: light;
   }
   dialog::backdrop {
     background: rgb(17 19 21 / 0.45);
@@ -134,6 +143,15 @@
   }
 }
 
+@keyframes asa-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes asa-overlay-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes asa-dialog-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: scale(1); } }
+@keyframes asa-dialog-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes asa-toast-in { from { opacity: 0; transform: translateX(1rem); } to { opacity: 1; transform: translateX(0); } }
+@keyframes asa-toast-out { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(1rem); } }
+@keyframes asa-drawer-in { from { opacity: 0; transform: translateX(-1rem); } to { opacity: 1; transform: translateX(0); } }
+@keyframes asa-drawer-right-in { from { opacity: 0; transform: translateX(1rem); } to { opacity: 1; transform: translateX(0); } }
+
 .asa-skeleton {
   background: var(--color-line-soft);
   animation: asa-pulse 1.4s ease-in-out infinite;
@@ -141,4 +159,13 @@
 
 .asa-appear {
   animation: asa-fade-in 200ms var(--ease-standard) both;
+}
+
+.asa-page-in {
+  animation: asa-page-in 180ms var(--ease-standard) both;
+}
+
+@keyframes asa-page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

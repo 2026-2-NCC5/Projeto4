@@ -56,7 +56,7 @@ describe('Vida acadêmica', () => {
     const { router } = renderRoutes(routes, { initialPath: '/aluno/academico' });
 
     expect(await screen.findByText('RA DEMO-2026-001 · Ciências da Computação')).toBeInTheDocument();
-    expect(await screen.findByRole('note', { name: 'Origem dos dados acadêmicos' })).toHaveTextContent('DEMONSTRAÇÃO — Dados fictícios');
+    expect(await screen.findByRole('note', { name: 'Origem dos dados acadêmicos' })).toHaveTextContent('MODO DE DEMONSTRAÇÃO');
     const summary = await screen.findByRole('region', { name: 'Resumo acadêmico' });
     expect(within(summary).getByText('7,6')).toBeInTheDocument();
     expect(within(summary).getByText('95%')).toBeInTheDocument();

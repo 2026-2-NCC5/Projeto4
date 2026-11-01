@@ -6,6 +6,8 @@ export const studentRoutes: RouteObject[] = [
   { index: true, element: page(() => import('@/pages/student/StudentDashboard')) },
   { path: 'notificacoes', element: pageWith(() => import('@/pages/shared/NotificationsPage'), { area: 'aluno' as const }) },
   { path: 'perfil', element: page(() => import('@/pages/shared/AccountPage')) },
+  { path: 'oportunidades', element: page(() => import('@/pages/student/CareerMatchPage')) },
+  { path: 'jornada-profissional', element: page(() => import('@/pages/student/CareerOnboardingPage')) },
   // ---- vida acadêmica, pendências e Assistente ASA
   // ?aba=avaliacoes|frequencia|analise · ?disciplina=<id> · ?recomendacao=<id> (avisos) · ?analise=<runId>
   { path: 'academico', element: page(() => import('@/pages/student/academic/AcademicPage')) },

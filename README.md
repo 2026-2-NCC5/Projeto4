@@ -1050,6 +1050,12 @@ Materiais de terceiros permanecem sujeitos às respectivas licenças de seus aut
 
 # 🎓 Referências
 
+## Gestão de Estágios (Entrega 2)
+
+O módulo inicial de Gestão de Estágios está integrado ao app Expo e à API Node/PostgreSQL da Entrega 2. Ele oferece rascunhos persistidos, validação do endereço, versões documentais com hash e fluxo manual assistido. A prévia ainda não é PDF oficial e não há integração ativa com sistemas FECAP ou DocuSign. Consulte a [documentação técnica](docs/internships/README.md) e o [contrato OpenAPI](docs/internships/openapi.yaml).
+
+O conector local do Portal Educacional FECAP utiliza Scrapling para descoberta de interface autenticada em modo somente leitura, com sincronização ASA opcional por token pessoal revogável. A navegação real ainda depende da conta do estudante; veja [documentação e limites](docs/fecap-portal/README.md).
+
 1. FECAP  Fundação Escola de Comércio Álvares Penteado
    https://www.fecap.br/
 

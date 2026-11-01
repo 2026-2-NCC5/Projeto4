@@ -1,4 +1,7 @@
 import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import * as Popover from '@radix-ui/react-popover';
+import { Check, ChevronsUpDown, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/lib/cn';
 
 const CONTROL =
@@ -98,6 +101,52 @@ export function Select({ label, hint, error, hideLabel, options, placeholder, co
             </option>
           ))}
         </select>
+      )}
+    </Field>
+  );
+}
+
+export interface SearchableOption { value: string; label: string; description?: string; disabled?: boolean }
+export function SearchableSelect({
+  label, value, options, onChange, placeholder = 'Selecione uma opção', searchPlaceholder, emptyLabel = 'Nenhum resultado encontrado.',
+  hint, error, required, disabled, hideLabel, containerClassName, className, onSearchChange,
+}: {
+  label: string; value: string; options: SearchableOption[]; onChange: (value: string) => void; placeholder?: string;
+  searchPlaceholder?: string; emptyLabel?: string; hint?: ReactNode; error?: string | null; required?: boolean;
+  disabled?: boolean; hideLabel?: boolean; containerClassName?: string; className?: string; onSearchChange?: (query: string) => void;
+}) {
+  const id = useId();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const selected = options.find((option) => option.value === value);
+  const filtered = useMemo(() => {
+    const normalized = query.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+    if (!normalized) return options;
+    return options.filter((option) => `${option.label} ${option.description ?? ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().includes(normalized));
+  }, [options, query]);
+  return (
+    <Field label={label} hint={hint} error={error} required={required} hideLabel={hideLabel} className={containerClassName}>
+      {({ describedBy, invalid }) => (
+        <Popover.Root open={open} onOpenChange={(next) => { setOpen(next); if (!next) { setQuery(''); onSearchChange?.(''); } }}>
+          <Popover.Trigger asChild>
+            <button type="button" id={id} role="combobox" aria-expanded={open} aria-controls={`${id}-list`} aria-describedby={describedBy} aria-invalid={invalid || undefined} aria-required={required || undefined} disabled={disabled} className={cn(CONTROL, 'flex h-10 items-center justify-between gap-2 text-left', controlBorder(invalid), disabled && 'cursor-not-allowed opacity-60', className)}>
+              <span className={cn('truncate', !selected && 'text-mist')}>{selected?.label ?? placeholder}</span><ChevronsUpDown size={16} aria-hidden className="shrink-0 text-mist" />
+            </button>
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content align="start" sideOffset={5} className="z-[100] w-[var(--radix-popover-trigger-width)] min-w-64 overflow-hidden rounded-md border border-line bg-white p-1 shadow-lg" onOpenAutoFocus={(event) => { event.preventDefault(); document.getElementById(`${id}-search`)?.focus(); }}>
+              <label className="flex items-center gap-2 border-b border-line px-2 py-1.5"><Search size={15} aria-hidden className="shrink-0 text-mist" /><input id={`${id}-search`} role="searchbox" aria-label={searchPlaceholder ?? `Pesquisar ${label}`} value={query} onChange={(event) => { setQuery(event.target.value); onSearchChange?.(event.target.value); }} placeholder={searchPlaceholder ?? `Pesquisar ${label}`} className="h-8 w-full bg-transparent text-small text-ink outline-none placeholder:text-mist" /></label>
+              <ul id={`${id}-list`} role="listbox" aria-label={label} className="max-h-64 overflow-y-auto py-1">
+                {filtered.map((option) => <li key={option.value} role="option" aria-selected={option.value === value} aria-disabled={option.disabled || undefined}>
+                  <button type="button" disabled={option.disabled} onClick={() => { onChange(option.value); setOpen(false); }} className={cn('flex w-full items-start gap-2 rounded px-2 py-2 text-left text-small hover:bg-action-soft disabled:cursor-not-allowed disabled:opacity-50', option.value === value ? 'font-semibold text-action' : 'text-ink')}>
+                    <Check size={15} aria-hidden className={cn('mt-0.5 shrink-0', option.value === value ? 'opacity-100' : 'opacity-0')} /><span className="min-w-0"><span className="block">{option.label}</span>{option.description ? <span className="mt-0.5 block text-caption font-normal text-mist">{option.description}</span> : null}</span>
+                  </button>
+                </li>)}
+                {filtered.length === 0 ? <li role="status" className="px-3 py-4 text-center text-small text-mist">{emptyLabel}</li> : null}
+              </ul>
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
       )}
     </Field>
   );

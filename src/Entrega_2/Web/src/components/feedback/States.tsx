@@ -8,7 +8,7 @@ type Icon = ComponentType<{ size?: number; className?: string; 'aria-hidden'?: b
 
 export function EmptyState({ title, description, icon: IconGlyph = Inbox, action }: { title: string; description?: ReactNode; icon?: Icon; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line bg-white px-6 py-10 text-center">
+    <div data-gsap-reveal className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line bg-white px-6 py-10 text-center">
       <IconGlyph size={24} className="text-mist" aria-hidden />
       <p className="text-h4 font-semibold text-ink">{title}</p>
       {description ? <p className="max-w-md text-small text-slate">{description}</p> : null}
@@ -23,7 +23,7 @@ export function ErrorState({ error, onRetry, title }: { error: unknown; onRetry?
   const retryable = !isApiError(error) || ['offline', 'network', 'timeout', 'server', 'dependency', 'contract'].includes(error.kind);
   const requestId = isApiError(error) ? error.requestId : null;
   return (
-    <div role="alert" className="flex flex-col items-center gap-2 rounded-lg border border-line bg-white px-6 py-10 text-center">
+    <div data-gsap-reveal role="alert" className="flex flex-col items-center gap-2 rounded-lg border border-line bg-white px-6 py-10 text-center">
       {offline ? <WifiOff size={24} className="text-warning" aria-hidden /> : <CircleAlert size={24} className="text-danger" aria-hidden />}
       <p className="text-h4 font-semibold">{title ?? (offline ? 'Sem conexão' : 'Não foi possível carregar')}</p>
       <p className="max-w-md text-small text-slate">{messageForError(error)}</p>
@@ -39,7 +39,7 @@ export function ErrorState({ error, onRetry, title }: { error: unknown; onRetry?
 
 export function AccessDenied({ description }: { description?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-lg border border-line bg-white px-6 py-12 text-center">
+    <div data-gsap-reveal className="flex flex-col items-center gap-2 rounded-lg border border-line bg-white px-6 py-12 text-center">
       <Lock size={24} className="text-mist" aria-hidden />
       <h1 className="text-h3 font-semibold">Acesso não permitido</h1>
       <p className="max-w-md text-small text-slate">{description ?? 'Seu perfil não tem permissão para esta área. Se precisar de acesso, fale com a administração do ASA Conecta.'}</p>
@@ -52,7 +52,7 @@ export function AccessDenied({ description }: { description?: ReactNode }) {
 
 export function LoadingRows({ rows = 4 }: { rows?: number }) {
   return (
-    <div aria-busy className="flex flex-col gap-3 rounded-lg border border-line bg-white p-4">
+    <div data-gsap-reveal aria-busy className="flex flex-col gap-3 rounded-lg border border-line bg-white p-4">
       <span className="sr-only">Carregando</span>
       {Array.from({ length: rows }, (_, index) => (
         <div key={index} className="flex flex-col gap-2">

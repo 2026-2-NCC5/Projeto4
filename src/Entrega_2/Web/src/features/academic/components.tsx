@@ -114,10 +114,11 @@ export function AcademicSourceNote({ className }: { className?: string }) {
   const info = platform.data;
   if (!info) return null;
   const demo = info.academicSource.provider === 'demo' || info.dataMode === 'demo';
+  const sourceLabel = info.academicSource.status === 'unavailable' ? 'FONTE ACADÊMICA NÃO CONECTADA' : info.dataModeLabel;
   return (
     <div role="note" aria-label="Origem dos dados acadêmicos" className={cn('flex flex-wrap items-center gap-x-2 gap-y-1 text-small text-slate', className)}>
       <Pill tone={demo ? 'warning' : 'neutral'} icon={demo ? FlaskConical : ShieldCheck}>
-        {info.dataModeLabel}
+        {sourceLabel}
       </Pill>
       <span className="min-w-0">{info.academicSource.message}</span>
     </div>

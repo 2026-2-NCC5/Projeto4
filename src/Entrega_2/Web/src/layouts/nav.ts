@@ -2,6 +2,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  BriefcaseBusiness,
   BookOpenText,
   Bot,
   CalendarClock,
@@ -22,6 +23,7 @@ import {
   Timer,
   User,
   Users,
+  UserCog,
   Workflow,
   type LucideIcon,
 } from 'lucide-react';
@@ -49,7 +51,7 @@ export interface NavSection {
 export const AREA_META: Record<Area, { label: string; role: UserRole; accent: string }> = {
   aluno: { label: 'Portal do Aluno', role: 'student', accent: 'bg-action' },
   asa: { label: 'Operação ASA', role: 'institutional_staff', accent: 'bg-fecap' },
-  admin: { label: 'Administração', role: 'technical_admin', accent: 'bg-ink' },
+  admin: { label: 'Administração', role: 'technical_admin', accent: 'bg-action' },
 };
 
 export const NAVIGATION: Record<Area, NavSection[]> = {
@@ -57,6 +59,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
     {
       items: [
         { to: '/aluno', label: 'Início', icon: LayoutDashboard, end: true },
+        { to: '/aluno/oportunidades', label: 'ASA Match', icon: BriefcaseBusiness },
         { to: '/aluno/academico', label: 'Vida acadêmica', icon: GraduationCap },
         { to: '/aluno/pendencias', label: 'Pendências', icon: ListChecks },
         { to: '/aluno/assistente', label: 'Assistente ASA', icon: Sparkles },
@@ -93,6 +96,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
       title: 'Alunos e conhecimento',
       items: [
         { to: '/asa/alunos', label: 'Alunos atendidos', icon: Users, permission: 'students:read:support_context' },
+        { to: '/asa/diretorio-academico', label: 'Diretório acadêmico', icon: GraduationCap, permission: 'academic:directory:read' },
         { to: '/asa/base-conhecimento', label: 'Base de conhecimento', icon: BookOpenText, permission: 'kb:write', feature: 'knowledgeBase' },
         { to: '/asa/agente-ia', label: 'Agente e assistente', icon: Bot, permission: 'agent:insights:read' },
       ],
@@ -120,6 +124,8 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
       title: 'Gestão',
       items: [
         { to: '/admin/usuarios', label: 'Usuários e equipe', icon: Users, permission: 'users:manage' },
+        { to: '/admin/diretorio-academico', label: 'Diretório acadêmico', icon: GraduationCap, permission: 'academic:directory:read' },
+        { to: '/admin/perfis', label: 'Papéis e perfis', icon: UserCog, permission: 'permissions:read' },
         { to: '/admin/permissoes', label: 'Permissões', icon: ShieldCheck, permission: 'permissions:read' },
         { to: '/admin/sla', label: 'SLA e categorias', icon: Timer, permission: 'sla:manage' },
         { to: '/admin/automacoes', label: 'Automações', icon: Workflow, permission: 'automations:manage' },
@@ -136,6 +142,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
       title: 'Governança',
       items: [
         { to: '/admin/integracoes', label: 'Integrações', icon: Plug, permission: 'integrations:read' },
+        { to: '/admin/oportunidades', label: 'Fontes de oportunidades', icon: BriefcaseBusiness, permission: 'settings:manage' },
         { to: '/admin/metricas', label: 'Métricas e relatórios', icon: BarChart3, permission: 'metrics:read' },
         { to: '/admin/auditoria', label: 'Auditoria', icon: ScrollText, permission: 'audit:read:any' },
         { to: '/admin/configuracoes', label: 'Configurações', icon: Settings, permission: 'settings:manage' },

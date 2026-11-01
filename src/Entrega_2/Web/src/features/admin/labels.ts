@@ -26,7 +26,7 @@ import type {
 /** Rótulos dos papéis (os mesmos do servidor: Backend/api/src/auth/permissions.ts → ROLE_LABELS). */
 export const ROLE_LABELS: Record<UserRole, string> = {
   student: 'Aluno',
-  institutional_staff: 'Equipe ASA',
+  institutional_staff: 'Professor(a) / Equipe ASA',
   technical_admin: 'Administração',
 };
 
@@ -35,7 +35,7 @@ export const ASSIGNABLE_ROLES = ['institutional_staff', 'technical_admin'] as co
 export type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
 
 export const ROLE_DESCRIPTIONS: Record<AssignableRole, string> = {
-  institutional_staff: 'Atende chamados e agendamentos e mantém a base de conhecimento.',
+  institutional_staff: 'Perfil institucional para professores e equipe ASA; usa e-mail @fecap.br.',
   technical_admin: 'Gerencia contas, parâmetros, integrações e auditoria. Não lê o conteúdo dos chamados.',
 };
 

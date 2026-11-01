@@ -58,8 +58,8 @@ export function InsightsFailure({ error, onRetry, notFound }: { error: unknown; 
 }
 
 export const DATA_MODE_LABELS: Record<DataMode, string> = {
-  demo: 'DEMONSTRAÇÃO — Dados fictícios',
-  institutional: 'INSTITUCIONAL — Dados autorizados',
+  demo: 'Modo de demonstração',
+  institutional: 'Modo sem dados de demonstração',
 };
 
 /** Rótulo do modo de dados (o mesmo da faixa do portal quando a plataforma informa). */

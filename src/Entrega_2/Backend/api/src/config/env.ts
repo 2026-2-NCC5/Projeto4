@@ -25,6 +25,8 @@ const envSchema = z.object({
   TRUST_PROXY: z.string().optional(),
   RATE_LIMIT_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   SIGNUP_ALLOWED_EMAIL_DOMAINS: z.string().default('edu.fecap.br,fecap.br,demo.asa'),
+  STUDENT_EMAIL_DOMAIN: z.string().default('edu.fecap.br'),
+  STAFF_EMAIL_DOMAIN: z.string().default('fecap.br'),
   REGISTRATION_NUMBER_PATTERN: z.string().min(1).default('^\\d{8}$'),
   REGISTRATION_NUMBER_EXAMPLE: z.string().min(1).default('24026962'),
   RESET_CODE_LENGTH: z.coerce.number().int().min(4).max(10).default(6),
@@ -107,6 +109,9 @@ const envSchema = z.object({
   // Provedor de IA do assistente: existing (regras + base de conhecimento) | jev (integração futura, desligada)
   AI_PROVIDER: z.enum(['existing', 'jev']).default('existing'),
   JEV_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
+  GAMEFY_SUPABASE_URL: z.string().url().optional(),
+  GAMEFY_SUPABASE_SERVICE_ROLE_KEY: z.string().min(20).optional(),
+  GAMEFY_INSTITUTION_SLUG: z.string().min(1).default('fecap'),
 });
 
 export type AppEnvironment = NonNullable<z.infer<typeof envSchema>['APP_ENV']>;
@@ -127,6 +132,8 @@ export interface AppConfig {
   rateLimit: { enabled: boolean };
   auth: {
     allowedEmailDomains: string[];
+    studentEmailDomain: string;
+    staffEmailDomain: string;
     registrationNumberPattern: RegExp;
     registrationNumberPatternSource: string;
     registrationNumberExample: string;
@@ -179,6 +186,7 @@ export interface AppConfig {
   automations: { scanIntervalSeconds: number };
   web: { origins: string[]; cookieSecure: boolean };
   ai: { provider: Env['AI_PROVIDER']; jevEnabled: boolean };
+  gamefy: { url: string | null; serviceRoleKey: string | null; institutionSlug: string };
 }
 
 export type QueueProviderName = 'fecap' | 'fecap-html' | 'mock';
@@ -254,6 +262,8 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     rateLimit: { enabled: flag(env.RATE_LIMIT_ENABLED) },
     auth: {
       allowedEmailDomains: env.SIGNUP_ALLOWED_EMAIL_DOMAINS.split(',').map((domain) => domain.trim().toLowerCase().replace(/^@/, '')).filter(Boolean),
+      studentEmailDomain: env.STUDENT_EMAIL_DOMAIN.trim().toLowerCase().replace(/^@/, ''),
+      staffEmailDomain: env.STAFF_EMAIL_DOMAIN.trim().toLowerCase().replace(/^@/, ''),
       registrationNumberPattern,
       registrationNumberPatternSource: env.REGISTRATION_NUMBER_PATTERN,
       registrationNumberExample: env.REGISTRATION_NUMBER_EXAMPLE,
@@ -328,5 +338,10 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
       cookieSecure: env.WEB_COOKIE_SECURE === 'auto' ? env.NODE_ENV === 'production' : env.WEB_COOKIE_SECURE === 'true',
     },
     ai: { provider: env.AI_PROVIDER, jevEnabled: flag(env.JEV_ENABLED) },
+    gamefy: {
+      url: env.GAMEFY_SUPABASE_URL?.replace(/\/+$/, '') ?? null,
+      serviceRoleKey: env.GAMEFY_SUPABASE_SERVICE_ROLE_KEY ?? null,
+      institutionSlug: env.GAMEFY_INSTITUTION_SLUG.trim().toLowerCase(),
+    },
   };
 }

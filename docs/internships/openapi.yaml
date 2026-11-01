@@ -1,0 +1,96 @@
+openapi: 3.1.0
+info:
+  title: ASA Conecta — Gestão de Estágios
+  version: 1.0.0
+  description: API própria do ASA Conecta. Rotas autenticadas; encaminhamento institucional é manual e assistido.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+paths:
+  /internships:
+    get:
+      summary: Listar processos próprios do estudante autenticado
+      responses:
+        '200': { description: Processos do estudante }
+        '401': { description: Sessão ausente ou inválida }
+    post:
+      summary: Criar rascunho
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clientRequestId, requestType, data]
+              properties:
+                clientRequestId: { type: string, minLength: 8, maxLength: 128 }
+                requestType:
+                  type: string
+                  enum: [first_contract, mandatory, non_mandatory, extension, amendment, supervisor_change, hours_change, benefits_change, company_change, termination, closure, semester_report, regularization]
+                data: { type: object, additionalProperties: true }
+      responses:
+        '201': { description: Rascunho persistido }
+        '400': { description: Payload inválido }
+  /internships/{id}:
+    parameters:
+      - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+    get:
+      summary: Consultar processo próprio
+      responses:
+        '200': { description: Processo }
+        '404': { description: Não encontrado ou sem acesso }
+    patch:
+      summary: Atualizar rascunho próprio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [data], properties: { data: { type: object, additionalProperties: true } } }
+      responses:
+        '200': { description: Rascunho atualizado }
+        '400': { description: Dados inválidos ou processo concluído }
+  /internships/{id}/validate:
+    post:
+      summary: Validar endereço, empresa, datas e campos contratuais
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { description: Resultado determinístico da validação } }
+  /internships/{id}/documents/generate:
+    post:
+      summary: Criar versão demonstrativa e prévia textual
+      description: omitFields reproduz omissão de template em teste; documento inválido bloqueia encaminhamento.
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { omitFields: { type: array, items: { type: string } } } }
+      responses: { '201': { description: Versão, hash, campos, inconsistências e prévia textual } }
+  /internships/{id}/documents:
+    get:
+      summary: Listar versões documentais
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { description: Versões próprias } }
+  /internships/{id}/submit:
+    post:
+      summary: Preparar encaminhamento manual
+      description: Não envia para DocuSign nem para sistema FECAP. Retorna officialTransmission=false.
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { description: Preparação manual concluída } ,'400': { description: Bloqueado sem versão válida } }
+  /internships/{id}/timeline:
+    get:
+      summary: Consultar eventos append-only próprios
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { description: Eventos do processo } }
+  /internships/{id}/appeals:
+    post:
+      summary: Abrir contestação
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [reason], properties: { reason: { type: string, minLength: 10, maxLength: 2000 } } }
+      responses: { '201': { description: Contestação registrada para revisão humana } }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }

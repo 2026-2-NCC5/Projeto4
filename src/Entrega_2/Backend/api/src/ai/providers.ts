@@ -37,7 +37,7 @@ export interface AIRequest {
 export interface AIRequestContext {
   requestId: string;
   correlationId: string;
-  role: UserRole;
+  role: UserRole | 'public';
   timeoutMs: number;
 }
 

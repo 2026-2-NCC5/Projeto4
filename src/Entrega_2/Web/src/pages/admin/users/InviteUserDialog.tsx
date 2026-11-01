@@ -126,7 +126,7 @@ export function InviteUserDialog({ open, onClose, onOpenUser }: { open: boolean;
       open={open}
       onClose={close}
       title="Convidar pessoa"
-      description="Para a equipe ASA e a administração. Alunos não são convidados: eles se cadastram com o e-mail institucional."
+      description="Administradores, professores e equipe ASA usam @fecap.br. Alunos fazem o próprio cadastro com @edu.fecap.br."
       footer={
         <>
           <Button onClick={onClose} disabled={invite.isPending}>
@@ -161,7 +161,7 @@ export function InviteUserDialog({ open, onClose, onOpenUser }: { open: boolean;
           maxLength={160}
           value={form.email}
           onChange={(event) => set('email', event.target.value)}
-          hint="O servidor só aceita os domínios institucionais configurados."
+          hint="Para este convite, informe um endereço @fecap.br."
           error={errors.email}
         />
         <ChoiceGroup
