@@ -159,6 +159,28 @@ export interface ProgramOption {
   name: string;
 }
 
+/** Catálogo acadêmico disponibilizado pelo conector GameFY para o portal. */
+export interface AcademicCatalog {
+  source: 'GameFY';
+  institution: string;
+  updatedAt: string;
+  courses: Array<{ id: string; code: string; name: string; totalSemesters: number; periods: string[] }>;
+  subjects: Array<{ id: string; courseId: string; name: string; semester: number | null }>;
+  terms: Array<{ id: string; year: number; term: number; title: string; startsAt: string | null; endsAt: string | null; current: boolean }>;
+  classes: Array<{ id: string; courseId: string; semester: number; period: string; classCode: string }>;
+}
+
+/** Resultado resumido do diretório acadêmico (sem dados não necessários à função). */
+export interface AcademicDirectoryPerson {
+  id: string;
+  name: string;
+  course?: string;
+  semester?: number | null;
+  period?: string | null;
+  classCode?: string | null;
+  department?: string | null;
+}
+
 export interface RegisterRequest {
   fullName: string;
   email: string;
@@ -1340,7 +1362,7 @@ export interface PlatformInfo {
   apiVersion: string;
   contractVersion: string;
   dataMode: DataMode;
-  /** Indica se o ambiente permite registros explicitamente marcados como dados de demonstração. */
+  /** Rótulo curto do modo de dados ativo, sem sugerir origem institucional não configurada. */
   dataModeLabel: string;
   academicSource: {
     provider: 'demo' | 'institutional';

@@ -18,6 +18,16 @@ describe('autenticação', () => {
     expect(JSON.stringify(response.body)).not.toContain('passwordHash');
   });
 
+  it('permite contas de demonstração apenas quando o modo correspondente está habilitado', async () => {
+    const enabled = createTestApp();
+    expect((await request(enabled.app).post('/api/auth/login').send({ email: USERS.staff.email, password: DEMO_PASSWORD })).status).toBe(200);
+
+    const disabled = createTestApp({ configOverrides: { demo: { dataEnabled: false, seedEnabled: false, seedAllowRemote: false, scenario: 'academic-full' } } });
+    const response = await request(disabled.app).post('/api/auth/login').send({ email: USERS.student1.email, password: DEMO_PASSWORD });
+    expect(response.status).toBe(403);
+    expect(response.body.error.reason).toBe('demo_account_disabled');
+  });
+
   it('senha incorreta ou usuário inexistente retornam 401 com o mesmo código', async () => {
     const { app } = createTestApp();
     const wrong = await request(app).post('/api/auth/login').send({ email: USERS.student1.email, password: 'errada' });

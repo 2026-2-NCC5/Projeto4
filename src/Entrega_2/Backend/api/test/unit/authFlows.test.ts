@@ -127,6 +127,9 @@ describe('cadastro', () => {
 
   it('valida domínio, RA, política de senha e curso com detalhes por campo', async () => {
     const { app } = setup();
+    const staffDomain = await request(app).post('/api/auth/register').send({ ...VALID_REGISTRATION, email: 'nao.aluno@fecap.br' });
+    expect(staffDomain.status).toBe(400);
+    expect(staffDomain.body.error.reason).toBe('email_domain_not_allowed');
     const response = await request(app)
       .post('/api/auth/register')
       .send({ ...VALID_REGISTRATION, email: 'aluna@gmail.com', registrationNumber: '12AB', password: 'fraca', programCode: 'XYZ' });

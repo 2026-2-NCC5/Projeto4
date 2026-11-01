@@ -219,7 +219,8 @@ export class AdminService {
     if (roleChanged) {
       const domain = normalizeEmail(current.email).split('@')[1] ?? '';
       const requiredDomain = this.deps.config.auth.staffEmailDomain;
-      if (domain !== requiredDomain) throw new ValidationError('O domínio do e-mail não corresponde ao papel solicitado.', [{ field: 'role', message: `este papel exige uma conta @${requiredDomain}` }]);
+      const enabledDemoAccount = current.isDemo && this.deps.config.demo.dataEnabled;
+      if (!enabledDemoAccount && domain !== requiredDomain) throw new ValidationError('O domínio do e-mail não corresponde ao papel solicitado.', [{ field: 'role', message: `este papel exige uma conta @${requiredDomain}` }]);
     }
     const activeChanged = input.isActive !== undefined && input.isActive !== current.isActive;
     if (!roleChanged && !activeChanged) return this.getUser(id);

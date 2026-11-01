@@ -29,7 +29,7 @@ async function openInvite() {
 async function fillInvite(dialog: HTMLElement, role: 'Equipe ASA' | 'Administração' = 'Equipe ASA') {
   await userEvent.type(within(dialog).getByLabelText(/Nome completo/), 'Joana Lima');
   await userEvent.type(within(dialog).getByLabelText(/E-mail institucional/), 'joana.lima@fecap.br');
-  await userEvent.click(within(dialog).getByRole('radio', { name: new RegExp(`^${role}`) }));
+  await userEvent.click(within(dialog).getByRole('radio', { name: new RegExp(role) }));
 }
 
 describe('Usuários e equipe', () => {
@@ -135,10 +135,10 @@ describe('Usuários e equipe', () => {
     });
     renderRoutes(routes, { initialPath: '/admin/usuarios?conta=u-staff', session: adminSession() });
     const drawer = await screen.findByRole('dialog', { name: 'Bruno Atendente' });
-    await userEvent.click(await within(drawer).findByRole('radio', { name: /^Administração/ }));
+    await userEvent.click(await within(drawer).findByRole('radio', { name: /Administração/ }));
     await userEvent.click(within(drawer).getByRole('button', { name: 'Alterar papel' }));
     const confirm = await screen.findByRole('dialog', { name: 'Alterar papel?' });
-    expect(confirm).toHaveTextContent('Bruno Atendente passa de Equipe ASA para Administração.');
+    expect(confirm).toHaveTextContent('Bruno Atendente passa de Professor(a) / Equipe ASA para Administração.');
     expect(confirm).toHaveTextContent('Todas as sessões dessa pessoa terminam na hora');
     expect(calls.some((call) => call.method === 'PATCH')).toBe(false);
     await userEvent.click(within(confirm).getByRole('button', { name: 'Alterar papel' }));
@@ -154,7 +154,7 @@ describe('Usuários e equipe', () => {
     const drawer = await screen.findByRole('dialog', { name: 'Carla Administração' });
     const message = /É preciso manter pelo menos uma conta de administração ativa\. Dê o papel de Administração a outra pessoa/;
 
-    await userEvent.click(await within(drawer).findByRole('radio', { name: /^Equipe ASA/ }));
+    await userEvent.click(await within(drawer).findByRole('radio', { name: /Equipe ASA/ }));
     await userEvent.click(within(drawer).getByRole('button', { name: 'Alterar papel' }));
     const roleConfirm = await screen.findByRole('dialog', { name: 'Alterar papel?' });
     await userEvent.click(within(roleConfirm).getByRole('button', { name: 'Alterar papel' }));

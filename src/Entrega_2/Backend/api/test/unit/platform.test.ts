@@ -178,7 +178,7 @@ describe('GET /api/platform/info', () => {
     expect(response.body.data).toMatchObject({
       name: 'ASA Conecta',
       dataMode: 'demo',
-      dataModeLabel: 'DEMONSTRAÇÃO — Dados fictícios',
+      dataModeLabel: 'MODO DE DEMONSTRAÇÃO',
       academicSource: { provider: 'demo', status: 'demo' },
       features: { tickets: true, appointments: true, knowledgeBase: true, notifications: true, realtime: false },
       assistant: { provider: 'existing', jev: { status: 'planned', enabled: false } },
@@ -192,7 +192,7 @@ describe('GET /api/platform/info', () => {
     const config = buildTestConfig();
     const { app } = createTestApp({ configOverrides: { demo: { ...config.demo, dataEnabled: false } } });
     const response = await request(app).get('/api/platform/info');
-    expect(response.body.data).toMatchObject({ dataMode: 'institutional', dataModeLabel: 'INSTITUCIONAL — Dados autorizados', academicSource: { status: 'unavailable' } });
+    expect(response.body.data).toMatchObject({ dataMode: 'institutional', dataModeLabel: 'MODO SEM DADOS DE DEMONSTRAÇÃO', academicSource: { status: 'unavailable' } });
   });
 });
 

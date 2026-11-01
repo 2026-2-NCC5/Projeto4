@@ -87,11 +87,14 @@ export class AuthService {
 
   /** Com o modo demonstração desligado, o domínio reservado demo.asa deixa de aceitar cadastros. */
   private allowedEmailDomains(): string[] {
-    return [this.config.auth.studentEmailDomain].filter((domain) => this.config.demo.dataEnabled || domain !== DEMO_EMAIL_DOMAIN);
+    return this.config.auth.allowedEmailDomains.filter((domain) => this.config.demo.dataEnabled || domain !== DEMO_EMAIL_DOMAIN);
   }
 
   private accountDomainAllowed(user: UserRecord): boolean {
     const domain = normalizeEmail(user.email).split('@')[1] ?? '';
+    // Contas de fixture/seeds só entram quando o modo de demonstração está habilitado.
+    // As contas institucionais continuam estritamente separadas entre alunos e equipe.
+    if (isDemoAccount(user)) return this.config.demo.dataEnabled;
     const expected = user.role === 'student' ? this.config.auth.studentEmailDomain : this.config.auth.staffEmailDomain;
     return domain === expected;
   }
@@ -163,6 +166,7 @@ export class AuthService {
       if (this.config.rateLimit.enabled) this.loginFailures.hit(key);
       throw new UnauthorizedError('E-mail ou senha inválidos.', 'invalid_credentials');
     }
+    this.assertNotBlockedDemo(user);
     if (!this.accountDomainAllowed(user)) throw new UnauthorizedError('E-mail ou senha inválidos.', 'invalid_credentials');
     // Só informa conta desativada a quem já provou conhecer a senha.
     if (!user.isActive) throw new ForbiddenError('Conta desativada.', 'account_disabled');
@@ -183,7 +187,9 @@ export class AuthService {
       details.push(...detail);
     };
 
-    const domains = this.allowedEmailDomains();
+    // Esta rota sempre cria um aluno; o domínio @fecap.br é reservado à equipe,
+    // ainda que a política pública também o liste como domínio institucional aceito.
+    const domains = [this.config.auth.studentEmailDomain, ...(this.config.demo.dataEnabled ? [DEMO_EMAIL_DOMAIN] : [])];
     const domain = email.split('@')[1] ?? '';
     if (domains.length > 0 && !domains.includes(domain)) {
       fail('email_domain_not_allowed', [{ field: 'email', message: `Use um e-mail institucional (${domains.map((item) => `@${item}`).join(', ')}).` }]);
