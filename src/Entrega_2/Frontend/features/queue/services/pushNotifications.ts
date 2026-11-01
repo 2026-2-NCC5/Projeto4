@@ -135,16 +135,16 @@ export function addQueueNotificationListeners(listeners: QueueNotificationListen
   try {
     const Notifications = loadNativeNotifications();
     if (Notifications) {
-      subscriptions.push(
-        Notifications.addNotificationReceivedListener((notification) => {
-          const data = notification.request.content.data;
-          if (isQueuePushData(data)) listeners.onReceived(data);
-        }),
-        Notifications.addNotificationResponseReceivedListener((response) => {
-          const data = response.notification.request.content.data;
-          if (isQueuePushData(data)) listeners.onOpened(data);
-        }),
-      );
+      const received = Notifications.addNotificationReceivedListener((notification) => {
+        const data = notification.request.content.data;
+        if (isQueuePushData(data)) listeners.onReceived(data);
+      });
+      const responded = Notifications.addNotificationResponseReceivedListener((response) => {
+        const data = response.notification.request.content.data;
+        if (isQueuePushData(data)) listeners.onOpened(data);
+      });
+      if (received && typeof received.remove === 'function') subscriptions.push(received);
+      if (responded && typeof responded.remove === 'function') subscriptions.push(responded);
       const last = Notifications.getLastNotificationResponse();
       const data = last?.notification.request.content.data;
       if (isQueuePushData(data)) {
