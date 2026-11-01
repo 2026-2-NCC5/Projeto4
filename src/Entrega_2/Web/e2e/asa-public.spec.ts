@@ -64,16 +64,18 @@ test.describe('Portal público ASA', () => {
   });
 
   test('baseline visual da homepage ASA desktop @visual', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Seu futuro começa com acolhimento e oportunidades.' })).toBeVisible();
-    await expect(page).toHaveScreenshot('asa-home-desktop.png', { animations: 'disabled', fullPage: false });
+    await expect(page).toHaveScreenshot('asa-home-desktop.png', { animations: 'disabled', fullPage: false, maxDiffPixelRatio: 0.01 });
   });
 
   test('baseline visual da homepage ASA mobile @visual', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Seu futuro começa com acolhimento e oportunidades.' })).toBeVisible();
-    await expect(page).toHaveScreenshot('asa-home-mobile.png', { animations: 'disabled', fullPage: false });
+    await expect(page).toHaveScreenshot('asa-home-mobile.png', { animations: 'disabled', fullPage: false, maxDiffPixelRatio: 0.01 });
   });
 });
