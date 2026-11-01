@@ -34,7 +34,7 @@ export default function LandingPage() {
         <div className="relative min-h-[310px] overflow-hidden rounded-xl bg-[#eef7f2] p-5 sm:min-h-[390px] sm:p-8">
           <div className="absolute -right-10 -top-12 h-64 w-64 rounded-full border-[38px] border-white/80" aria-hidden />
           <div className="absolute -bottom-16 -left-6 h-56 w-56 rounded-full bg-[#e7defe]" aria-hidden />
-          <img src="https://www.fecap.br/files/img/asa/thumb-asa.jpg" alt="Comunidade FECAP em imagem institucional do ASA" className="relative z-10 h-[270px] w-full rounded-lg object-cover sm:h-[330px]" />
+          <img src="/brand/asa/asa-community.jpg" alt="Comunidade FECAP em imagem institucional do ASA" loading="eager" className="relative z-10 h-[270px] w-full rounded-lg object-cover sm:h-[330px]" />
           <div className="absolute bottom-2 left-2 z-20 rounded-md bg-white px-4 py-3 shadow-md sm:bottom-7 sm:left-7"><p className="text-caption font-bold uppercase tracking-wide text-assistant-text">Acolhimento · permanência · sucesso</p><p className="mt-1 text-small font-semibold text-fecap">Uma jornada Alvarista por inteiro</p></div>
         </div>
       </div>
