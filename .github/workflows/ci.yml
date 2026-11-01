@@ -181,6 +181,12 @@ jobs:
           cache-dependency-path: |
             src/Entrega_2/Backend/api/package-lock.json
             src/Entrega_2/Web/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Agent Service — dependências para a API usada no E2E
+        working-directory: src/Entrega_2/Backend/agent-service
+        run: pip install -r requirements.txt
       - name: API — build, migrations e seeds fictícios
         working-directory: src/Entrega_2/Backend/api
         run: |
@@ -191,8 +197,11 @@ jobs:
       - name: API — sobe duas instâncias (demonstração ligada :3000 e desligada :3001)
         working-directory: src/Entrega_2/Backend/api
         run: |
+          (cd ../agent-service && nohup python -m uvicorn app.main:app --port 8000 > agent-e2e.log 2>&1 &)
           nohup node dist/server.js > api.log 2>&1 &
           PORT=3001 DEMO_DATA_ENABLED=false nohup node dist/server.js > api-demo-off.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:8000/health > /dev/null && break; sleep 1; done
+          curl -sf http://localhost:8000/health > /dev/null
           for port in 3000 3001; do
             for i in $(seq 1 60); do curl -sf "http://localhost:$port/health" > /dev/null && break; sleep 1; done
             curl -sf "http://localhost:$port/health" > /dev/null
