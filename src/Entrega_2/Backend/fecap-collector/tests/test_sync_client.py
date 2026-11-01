@@ -1,3 +1,4 @@
+import json
 from datetime import UTC, datetime
 
 from fecap_collector import sync_client
@@ -5,19 +6,19 @@ from fecap_collector.config import load_settings
 from fecap_collector.models import PortalInventory, PortalRoute
 
 
-def test_sync_payload_uses_api_contract_and_utc_timestamps(monkeypatch, tmp_path):
+def test_sync_payload_contains_only_metrics_and_never_student_page_content(monkeypatch, tmp_path):
     monkeypatch.setenv("FECAP_SYNC_ENABLED", "true")
     monkeypatch.setenv("ASA_API_BASE_URL", "https://asa.example.test")
     monkeypatch.setenv("ASA_INTERNAL_SYNC_TOKEN", "personal-test-token")
     monkeypatch.setenv("FECAP_DATA_DIR", str(tmp_path))
     route = PortalRoute(
         route_id="abc123",
-        title="Página fictícia",
+        title="Página com nome de estudante no título",
         route="https://portal.fecap.br/#/home",
         state_signature="state-signature",
         page_kind="unclassified",
         visited_at=datetime(2026, 10, 31, tzinfo=UTC),
-        text="fixture",
+        text="Nota acadêmica privada de teste.",
     )
     inventory = PortalInventory(
         session_id="session-fake",
@@ -56,7 +57,8 @@ def test_sync_payload_uses_api_contract_and_utc_timestamps(monkeypatch, tmp_path
     body = captured["body"]
     assert result["data"]["status"] == "completed"
     assert body["startedAt"].endswith("Z")
-    assert body["routes"][0]["stateSignature"] == "state-signature"
-    assert body["routes"][0]["contentHash"]
-    assert "state_signature" not in body["routes"][0]
+    assert body["routes"] == []
+    assert "Página com nome de estudante" not in json.dumps(body, ensure_ascii=False)
+    assert "Nota acadêmica privada" not in json.dumps(body, ensure_ascii=False)
+    assert body["sessionId"] != "session-fake"
     assert captured["headers"]["Authorization"] == "Bearer personal-test-token"

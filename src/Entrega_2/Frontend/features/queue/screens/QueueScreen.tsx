@@ -44,10 +44,13 @@ export function QueueScreen({ onBack }: QueueScreenProps) {
   const [cancelling, setCancelling] = useState(false);
 
   const { status, experience } = queue;
-  const sub = status?.subscription ?? null;
+  const rawOverview = status?.queue ?? null;
+  const sync = rawOverview?.sync ?? null;
+  const demoSource = sync?.source?.kind === 'demo';
+  // Não expor snapshot simulado mesmo que um backend antigo/mal configurado o retorne.
+  const sub = demoSource ? null : status?.subscription ?? null;
   const showTicket = sub !== null && (queue.tracking || sub.status === 'completed');
-  const overview = status?.queue ?? null;
-  const sync = overview?.sync ?? null;
+  const overview = demoSource ? null : rawOverview;
 
   const subscribe = async (ticket: string) => {
     const result = await queue.subscribe(ticket);
@@ -109,6 +112,15 @@ export function QueueScreen({ onBack }: QueueScreenProps) {
       ) : null}
 
       <View style={styles.stack}>
+        <Surface tone="warning" style={{ marginBottom: theme.spacing.md }} testID="queue-ownership-disclosure">
+          <View style={styles.notice}>
+            <Ionicons name="shield-outline" size={20} color={theme.colors.status.warningText} />
+            <View style={styles.noticeBody}>
+              <AppText variant="bodyStrong" tone="warning">Acompanhamento por senha informada</AppText>
+              <AppText variant="bodySmall" tone="warning">O número do comprovante permite acompanhar dados públicos e receber alertas nesta conta ASA. Ele não verifica se você é o titular do atendimento. Não informe CPF no app.</AppText>
+            </View>
+          </View>
+        </Surface>
         {queue.loading && !status ? (
           <CardSkeleton />
         ) : showTicket && sub ? (
@@ -126,7 +138,7 @@ export function QueueScreen({ onBack }: QueueScreenProps) {
                 </View>
               </Surface>
             ) : null}
-            <QueueTicketForm onSubmit={subscribe} disabled={queue.isOffline || status?.queue.sync.status === 'disabled'} intro={experience.state === 'queue_empty' ? experience.message : undefined} />
+            <QueueTicketForm onSubmit={subscribe} disabled={demoSource || queue.isOffline || status?.queue.sync.status === 'disabled'} intro={experience.state === 'queue_empty' ? experience.message : undefined} />
           </>
         )}
 
@@ -185,8 +197,8 @@ export function QueueScreen({ onBack }: QueueScreenProps) {
       ) : null}
 
       <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.xxl }}>
-        {sync?.source?.kind === 'demo'
-          ? 'Simulação do painel do ASA com senhas fictícias, para demonstração. A estimativa é aproximada.'
+        {demoSource
+          ? 'Dados de demonstração não são exibidos no app. Conecte uma fonte institucional real e autorizada para habilitar a fila.'
           : 'Dados do painel público presencial.fecap.br, lidos pelo ASA Conecta a cada poucos segundos. Posição e mesa vêm do painel; a estimativa é aproximada.'}
       </AppText>
     </Screen>

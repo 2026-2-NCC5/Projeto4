@@ -19,4 +19,5 @@ export const EXPECTED_MIGRATIONS: readonly string[] = [
   '013_internships.sql',
   '014_fecap_portal.sql',
   '015_asa_match.sql',
+  '016_fecap_portal_data_minimization.sql',
 ];

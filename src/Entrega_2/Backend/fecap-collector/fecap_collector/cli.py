@@ -40,7 +40,7 @@ def _parser() -> argparse.ArgumentParser:
 def _scan(*, resume: bool = False):
     settings = load_settings()
     inventory = ReadOnlyPortalCrawler(settings).scan(resume=resume)
-    store = LocalInventoryStore(settings.data_dir)
+    store = LocalInventoryStore(settings.data_dir, settings.data_retention_minutes)
     saved = store.save(inventory)
     print(f"Varredura concluída: {inventory.pages_visited} estados acessíveis; arquivo privado: {saved}")
     print("A descoberta reflete somente o que esta conta autenticada apresentou nesta execução.")
@@ -107,7 +107,7 @@ def main() -> None:
             output = Path(args.output)
             if not output.is_absolute():
                 output = ROOT / output
-            result = LocalInventoryStore(settings.data_dir).export_map(output)
+            result = LocalInventoryStore(settings.data_dir, settings.data_retention_minutes).export_map(output)
             print(f"Mapa de navegação exportado sem texto das páginas: {result}")
             return
         if args.command == "serve":

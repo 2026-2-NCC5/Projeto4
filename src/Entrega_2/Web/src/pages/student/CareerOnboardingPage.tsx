@@ -27,11 +27,23 @@ const objectiveOptions = ['Conquistar meu primeiro estágio', 'Encontrar um novo
 const areas = ['Desenvolvimento Front-end', 'Desenvolvimento Back-end', 'Inteligência Artificial', 'Ciência de Dados', 'Segurança da Informação', 'Produto Digital', 'UX/UI', 'Administração', 'Finanças', 'Contabilidade', 'Marketing', 'Recursos Humanos', 'Logística', 'Consultoria', 'Comércio Exterior', 'Comunicação'];
 const modes = ['Presencial', 'Híbrido', 'Remoto'];
 type Draft = { [key: string]: string | string[] | boolean };
-const blank: Draft = { name: '', course: '', semester: '', period: '', graduation: '', objective: '', areas: [], skills: [], softSkills: [], experiences: '', projects: '', resumeName: '', languages: '', certificates: '', availability: [], city: '', state: '', regions: '', modalities: [], opportunityType: '', companyPreference: '', interests: '', completed: false };
+const blank: Draft = { name: '', course: '', semester: '', period: '', graduation: '', objective: '', areas: [], skills: [], softSkills: [], skillsText: '', softSkillsText: '', experiences: '', projects: '', resumeName: '', languages: '', certificates: '', availability: [], city: '', state: '', regions: '', modalities: [], opportunityType: '', companyPreference: '', interests: '', completed: false };
 const inputClass = 'mt-1 h-11 w-full rounded-md border border-line bg-white px-3 text-body text-ink outline-none transition focus:border-action focus:ring-2 focus:ring-action/20';
 
 function readDraft(): Draft {
-  try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? { ...blank, ...JSON.parse(raw) as Draft } : blank; } catch { return blank; }
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return blank;
+    const saved = JSON.parse(raw) as Draft;
+    const skills = Array.isArray(saved.skills) ? saved.skills as string[] : [];
+    const softSkills = Array.isArray(saved.softSkills) ? saved.softSkills as string[] : [];
+    return {
+      ...blank,
+      ...saved,
+      skillsText: typeof saved.skillsText === 'string' ? saved.skillsText : skills.join(', '),
+      softSkillsText: typeof saved.softSkillsText === 'string' ? saved.softSkillsText : softSkills.join(', '),
+    };
+  } catch { return blank; }
 }
 function split(value: string) { return value.split(/[\n,;]/).map((item) => item.trim()).filter(Boolean); }
 function TextField({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; type?: string }) {
@@ -74,7 +86,7 @@ export default function CareerOnboardingPage() {
       semester: String(draft.semester || '').trim() ? Number(draft.semester) : profile.data?.semester ?? null,
       careerObjective: [String(draft.objective || profile.data?.careerObjective || ''), ...(draft.areas as string[])].filter(Boolean).join(' · '),
       firstInternship: draft.objective ? String(draft.objective).toLowerCase().includes('primeiro estágio') : profile.data?.firstInternship ?? false,
-      skills: [...new Set([...(draft.skills as string[]), ...(draft.softSkills as string[]), ...((draft.skills as string[]).length || (draft.softSkills as string[]).length ? [] : profile.data?.skills ?? [])])],
+      skills: [...new Set([...split(String(draft.skillsText || '')), ...split(String(draft.softSkillsText || '')), ...(String(draft.skillsText || '').trim() || String(draft.softSkillsText || '').trim() ? [] : profile.data?.skills ?? [])])],
       interests: [...new Set([...(draft.areas as string[]), ...split(String(draft.interests || '')), ...((draft.areas as string[]).length || draft.interests ? [] : profile.data?.interests ?? [])])],
       city: String(draft.city || '').trim() || profile.data?.city || null, state: String(draft.state || '').trim().toUpperCase() || profile.data?.state || null,
       modalities: (draft.modalities as string[]).length ? (draft.modalities as string[]).map((value) => value === 'Presencial' ? 'onsite' : value === 'Híbrido' ? 'hybrid' : 'remote') : profile.data?.modalities ?? [],
@@ -98,7 +110,7 @@ export default function CareerOnboardingPage() {
   };
   const dataRows = useMemo<Array<[string, string]>>(() => [
     ['Formação', [String(draft.course || ''), draft.semester && `${draft.semester}º semestre`].filter(Boolean).join(' · ')], ['Objetivo', String(draft.objective || '')], ['Áreas', (draft.areas as string[]).join(', ')],
-    ['Competências', [...draft.skills as string[], ...draft.softSkills as string[]].join(', ')], ['Experiências', String(draft.experiences || '')], ['Projetos', String(draft.projects || '')], ['Currículo', String(draft.resumeName || '')],
+    ['Competências', [...split(String(draft.skillsText || '')), ...split(String(draft.softSkillsText || ''))].join(', ')], ['Experiências', String(draft.experiences || '')], ['Projetos', String(draft.projects || '')], ['Currículo', String(draft.resumeName || '')],
     ['Idiomas e cursos', [String(draft.languages || ''), String(draft.certificates || '')].filter(Boolean).join(' · ')], ['Disponibilidade', (draft.availability as string[]).join(', ')], ['Localização', [String(draft.city || ''), String(draft.state || ''), String(draft.regions || '')].filter(Boolean).join(' · ')],
     ['Preferências', [String(draft.opportunityType || ''), (draft.modalities as string[]).join(', '), String(draft.companyPreference || '')].filter(Boolean).join(' · ')],
   ], [draft]);
@@ -124,7 +136,7 @@ export default function CareerOnboardingPage() {
       }
       case 1: return <MultiChoice label="Selecione seu objetivo principal" options={objectiveOptions} values={draft.objective ? [String(draft.objective)] : []} onChange={(v) => updateField('objective', v[0] || '')} />;
       case 2: return <><MultiChoice label="Você pode escolher mais de uma área" options={areas} values={draft.areas as string[]} onChange={(v) => updateField('areas', v)} /><TextField label="Outra área (opcional)" value={String(draft.otherArea || '')} onChange={(v) => updateField('otherArea', v)} placeholder="Digite uma área" /></>;
-      case 3: return <div className="space-y-5"><TextArea label="Competências técnicas" value={(draft.skills as string[]).join(', ')} onChange={(v) => updateField('skills', split(v))} placeholder="Ex.: Excel, Python, SQL, Power BI" /><TextArea label="Competências comportamentais" value={(draft.softSkills as string[]).join(', ')} onChange={(v) => updateField('softSkills', split(v))} placeholder="Ex.: comunicação, organização, trabalho em equipe" /><p className="text-caption text-mist">A autoavaliação não equivale a certificação. Separe as habilidades com vírgula.</p></div>;
+      case 3: return <div className="space-y-5"><TextArea label="Competências técnicas" value={String(draft.skillsText || '')} onChange={(v) => updateField('skillsText', v)} placeholder="Ex.: Excel, Python, SQL, Power BI" /><TextArea label="Competências comportamentais" value={String(draft.softSkillsText || '')} onChange={(v) => updateField('softSkillsText', v)} placeholder="Ex.: comunicação, organização, trabalho em equipe" /><p className="text-caption text-mist">A autoavaliação não equivale a certificação. Separe as habilidades com vírgula.</p></div>;
       case 4: return <><p className="mb-3 rounded-md bg-action-soft p-3 text-small text-action">Ainda não trabalhou? Sem problema. Projetos, cursos e conhecimentos também contam na sua trajetória.</p><TextArea label="Experiências profissionais ou atividades práticas" value={String(draft.experiences)} onChange={(v) => updateField('experiences', v)} placeholder="Empresa, cargo, período e atividades. Inclua voluntariado ou projetos aplicados se fizer sentido." /></>;
       case 5: return <><TextArea label="Projetos acadêmicos, pessoais, extensão ou voluntariado" value={String(draft.projects)} onChange={(v) => updateField('projects', v)} placeholder="Nome do projeto, seu papel, ferramentas utilizadas e link (se houver)." /><TextField label="LinkedIn, GitHub, Behance ou portfólio (opcional)" value={String(draft.links || '')} onChange={(v) => updateField('links', v)} placeholder="https://" /></>;
       case 6: return <div className="space-y-4"><label className="flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line-strong bg-paper p-5 text-center hover:border-action"><FileUser size={25} className="text-action" aria-hidden /><span className="mt-2 font-semibold text-ink">Selecionar currículo (PDF ou DOCX)</span><span className="mt-1 text-caption text-slate">Até 10 MB · seleção local, envio indisponível</span><input className="sr-only" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(event) => resumeFile(event.target.files?.[0])} /></label>{draft.resumeName ? <p className="text-small text-slate">Selecionado: {String(draft.resumeName)}</p> : null}<p className="rounded-md bg-paper p-3 text-small text-slate">A API atual não oferece upload nem análise de currículo. Você pode seguir sem currículo e seu rascunho permanece salvo neste dispositivo.</p></div>;

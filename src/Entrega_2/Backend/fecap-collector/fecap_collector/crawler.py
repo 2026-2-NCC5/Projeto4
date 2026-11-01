@@ -25,7 +25,7 @@ class ReadOnlyPortalCrawler:
         self.settings = settings
         self.max_routes = max(1, min(max_routes, MAX_DISCOVERED_ROUTES))
         self.max_depth = max(0, min(max_depth, MAX_DEPTH))
-        self.store = LocalInventoryStore(settings.data_dir)
+        self.store = LocalInventoryStore(settings.data_dir, settings.data_retention_minutes)
 
     def scan(self, *, resume: bool = False) -> PortalInventory:
         previous = self.store.latest() if resume else None

@@ -47,7 +47,7 @@ function milestoneFor(ahead: number): QueueAlertMilestone | null {
 }
 
 /**
- * Fila simulada no aparelho (EXPO_PUBLIC_USE_MOCK_QUEUE=true). Mesmas regras do backend: posição pela
+ * Fixture de fila usada exclusivamente nos testes automatizados. Mesmas regras do backend: posição pela
  * lista de próximas senhas, marcos que só avançam e duas mesas em paralelo. `progression` chama uma
  * senha a cada QUEUE.MOCK_STEP_MS enquanto a tela está conectada (0026 → 0027 → 0028 → 0029).
  */

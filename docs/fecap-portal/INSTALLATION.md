@@ -18,4 +18,4 @@ O diretório `.private` e arquivos `.env` são ignorados pelo Git. Para instala�
 
 ## Ambiente
 
-Consulte `src/Entrega_2/Backend/fecap-collector/.env.example`. `ASA_INTERNAL_SYNC_TOKEN` é o token pessoal emitido pela tela ASA e não deve ser compartilhado. `FECAP_SYNC_ENABLED` permanece `false` até consentimento explícito. Para usar senha em memória, deixe `FECAP_PASSWORD` vazia e rode `fecap-portal login` ou `scan`; a entrada usa `getpass`.
+Consulte `src/Entrega_2/Backend/fecap-collector/.env.example`. `ASA_INTERNAL_SYNC_TOKEN` é o token pessoal emitido pela tela ASA e não deve ser compartilhado. `FECAP_SYNC_ENABLED` permanece `false` até consentimento explícito. Rode `fecap-portal login` ou `scan`; a senha é solicitada com `getpass` e nunca é lida de `.env`.

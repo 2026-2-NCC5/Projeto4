@@ -46,7 +46,7 @@ describe('API da fila presencial', () => {
     expect(overview.latestCall).toMatchObject({ ticket: '0023', desk: 'Mesa 03' });
     expect(overview.currentCalls.map((call) => `${call.ticket} ${call.desk}`)).toEqual(['0023 Mesa 03', '0022 Mesa 01']);
     expect(overview.upcoming[0]).toEqual({ ticket: '0024', position: 1 });
-    expect(overview.sync).toMatchObject({ status: 'live', pollIntervalSeconds: 10 });
+    expect(overview.sync).toMatchObject({ status: 'live', pollIntervalSeconds: 30 });
   });
 
   it('acompanhar senha: validação amigável e corpo estrito (sem userId)', async () => {

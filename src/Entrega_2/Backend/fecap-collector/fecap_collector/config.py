@@ -37,6 +37,8 @@ class Settings:
     sync_interval_minutes: int
     capture_screenshots: bool
     data_dir: Path
+    data_retention_minutes: int
+    local_allowed_origins: tuple[str, ...]
     log_level: str
     asa_api_base_url: str | None
     asa_internal_sync_token: str | None
@@ -64,12 +66,34 @@ def load_settings() -> Settings:
     max_pages = int(os.getenv("FECAP_MAX_CONCURRENT_PAGES", "1"))
     if max_pages != 1:
         raise ValueError("A navegação é serial e aceita FECAP_MAX_CONCURRENT_PAGES=1.")
-    data_dir = Path(os.getenv("FECAP_DATA_DIR", ".private/fecap-data"))
+    default_data_dir = Path.home() / ".asa-conecta" / "fecap-data"
+    data_dir = Path(os.getenv("FECAP_DATA_DIR", str(default_data_dir)))
     session_path = Path(os.getenv("FECAP_SESSION_STORAGE_PATH", ".private/fecap-session.enc"))
     if not data_dir.is_absolute():
         data_dir = ROOT / data_dir
     if not session_path.is_absolute():
         session_path = ROOT / session_path
+    local_allowed_origins = tuple(
+        origin.strip().rstrip("/")
+        for origin in os.getenv(
+            "ASA_LOCAL_ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+        ).split(",")
+        if origin.strip()
+    )
+    for origin in local_allowed_origins:
+        parsed_origin = urlparse(origin)
+        loopback_http = parsed_origin.scheme == "http" and parsed_origin.hostname in {"localhost", "127.0.0.1"}
+        if (
+            origin == "*"
+            or not parsed_origin.hostname
+            or (parsed_origin.scheme != "https" and not loopback_http)
+            or parsed_origin.path not in {"", "/"}
+            or parsed_origin.query
+            or parsed_origin.fragment
+            or parsed_origin.username
+            or parsed_origin.password
+        ):
+            raise ValueError("ASA_LOCAL_ALLOWED_ORIGINS aceita somente origens HTTPS ou loopback HTTP exatas.")
     asa_api_base_url = os.getenv("ASA_API_BASE_URL") or None
     if asa_api_base_url:
         asa_api = urlparse(asa_api_base_url)
@@ -81,7 +105,9 @@ def load_settings() -> Settings:
     return Settings(
         portal_url=portal_url,
         username=os.getenv("FECAP_USERNAME") or None,
-        password=os.getenv("FECAP_PASSWORD") or None,
+        # Senhas nunca são lidas de variáveis de ambiente ou arquivos .env.
+        # O fluxo local pede a senha com entrada oculta no terminal.
+        password=None,
         auth_mode=auth_mode,
         browser_headless=_bool("FECAP_BROWSER_HEADLESS", False),
         session_persist=_bool("FECAP_SESSION_PERSIST", False),
@@ -96,6 +122,8 @@ def load_settings() -> Settings:
         sync_interval_minutes=max(1, int(os.getenv("FECAP_SYNC_INTERVAL_MINUTES", "60"))),
         capture_screenshots=_bool("FECAP_CAPTURE_SCREENSHOTS", False),
         data_dir=data_dir,
+        data_retention_minutes=max(5, min(int(os.getenv("FECAP_DATA_RETENTION_MINUTES", "60")), 1440)),
+        local_allowed_origins=local_allowed_origins,
         log_level=os.getenv("FECAP_LOG_LEVEL", "INFO").upper(),
         asa_api_base_url=asa_api_base_url,
         asa_internal_sync_token=os.getenv("ASA_INTERNAL_SYNC_TOKEN") or None,

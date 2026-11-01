@@ -76,6 +76,22 @@ export const academicApi = {
   searchDirectory: (kind: 'student' | 'professor', q: string, signal?: AbortSignal) => api.get<{ items: import('@/types/api').AcademicDirectoryPerson[] }>('/api/academic/directory', { query: { kind, q }, ...(signal ? { signal } : {}) }),
 };
 
+export interface FecapPortalCapabilities {
+  provider: 'fecap-portal';
+  officialPortalUrl: string;
+  officialAuthentication: 'not_configured';
+  officialApi: 'not_confirmed';
+  institutionalSession: 'not_connected';
+  academicModules: Record<'profile' | 'subjects' | 'grades' | 'attendance' | 'schedule' | 'documents' | 'requests' | 'internships' | 'financial', 'not_integrated'>;
+  localReadOnlyCollector: 'experimental';
+  authorizationRequired: true;
+}
+
+export const fecapPortalApi = {
+  capabilities: () => api.get<FecapPortalCapabilities>('/api/v1/portal/capabilities'),
+  createLocalCollectorToken: () => api.post<{ connectionId: string; syncToken: string; issuedAt: string }>('/api/v1/portal/connect', {}),
+};
+
 export const notificationsApi = {
   list: (limit = 30) => api.get<InboxNotificationList>('/api/notifications', { query: { limit } }),
   markRead: (ids?: string[]) => api.patch<InboxNotificationList>('/api/notifications', ids ? { read: true, ids } : { read: true }),

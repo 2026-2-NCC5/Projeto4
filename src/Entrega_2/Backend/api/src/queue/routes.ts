@@ -47,7 +47,7 @@ export interface QueueRouteDeps {
   /** cadastros de senha por usuário a cada 10 minutos */
   subscriptionRateLimit: number;
   now: () => Date;
-  /** presente só com ASA_QUEUE_PROVIDER=mock fora de produção */
+  /** presente apenas em testes automatizados com ASA_QUEUE_PROVIDER=mock */
   mock: MockQueueProvider | null;
 }
 

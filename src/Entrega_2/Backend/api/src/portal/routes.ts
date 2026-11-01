@@ -22,6 +22,32 @@ const syncSchema = z.object({
   routes: z.array(routeSchema).max(300),
 }).strict();
 
+/**
+ * O Portal Educacional continua sendo a fonte oficial. Nesta entrega não há
+ * contrato de SSO/API institucional aprovado nem conector acadêmico oficial.
+ * O coletor local é experimental e não representa uma sessão FECAP vinculada.
+ */
+export const PORTAL_CAPABILITIES = {
+  provider: 'fecap-portal',
+  officialPortalUrl: 'https://portal.fecap.br/',
+  officialAuthentication: 'not_configured',
+  officialApi: 'not_confirmed',
+  institutionalSession: 'not_connected',
+  academicModules: {
+    profile: 'not_integrated',
+    subjects: 'not_integrated',
+    grades: 'not_integrated',
+    attendance: 'not_integrated',
+    schedule: 'not_integrated',
+    documents: 'not_integrated',
+    requests: 'not_integrated',
+    internships: 'not_integrated',
+    financial: 'not_integrated',
+  },
+  localReadOnlyCollector: 'experimental',
+  authorizationRequired: true,
+} as const;
+
 function hashToken(token: string): Buffer { return createHash('sha256').update(token).digest(); }
 function bearer(req: Request): string {
   const value = req.headers.authorization;
@@ -70,21 +96,41 @@ export function createPortalRouter(deps: PortalRouteDeps): Router {
           [connection.id],
         );
         if ((recent.rows[0]?.count ?? 0) >= 5) throw new RateLimitedError(60);
+        const safeMetadata = {
+          authStatus: /^(authenticated|pending|unauthenticated|manual_required)$/i.test(input.authStatus) ? input.authStatus.toLowerCase() : 'unknown',
+          errorCount: input.errors.length,
+        };
+        const sessionIdHash = createHash('sha256').update(input.sessionId).digest('hex');
         const result = await client.query<{ id: string }>(
           `insert into portal_sync_sessions(connection_id,client_session_id,status,started_at,finished_at,pages_discovered,pages_visited,records_extracted,error_count,metadata)
            values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb)
            on conflict(connection_id,client_session_id) do update set status=excluded.status,finished_at=excluded.finished_at,pages_discovered=excluded.pages_discovered,pages_visited=excluded.pages_visited,records_extracted=excluded.records_extracted,error_count=excluded.error_count,metadata=excluded.metadata
-           returning id`, [connection.id, input.sessionId, state, input.startedAt, input.finishedAt, input.pagesDiscovered, input.pagesVisited, input.recordsExtracted, input.errors.length, JSON.stringify({ authStatus: input.authStatus, errors: input.errors })],
+           returning id`, [connection.id, sessionIdHash, state, input.startedAt, input.finishedAt, input.pagesDiscovered, input.pagesVisited, input.recordsExtracted, input.errors.length, JSON.stringify(safeMetadata)],
         );
         const syncId = result.rows[0]!.id;
         await client.query('delete from portal_discovered_routes where sync_session_id=$1', [syncId]);
-        if (input.routes.length) await client.query(
+        // Persistir apenas rótulos de navegação. Texto, URLs, tabelas,
+        // formulários, documentos, hashes de conteúdo e warnings podem conter
+        // dados pessoais/acadêmicos e não são necessários para o mapa.
+        const safeRoutes = input.routes.map((route) => {
+          const routeData = {
+            title: route.title,
+            category: route.category,
+            depth: route.depth,
+          };
+          return {
+            routeKey: createHash('sha256').update(route.stateSignature).digest('hex'),
+            routeData,
+            contentHash: createHash('sha256').update(JSON.stringify(routeData)).digest('hex'),
+          };
+        });
+        if (safeRoutes.length) await client.query(
           `insert into portal_discovered_routes(sync_session_id,route_key,route_data,content_hash)
-           select $1, item->>'stateSignature', item, item->>'contentHash'
-           from jsonb_array_elements($2::jsonb) as entries(item)`, [syncId, JSON.stringify(input.routes)],
+           select $1, item->>'routeKey', item->'routeData', item->>'contentHash'
+           from jsonb_array_elements($2::jsonb) as entries(item)`, [syncId, JSON.stringify(safeRoutes)],
         );
         await client.query('update portal_connections set last_sync_at=now() where id=$1', [connection.id]);
-        await client.query('insert into portal_audit_events(connection_id,action,outcome,detail) values($1,$2,$3,$4::jsonb)', [connection.id, 'portal.sync.received', state, JSON.stringify({ sessionId: input.sessionId, routes: input.routes.length, errors: input.errors.length })]);
+        await client.query('insert into portal_audit_events(connection_id,action,outcome,detail) values($1,$2,$3,$4::jsonb)', [connection.id, 'portal.sync.received', state, JSON.stringify({ sessionIdHash, routes: input.routes.length, errors: input.errors.length })]);
         await client.query('commit');
         res.status(202).json({ data: { syncId, status: state, routeCount: input.routes.length }, meta: { requestId: req.ctx?.requestId ?? 'portal-sync', correlationId: req.ctx?.correlationId ?? 'portal-sync' } });
       } catch (error) { await client.query('rollback'); throw error; } finally { client.release(); }
@@ -94,6 +140,9 @@ export function createPortalRouter(deps: PortalRouteDeps): Router {
   router.get('/api/v1/portal/status', deps.authed, deps.asStudent, wrap(async (req, res) => {
     const { rows } = await deps.pool.query('select id as "connectionId",created_at as "connectedAt",last_sync_at as "lastSyncAt",revoked_at as "revokedAt" from portal_connections where student_id=$1 order by created_at desc limit 1', [studentId(req)]);
     ok(req, res, rows[0] ?? null);
+  }));
+  router.get('/api/v1/portal/capabilities', deps.authed, deps.asStudent, wrap(async (req, res) => {
+    ok(req, res, PORTAL_CAPABILITIES);
   }));
   router.get('/api/v1/portal/navigation', deps.authed, deps.asStudent, wrap(async (req, res) => {
     const { rows } = await deps.pool.query(

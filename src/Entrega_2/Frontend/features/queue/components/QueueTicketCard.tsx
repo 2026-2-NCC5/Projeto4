@@ -79,8 +79,8 @@ export function QueueTicketCard({ subscription, experience }: QueueTicketCardPro
         <View accessible accessibilityRole="summary" accessibilityLiveRegion="polite" accessibilityLabel={`Sua senha ${subscription.ticket}. ${experience.accessibilityLabel}`}>
           <View style={styles.top}>
             <View>
-              <AppText variant="label" tone="secondary">
-                Sua senha
+            <AppText variant="label" tone="secondary">
+              Senha acompanhada
               </AppText>
               <AppText variant="metricLarge" tone={experience.tone === 'success' ? 'success' : 'primary'} style={styles.ticket} testID="queue-ticket-number">
                 {subscription.ticket}

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Screen } from '../components/Screen';
 import { ScreenHeader } from '../components/ScreenHeader';
@@ -9,7 +9,7 @@ import { apiClient } from '../services/apiClient';
 import { useTheme } from '../theme';
 
 type PortalStatus = { connectionId: string; connectedAt: string; lastSyncAt: string | null; revokedAt: string | null } | null;
-type RouteInfo = { route: { title: string; route: string; page_kind: string; depth: number; warnings: string[] }; status: string };
+type RouteInfo = { route: { title: string; category: string; depth: number }; status: string };
 
 export function PortalIntegrationScreen({ onBack }: { onBack: () => void }) {
   const theme = useTheme();
@@ -35,7 +35,7 @@ export function PortalIntegrationScreen({ onBack }: { onBack: () => void }) {
     setBusy(true); setMessage('');
     try {
       const result = await apiClient.request<{ connectionId: string; syncToken: string }>('/api/v1/portal/connect', { method: 'POST', body: {} });
-      setToken(result.syncToken); setMessage('Token pessoal criado. Copie e configure localmente no serviço fecap-collector.'); await load();
+      setToken(result.syncToken); setMessage('Token do coletor local criado. Isso não conecta uma sessão institucional FECAP.'); await load();
     } catch (error) { setMessage(error instanceof Error ? error.message : 'Não foi possível criar a conexão.'); }
     finally { setBusy(false); }
   };
@@ -47,23 +47,29 @@ export function PortalIntegrationScreen({ onBack }: { onBack: () => void }) {
   };
   const button = (label: string, onPress: () => void, destructive = false) => <Pressable accessibilityRole="button" disabled={busy} onPress={onPress} style={[styles.button, { backgroundColor: destructive ? theme.colors.status.errorSoft : theme.colors.brand.primaryStrong, opacity: busy ? 0.5 : 1 }]}><AppText variant="bodySmallStrong" style={{ color: destructive ? theme.colors.status.errorText : theme.colors.text.onPrimary }}>{label}</AppText></Pressable>;
   return <Screen testID="fecap-portal-screen">
-    <ScreenHeader title="Portal Educacional FECAP" subtitle="Conector pessoal, local e somente leitura." onBack={onBack} />
+    <ScreenHeader title="Portal Educacional FECAP" subtitle="Acesso oficial e status da integração ASA Conecta." onBack={onBack} />
     <ScrollView contentContainerStyle={styles.content}>
-      <View style={[styles.notice, { backgroundColor: theme.colors.status.infoSoft }]}><Ionicons name="shield-checkmark-outline" size={20} color={theme.colors.status.infoText} /><AppText variant="bodySmall" style={{ color: theme.colors.status.infoText, flex: 1 }}>A senha do Portal não é solicitada nem armazenada pelo ASA Conecta. O login acontece no seu computador pelo navegador local. MFA e CAPTCHA permanecem manuais. Nenhuma ação de escrita é executada.</AppText></View>
+      <View style={[styles.notice, { backgroundColor: theme.colors.status.infoSoft }]}><Ionicons name="shield-checkmark-outline" size={20} color={theme.colors.status.infoText} /><AppText variant="bodySmall" style={{ color: theme.colors.status.infoText, flex: 1 }}>Ainda não há SSO ou API acadêmica institucional configurados. O ASA Conecta não solicita sua senha FECAP. Para notas, documentos e requerimentos, use o domínio oficial do Portal do Aluno.</AppText></View>
       <View style={[styles.card, { backgroundColor: theme.colors.surface.primary, borderColor: theme.colors.border.subtle }]}>
-        <AppText variant="h3">Conexão de sincronização</AppText>
-        <AppText variant="bodySmall" tone="secondary">{status?.revokedAt ? 'Conexão revogada' : status ? `Ativa desde ${new Date(status.connectedAt).toLocaleString()}` : 'Nenhuma conexão configurada'}</AppText>
+        <AppText variant="h3">Portal oficial</AppText>
+        <AppText variant="bodySmall" tone="secondary">A FECAP informa que o portal reúne documentos, notas, faltas, boletos, vagas, horários e requerimentos. O login usa o Registro de Aluno.</AppText>
+        {button('Abrir Portal do Aluno FECAP', () => { void Linking.openURL('https://portal.fecap.br/').catch(() => setMessage('Não foi possível abrir o Portal FECAP neste dispositivo.')); })}
+        <AppText variant="caption" tone="muted">Você fará login no site oficial da FECAP. O ASA Conecta não recebe sua senha.</AppText>
+      </View>
+      <View style={[styles.card, { backgroundColor: theme.colors.surface.primary, borderColor: theme.colors.border.subtle }]}>
+        <AppText variant="h3">Coletor local experimental</AppText>
+        <AppText variant="bodySmall" tone="secondary">{status?.revokedAt ? 'Token de sincronização revogado' : status ? `Token do coletor local emitido em ${new Date(status.connectedAt).toLocaleString()}` : 'Nenhum token para o coletor local'}</AppText>
         <AppText variant="caption" tone="secondary">Última sincronização: {status?.lastSyncAt ? new Date(status.lastSyncAt).toLocaleString() : 'ainda não sincronizado'}</AppText>
-        {status && !status.revokedAt ? button('Revogar conexão', disconnect, true) : button('Criar token pessoal', connect)}
+        {status && !status.revokedAt ? button('Revogar token do coletor', disconnect, true) : button('Criar token local', connect)}
         {token ? <View style={[styles.tokenBox, { borderColor: theme.colors.border.default }]}><AppText variant="caption" tone="warning">Exibido uma única vez. Cole apenas no `.env` local e não compartilhe.</AppText><AppText selectable variant="bodySmallStrong">{token}</AppText>{button('Copiar token', () => { void Clipboard.setStringAsync(token); setMessage('Token copiado para a área de transferência.'); })}</View> : null}
       </View>
       <View style={[styles.card, { backgroundColor: theme.colors.surface.primary, borderColor: theme.colors.border.subtle }]}>
         <AppText variant="h3">Mapa descoberto</AppText>
-        {routes.length ? routes.map((item, index) => <View key={`${item.route.route}-${index}`} style={[styles.route, { borderColor: theme.colors.border.subtle }]}><AppText variant="bodySmallStrong">{'　'.repeat(Math.min(item.route.depth, 5))}{item.route.title}</AppText><AppText variant="caption" tone="secondary">{item.route.page_kind} · {item.status}</AppText></View>) : <AppText variant="bodySmall" tone="secondary">Nenhuma navegação real sincronizada. Execute `fecap-portal scan --read-only` no serviço local depois de autenticar sua própria conta.</AppText>}
+        {routes.length ? routes.map((item, index) => <View key={`${item.route.title}-${index}`} style={[styles.route, { borderColor: theme.colors.border.subtle }]}><AppText variant="bodySmallStrong">{'　'.repeat(Math.min(item.route.depth, 5))}{item.route.title}</AppText><AppText variant="caption" tone="secondary">{item.route.category} · {item.status}</AppText></View>) : <AppText variant="bodySmall" tone="secondary">Nenhum mapa de navegação sincronizado. O coletor experimental exige execução local e autorização institucional para uso conectado.</AppText>}
       </View>
       {message ? <AppText accessibilityRole="alert" variant="bodySmall" tone="info">{message}</AppText> : null}
       {busy ? <ActivityIndicator accessibilityLabel="Carregando conexão" color={theme.colors.brand.primaryStrong} /> : null}
-      <AppText variant="caption" tone="muted">O inventário pode conter dados acadêmicos pessoais e é visível somente nesta conta. O crawler salva evidências localmente com permissões restritas; o envio à API só ocorre com sincronização explicitamente habilitada.</AppText>
+      <AppText variant="caption" tone="muted">A API do ASA Conecta guarda apenas título, categoria e nível das seções do mapa. Texto de páginas, URLs, tabelas, formulários e documentos não é persistido.</AppText>
     </ScrollView>
   </Screen>;
 }

@@ -29,7 +29,7 @@ export interface QueueModule {
   bus: QueueEventBus;
   metrics: QueueMetrics;
   repository: QueueRepository;
-  /** presente só com ASA_QUEUE_PROVIDER=mock (fora de produção) */
+  /** presente apenas em testes automatizados com ASA_QUEUE_PROVIDER=mock */
   mock: MockQueueProvider | null;
   router(deps: { authenticate: RequestHandler; rateLimitEnabled: boolean; now: () => Date }): Router;
   /** inicia o monitor residente (modo loop; no modo sob demanda não há o que iniciar) */

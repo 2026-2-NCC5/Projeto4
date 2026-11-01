@@ -91,6 +91,16 @@ function SidebarNav({ area, collapsed, onNavigate }: { area: Area; collapsed: bo
 }
 
 function Brand({ area, collapsed }: { area: Area; collapsed: boolean }) {
+  if (area === 'admin' && !collapsed) {
+    return (
+      <Link to="/admin" className="flex flex-col gap-2 px-3 py-4" aria-label="ASA Conecta — Administração">
+        <span className="flex h-[4.5rem] items-center rounded-md bg-[#003B2C] px-3">
+          <img data-testid="admin-sidebar-asa-logo" src="/brand/asa-logo-white.svg" alt="ASA" className="h-auto max-h-12 w-full object-contain" />
+        </span>
+        <span className="px-1 text-caption text-mist">Administração</span>
+      </Link>
+    );
+  }
   return (
     <Link to={`/${area}`} className="flex items-center gap-3 px-4 py-4" aria-label={`ASA Conecta — ${AREA_META[area].label}`}>
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-action">

@@ -1,13 +1,11 @@
-import { readBoolean } from '../../config/services';
-
 /**
  * Fila presencial do ASA. O app NÃO consulta presencial.fecap.br: o backend monitora a fonte e envia
  * push (app fechado/em segundo plano) e eventos em tempo real (app aberto). Polling aqui é só o
  * plano B do canal em tempo real, e apenas com o app em primeiro plano.
  */
 export const QUEUE = {
-  /** EXPO_PUBLIC_USE_MOCK_QUEUE=true → fila simulada no aparelho (desenvolvimento; nunca em produção). */
-  USE_MOCK: readBoolean(process.env.EXPO_PUBLIC_USE_MOCK_QUEUE, false),
+  /** Dados simulados são injetados apenas por testes; o app sempre usa a API real. */
+  USE_MOCK: false,
   /** Plano B quando o canal em tempo real (SSE) não conecta. */
   POLL_INTERVAL_MS: 15_000,
   /** Espera entre tentativas de reconectar o SSE. */

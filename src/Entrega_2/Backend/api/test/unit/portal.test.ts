@@ -45,9 +45,18 @@ describe('Portal FECAP ASA API', () => {
     expect(response.body.data.connectionId).toBe('mine');
   });
 
+  it('expõe capacidades honestas e não declara SSO ou integração acadêmica sem configuração', async () => {
+    const response = await request(testApp({ query: vi.fn() } as unknown as DbPool)).get('/api/v1/portal/capabilities');
+    expect(response.status).toBe(200);
+    expect(response.body.data.officialAuthentication).toBe('not_configured');
+    expect(response.body.data.officialApi).toBe('not_confirmed');
+    expect(response.body.data.academicModules.grades).toBe('not_integrated');
+    expect(response.body.data.officialPortalUrl).toBe('https://portal.fecap.br/');
+  });
+
   it('recebe inventário validado com token pessoal e persiste sessão e rota numa transação', async () => {
     const connectionQuery = vi.fn(async () => ({ rows: [{ id: 'connection-id', student_id: 'student-owned-by-session' }] }));
-    const clientQuery = vi.fn(async (sql: string) => ({ rows: sql.includes('portal_sync_sessions') ? [{ id: 'sync-id' }] : [] }));
+    const clientQuery = vi.fn(async (sql: string, _params?: unknown[]) => ({ rows: sql.includes('portal_sync_sessions') ? [{ id: 'sync-id' }] : [] }));
     const pool = {
       query: connectionQuery,
       connect: vi.fn(async () => ({ query: clientQuery, release: vi.fn() })),
@@ -67,5 +76,9 @@ describe('Portal FECAP ASA API', () => {
     expect(connectionQuery).toHaveBeenCalledOnce();
     expect(clientQuery.mock.calls.map(([sql]) => sql.trim().toLowerCase())).toEqual(expect.arrayContaining(['begin', 'commit']));
     expect(clientQuery).toHaveBeenCalledWith(expect.stringContaining('portal_discovered_routes'), expect.any(Array));
+    const persistedRoutes = clientQuery.mock.calls.find(([sql]) => sql.includes('insert into portal_discovered_routes'))?.[1]?.[1];
+    expect(String(persistedRoutes)).not.toContain('Conteúdo fictício');
+    expect(String(persistedRoutes)).not.toContain('portal.fecap.br/#/home');
+    expect(String(persistedRoutes)).toContain('"title":"Início"');
   });
 });

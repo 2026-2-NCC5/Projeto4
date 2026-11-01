@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 from datetime import UTC, datetime
 
@@ -22,49 +21,24 @@ def push_inventory(settings: Settings, inventory: PortalInventory) -> dict[str, 
         raise RuntimeError("Sincronização remota está desligada. Defina FECAP_SYNC_ENABLED=true para habilitá-la.")
     if not settings.asa_api_base_url or not settings.asa_internal_sync_token:
         raise RuntimeError("Configure a URL da API e o token pessoal revogável emitido pelo ASA Conecta.")
-    routes = []
-    for route in inventory.routes:
-        route_data = route.model_dump(mode="json")
-        canonical = json.dumps(route_data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-        links = [
-            {
-                "label": link.label,
-                "url": link.url,
-                "relation": link.relation,
-                "inScope": link.in_scope,
-                "readOnlyCandidate": link.read_only_candidate,
-            }
-            for link in route.links
-        ]
-        routes.append(
-            {
-                "route": route.route,
-                "title": route.title,
-                "category": route.page_kind,
-                "parentRoute": route.parent_route,
-                "depth": route.depth,
-                "stateSignature": route.state_signature,
-                "contentHash": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
-                "discoveredAt": iso_utc(route.visited_at),
-                "links": links,
-                "tabs": route.tabs,
-                "tables": [table.model_dump(mode="json") for table in route.tables],
-                "forms": [form.model_dump(mode="json") for form in route.forms],
-                "documents": [link.model_dump(mode="json") for link in route.documents],
-                "warnings": route.warnings,
-                "text": route.text,
-            }
-        )
+    # O conteúdo acadêmico permanece no dispositivo do estudante. A API remota
+    # recebe apenas métricas da execução; nenhum título, URL, texto ou tabela.
+    safe_errors = [
+        {"route": "", "code": "local_scan_issue", "message": "A leitura local encontrou uma falha."}
+        for _ in inventory.errors[:500]
+    ]
+    known_auth_states = {"authenticated", "pending", "unauthenticated", "manual_required"}
+    auth_status = inventory.auth_status if inventory.auth_status in known_auth_states else "unknown"
     body = {
-        "sessionId": inventory.session_id,
+        "sessionId": hashlib.sha256(inventory.session_id.encode("utf-8")).hexdigest(),
         "startedAt": iso_utc(inventory.started_at),
         "finishedAt": iso_utc(inventory.finished_at or inventory.started_at),
-        "authStatus": inventory.auth_status,
+        "authStatus": auth_status,
         "scraplingVersion": inventory.scrapling_version,
         "parserVersion": inventory.parser_version,
         "recordsExtracted": sum(len(table.rows) for route in inventory.routes for table in route.tables),
-        "routes": routes,
-        "errors": inventory.errors,
+        "routes": [],
+        "errors": safe_errors,
     }
     url = settings.asa_api_base_url.rstrip("/") + "/api/v1/portal/sync"
     with httpx.Client(timeout=settings.timeout_ms / 1000, follow_redirects=False) as client:

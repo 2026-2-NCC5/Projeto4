@@ -138,7 +138,6 @@ Documentação completa em [`documentos/Entrega_2/Projeto_Interdisciplinar_Intel
 | `EXPO_PUBLIC_WAKE_WORD_ENABLED` | `true` | disponibiliza o "Hey Asa" (preferência do aluno nasce desligada) |
 | `EXPO_PUBLIC_BARGE_IN_ENABLED` | `true` | disponibiliza "Interromper por voz" (opt-in) |
 | `EXPO_PUBLIC_USE_MOCK_TICKETS` | `false` | chamados de demonstração no app (sem a API de chamados) |
-| `EXPO_PUBLIC_USE_MOCK_QUEUE` | `false` | fila presencial simulada no app (sem a API da fila) |
 
 Limites em `config/services.ts` (`VOICE`, `WAKE_WORD`, `HISTORY`). Nenhuma chave ou segredo no app.
 
@@ -185,8 +184,7 @@ enquanto há uma senha acompanhada.
 - Push: `expo-notifications`; a permissão é pedida só depois que o aluno começa a acompanhar uma senha. Exige
   build com projeto EAS (`extra.eas.projectId`) — no Expo Go/web os avisos aparecem só com o app aberto. Toque
   na notificação ou link `asaconecta://atendimento/fila` abre a fila.
-- `EXPO_PUBLIC_USE_MOCK_QUEUE=true` simula a fila no aparelho; em desenvolvimento a tela tem o painel
-  "Simulação" (cenários relativos à senha 0029).
+- A tela da fila usa apenas a API do ASA. Dados demonstrativos não são disponibilizados no app; fixtures simuladas existem somente na suíte automatizada.
 
 Detalhes: [`architecture/queue-presencial.md`](<../../../documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/architecture/queue-presencial.md>) e
 [ADR-007](<../../../documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-007-queue-presencial.md>).
