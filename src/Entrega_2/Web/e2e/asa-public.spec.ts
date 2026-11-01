@@ -76,6 +76,7 @@ test.describe('Portal público ASA', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Seu futuro começa com acolhimento e oportunidades.' })).toBeVisible();
+    await expect.poll(() => page.evaluate<number>('window.scrollY')).toBe(0);
     await expect(page).toHaveScreenshot('asa-home-mobile.png', { animations: 'disabled', fullPage: false, maxDiffPixelRatio: 0.01 });
   });
 });
