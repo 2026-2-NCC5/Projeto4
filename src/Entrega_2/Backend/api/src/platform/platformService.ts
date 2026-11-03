@@ -10,7 +10,7 @@ export const DATA_MODE_LABELS = {
 
 const WEEKDAY_LABELS = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
-export const CONTRACT_VERSION = '1.8';
+export const CONTRACT_VERSION = '1.9';
 
 /** Recursos que a administração pode desligar sem novo deploy (somados à flag de ambiente). */
 export type ToggleableFeature = 'appointments' | 'knowledgeBase' | 'assistantKnowledgeAnswers' | 'automations';

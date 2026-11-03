@@ -1,11 +1,16 @@
 import type {
   SupportActorType,
+  SupportAttachmentReviewStatus,
   SupportEventVisibility,
+  SupportMessageContentKind,
+  SupportMessageDeliveryState,
+  SupportMessageTransport,
   SupportNotificationKind,
   SupportTicketEventType,
   SupportTicketPriority,
   SupportTicketStatus,
 } from '../contracts/mobileApi.v1.js';
+import type { EventLogEntry } from './realtime/canonical.js';
 
 /** Prazo do chamado. `status` não é persistido: é calculado a cada leitura (ver sla.ts). */
 export interface SupportSlaRecord {
@@ -27,9 +32,12 @@ export interface SupportPendingActionRecord {
 export interface SupportTicketRecord {
   id: string;
   protocol: string;
-  studentId: string;
-  /** canal de abertura (app ou portal web) */
-  channel: 'app' | 'web';
+  /** null = contato do WhatsApp sem vínculo verificado: o chamado só existe para a equipe */
+  studentId: string | null;
+  /** canal de abertura (app, portal web ou WhatsApp) */
+  channel: 'app' | 'web' | 'whatsapp';
+  /** conversa do WhatsApp ligada ao chamado */
+  conversationId: string | null;
   clientRequestId: string;
   categoryId: string;
   subcategoryId: string | null;
@@ -84,10 +92,25 @@ export interface SupportEventRecord {
   createdAt: Date;
 }
 
-export interface SupportMessageRecord {
+/** Dados de transporte da mensagem. O estado de entrega é da mensagem, nunca do chamado. */
+export interface SupportMessageTransportFields {
+  transport: SupportMessageTransport;
+  channelId: string | null;
+  externalMessageId: string | null;
+  deliveryState: SupportMessageDeliveryState;
+  deliveryErrorCode: string | null;
+  deliveryUpdatedAt: Date | null;
+  providerTimestamp: Date | null;
+  contentKind: SupportMessageContentKind;
+  replyToExternalId: string | null;
+  /** false = só a equipe vê (ex.: WhatsApp sem espelhamento autorizado) */
+  studentVisible: boolean;
+}
+
+export interface SupportMessageRecord extends SupportMessageTransportFields {
   id: string;
   ticketId: string;
-  senderType: 'student' | 'agent';
+  senderType: 'student' | 'agent' | 'contact';
   senderUserId: string | null;
   senderName: string;
   content: string;
@@ -101,7 +124,7 @@ export interface SupportAttachmentRecord {
   id: string;
   ticketId: string | null;
   messageId: string | null;
-  uploadedByType: 'student' | 'agent';
+  uploadedByType: 'student' | 'agent' | 'contact';
   uploadedByUserId: string | null;
   uploaderName: string;
   fileName: string;
@@ -111,6 +134,10 @@ export interface SupportAttachmentRecord {
   createdAt: Date;
   /** só para envios pendentes; vinculados ao chamado não expiram */
   expiresAt: Date | null;
+  origin: 'upload' | 'whatsapp';
+  /** false = só a equipe vê; o aluno não recebe link nem metadados */
+  studentVisible: boolean;
+  reviewStatus: SupportAttachmentReviewStatus;
 }
 
 export interface SupportRatingRecord {
@@ -148,11 +175,19 @@ export interface NewSupportEvent {
 export interface NewSupportMessage {
   /** gerado no serviço para que anexos possam ser vinculados na mesma transação */
   id: string;
-  senderType: 'student' | 'agent';
+  senderType: 'student' | 'agent' | 'contact';
   senderUserId: string | null;
   senderName: string;
   content: string;
   clientMessageId: string | null;
+  /** ausente = conversa dentro do ASA Conecta */
+  transportFields?: Partial<SupportMessageTransportFields>;
+}
+
+export interface NewSupportOutboxItem {
+  messageId: string;
+  channelId: string;
+  dedupeKey: string;
 }
 
 export interface NewSupportNotification {
@@ -183,6 +218,8 @@ export type SupportTicketPatch = Partial<
     | 'cancelReason'
     | 'reopenedCount'
     | 'sla'
+    | 'studentId'
+    | 'conversationId'
   >
 >;
 
@@ -197,13 +234,20 @@ export interface SupportTicketChanges {
   attachments: SupportAttachmentLink[];
   notifications: NewSupportNotification[];
   rating?: { rating: 1 | 2 | 3 | 4 | 5; comment: string | null };
+  /** envio ao WhatsApp, gravado na mesma transação da mensagem */
+  outbox?: NewSupportOutboxItem[];
+  /** eventos de tempo real sem evento de histórico correspondente (ex.: etiquetas) */
+  extraLog?: EventLogEntry[];
   now: Date;
 }
 
 export interface NewSupportTicket {
   id: string;
-  studentId: string;
-  channel: 'app' | 'web';
+  studentId: string | null;
+  channel: 'app' | 'web' | 'whatsapp';
+  conversationId?: string | null;
+  /** primeira mensagem, na mesma transação (chamados nascidos no WhatsApp) */
+  messages?: NewSupportMessage[];
   clientRequestId: string;
   categoryId: string;
   subcategoryId: string | null;
@@ -245,6 +289,12 @@ export interface SupportTicketQuery {
   slaRisk?: 'at_risk' | 'near_deadline' | 'overdue';
   /** com mensagem do aluno ainda não lida pela equipe */
   unreadByStaff?: boolean;
+  /** canal de abertura */
+  channels?: Array<'app' | 'web' | 'whatsapp'>;
+  /** só contatos sem vínculo verificado (fila "Não identificado") */
+  unidentifiedOnly?: boolean;
+  /** com esta etiqueta */
+  tag?: string;
   /** modo demonstração desligado: chamados de contas fictícias ficam fora da fila */
   excludeDemo?: boolean;
   orderBy?: 'updated' | 'due';
@@ -278,14 +328,19 @@ export interface SupportRepository {
   listTickets(query: SupportTicketQuery): Promise<SupportTicketListRow[]>;
   countByStatus(studentId: string): Promise<Partial<Record<SupportTicketStatus, number>>>;
   listEvents(ticketId: string, options: { includeInternal: boolean }): Promise<SupportEventRecord[]>;
-  listMessages(ticketId: string): Promise<SupportMessageRecord[]>;
+  /** Primeira resposta da equipe: ação pública ou resposta pelo WhatsApp (que pode ser interna ao histórico). */
+  firstStaffResponseAt(ticketId: string): Promise<Date | null>;
+  /** `studentVisibleOnly`: o que o estudante pode ver (filtro no servidor, não na tela). */
+  listMessages(ticketId: string, options?: { studentVisibleOnly?: boolean }): Promise<SupportMessageRecord[]>;
   findMessageByClientId(ticketId: string, clientMessageId: string): Promise<SupportMessageRecord | null>;
-  listAttachments(ticketId: string): Promise<SupportAttachmentRecord[]>;
+  listAttachments(ticketId: string, options?: { studentVisibleOnly?: boolean }): Promise<SupportAttachmentRecord[]>;
   findRating(ticketId: string): Promise<SupportRatingRecord | null>;
   /** Lança ConflictError('ticket_changed') se a versão mudou e ValidationError se um anexo não puder ser vinculado. */
   applyChanges(changes: SupportTicketChanges): Promise<SupportTicketRecord>;
   /** Marca como lidas as mensagens da equipe e as notificações do chamado. Devolve quantas mensagens mudaram. */
   markRead(ticketId: string, studentId: string, now: Date): Promise<number>;
+  /** Liberar ou recusar um anexo (equipe). `studentVisible` ausente não altera a visibilidade. */
+  reviewAttachment(id: string, ticketId: string, input: { reviewStatus: SupportAttachmentReviewStatus; studentVisible?: boolean }): Promise<SupportAttachmentRecord | null>;
   /** Equipe abriu o chamado: mensagens do aluno ficam lidas (confirmação de leitura para o aluno). */
   markReadByStaff(ticketId: string, now: Date): Promise<number>;
   /** Também remove envios pendentes expirados (limpeza preguiçosa). */

@@ -1,0 +1,75 @@
+# Piloto WhatsApp: SÓ com autorização formal do número (docs/whatsapp/integration-wa-akg.md).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.whatsapp-pilot.yml --profile whatsapp-pilot up -d --build wa-akg
+#
+# Fica fora do docker-compose.yml porque exige segredos (`:?`), e o Compose interpola todos os serviços do arquivo,
+# mesmo os de perfis inativos: lá, a exigência quebraria o `docker compose up` de quem não usa o piloto.
+#
+# WA-AKG usa Baileys, cliente NÃO oficial do WhatsApp. A revisão auditada (04d6c0f) tem alertas críticos em dependências:
+# não publique sem atualizar. Nenhuma porta fica aberta fora de 127.0.0.1, e o gateway tem banco próprio (MySQL) em rede
+# separada: nunca aponte o Prisma dele para o banco do ASA, porque `prisma db push` roda a cada subida.
+# O build usa um clone auditado:
+#   git clone https://github.com/mrifqidaffaaditya/WA-AKG ../../../.references/WA-AKG
+#   git -C ../../../.references/WA-AKG checkout 04d6c0f5e484df469840697e3573654691792958
+name: projeto4
+
+services:
+  wa-akg-db:
+    profiles: [whatsapp-pilot]
+    image: mysql:8.0
+    container_name: asa-wa-akg-db
+    networks: [wa-akg-private]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${WA_AKG_MYSQL_ROOT_PASSWORD:?defina WA_AKG_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: wa_akg
+    volumes:
+      - wa-akg-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  wa-akg:
+    profiles: [whatsapp-pilot]
+    build:
+      context: ../../../.references/WA-AKG
+    container_name: asa-wa-akg
+    depends_on:
+      wa-akg-db:
+        condition: service_healthy
+    # uma única réplica: a sessão do WhatsApp vive na memória deste processo
+    restart: unless-stopped
+    networks: [wa-akg-private, default]
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: mysql://root:${WA_AKG_MYSQL_ROOT_PASSWORD}@wa-akg-db:3306/wa_akg
+      AUTH_SECRET: ${WA_AKG_AUTH_SECRET:?defina WA_AKG_AUTH_SECRET}
+      # cifra as credenciais do WhatsApp; sem isto o gateway reaproveita o AUTH_SECRET
+      ENCRYPTION_KEY: ${WA_AKG_ENCRYPTION_KEY:?defina WA_AKG_ENCRYPTION_KEY}
+      BASE_URL: http://localhost:${WA_AKG_PORT:-3100}
+      NEXTAUTH_URL: http://localhost:${WA_AKG_PORT:-3100}
+      ADMIN_EMAIL: ${WA_AKG_ADMIN_EMAIL:?defina WA_AKG_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${WA_AKG_ADMIN_PASSWORD:?defina WA_AKG_ADMIN_PASSWORD}
+      # o padrão do gateway envia telemetria a um servidor externo a cada 30 s
+      ENABLE_TELEMETRY: "false"
+    volumes:
+      - wa-akg-media:/app/data
+    ports:
+      - "127.0.0.1:${WA_AKG_PORT:-3100}:3000"
+    healthcheck:
+      # o gateway não tem rota de saúde: confere só se a porta responde. Saúde da sessão é lida pela API do ASA.
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/auth/login || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+
+networks:
+  wa-akg-private:
+    internal: true
+
+volumes:
+  wa-akg-mysql:
+  wa-akg-media:

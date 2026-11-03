@@ -20,4 +20,5 @@ export const EXPECTED_MIGRATIONS: readonly string[] = [
   '014_fecap_portal.sql',
   '015_asa_match.sql',
   '016_fecap_portal_data_minimization.sql',
+  '017_support_whatsapp.sql',
 ];

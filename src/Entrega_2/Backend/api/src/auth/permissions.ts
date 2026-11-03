@@ -65,6 +65,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<UserRole, readonly Permission[]>>
     'integrations:read',
     'health:read',
     'permissions:read',
+    'support_channels:manage',
   ],
 };
 
@@ -113,6 +114,7 @@ export const PERMISSION_DESCRIPTIONS: Readonly<Record<Permission, { group: strin
   'integrations:read': { group: 'Governança', label: 'Ver o estado das integrações' },
   'health:read': { group: 'Governança', label: 'Ver a saúde dos serviços' },
   'permissions:read': { group: 'Governança', label: 'Ver a matriz de permissões' },
+  'support_channels:manage': { group: 'Governança', label: 'Conectar e configurar canais de atendimento (WhatsApp), sem ler as conversas' },
 };
 
 export const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS) as Permission[];

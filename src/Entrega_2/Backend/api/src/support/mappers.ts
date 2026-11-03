@@ -2,8 +2,10 @@ import type {
   SupportAttachment,
   SupportFirstResponse,
   SupportNotification,
+  SupportStaffAttachment,
   SupportStaffTicket,
   SupportStaffTicketEvent,
+  SupportStaffTicketMessage,
   SupportTicket,
   SupportTicketEvent,
   SupportTicketMessage,
@@ -70,10 +72,15 @@ export function toAttachment(record: SupportAttachmentRecord): SupportAttachment
     mimeType: record.mimeType,
     sizeBytes: record.sizeBytes,
     createdAt: record.createdAt.toISOString(),
-    uploadedBy: record.uploadedByType,
+    // o aluno só recebe anexos de chamados vinculados a ele: o remetente sem vínculo aparece como ele mesmo
+    uploadedBy: record.uploadedByType === 'contact' ? 'student' : record.uploadedByType,
     uploaderName: record.uploaderName,
     messageId: record.messageId,
   };
+}
+
+export function toStaffAttachment(record: SupportAttachmentRecord): SupportStaffAttachment {
+  return { ...toAttachment(record), uploadedBy: record.uploadedByType, origin: record.origin, studentVisible: record.studentVisible, reviewStatus: record.reviewStatus };
 }
 
 export function toEvent(record: SupportEventRecord): SupportTicketEvent {
@@ -98,12 +105,36 @@ export function toStaffEvent(record: SupportEventRecord): SupportStaffTicketEven
 export function toMessage(record: SupportMessageRecord, attachments: SupportAttachmentRecord[]): SupportTicketMessage {
   return {
     id: record.id,
-    senderType: record.senderType,
+    // o aluno só vê mensagens com vínculo verificado: as dele aparecem como dele
+    senderType: record.senderType === 'contact' ? 'student' : record.senderType,
     senderName: record.senderName,
     content: record.content,
     createdAt: record.createdAt.toISOString(),
     readAt: iso(record.readAt),
     attachments: attachments.filter((item) => item.messageId === record.id).map(toAttachment),
+    transport: record.transport,
+  };
+}
+
+/** Falha ou resultado ambíguo: a equipe decide reenviar, nunca o sistema. */
+const RETRYABLE_DELIVERY = new Set(['failed', 'unknown']);
+
+export function toStaffMessage(record: SupportMessageRecord, attachments: SupportAttachmentRecord[]): SupportStaffTicketMessage {
+  return {
+    id: record.id,
+    senderType: record.senderType,
+    senderName: record.senderName,
+    content: record.content,
+    createdAt: (record.providerTimestamp ?? record.createdAt).toISOString(),
+    readAt: iso(record.readAt),
+    attachments: attachments.filter((item) => item.messageId === record.id).map(toStaffAttachment),
+    transport: record.transport,
+    deliveryState: record.deliveryState,
+    deliveryErrorCode: record.deliveryErrorCode,
+    deliveryUpdatedAt: iso(record.deliveryUpdatedAt),
+    contentKind: record.contentKind,
+    studentVisible: record.studentVisible,
+    canRetry: record.senderType === 'agent' && record.transport === 'whatsapp' && RETRYABLE_DELIVERY.has(record.deliveryState),
   };
 }
 
@@ -125,7 +156,7 @@ export function activityFrom(events: SupportEventRecord[], messages: SupportMess
   const publicEvents = events.filter((event) => event.visibility === 'public');
   const last = publicEvents.reduce<SupportEventRecord | null>((latest, event) => (!latest || event.createdAt >= latest.createdAt ? event : latest), null);
   return {
-    unreadCount: messages.filter((message) => message.senderType === 'agent' && !message.readAt).length,
+    unreadCount: messages.filter((message) => message.senderType === 'agent' && message.studentVisible && !message.readAt).length,
     lastActivity: last ? { title: last.title, createdAt: last.createdAt } : null,
   };
 }
@@ -136,6 +167,7 @@ export interface TicketBundle {
   messages: SupportMessageRecord[];
   attachments: SupportAttachmentRecord[];
   rating: SupportRatingRecord | null;
+  firstResponseAt: Date | null;
 }
 
 /** Até quando o estudante pode reabrir (null quando a reabertura não se aplica). */
@@ -149,12 +181,9 @@ export function reopenDeadline(ticket: SupportTicketRecord): Date | null {
  * Primeira resposta da equipe: a primeira ação PÚBLICA da equipe no histórico (mensagem, assumir, encaminhar,
  * pedir ação, resolver). Mesma regra do indicador de métricas e do CSV.
  */
-export function firstResponseOf(ticket: SupportTicketRecord, publicEvents: SupportEventRecord[], now: Date): SupportFirstResponse | null {
+export function firstResponseOf(ticket: SupportTicketRecord, responded: Date | null, now: Date): SupportFirstResponse | null {
   if (!ticket.firstResponseDueAt) return null;
   const due = ticket.firstResponseDueAt;
-  const responded = publicEvents
-    .filter((event) => event.actorType === 'agent' || event.actorType === 'department')
-    .reduce<Date | null>((first, event) => (!first || event.createdAt < first ? event.createdAt : first), null);
   const status: SupportFirstResponse['status'] = responded
     ? responded.getTime() <= due.getTime()
       ? 'met'
@@ -192,7 +221,7 @@ export function toTicket(bundle: TicketBundle, now: Date): SupportTicket {
     canReopen: deadline !== null && deadline.getTime() > now.getTime(),
     canRate: (ticket.status === 'resolved' || ticket.status === 'closed') && !rating,
     reopenDeadline: deadline ? deadline.toISOString() : null,
-    firstResponse: firstResponseOf(ticket, publicEvents, now),
+    firstResponse: firstResponseOf(ticket, bundle.firstResponseAt, now),
     events: publicEvents.map(toEvent),
     messages: messages.map((message) => toMessage(message, attachments)),
     attachments: attachments.map(toAttachment),
@@ -200,6 +229,13 @@ export function toTicket(bundle: TicketBundle, now: Date): SupportTicket {
 }
 
 export function toStaffTicket(bundle: TicketBundle, student: SupportStaffTicket['student'], now: Date): SupportStaffTicket {
-  const { events: _publicEvents, ...base } = toTicket(bundle, now);
-  return { ...base, student, events: bundle.events.map(toStaffEvent) };
+  const { events: _publicEvents, messages: _publicMessages, attachments: _publicAttachments, ...base } = toTicket(bundle, now);
+  return {
+    ...base,
+    student,
+    version: bundle.ticket.version,
+    events: bundle.events.map(toStaffEvent),
+    messages: bundle.messages.map((message) => toStaffMessage(message, bundle.attachments)),
+    attachments: bundle.attachments.map(toStaffAttachment),
+  };
 }

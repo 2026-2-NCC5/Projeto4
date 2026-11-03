@@ -37,6 +37,8 @@ import type {
 } from './types.js';
 // ---- support (Atendimento)
 import { createPgSupportRepository } from './pgSupportRepository.js';
+import { PgSupportFeedRepository } from '../support/realtime/feedRepository.js';
+import { PgWhatsAppRepository } from '../support/whatsapp/repository.js';
 // ---- platform (portal web, auditoria, avisos)
 import { createPgPlatformRepositories } from './pgPlatformRepositories.js';
 import { PgAnalyticsRepository } from '../operations/analyticsRepository.js';
@@ -879,6 +881,9 @@ export function createPgRepositories(pool: DbPool): Repositories {
     deviceCredentials: new PgDeviceCredentialRepository(pool),
     // ---- support (Atendimento)
     support: createPgSupportRepository(pool),
+    // ---- support-whatsapp (Central de Atendimento)
+    supportFeed: new PgSupportFeedRepository(pool),
+    whatsapp: new PgWhatsAppRepository(pool),
     // ---- platform (portal web, auditoria, avisos)
     ...createPgPlatformRepositories(pool),
     analytics: new PgAnalyticsRepository(pool),

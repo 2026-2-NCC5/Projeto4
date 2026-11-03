@@ -54,6 +54,26 @@ const envSchema = z.object({
   VOICE_ASSISTANT_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   INTENT_MIN_CONFIDENCE: z.coerce.number().min(0).max(1).default(0.6),
   APP_TIMEZONE: z.string().min(1).default('America/Sao_Paulo'),
+  // ---- support-whatsapp (Central de Atendimento WhatsApp). Sem provedor, o atendimento funciona só no app e no portal.
+  ASA_WHATSAPP_PROVIDER: z.enum(['none', 'fake', 'wa-akg', 'meta-cloud-api']).default('none'),
+  ASA_SUPPORT_DEMO_MODE: z.enum(['true', 'false', '1', '0']).default('false'),
+  ASA_WHATSAPP_OUTBOUND_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
+  ASA_WHATSAPP_SESSION_MANAGEMENT_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
+  // Espelhar mensagens do WhatsApp no app exige base legal definida pela instituição; o mínimo é status e eventos públicos
+  ASA_SUPPORT_MIRROR_WHATSAPP_TO_APP: z.enum(['true', 'false', '1', '0']).default('false'),
+  ASA_WHATSAPP_WEBHOOK_SECRET: z.string().min(32, 'ASA_WHATSAPP_WEBHOOK_SECRET deve ter pelo menos 32 caracteres').optional(),
+  // Cifra e impressão digital de telefones. Trocar esta chave invalida os vínculos existentes
+  ASA_WHATSAPP_PII_KEY: z.string().min(32, 'ASA_WHATSAPP_PII_KEY deve ter pelo menos 32 caracteres').optional(),
+  ASA_SUPPORT_PUBLIC_BASE_URL: z.string().url().optional(),
+  ASA_SUPPORT_EVENT_RETENTION_DAYS: z.coerce.number().int().min(1).max(3650).default(180),
+  ASA_WA_AKG_BASE_URL: z.string().url().optional(),
+  ASA_WA_AKG_API_KEY: z.string().min(1).optional(),
+  ASA_WA_AKG_TIMEOUT_MS: z.coerce.number().int().min(500).max(60_000).default(10_000),
+  ASA_META_GRAPH_API_VERSION: z.string().regex(/^v\d+\.\d+$/).default('v26.0'),
+  ASA_META_ACCESS_TOKEN: z.string().min(1).optional(),
+  ASA_META_PHONE_NUMBER_ID: z.string().min(1).optional(),
+  ASA_META_VERIFY_TOKEN: z.string().min(1).optional(),
+  ASA_META_APP_SECRET: z.string().min(1).optional(),
   // ---- queue (Fila presencial do ASA): UM monitor no backend consulta a fonte pública
   ASA_QUEUE_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
   // A fonte real permanece desativada sem aprovação e opt-in. mock/demo só pode ser usado pelo ambiente de testes.
@@ -148,6 +168,7 @@ export interface AppConfig {
   database: { poolMax: number };
   jobs: { cronSecret: string | null };
   support: { maxAttachmentBytes: number };
+  whatsapp: WhatsAppConfig;
   mail: {
     transport: 'smtp' | 'disabled';
     smtp: { host: string; port: number; secure: boolean; user: string | undefined; pass: string | undefined } | null;
@@ -193,6 +214,58 @@ export interface AppConfig {
 }
 
 export type QueueProviderName = 'fecap' | 'fecap-html' | 'mock';
+
+/** Configuração do canal WhatsApp. Falta de segredo desliga o canal (com o motivo) e nunca derruba a API acadêmica. */
+export interface WhatsAppConfig {
+  provider: 'fake' | 'wa-akg' | 'meta-cloud-api' | null;
+  /** por que não há provedor ativo (cita nomes de variáveis, nunca valores) */
+  disabledReason: string | null;
+  demoMode: boolean;
+  outboundEnabled: boolean;
+  sessionManagementEnabled: boolean;
+  mirrorToApp: boolean;
+  webhookSecret: string | null;
+  piiKey: string | null;
+  publicBaseUrl: string | null;
+  eventRetentionDays: number;
+  waAkg: { baseUrl: string; apiKey: string; timeoutMs: number } | null;
+  meta: { graphApiVersion: string; accessToken: string; phoneNumberId: string; verifyToken: string; appSecret: string } | null;
+}
+
+function resolveWhatsAppConfig(env: z.infer<typeof envSchema>, appEnv: AppEnvironment): WhatsAppConfig {
+  const flag = (value: string) => value === 'true' || value === '1';
+  const base = {
+    outboundEnabled: flag(env.ASA_WHATSAPP_OUTBOUND_ENABLED),
+    sessionManagementEnabled: flag(env.ASA_WHATSAPP_SESSION_MANAGEMENT_ENABLED),
+    mirrorToApp: flag(env.ASA_SUPPORT_MIRROR_WHATSAPP_TO_APP),
+    publicBaseUrl: env.ASA_SUPPORT_PUBLIC_BASE_URL ?? null,
+    eventRetentionDays: env.ASA_SUPPORT_EVENT_RETENTION_DAYS,
+  };
+  const off = (disabledReason: string | null): WhatsAppConfig => ({ ...base, provider: null, disabledReason, demoMode: false, outboundEnabled: false, sessionManagementEnabled: false, webhookSecret: null, piiKey: null, waAkg: null, meta: null });
+  if (env.ASA_WHATSAPP_PROVIDER === 'none') return off('Nenhum provedor configurado (ASA_WHATSAPP_PROVIDER).');
+  if (env.ASA_WHATSAPP_PROVIDER === 'fake') {
+    if (env.NODE_ENV === 'production' || appEnv === 'production') throw new Error('Configuração inválida: ASA_WHATSAPP_PROVIDER=fake nunca é permitido em produção');
+    // Demonstração isolada: nada sai da API. Sem chaves próprias, deriva de um valor fixo por ser ambiente descartável.
+    const devSecret = `asa-conecta-whatsapp-demo:${env.JWT_SECRET}`;
+    // nada sai para o WhatsApp neste provedor: as travas de envio e de sessão só fazem sentido nos provedores reais
+    return { ...base, outboundEnabled: true, sessionManagementEnabled: true, provider: 'fake', disabledReason: null, demoMode: true, webhookSecret: env.ASA_WHATSAPP_WEBHOOK_SECRET ?? devSecret, piiKey: env.ASA_WHATSAPP_PII_KEY ?? devSecret, waAkg: null, meta: null };
+  }
+  const missing: string[] = [];
+  if (!env.ASA_WHATSAPP_PII_KEY) missing.push('ASA_WHATSAPP_PII_KEY');
+  if (env.ASA_WHATSAPP_PROVIDER === 'wa-akg') {
+    if (!env.ASA_WHATSAPP_WEBHOOK_SECRET) missing.push('ASA_WHATSAPP_WEBHOOK_SECRET');
+    if (!env.ASA_WA_AKG_BASE_URL) missing.push('ASA_WA_AKG_BASE_URL');
+    if (!env.ASA_WA_AKG_API_KEY) missing.push('ASA_WA_AKG_API_KEY');
+    if (missing.length > 0) return off(`Provedor wa-akg sem configuração: ${missing.join(', ')}.`);
+    return { ...base, provider: 'wa-akg', disabledReason: null, demoMode: false, webhookSecret: env.ASA_WHATSAPP_WEBHOOK_SECRET!, piiKey: env.ASA_WHATSAPP_PII_KEY!, waAkg: { baseUrl: env.ASA_WA_AKG_BASE_URL!, apiKey: env.ASA_WA_AKG_API_KEY!, timeoutMs: env.ASA_WA_AKG_TIMEOUT_MS }, meta: null };
+  }
+  if (!env.ASA_META_ACCESS_TOKEN) missing.push('ASA_META_ACCESS_TOKEN');
+  if (!env.ASA_META_PHONE_NUMBER_ID) missing.push('ASA_META_PHONE_NUMBER_ID');
+  if (!env.ASA_META_VERIFY_TOKEN) missing.push('ASA_META_VERIFY_TOKEN');
+  if (!env.ASA_META_APP_SECRET) missing.push('ASA_META_APP_SECRET');
+  if (missing.length > 0) return off(`Provedor meta-cloud-api sem configuração: ${missing.join(', ')}.`);
+  return { ...base, provider: 'meta-cloud-api', disabledReason: null, demoMode: false, webhookSecret: null, piiKey: env.ASA_WHATSAPP_PII_KEY!, waAkg: null, meta: { graphApiVersion: env.ASA_META_GRAPH_API_VERSION, accessToken: env.ASA_META_ACCESS_TOKEN!, phoneNumberId: env.ASA_META_PHONE_NUMBER_ID!, verifyToken: env.ASA_META_VERIFY_TOKEN!, appSecret: env.ASA_META_APP_SECRET! } };
+}
 
 export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   // Variáveis vazias no .env (ex.: TERMS_URL=) equivalem a não definidas.
@@ -269,6 +342,7 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     database: { poolMax: env.DATABASE_POOL_MAX },
     jobs: { cronSecret: env.CRON_SECRET ?? null },
     support: { maxAttachmentBytes: env.SUPPORT_MAX_ATTACHMENT_BYTES ?? (onVercel ? 3 * 1024 * 1024 : 5 * 1024 * 1024) },
+    whatsapp: resolveWhatsAppConfig(env, appEnv),
     jwt: { secret: env.JWT_SECRET, expiresIn: env.JWT_EXPIRES_IN, issuer: 'asa-conecta-api', audience: 'asa-conecta-mobile' },
     refreshTokenTtlDays: env.REFRESH_TOKEN_TTL_DAYS,
     sessionTtlHours: env.SESSION_TTL_HOURS,

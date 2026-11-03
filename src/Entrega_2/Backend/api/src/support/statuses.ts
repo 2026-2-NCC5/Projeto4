@@ -33,6 +33,36 @@ export const STAFF_SETTABLE_STATUSES: ReadonlySet<SupportTicketStatus> = new Set
   'cancelled',
 ]);
 
+/**
+ * Tabela de decisão das transições pela equipe (origem → destinos). O que não está aqui é recusado com
+ * `invalid_transition`. Ações específicas têm rota própria e seguem a mesma tabela: pedir ação ao estudante
+ * (→ waiting_student), resolver (→ resolved) e reabrir (resolved|closed → reopened).
+ *
+ * Equivalência com os estados do documento de arquitetura: NEW = received; TRIAGE = triage;
+ * OPEN = assigned|in_analysis|in_progress; WAITING_STUDENT = waiting_student;
+ * WAITING_INTERNAL = waiting_department|waiting_external; RESOLVED, CLOSED e REOPENED = iguais.
+ */
+const WORK: readonly SupportTicketStatus[] = ['triage', 'assigned', 'in_analysis', 'in_progress', 'waiting_department', 'waiting_external'];
+export const STAFF_TRANSITIONS: Readonly<Record<SupportTicketStatus, readonly SupportTicketStatus[]>> = {
+  submitted: [...WORK, 'closed', 'cancelled'],
+  received: [...WORK, 'closed', 'cancelled'],
+  triage: [...WORK, 'closed', 'cancelled'],
+  assigned: [...WORK, 'closed', 'cancelled'],
+  in_analysis: [...WORK, 'closed', 'cancelled'],
+  in_progress: [...WORK, 'closed', 'cancelled'],
+  waiting_student: [...WORK, 'closed', 'cancelled'],
+  waiting_department: [...WORK, 'closed', 'cancelled'],
+  waiting_external: [...WORK, 'closed', 'cancelled'],
+  reopened: [...WORK, 'closed', 'cancelled'],
+  resolved: ['closed'],
+  closed: [],
+  cancelled: [],
+};
+
+export function canTransition(from: SupportTicketStatus, to: SupportTicketStatus): boolean {
+  return STAFF_TRANSITIONS[from].includes(to);
+}
+
 /** Textos humanos (também usados nas notificações, que precisam sair prontas do servidor). */
 export const STATUS_LABELS: Record<SupportTicketStatus, string> = {
   submitted: 'Enviado',

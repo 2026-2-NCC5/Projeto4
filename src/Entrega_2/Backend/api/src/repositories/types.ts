@@ -20,6 +20,8 @@ import type {
 import type { SessionChannel, UserRole } from '../contracts/mobileApi.v1.js';
 // ---- support (Atendimento)
 import type { SupportRepository } from '../support/types.js';
+import type { SupportFeedRepository } from '../support/realtime/feedRepository.js';
+import type { WhatsAppRepository } from '../support/whatsapp/repository.js';
 // ---- platform (portal web, auditoria, avisos)
 import type { AuditRepository, InboxRepository, SettingsRepository, UserAdminRecord, UserListQuery } from '../platform/types.js';
 import type { AnalyticsRepository } from '../operations/analyticsRepository.js';
@@ -168,6 +170,11 @@ export interface Repositories {
   knowledge?: KnowledgeRepository;
   /** administração: metas de SLA, automações e consultas de saúde (só PostgreSQL) */
   admin?: AdminRepository;
+  // ---- support-whatsapp (Central de Atendimento): só PostgreSQL
+  /** log de eventos do atendimento (tempo real e reconciliação por cursor) */
+  supportFeed?: SupportFeedRepository;
+  /** canais, conversas, vínculos, inbox e outbox do WhatsApp */
+  whatsapp?: WhatsAppRepository;
   /** verificação de saúde da persistência */
   ping(): Promise<boolean>;
 }

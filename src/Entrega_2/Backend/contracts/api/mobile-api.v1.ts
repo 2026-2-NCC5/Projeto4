@@ -795,6 +795,8 @@ export interface SupportTicketMessage {
   /** quando o outro lado leu: mensagens da equipe → aluno; mensagens do aluno → equipe (v1.5); null = não lida */
   readAt: string | null;
   attachments: SupportAttachment[];
+  /** v1.9: `whatsapp` = espelhada do canal WhatsApp; ausente ou `in_app` = conversa dentro do ASA Conecta */
+  transport?: SupportMessageTransport;
 }
 
 export interface SupportTicketRating {
@@ -810,13 +812,19 @@ export interface SupportLastActivity {
 
 /** v1.5: dados internos da fila da equipe (preenchidos só em /api/support/staff/*; nunca para o aluno). */
 export interface SupportStaffSummaryInfo {
-  studentId: string;
+  /** v1.9: null = conversa do WhatsApp sem vínculo verificado com um estudante */
+  studentId: string | null;
   studentName: string;
   registrationNumber: string;
   assignedTeam: string;
   assignedAgentId: string | null;
   assignedAgentName: string | null;
-  channel: 'app' | 'web';
+  channel: 'app' | 'web' | 'whatsapp';
+  /** v1.9: contato mascarado do WhatsApp (nunca o número inteiro) */
+  contactLabel?: string | null;
+  /** v1.9: início da última mensagem da conversa (só para a equipe) */
+  lastMessagePreview?: string | null;
+  tags?: string[];
 }
 
 /** Item da lista "Meus chamados". */
@@ -855,8 +863,8 @@ export interface SupportFirstResponse {
 
 export interface SupportTicket extends SupportTicketSummary {
   description: string;
-  /** canal de abertura; `web` desde a v1.5 (portal) */
-  channel: 'app' | 'web';
+  /** canal de abertura; `web` desde a v1.5 (portal), `whatsapp` desde a v1.9 */
+  channel: 'app' | 'web' | 'whatsapp';
   /** equipe que está cuidando agora (ex.: "Secretaria Acadêmica") */
   assignedTeam: string;
   pendingAction: SupportPendingAction | null;
@@ -974,13 +982,21 @@ export interface SupportStaffTicketEvent extends SupportTicketEvent {
   visibility: SupportEventVisibility;
 }
 
-export interface SupportStaffTicket extends Omit<SupportTicket, 'events'> {
-  student: { id: string; fullName: string; registrationNumber: string };
+export interface SupportStaffTicket extends Omit<SupportTicket, 'events' | 'messages' | 'attachments'> {
+  /** v1.9: null = contato do WhatsApp ainda sem vínculo verificado; dados acadêmicos ficam indisponíveis */
+  student: { id: string; fullName: string; registrationNumber: string } | null;
   events: SupportStaffTicketEvent[];
+  messages: SupportStaffTicketMessage[];
+  attachments: SupportStaffAttachment[];
   /** v1.5: atendente que assumiu (interno; o aluno vê só a equipe) */
   assignedAgent?: { id: string; fullName: string } | null;
   /** v1.5: mensagens do aluno ainda não lidas pela equipe */
   unreadFromStudent?: number;
+  /** v1.9: conversa do WhatsApp ligada ao chamado (null nos chamados do app/portal) */
+  conversation?: SupportConversationInfo | null;
+  tags?: string[];
+  /** v1.9: versão atual; ações com `expectedVersion` recebem 409 `ticket_changed` se ela mudou */
+  version?: number;
 }
 
 export interface SupportStaffStatusRequest {
@@ -999,6 +1015,12 @@ export interface SupportStaffMessageRequest {
   attachmentIds?: string[];
   /** pede uma ação do estudante e coloca o chamado em `waiting_student` */
   requestAction?: { title: string; description: string; expectsAttachment?: boolean };
+  /** v1.9: `whatsapp` entra na outbox e responde 202; padrão `in_app` (conversa dentro do ASA Conecta) */
+  transport?: SupportMessageTransport;
+  /** v1.9: chave de idempotência da resposta; repetir devolve a mesma mensagem */
+  clientMessageId?: string;
+  /** v1.9: responder mesmo com o chamado atribuído a outra pessoa (fica registrado) */
+  overrideAssignee?: boolean;
 }
 
 export interface SupportStaffNoteRequest {
@@ -1011,6 +1033,389 @@ export interface SupportStaffPriorityRequest {
 
 export interface SupportStaffResolveRequest {
   resolution: string;
+}
+
+// ---- support-whatsapp (Central de Atendimento WhatsApp) ----------------------
+// Adição compatível (v1.9). O chamado continua sendo o mesmo registro: o WhatsApp é um transporte. O status de
+// entrega é da mensagem e NUNCA é o status do chamado. Nenhum cliente fala com o gateway: tudo passa pela API.
+// Rotas: GET /api/support/staff/events, GET /api/support/me/events, /api/support/staff/*, /api/support/me/*,
+// /api/admin/support/*, /api/internal/webhooks/*. O estudante vem sempre da sessão, nunca do corpo.
+
+export type SupportMessageTransport = 'in_app' | 'whatsapp';
+
+/** Só muda com confirmação do provedor. `unknown` = resposta ambígua: pode ter sido enviada; nunca há reenvio automático. */
+export type SupportMessageDeliveryState = 'not_applicable' | 'queued' | 'sending' | 'sent' | 'delivered' | 'read' | 'failed' | 'unknown';
+
+export type SupportMessageContentKind = 'text' | 'image' | 'document' | 'audio' | 'video' | 'sticker' | 'location' | 'contact' | 'unsupported';
+
+export interface SupportStaffTicketMessage extends Omit<SupportTicketMessage, 'senderType' | 'attachments'> {
+  /** `contact` = pessoa no WhatsApp ainda sem vínculo verificado */
+  senderType: 'student' | 'agent' | 'contact';
+  transport: SupportMessageTransport;
+  deliveryState: SupportMessageDeliveryState;
+  /** código seguro para exibir (nunca o texto cru do provedor) */
+  deliveryErrorCode: string | null;
+  deliveryUpdatedAt: string | null;
+  contentKind: SupportMessageContentKind;
+  /** false = o estudante não vê esta mensagem no app */
+  studentVisible: boolean;
+  attachments: SupportStaffAttachment[];
+  /** a equipe pode pedir nova tentativa (falha ou resultado desconhecido) */
+  canRetry: boolean;
+}
+
+export type SupportAttachmentReviewStatus = 'received' | 'analyzed' | 'rejected' | 'released';
+
+export interface SupportStaffAttachment extends Omit<SupportAttachment, 'uploadedBy'> {
+  uploadedBy: 'student' | 'agent' | 'contact';
+  origin: 'upload' | 'whatsapp';
+  studentVisible: boolean;
+  reviewStatus: SupportAttachmentReviewStatus;
+}
+
+export interface SupportAttachmentReviewRequest {
+  reviewStatus: SupportAttachmentReviewStatus;
+  /** liberar ao estudante exige vínculo verificado; recusado nunca fica visível */
+  studentVisible?: boolean;
+}
+
+/** Janela de atendimento de provedores oficiais. `not_applicable` = provedor sem essa regra. */
+export interface SupportServiceWindow {
+  kind: 'not_applicable' | 'open' | 'expired';
+  expiresAt: string | null;
+}
+
+export interface SupportConversationInfo {
+  id: string;
+  channelId: string;
+  channelName: string;
+  /** número mascarado; o número completo nunca sai do servidor */
+  contactLabel: string;
+  /** nome informado pelo WhatsApp: dado não verificado */
+  contactName: string | null;
+  identified: boolean;
+  linkedAt: string | null;
+  lastInboundAt: string | null;
+  serviceWindow: SupportServiceWindow;
+  /** se uma resposta pelo WhatsApp seria aceita agora, e por que não */
+  replyBlock: SupportWhatsAppReplyBlock | null;
+}
+
+export type SupportWhatsAppReplyBlock = 'outbound_disabled' | 'channel_disconnected' | 'channel_paused' | 'provider_unavailable' | 'template_required' | 'consent_required';
+
+export type SupportConnectionStatus = 'DISCONNECTED' | 'CONNECTING' | 'QR_REQUIRED' | 'CONNECTED' | 'DEGRADED' | 'ERROR';
+
+export type SupportProviderName = 'fake' | 'wa-akg' | 'meta-cloud-api';
+
+export type SupportEventAudience = 'STUDENT_VISIBLE' | 'STAFF_ONLY' | 'ADMIN_ONLY';
+
+export type SupportCanonicalEventType =
+  | 'support.ticket.created'
+  | 'support.ticket.status_changed'
+  | 'support.ticket.assigned'
+  | 'support.ticket.transferred'
+  | 'support.ticket.priority_changed'
+  | 'support.ticket.reopened'
+  | 'support.ticket.resolved'
+  | 'support.ticket.linked'
+  | 'support.ticket.rated'
+  | 'support.ticket.note_added'
+  | 'support.ticket.tags_changed'
+  | 'support.message.created'
+  | 'support.message.delivery_updated'
+  | 'support.message.attachment_added'
+  | 'support.document.requested'
+  | 'support.document.received'
+  | 'support.channel.connection_updated';
+
+/** Envelope versionado. `data` traz só identificadores e rótulos públicos: nunca texto de mensagem, telefone ou nota. */
+export interface SupportEventEnvelope {
+  schemaVersion: '1.0';
+  eventId: string;
+  correlationId: string | null;
+  /** null em eventos de canal */
+  ticketId: string | null;
+  /** monotônica por chamado; lacuna indica evento que este público não vê */
+  sequence: number | null;
+  type: SupportCanonicalEventType;
+  occurredAt: string;
+  actor: { type: string; id?: string | null };
+  audience: SupportEventAudience;
+  data: Record<string, string | number | boolean | null>;
+}
+
+/**
+ * GET /api/support/staff/events e GET /api/support/me/events (?since=<cursor>&wait=<segundos>).
+ * Sem `since` devolve só o cursor atual. Long polling: `wait` até 25 s; toda chamada reautentica, então revogar a
+ * sessão ou o papel corta o acesso na chamada seguinte. `resyncRequired` = o cursor é mais antigo que a retenção.
+ */
+export interface SupportEventFeed {
+  events: SupportEventEnvelope[];
+  nextCursor: string;
+  hasMore: boolean;
+  resyncRequired: boolean;
+  serverTime: string;
+}
+
+/** Resumo do canal para a equipe (sem dados de configuração). */
+export interface SupportChannelStatusItem {
+  id: string;
+  name: string;
+  provider: SupportProviderName;
+  state: 'enabled' | 'paused' | 'disabled';
+  status: SupportConnectionStatus;
+  maskedNumber: string | null;
+  isDemo: boolean;
+  lastWebhookAt: string | null;
+}
+
+/** GET /api/support/staff/whatsapp/status — alimenta o indicador real do canal na Central. */
+export interface SupportWhatsAppStatus {
+  /** há provedor configurado neste ambiente */
+  configured: boolean;
+  /** provedor de demonstração: nenhuma mensagem sai para o WhatsApp */
+  demoMode: boolean;
+  outboundEnabled: boolean;
+  provider: SupportProviderName | null;
+  channels: SupportChannelStatusItem[];
+  checkedAt: string;
+}
+
+/** GET /api/support/staff/inbox/counts — contadores da caixa de entrada. */
+export interface SupportInboxCounts {
+  newTickets: number;
+  mine: number;
+  waitingStudent: number;
+  unidentified: number;
+  whatsapp: number;
+  unread: number;
+}
+
+export interface SupportTicketTransferRequest {
+  team: string;
+  /** motivo interno (obrigatório): fica no histórico da equipe */
+  reason: string;
+  /** observação pública ao estudante */
+  publicNote?: string;
+  expectedVersion?: number;
+}
+
+export interface SupportStaffReopenRequest {
+  reason: string;
+}
+
+export interface SupportTicketTagsRequest {
+  tags: string[];
+}
+
+export interface SupportTagList {
+  items: { id: string; name: string }[];
+}
+
+export interface SupportPresenceRequest {
+  composing?: boolean;
+}
+
+export interface SupportPresenceView {
+  /** outras pessoas da equipe com este chamado aberto agora */
+  viewers: { userId: string; name: string; composing: boolean; lastSeenAt: string }[];
+}
+
+export interface SupportSavedReply {
+  id: string;
+  categoryId: string | null;
+  title: string;
+  body: string;
+  approvalStatus: 'draft' | 'approved' | 'archived';
+  updatedAt: string;
+}
+
+export interface SupportSavedReplyList {
+  items: SupportSavedReply[];
+}
+
+export interface SupportSavedReplyRequest {
+  categoryId?: string | null;
+  title: string;
+  body: string;
+}
+
+export interface SupportSavedReplyStatusRequest {
+  approvalStatus: 'approved' | 'archived';
+}
+
+/** Indicadores calculados a partir de eventos reais; `null` = sem dados, nunca um valor estimado. */
+export interface SupportWhatsAppMetrics {
+  from: string;
+  to: string;
+  ticketsOpened: number;
+  ticketsResolved: number;
+  unidentifiedOpen: number;
+  inboundMessages: number;
+  outboundMessages: number;
+  deliveryFailures: number;
+  deliveryUnknown: number;
+  medianFirstResponseMinutes: number | null;
+}
+
+// Administração do canal (permissão support_channels:manage) --------------------
+
+export interface SupportChannelView extends SupportChannelStatusItem {
+  team: string;
+  publicNumber: string | null;
+  authorizationReference: string | null;
+  lastConnectedAt: string | null;
+  lastDisconnectedAt: string | null;
+  lastErrorCode: string | null;
+  healthCheckedAt: string | null;
+  circuitOpenUntil: string | null;
+  sessionManagementEnabled: boolean;
+  /** rota de ingestão a registrar no gateway (o segredo nunca aparece) */
+  webhookPath: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SupportChannelList {
+  items: SupportChannelView[];
+  /** provedor configurado neste ambiente (canais só podem ser criados para ele) */
+  provider: SupportProviderName | null;
+  configured: boolean;
+  /** por que o provedor não está disponível (sem nomes de segredo) */
+  disabledReason: string | null;
+  demoMode: boolean;
+}
+
+export interface SupportChannelCreateRequest {
+  name: string;
+  team: string;
+  publicNumber?: string | null;
+  authorizationReference?: string | null;
+}
+
+export interface SupportChannelPatchRequest {
+  name?: string;
+  team?: string;
+  state?: 'enabled' | 'paused' | 'disabled';
+  publicNumber?: string | null;
+  authorizationReference?: string | null;
+}
+
+/** POST /api/admin/support/channels/:id/connect — o QR só existe nesta resposta e só para a administração. */
+export interface SupportChannelConnectResult {
+  channel: SupportChannelView;
+  action: 'qr' | 'external-setup' | 'none';
+  qr: { format: 'text' | 'image_data_url'; value: string; expiresAt: string | null } | null;
+  message: string;
+}
+
+export interface SupportProviderHealth {
+  provider: SupportProviderName | null;
+  configured: boolean;
+  demoMode: boolean;
+  disabledReason: string | null;
+  outbox: { pending: number; processing: number; failed: number; unknown: number; oldestPendingAt: string | null };
+  inbox: { pending: number; failed: number; lastReceivedAt: string | null };
+  eventLagSeconds: number | null;
+  channels: SupportChannelStatusItem[];
+  checkedAt: string;
+}
+
+export interface SupportContactReview {
+  id: string;
+  contactMasked: string;
+  createdAt: string;
+}
+
+export interface SupportContactReviewList {
+  items: SupportContactReview[];
+}
+
+export interface SupportContactReviewDecisionRequest {
+  /** `transfer_link` revoga o vínculo anterior e libera o estudante a confirmar; `reject` encerra o pedido */
+  decision: 'transfer_link' | 'reject';
+  reason: string;
+}
+
+/** Simulador do provedor fake: só existe fora de produção, com provedor `fake` e dados sintéticos. */
+export interface SupportSimulatorInboundRequest {
+  channelId: string;
+  /** número sintético não roteável: +999... */
+  from: string;
+  name?: string;
+  text?: string;
+  kind?: 'text' | 'document' | 'image' | 'unsupported';
+  /** repete o mesmo id de evento para demonstrar a deduplicação */
+  providerEventId?: string;
+}
+
+export interface SupportSimulatorDeliveryRequest {
+  channelId: string;
+  state: 'sent' | 'delivered' | 'read' | 'failed';
+}
+
+export interface SupportSimulatorConnectionRequest {
+  channelId: string;
+  status: 'CONNECTED' | 'DISCONNECTED' | 'DEGRADED' | 'QR_REQUIRED';
+}
+
+export interface SupportSimulatorNextSendRequest {
+  channelId: string;
+  mode: 'fail' | 'reject' | 'timeout' | null;
+}
+
+// Estudante: vínculo verificado com o WhatsApp ----------------------------------
+
+export interface SupportContactLinkView {
+  id: string;
+  contactMasked: string;
+  verifiedAt: string;
+}
+
+export type SupportContactVerificationStatus = 'pending' | 'proven' | 'confirmed' | 'expired' | 'cancelled' | 'review_required';
+
+export interface SupportContactVerificationView {
+  id: string;
+  status: SupportContactVerificationStatus;
+  /** só na resposta que cria a verificação; nunca é armazenado em texto */
+  code: string | null;
+  expiresAt: string;
+  /** número que enviou o código, mascarado, para o estudante reconhecer antes de confirmar */
+  contactMasked: string | null;
+  /** para onde enviar o código (número institucional público) */
+  institutionalNumber: string | null;
+  /** atalho https://wa.me/... com o código preenchido */
+  openUrl: string | null;
+  /** chamados anteriores desse contato que o estudante pode autorizar a vincular */
+  previousTicketsCount: number;
+}
+
+export interface SupportWhatsAppLinkState {
+  /** há canal WhatsApp habilitado para vincular */
+  available: boolean;
+  demoMode: boolean;
+  /** versão do aviso de privacidade que será aceita */
+  consentVersion: string;
+  /** o que o estudante autoriza ao vincular (exibir antes do aceite) */
+  consentText: string;
+  links: SupportContactLinkView[];
+  pending: SupportContactVerificationView | null;
+}
+
+export interface SupportContactVerificationCreateRequest {
+  /** aceite explícito do aviso de privacidade; sem ele a API responde `consent_required` */
+  consentAccepted: boolean;
+  consentVersion: string;
+}
+
+export interface SupportContactVerificationConfirmRequest {
+  /** autoriza associar os chamados anteriores desse contato à conta do estudante */
+  linkPreviousTickets: boolean;
+}
+
+export interface SupportMessageRetryRequest {
+  /** obrigatório quando o resultado é desconhecido: a pessoa pode receber a mensagem duas vezes */
+  confirmDuplicateRisk?: boolean;
 }
 
 // ---- queue (Fila presencial do ASA) ----------------------------------------
@@ -1252,7 +1657,9 @@ export type Permission =
   | 'automations:manage'
   | 'integrations:read'
   | 'health:read'
-  | 'permissions:read';
+  | 'permissions:read'
+  // v1.9: canais institucionais de atendimento (WhatsApp): conexão, QR e saúde do provedor
+  | 'support_channels:manage';
 
 /** Uma sessão (aparelho ou navegador). `id` é estável entre renovações do token. */
 export interface AuthSessionSummary {
@@ -2068,7 +2475,7 @@ export interface AdminTicketMetadata {
   status: SupportTicketStatus;
   priority: SupportTicketPriority;
   team: string;
-  channel: 'app' | 'web';
+  channel: 'app' | 'web' | 'whatsapp';
   createdAt: string;
   updatedAt: string;
   sla: { status: SupportSlaStatus; dueAt: string };

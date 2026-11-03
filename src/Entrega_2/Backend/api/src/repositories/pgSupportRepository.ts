@@ -3,15 +3,23 @@ import { withTransaction } from '../db/pool.js';
 import { ConflictError, ValidationError } from '../errors/AppError.js';
 import type {
   SupportActorType,
+  SupportAttachmentReviewStatus,
   SupportEventVisibility,
+  SupportMessageContentKind,
+  SupportMessageDeliveryState,
+  SupportMessageTransport,
   SupportNotificationKind,
   SupportTicketEventType,
   SupportTicketPriority,
   SupportTicketStatus,
 } from '../contracts/mobileApi.v1.js';
+import { currentCorrelationId } from '../support/realtime/correlation.js';
+import { logEntriesFor, type EventLogEntry } from '../support/realtime/canonical.js';
 import type {
   NewSupportEvent,
+  NewSupportMessage,
   NewSupportNotification,
+  NewSupportOutboxItem,
   SupportAttachmentLink,
   SupportAttachmentRecord,
   SupportEventDetailRecord,
@@ -32,8 +40,9 @@ const isUuid = (value: string) => UUID.test(value);
 interface TicketRow {
   id: string;
   protocol: string;
-  student_id: string;
-  channel: 'app' | 'web';
+  student_id: string | null;
+  channel: 'app' | 'web' | 'whatsapp';
+  conversation_id: string | null;
   client_request_id: string;
   category_id: string;
   subcategory_id: string | null;
@@ -65,7 +74,7 @@ interface TicketRow {
   updated_at: Date;
 }
 
-const TICKET_COLUMNS = `id, protocol, student_id, channel, client_request_id, category_id, subcategory_id, subject, description, status, priority,
+const TICKET_COLUMNS = `id, protocol, student_id, channel, conversation_id, client_request_id, category_id, subcategory_id, subject, description, status, priority,
   assigned_team, assigned_agent_id, pending_action_title, pending_action_description, pending_action_requested_at,
   pending_action_expects_attachment, resolution, resolved_at, closed_at, cancelled_at, cancel_reason, reopened_count,
   sla_target_business_days, sla_started_at, sla_due_at, sla_paused_at, sla_resumed_at, sla_completed_at, first_response_due_at, version, created_at, updated_at`;
@@ -80,6 +89,7 @@ const mapTicket = (row: TicketRow): SupportTicketRecord => ({
   protocol: row.protocol,
   studentId: row.student_id,
   channel: row.channel,
+  conversationId: row.conversation_id,
   clientRequestId: row.client_request_id,
   categoryId: row.category_id,
   subcategoryId: row.subcategory_id,
@@ -148,16 +158,27 @@ const mapEvent = (row: EventRow): SupportEventRecord => ({
 interface MessageRow {
   id: string;
   ticket_id: string;
-  sender_type: 'student' | 'agent';
+  sender_type: 'student' | 'agent' | 'contact';
   sender_user_id: string | null;
   sender_name: string;
   content: string;
   client_message_id: string | null;
   read_at: Date | null;
   created_at: Date;
+  transport: SupportMessageTransport;
+  channel_id: string | null;
+  external_message_id: string | null;
+  delivery_state: SupportMessageDeliveryState;
+  delivery_error_code: string | null;
+  delivery_updated_at: Date | null;
+  provider_timestamp: Date | null;
+  content_kind: SupportMessageContentKind;
+  reply_to_external_id: string | null;
+  student_visible: boolean;
 }
 
-const MESSAGE_COLUMNS = 'id, ticket_id, sender_type, sender_user_id, sender_name, content, client_message_id, read_at, created_at';
+const MESSAGE_COLUMNS = `id, ticket_id, sender_type, sender_user_id, sender_name, content, client_message_id, read_at, created_at,
+  transport, channel_id, external_message_id, delivery_state, delivery_error_code, delivery_updated_at, provider_timestamp, content_kind, reply_to_external_id, student_visible`;
 
 const mapMessage = (row: MessageRow): SupportMessageRecord => ({
   id: row.id,
@@ -169,13 +190,23 @@ const mapMessage = (row: MessageRow): SupportMessageRecord => ({
   clientMessageId: row.client_message_id,
   readAt: row.read_at,
   createdAt: row.created_at,
+  transport: row.transport,
+  channelId: row.channel_id,
+  externalMessageId: row.external_message_id,
+  deliveryState: row.delivery_state,
+  deliveryErrorCode: row.delivery_error_code,
+  deliveryUpdatedAt: row.delivery_updated_at,
+  providerTimestamp: row.provider_timestamp,
+  contentKind: row.content_kind,
+  replyToExternalId: row.reply_to_external_id,
+  studentVisible: row.student_visible,
 });
 
 interface AttachmentRow {
   id: string;
   ticket_id: string | null;
   message_id: string | null;
-  uploaded_by_type: 'student' | 'agent';
+  uploaded_by_type: 'student' | 'agent' | 'contact';
   uploaded_by_user_id: string | null;
   uploader_name: string;
   file_name: string;
@@ -184,9 +215,12 @@ interface AttachmentRow {
   sha256: string;
   created_at: Date;
   expires_at: Date | null;
+  origin: 'upload' | 'whatsapp';
+  student_visible: boolean;
+  review_status: SupportAttachmentReviewStatus;
 }
 
-const ATTACHMENT_COLUMNS = 'id, ticket_id, message_id, uploaded_by_type, uploaded_by_user_id, uploader_name, file_name, mime_type, size_bytes, sha256, created_at, expires_at';
+const ATTACHMENT_COLUMNS = 'id, ticket_id, message_id, uploaded_by_type, uploaded_by_user_id, uploader_name, file_name, mime_type, size_bytes, sha256, created_at, expires_at, origin, student_visible, review_status';
 
 const mapAttachment = (row: AttachmentRow): SupportAttachmentRecord => ({
   id: row.id,
@@ -201,6 +235,9 @@ const mapAttachment = (row: AttachmentRow): SupportAttachmentRecord => ({
   sha256: row.sha256,
   createdAt: row.created_at,
   expiresAt: row.expires_at,
+  origin: row.origin,
+  studentVisible: row.student_visible,
+  reviewStatus: row.review_status,
 });
 
 interface NotificationRow {
@@ -247,6 +284,8 @@ function patchColumns(patch: SupportTicketPatch): Array<[string, unknown]> {
   if (patch.cancelledAt !== undefined) columns.push(['cancelled_at', patch.cancelledAt]);
   if (patch.cancelReason !== undefined) columns.push(['cancel_reason', patch.cancelReason]);
   if (patch.reopenedCount !== undefined) columns.push(['reopened_count', patch.reopenedCount]);
+  if (patch.studentId !== undefined) columns.push(['student_id', patch.studentId]);
+  if (patch.conversationId !== undefined) columns.push(['conversation_id', patch.conversationId]);
   if (patch.sla !== undefined) {
     columns.push(['sla_target_business_days', patch.sla.targetBusinessDays]);
     columns.push(['sla_started_at', patch.sla.startedAt]);
@@ -268,9 +307,66 @@ async function insertEvents(client: DbClient, ticketId: string, events: NewSuppo
   }
 }
 
-async function insertNotifications(client: DbClient, ticketId: string, studentId: string, notifications: NewSupportNotification[], now: Date): Promise<void> {
+async function insertNotifications(client: DbClient, ticketId: string, studentId: string | null, notifications: NewSupportNotification[], now: Date): Promise<void> {
+  // contato sem vínculo verificado: não há para quem avisar
+  if (!studentId) return;
   for (const item of notifications) {
     await client.query('insert into support_notifications (student_id, ticket_id, kind, title, body, created_at) values ($1, $2, $3, $4, $5, $6)', [studentId, ticketId, item.kind, item.title, item.body, now]);
+  }
+}
+
+async function insertMessages(client: DbClient, ticketId: string, messages: NewSupportMessage[], now: Date): Promise<void> {
+  for (const message of messages) {
+    const fields = message.transportFields ?? {};
+    await client.query(
+      `insert into support_ticket_messages (id, ticket_id, sender_type, sender_user_id, sender_name, content, client_message_id, created_at,
+          transport, channel_id, external_message_id, delivery_state, delivery_error_code, delivery_updated_at, provider_timestamp, content_kind, reply_to_external_id, student_visible)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
+      [
+        message.id,
+        ticketId,
+        message.senderType,
+        message.senderUserId,
+        message.senderName,
+        message.content,
+        message.clientMessageId,
+        now,
+        fields.transport ?? 'in_app',
+        fields.channelId ?? null,
+        fields.externalMessageId ?? null,
+        fields.deliveryState ?? 'not_applicable',
+        fields.deliveryErrorCode ?? null,
+        fields.deliveryUpdatedAt ?? null,
+        fields.providerTimestamp ?? null,
+        fields.contentKind ?? 'text',
+        fields.replyToExternalId ?? null,
+        fields.studentVisible ?? true,
+      ],
+    );
+  }
+}
+
+async function insertOutbox(client: DbClient, ticketId: string, items: NewSupportOutboxItem[], now: Date): Promise<void> {
+  for (const item of items) {
+    await client.query(
+      `insert into support_outbox (kind, ticket_id, message_id, channel_id, dedupe_key, next_attempt_at, created_at, updated_at)
+       values ('whatsapp.send', $1, $2, $3, $4, $5, $5, $5)`,
+      [ticketId, item.messageId, item.channelId, item.dedupeKey, now],
+    );
+  }
+}
+
+/** Grava o log de eventos com as sequências já reservadas no chamado (`lastSequence` é a última delas). */
+async function insertEventLog(client: DbClient, ticketId: string, studentId: string | null, entries: EventLogEntry[], lastSequence: number, now: Date): Promise<void> {
+  const correlationId = currentCorrelationId();
+  let sequence = lastSequence - entries.length;
+  for (const entry of entries) {
+    sequence += 1;
+    await client.query(
+      `insert into support_event_log (ticket_id, sequence, type, audience, student_id, actor_type, actor_user_id, correlation_id, data, occurred_at)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10)`,
+      [ticketId, sequence, entry.type, entry.audience, studentId, entry.actorType, entry.actorUserId, correlationId, JSON.stringify(entry.data), now],
+    );
   }
 }
 
@@ -291,13 +387,15 @@ class PgSupportRepository implements SupportRepository {
   constructor(private readonly pool: DbPool) {}
 
   async createTicket(input: Parameters<SupportRepository['createTicket']>[0]): Promise<{ ticket: SupportTicketRecord; created: boolean }> {
+    const messages = input.messages ?? [];
+    const logEntries = logEntriesFor({ events: input.events, messages });
     return withTransaction(this.pool, async (client) => {
       const { rows } = await client.query<TicketRow>(
         `insert into support_tickets (id, protocol, student_id, client_request_id, category_id, subcategory_id, subject, description, search_text,
-            status, priority, assigned_team, sla_target_business_days, sla_started_at, sla_due_at, created_at, updated_at, channel, first_response_due_at)
+            status, priority, assigned_team, sla_target_business_days, sla_started_at, sla_due_at, created_at, updated_at, channel, first_response_due_at, conversation_id, last_sequence)
          values ($1, 'ASA-' || to_char($15::timestamptz at time zone 'UTC', 'YYYY') || '-' || lpad(nextval('support_ticket_protocol_seq')::text, 5, '0'),
-            $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $15, $16, $17)
-         on conflict (student_id, client_request_id) do nothing
+            $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $15, $16, $17, $18, $19)
+         on conflict do nothing
          returning ${TICKET_COLUMNS}`,
         [
           input.id,
@@ -317,15 +415,21 @@ class PgSupportRepository implements SupportRepository {
           input.now,
           input.channel,
           input.firstResponseDueAt,
+          input.conversationId ?? null,
+          logEntries.length,
         ],
       );
       const inserted = rows[0];
       if (!inserted) {
-        // Corrida de envio duplo: o outro pedido já criou o chamado.
-        const existing = await client.query<TicketRow>(`select ${TICKET_COLUMNS} from support_tickets where student_id = $1 and client_request_id = $2`, [input.studentId, input.clientRequestId]);
+        // Corrida: outro pedido já criou o chamado (mesma chave do aluno) ou a conversa já tem um chamado aberto.
+        const existing = input.conversationId
+          ? await client.query<TicketRow>(`select ${TICKET_COLUMNS} from support_tickets where conversation_id = $1 and status not in ('resolved', 'closed', 'cancelled')`, [input.conversationId])
+          : await client.query<TicketRow>(`select ${TICKET_COLUMNS} from support_tickets where student_id = $1 and client_request_id = $2`, [input.studentId, input.clientRequestId]);
         return { ticket: mapTicket(existing.rows[0]!), created: false };
       }
+      await insertMessages(client, inserted.id, messages, input.now);
       await insertEvents(client, inserted.id, input.events, input.now);
+      await insertEventLog(client, inserted.id, input.studentId, logEntries, logEntries.length, input.now);
       if (input.attachments) await linkAttachments(client, inserted.id, input.attachments, input.now);
       await insertNotifications(client, inserted.id, input.studentId, input.notifications, input.now);
       return { ticket: mapTicket(inserted), created: true };
@@ -345,7 +449,8 @@ class PgSupportRepository implements SupportRepository {
   async listTickets(query: Parameters<SupportRepository['listTickets']>[0]): Promise<SupportTicketListRow[]> {
     const pattern = query.search ? `%${query.search.replace(/[\\%_]/g, '\\$&')}%` : null;
     // "não lidas" do ponto de vista de quem consulta: aluno lê mensagens da equipe; equipe lê mensagens do aluno
-    const unreadSender = query.perspective === 'staff' ? 'student' : 'agent';
+    // (mensagem que o aluno não pode ver nunca conta como não lida para ele)
+    const unreadFilter = query.perspective === 'staff' ? "m.sender_type in ('student', 'contact')" : "m.sender_type = 'agent' and m.student_visible";
     const byDue = query.orderBy === 'due';
     const sortKey = byDue ? 't.sla_due_at' : 't.updated_at';
     const now = query.now ?? new Date();
@@ -362,7 +467,7 @@ class PgSupportRepository implements SupportRepository {
             : '';
     const { rows } = await this.pool.query<TicketRow & { unread_count: number; last_title: string | null; last_at: Date | null }>(
       `select ${prefixed('t')},
-              (select count(*) from support_ticket_messages m where m.ticket_id = t.id and m.sender_type = '${unreadSender}' and m.read_at is null)::int as unread_count,
+              (select count(*) from support_ticket_messages m where m.ticket_id = t.id and ${unreadFilter} and m.read_at is null)::int as unread_count,
               le.title as last_title, le.created_at as last_at
          from support_tickets t
          left join lateral (
@@ -382,7 +487,11 @@ class PgSupportRepository implements SupportRepository {
                 select 1 from students s join users u on u.id = s.user_id where s.id = t.student_id and u.is_demo))
           and $14::timestamptz is not null
           and (not $15::boolean or exists (
-                select 1 from support_ticket_messages um where um.ticket_id = t.id and um.sender_type = 'student' and um.read_at is null))
+                select 1 from support_ticket_messages um where um.ticket_id = t.id and um.sender_type in ('student', 'contact') and um.read_at is null))
+          and ($16::text[] is null or t.channel = any($16))
+          and (not $17::boolean or t.student_id is null)
+          and ($18::text is null or exists (
+                select 1 from support_ticket_tags tt join support_tags tg on tg.id = tt.tag_id where tt.ticket_id = t.id and tg.name = $18))
           ${riskSql}
         order by ${sortKey} ${byDue ? 'asc' : 'desc'}, t.id ${byDue ? 'asc' : 'desc'}
         limit $7`,
@@ -402,6 +511,9 @@ class PgSupportRepository implements SupportRepository {
         query.excludeDemo ?? false,
         now,
         query.unreadByStaff ?? false,
+        query.channels && query.channels.length > 0 ? query.channels : null,
+        query.unidentifiedOnly ?? false,
+        query.tag ?? null,
       ],
     );
     return rows.map((row) => ({
@@ -425,8 +537,21 @@ class PgSupportRepository implements SupportRepository {
     return rows.map(mapEvent);
   }
 
-  async listMessages(ticketId: string): Promise<SupportMessageRecord[]> {
-    const { rows } = await this.pool.query<MessageRow>(`select ${MESSAGE_COLUMNS} from support_ticket_messages where ticket_id = $1 order by created_at, seq`, [ticketId]);
+  async firstStaffResponseAt(ticketId: string): Promise<Date | null> {
+    const { rows } = await this.pool.query<{ first_at: Date | null }>(
+      `select min(created_at) as first_at from support_ticket_events
+        where ticket_id = $1 and actor_type in ('agent', 'department') and (visibility = 'public' or type = 'message_received')`,
+      [ticketId],
+    );
+    return rows[0]?.first_at ?? null;
+  }
+
+  async listMessages(ticketId: string, options: { studentVisibleOnly?: boolean } = {}): Promise<SupportMessageRecord[]> {
+    // provider_timestamp: um webhook atrasado não embaralha a conversa
+    const { rows } = await this.pool.query<MessageRow>(
+      `select ${MESSAGE_COLUMNS} from support_ticket_messages where ticket_id = $1 and (not $2::boolean or student_visible) order by coalesce(provider_timestamp, created_at), seq`,
+      [ticketId, options.studentVisibleOnly ?? false],
+    );
     return rows.map(mapMessage);
   }
 
@@ -435,9 +560,18 @@ class PgSupportRepository implements SupportRepository {
     return rows[0] ? mapMessage(rows[0]) : null;
   }
 
-  async listAttachments(ticketId: string): Promise<SupportAttachmentRecord[]> {
-    const { rows } = await this.pool.query<AttachmentRow>(`select ${ATTACHMENT_COLUMNS} from support_attachments where ticket_id = $1 order by created_at, id`, [ticketId]);
+  async listAttachments(ticketId: string, options: { studentVisibleOnly?: boolean } = {}): Promise<SupportAttachmentRecord[]> {
+    const { rows } = await this.pool.query<AttachmentRow>(`select ${ATTACHMENT_COLUMNS} from support_attachments where ticket_id = $1 and (not $2::boolean or student_visible) order by created_at, id`, [ticketId, options.studentVisibleOnly ?? false]);
     return rows.map(mapAttachment);
+  }
+
+  async reviewAttachment(id: string, ticketId: string, input: { reviewStatus: SupportAttachmentReviewStatus; studentVisible?: boolean }): Promise<SupportAttachmentRecord | null> {
+    if (!isUuid(id)) return null;
+    const { rows } = await this.pool.query<AttachmentRow>(
+      `update support_attachments set review_status = $3, student_visible = coalesce($4, student_visible) where id = $1 and ticket_id = $2 returning ${ATTACHMENT_COLUMNS}`,
+      [id, ticketId, input.reviewStatus, input.studentVisible ?? null],
+    );
+    return rows[0] ? mapAttachment(rows[0]) : null;
   }
 
   async findRating(ticketId: string): Promise<SupportRatingRecord | null> {
@@ -450,29 +584,27 @@ class PgSupportRepository implements SupportRepository {
   }
 
   async applyChanges(changes: Parameters<SupportRepository['applyChanges']>[0]): Promise<SupportTicketRecord> {
-    return withTransaction(this.pool, async (client) => {
+    const logEntries = logEntriesFor({ events: changes.events, messages: changes.messages, ...(changes.extraLog ? { extra: changes.extraLog } : {}) });
+    const result = withTransaction(this.pool, async (client) => {
       const columns = patchColumns(changes.patch);
-      const params: unknown[] = [changes.ticketId, changes.expectedVersion, changes.now];
+      const params: unknown[] = [changes.ticketId, changes.expectedVersion, changes.now, logEntries.length];
       const sets = columns.map(([column, value]) => {
         params.push(value);
         return `${column} = $${params.length}`;
       });
-      const { rows } = await client.query<TicketRow>(
-        `update support_tickets set ${[...sets, 'version = version + 1', 'updated_at = $3'].join(', ')}
-          where id = $1 and version = $2 returning ${TICKET_COLUMNS}`,
+      // a linha do chamado fica travada até o commit: a sequência é monotônica por chamado
+      const { rows } = await client.query<TicketRow & { last_sequence: string }>(
+        `update support_tickets set ${[...sets, 'version = version + 1', 'updated_at = $3', 'last_sequence = last_sequence + $4'].join(', ')}
+          where id = $1 and version = $2 returning ${TICKET_COLUMNS}, last_sequence`,
         params,
       );
       const updated = rows[0];
       if (!updated) throw new ConflictError('O chamado foi atualizado enquanto você agia. Atualize e tente novamente.', 'ticket_changed');
-      for (const message of changes.messages) {
-        await client.query(
-          `insert into support_ticket_messages (id, ticket_id, sender_type, sender_user_id, sender_name, content, client_message_id, created_at)
-           values ($1, $2, $3, $4, $5, $6, $7, $8)`,
-          [message.id, changes.ticketId, message.senderType, message.senderUserId, message.senderName, message.content, message.clientMessageId, changes.now],
-        );
-      }
+      await insertMessages(client, changes.ticketId, changes.messages, changes.now);
       for (const link of changes.attachments) await linkAttachments(client, changes.ticketId, link, changes.now);
       await insertEvents(client, changes.ticketId, changes.events, changes.now);
+      await insertEventLog(client, changes.ticketId, updated.student_id, logEntries, Number(updated.last_sequence), changes.now);
+      await insertOutbox(client, changes.ticketId, changes.outbox ?? [], changes.now);
       await insertNotifications(client, changes.ticketId, updated.student_id, changes.notifications, changes.now);
       if (changes.rating) {
         const rating = await client.query(
@@ -483,12 +615,18 @@ class PgSupportRepository implements SupportRepository {
       }
       return mapTicket(updated);
     });
+    return result.catch((error: unknown) => {
+      // reabrir com outro chamado aberto na mesma conversa: regra de negócio, não falha interna
+      const pg = error as { code?: string; constraint?: string };
+      if (pg.code === '23505' && pg.constraint === 'uq_support_tickets_open_conversation') throw new ConflictError('Esta conversa já tem outro chamado aberto. Atenda por ele.', 'conversation_has_open_ticket');
+      throw error;
+    });
   }
 
   async markRead(ticketId: string, studentId: string, now: Date): Promise<number> {
     return withTransaction(this.pool, async (client) => {
       const messages = await client.query(
-        `update support_ticket_messages set read_at = $2 where ticket_id = $1 and sender_type = 'agent' and read_at is null`,
+        `update support_ticket_messages set read_at = $2 where ticket_id = $1 and sender_type = 'agent' and student_visible and read_at is null`,
         [ticketId, now],
       );
       await client.query('update support_notifications set read_at = $3 where ticket_id = $1 and student_id = $2 and read_at is null', [ticketId, studentId, now]);
@@ -498,7 +636,7 @@ class PgSupportRepository implements SupportRepository {
 
   async markReadByStaff(ticketId: string, now: Date): Promise<number> {
     const result = await this.pool.query(
-      `update support_ticket_messages set read_at = $2 where ticket_id = $1 and sender_type = 'student' and read_at is null`,
+      `update support_ticket_messages set read_at = $2 where ticket_id = $1 and sender_type in ('student', 'contact') and read_at is null`,
       [ticketId, now],
     );
     return result.rowCount ?? 0;
