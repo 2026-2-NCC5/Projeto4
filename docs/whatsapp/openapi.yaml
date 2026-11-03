@@ -1,0 +1,123 @@
+# Resumo das rotas. Os esquemas completos são os tipos do contrato: Backend/contracts/api/mobile-api.v1.ts (v1.9).
+openapi: 3.0.3
+info:
+  title: ASA Conecta - Central de Atendimento WhatsApp
+  version: "1.9"
+servers:
+  - url: http://localhost:3000
+components:
+  securitySchemes:
+    bearer: { type: http, scheme: bearer }
+    cron: { type: http, scheme: bearer, description: CRON_SECRET }
+  parameters:
+    since: { name: since, in: query, schema: { type: string }, description: Cursor. Sem ele, devolve só o cursor atual. }
+    wait: { name: wait, in: query, schema: { type: integer, minimum: 0, maximum: 25 }, description: Segundos de espera por eventos. }
+    ticketId: { name: id, in: path, required: true, schema: { type: string } }
+    channelId: { name: channelId, in: path, required: true, schema: { type: string, format: uuid } }
+  responses:
+    Ok: { description: Sucesso }
+    Queued: { description: "Aceita: entrou na fila. O estado real chega depois, por evento." }
+    Denied: { description: Sem permissão }
+    NotFound: { description: Não existe ou não pertence a quem pediu }
+    Conflict: { description: "Regra de negócio; ver error.reason em api.md" }
+security:
+  - bearer: []
+paths:
+  /api/support/staff/events:
+    get:
+      summary: Feed da equipe (SupportEventFeed)
+      parameters: [{ $ref: '#/components/parameters/since' }, { $ref: '#/components/parameters/wait' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '403': { $ref: '#/components/responses/Denied' } }
+  /api/support/me/events:
+    get:
+      summary: Feed do estudante, só eventos públicos dos próprios chamados
+      parameters: [{ $ref: '#/components/parameters/since' }, { $ref: '#/components/parameters/wait' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' } }
+  /api/support/staff/inbox/counts:
+    get: { summary: Contadores (SupportInboxCounts), responses: { '200': { $ref: '#/components/responses/Ok' } } }
+  /api/support/staff/whatsapp/status:
+    get: { summary: Estado real do canal (SupportWhatsAppStatus), responses: { '200': { $ref: '#/components/responses/Ok' } } }
+  /api/support/staff/whatsapp/metrics:
+    get: { summary: Indicadores de eventos reais (SupportWhatsAppMetrics), responses: { '200': { $ref: '#/components/responses/Ok' } } }
+  /api/support/staff/tickets/{id}/messages:
+    post:
+      summary: Responder (SupportStaffMessageRequest). transport whatsapp responde 202.
+      parameters: [{ $ref: '#/components/parameters/ticketId' }]
+      responses: { '201': { $ref: '#/components/responses/Ok' }, '202': { $ref: '#/components/responses/Queued' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/support/staff/tickets/{id}/messages/{messageId}/retry:
+    post:
+      summary: Nova tentativa. Resultado desconhecido exige confirmDuplicateRisk.
+      parameters: [{ $ref: '#/components/parameters/ticketId' }, { name: messageId, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses: { '202': { $ref: '#/components/responses/Queued' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/support/staff/tickets/{id}/transfer:
+    post:
+      summary: Transferir com motivo (SupportTicketTransferRequest)
+      parameters: [{ $ref: '#/components/parameters/ticketId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/support/staff/tickets/{id}/reopen:
+    post:
+      summary: Reabrir com motivo (SupportStaffReopenRequest)
+      parameters: [{ $ref: '#/components/parameters/ticketId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/support/staff/tickets/{id}/tags:
+    put:
+      summary: Definir etiquetas (SupportTicketTagsRequest)
+      parameters: [{ $ref: '#/components/parameters/ticketId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' } }
+  /api/support/staff/tickets/{id}/presence:
+    post:
+      summary: Heartbeat; devolve quem mais está no chamado
+      parameters: [{ $ref: '#/components/parameters/ticketId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' } }
+  /api/support/staff/tickets/{id}/attachments/{attachmentId}:
+    patch:
+      summary: Analisar e liberar arquivo (SupportAttachmentReviewRequest)
+      parameters: [{ $ref: '#/components/parameters/ticketId' }, { name: attachmentId, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/support/staff/saved-replies:
+    get: { summary: Modelos aprovados, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    post: { summary: Criar modelo (rascunho), responses: { '201': { $ref: '#/components/responses/Ok' } } }
+  /api/support/me/whatsapp:
+    get: { summary: Vínculos e pedido em aberto (SupportWhatsAppLinkState), responses: { '200': { $ref: '#/components/responses/Ok' } } }
+  /api/support/me/whatsapp/verifications:
+    post: { summary: Começar a vinculação; o código só existe nesta resposta, responses: { '201': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' }, '429': { description: Muitos pedidos } } }
+  /api/support/me/whatsapp/verifications/{id}/confirm:
+    post:
+      summary: Confirmar (SupportContactVerificationConfirmRequest)
+      parameters: [{ $ref: '#/components/parameters/ticketId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '404': { $ref: '#/components/responses/NotFound' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/admin/support/channels:
+    get: { summary: Canais (SupportChannelList), responses: { '200': { $ref: '#/components/responses/Ok' }, '403': { $ref: '#/components/responses/Denied' } } }
+    post: { summary: Criar canal, responses: { '201': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } } }
+  /api/admin/support/channels/{channelId}/connect:
+    post:
+      summary: Iniciar conexão; única resposta que contém o QR
+      parameters: [{ $ref: '#/components/parameters/channelId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '403': { $ref: '#/components/responses/Denied' }, '409': { $ref: '#/components/responses/Conflict' } }
+  /api/admin/support/channels/{channelId}/connection:
+    delete:
+      summary: Desconectar; chamados e histórico continuam
+      parameters: [{ $ref: '#/components/parameters/channelId' }]
+      responses: { '200': { $ref: '#/components/responses/Ok' } }
+  /api/admin/support/provider-health:
+    get: { summary: Saúde da entrega (SupportProviderHealth), responses: { '200': { $ref: '#/components/responses/Ok' } } }
+  /api/internal/webhooks/wa-akg/{channelId}:
+    post:
+      summary: Ingestão do WA-AKG
+      security: []
+      parameters: [{ $ref: '#/components/parameters/channelId' }, { name: X-Webhook-Signature, in: header, required: true, schema: { type: string } }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '401': { description: Assinatura inválida }, '400': { description: Formato inválido } }
+  /api/internal/webhooks/meta:
+    get:
+      summary: Handshake da Cloud API
+      security: []
+      responses: { '200': { description: Devolve hub.challenge }, '403': { description: Token inválido } }
+    post:
+      summary: Ingestão da Cloud API
+      security: []
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '401': { description: Assinatura inválida } }
+  /api/internal/jobs/support-outbox:
+    post:
+      summary: Faz a fila andar; reprocessa a inbox
+      security: [{ cron: [] }]
+      responses: { '200': { $ref: '#/components/responses/Ok' } }

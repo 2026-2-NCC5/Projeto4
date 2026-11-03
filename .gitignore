@@ -155,3 +155,6 @@ __pycache__/
 .expo/
 web-build/
 src/Entrega_2/Backend/api/dist/
+
+# Repositórios de terceiros clonados só para auditoria (nunca versionados nem executados daqui)
+.references/
