@@ -18,4 +18,4 @@ export function setSupportApi(api: SupportApi | null): void {
 }
 
 export { createMockSupportApi, httpSupportApi };
-export type { ListTicketsParams, SupportApi } from './types';
+export type { ListTicketsParams, SupportApi, SupportEventsParams } from './types';

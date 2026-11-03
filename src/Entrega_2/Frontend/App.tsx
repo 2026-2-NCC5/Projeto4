@@ -26,6 +26,7 @@ import { RunDetailScreen } from './screens/RunDetailScreen';
 import { ServicesScreen } from './screens/ServicesScreen';
 // ---- support (Atendimento)
 import { isSupportRoute } from './navigation/navigationReducer';
+import { SupportRealtimeProvider } from './features/support/realtime';
 import { SupportPushRouter } from './screens/support/SupportPushRouter';
 import { SupportRouter } from './screens/support/SupportRouter';
 // ---- queue (Fila presencial do ASA)
@@ -63,7 +64,7 @@ export default function App() {
 
 /** Orquestra booting → login → área autenticada. Telas protegidas nunca renderizam sem sessão válida. */
 export function AppShell() {
-  const { status } = useSession();
+  const { status, user } = useSession();
   const theme = useTheme();
   const platform = usePlatformInfo();
 
@@ -82,7 +83,8 @@ export function AppShell() {
       {blocked ? <DataReadinessGate demoData={demoData} retry={platform.reload} /> : null}
       {!blocked && status === 'booting' ? <Splash /> : null}
       {!blocked && status === 'unauthenticated' ? <AuthFlow /> : null}
-      {!blocked && status === 'authenticated' ? <AuthenticatedArea /> : null}
+      {/* key: outra conta remonta a área inteira, sem herdar estado de tela da conta anterior */}
+      {!blocked && status === 'authenticated' ? <AuthenticatedArea key={user?.id ?? 'session'} /> : null}
     </View>
   );
 }
@@ -163,7 +165,10 @@ function AuthenticatedAssistant() {
     <AssistantProvider onGoBack={navigation.goHome}>
       {/* ---- queue (Fila presencial do ASA): dentro do assistente para falar pelo mesmo TTS */}
       <QueueProvider onOpenQueue={navigation.openQueue}>
-        <AppContent />
+        {/* ---- support (Atendimento): atualizações dos chamados; para e limpa o cache quando a sessão acaba */}
+        <SupportRealtimeProvider>
+          <AppContent />
+        </SupportRealtimeProvider>
       </QueueProvider>
     </AssistantProvider>
   );

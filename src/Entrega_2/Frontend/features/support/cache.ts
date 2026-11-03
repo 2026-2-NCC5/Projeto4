@@ -4,8 +4,8 @@ import { SUPPORT } from './config';
 
 /**
  * Cache local do Atendimento: chamados já carregados aparecem na hora (e offline) enquanto a atualização acontece
- * em segundo plano. Sempre separado por usuário; ao entrar com outra conta, o cache das demais é apagado.
- * Só texto e metadados — nunca o conteúdo de anexos.
+ * em segundo plano. Sempre separado por usuário; ao sair da conta tudo é apagado, ao entrar com outra conta o que
+ * sobrou das demais também. Só texto e metadados — nunca o conteúdo de anexos.
  */
 export interface CacheEntry<T> {
   data: T;
@@ -13,6 +13,14 @@ export interface CacheEntry<T> {
 }
 
 const memory = new Map<string, CacheEntry<unknown>>();
+
+/**
+ * Conta dona do cache agora. `null` = sem sessão: uma resposta que chega depois do logout não volta a gravar dados.
+ * `undefined` = ninguém declarou (telas isoladas em testes): tudo é aceito.
+ */
+let owner: string | null | undefined;
+
+const accepts = (userId: string) => owner === undefined || owner === userId;
 
 const storageKey = (userId: string, key: string) => `${SUPPORT.CACHE_KEY_PREFIX}:${userId}:${key}`;
 
@@ -30,6 +38,7 @@ export async function readCache<T>(userId: string, key: string): Promise<CacheEn
     if (!raw) return null;
     const parsed = JSON.parse(raw) as CacheEntry<T>;
     if (typeof parsed !== 'object' || parsed === null || !('data' in parsed)) return null;
+    if (!accepts(userId)) return null;
     memory.set(fullKey, parsed);
     return parsed;
   } catch {
@@ -38,6 +47,7 @@ export async function readCache<T>(userId: string, key: string): Promise<CacheEn
 }
 
 export function writeCache<T>(userId: string, key: string, data: T, savedAt: number = Date.now()): void {
+  if (!accepts(userId)) return;
   const fullKey = storageKey(userId, key);
   const entry: CacheEntry<T> = { data, savedAt };
   memory.set(fullKey, entry);
@@ -58,7 +68,25 @@ export async function purgeOtherUsers(userId: string): Promise<void> {
   }
 }
 
+/** Define a conta dona do cache (entrada na área autenticada; `null` ao sair). */
+export function setSupportCacheOwner(userId: string | null): void {
+  owner = userId;
+}
+
+/** Apaga o cache de todas as contas, da memória e do aparelho (logout ou troca de conta). */
+export async function clearSupportCache(): Promise<void> {
+  memory.clear();
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    const all = keys.filter((key) => key.startsWith(`${SUPPORT.CACHE_KEY_PREFIX}:`));
+    if (all.length > 0) await AsyncStorage.multiRemove(all);
+  } catch {
+    // sem armazenamento: nada a limpar
+  }
+}
+
 /** Apenas para testes. */
 export function clearSupportMemoryCache(): void {
   memory.clear();
+  owner = undefined;
 }

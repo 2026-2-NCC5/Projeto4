@@ -9,4 +9,6 @@ export { useCreateTicket, newClientRequestId, type CreateTicketController } from
 export { useSupportCatalog, useSupportNotifications, useSupportOverview, useTicket, useTickets, useTicketUpdates } from './hooks/useSupportData';
 export { useSupportResource, useSupportUserId, type SupportResource } from './hooks/useSupportResource';
 export { useTicketActions, type PendingMessage, type TicketActions } from './hooks/useTicketActions';
+export { deriveWhatsAppLinkStep, useWhatsAppLink, type WhatsAppLinkController, type WhatsAppLinkStep } from './hooks/useWhatsAppLink';
+export { SupportRealtimeProvider, useSupportRealtime, type SupportRealtimeState, type SupportRealtimeView } from './realtime';
 export { purgeOtherUsers } from './cache';

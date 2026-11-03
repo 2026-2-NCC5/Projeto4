@@ -28,14 +28,16 @@ export type AppointmentRoute =
 
 // ---- support (Atendimento)
 /** Abas principais de "Meus chamados". */
-export type SupportListFilter = 'all' | 'active' | 'waiting_student' | 'finished';
+export type SupportListFilter = 'all' | 'active' | 'waiting_student' | 'resolved';
 
 /** Rotas do Atendimento (empilháveis: voltar retorna à tela anterior do fluxo). */
 export type SupportRoute =
   | { screen: 'support' }
   | { screen: 'support-tickets'; filter?: SupportListFilter }
   | { screen: 'support-new'; categoryId?: string }
-  | { screen: 'support-ticket'; id: string };
+  | { screen: 'support-ticket'; id: string }
+  // ---- support-whatsapp: vinculação do WhatsApp do atendimento (aberta pelo Perfil)
+  | { screen: 'support-whatsapp' };
 // ---- end support
 
 export type AcademicSegment = 'subjects' | 'assessments' | 'attendance' | 'pending';

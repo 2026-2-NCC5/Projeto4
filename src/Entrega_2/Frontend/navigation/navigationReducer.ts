@@ -62,7 +62,7 @@ function bump(state: NavigationState, changes: Partial<NavigationState>): Naviga
 const MAX_BACK_STACK = 8;
 
 export function isSupportRoute(route: DetailRoute | null | undefined): route is SupportRoute {
-  return route?.screen === 'support' || route?.screen === 'support-tickets' || route?.screen === 'support-new' || route?.screen === 'support-ticket';
+  return route?.screen === 'support' || route?.screen === 'support-tickets' || route?.screen === 'support-new' || route?.screen === 'support-ticket' || route?.screen === 'support-whatsapp';
 }
 
 function openSupportRoute(state: NavigationState, route: SupportRoute, replace: boolean): NavigationState {
@@ -75,6 +75,7 @@ export const supportRoutes = {
   tickets: (filter?: SupportListFilter): SupportRoute => (filter ? { screen: 'support-tickets', filter } : { screen: 'support-tickets' }),
   newTicket: (categoryId?: string): SupportRoute => (categoryId ? { screen: 'support-new', categoryId } : { screen: 'support-new' }),
   ticket: (id: string): SupportRoute => ({ screen: 'support-ticket', id }),
+  whatsapp: (): SupportRoute => ({ screen: 'support-whatsapp' }),
 };
 // ---- end support
 

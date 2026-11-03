@@ -116,12 +116,13 @@ function MessageBubble({ message, index, fresh, onOpenAttachment, now }: { messa
   const styles = useStyles();
   const mine = message.senderType === 'student';
   const when = formatFriendlyDateTime(message.createdAt, now);
+  const viaWhatsApp = message.transport === 'whatsapp';
   return (
     <Appear index={index} offsetX={mine ? 10 : -10} offset={4} style={[styles.row, mine ? styles.mine : styles.theirs]}>
       <View
         style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}
         accessible
-        accessibilityLabel={`${mine ? 'Você' : message.senderName}, ${when}: ${message.content}${message.attachments.length > 0 ? `. ${message.attachments.length} anexo(s)` : ''}`}
+        accessibilityLabel={`${mine ? 'Você' : message.senderName}, ${when}${viaWhatsApp ? ', via WhatsApp' : ''}: ${message.content}${message.attachments.length > 0 ? `. ${message.attachments.length} anexo(s)` : ''}`}
         testID={`message-${message.id}`}
       >
         {!mine ? (
@@ -141,6 +142,11 @@ function MessageBubble({ message, index, fresh, onOpenAttachment, now }: { messa
           <AppText variant="caption" tone="muted">
             {when}
           </AppText>
+          {viaWhatsApp ? (
+            <AppText variant="caption" tone="muted" testID={`message-${message.id}-via-whatsapp`}>
+              · via WhatsApp
+            </AppText>
+          ) : null}
           {mine ? (
             <>
               <Ionicons name="checkmark-done" size={13} color={theme.colors.text.muted} />

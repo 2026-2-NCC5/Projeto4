@@ -1,7 +1,7 @@
 import type { Ionicons } from '@expo/vector-icons';
 import type React from 'react';
 
-import type { SupportSlaStatus, SupportTicketEventType, SupportTicketPriority, SupportTicketStatus } from '../../types/api';
+import type { SupportSlaStatus, SupportTicket, SupportTicketEventType, SupportTicketPriority, SupportTicketStatus } from '../../types/api';
 import type { SupportListFilter } from '../../types/ui';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -43,7 +43,7 @@ export const isFinished = (status: SupportTicketStatus): boolean => FINISHED_STA
 export const ACTIVE_STATUSES: readonly SupportTicketStatus[] = ['submitted', 'received', 'triage', 'assigned', 'in_analysis', 'in_progress', 'waiting_student', 'waiting_department', 'waiting_external', 'reopened'];
 
 /** Filtros de "Meus chamados": os quatro principais viram chips; os detalhados ficam na folha "Filtros". */
-export type TicketFilterKey = SupportListFilter | 'open' | 'received' | 'analysis' | 'in_progress' | 'waiting_department' | 'resolved' | 'cancelled';
+export type TicketFilterKey = SupportListFilter | 'open' | 'received' | 'analysis' | 'in_progress' | 'waiting_department' | 'cancelled';
 
 export interface TicketFilter {
   key: TicketFilterKey;
@@ -52,11 +52,14 @@ export interface TicketFilter {
   statuses?: readonly SupportTicketStatus[];
 }
 
+/** Chamado cancelado não foi resolvido: fica em "Todos" e em "Cancelados". */
+const RESOLVED_STATUSES: readonly SupportTicketStatus[] = ['resolved', 'closed'];
+
 export const PRIMARY_FILTERS: readonly TicketFilter[] = [
   { key: 'all', label: 'Todos' },
   { key: 'active', label: 'Em andamento', statuses: ACTIVE_STATUSES },
   { key: 'waiting_student', label: 'Aguardando você', statuses: ['waiting_student'] },
-  { key: 'finished', label: 'Concluídos', statuses: FINISHED_STATUSES },
+  { key: 'resolved', label: 'Resolvidos', statuses: RESOLVED_STATUSES },
 ];
 
 export const DETAILED_FILTERS: readonly TicketFilter[] = [
@@ -66,13 +69,16 @@ export const DETAILED_FILTERS: readonly TicketFilter[] = [
   { key: 'in_progress', label: 'Em atendimento', statuses: ['in_progress'] },
   { key: 'waiting_student', label: 'Aguardando estudante', statuses: ['waiting_student'] },
   { key: 'waiting_department', label: 'Aguardando setor', statuses: ['waiting_department', 'waiting_external'] },
-  { key: 'resolved', label: 'Resolvidos', statuses: ['resolved', 'closed'] },
+  { key: 'resolved', label: 'Resolvidos', statuses: RESOLVED_STATUSES },
   { key: 'cancelled', label: 'Cancelados', statuses: ['cancelled'] },
 ];
 
 export function findFilter(key: TicketFilterKey): TicketFilter {
   return PRIMARY_FILTERS.find((filter) => filter.key === key) ?? DETAILED_FILTERS.find((filter) => filter.key === key) ?? (PRIMARY_FILTERS[0] as TicketFilter);
 }
+
+/** Por onde o chamado começou. */
+export const CHANNEL_LABELS: Record<SupportTicket['channel'], string> = { app: 'Aplicativo ASA Conecta', web: 'Portal ASA Conecta', whatsapp: 'WhatsApp' };
 
 export const PRIORITY_LABELS: Record<SupportTicketPriority, string> = { normal: 'Normal', high: 'Alta', urgent: 'Urgente' };
 

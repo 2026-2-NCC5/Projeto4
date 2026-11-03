@@ -121,6 +121,7 @@ export function ProfileScreen() {
 
       <SectionHeader title="Ajuda e sobre" />
       <List inset="icon">
+        {navigation ? <SettingRow kind="link" icon="logo-whatsapp" label="WhatsApp do atendimento" description="Vincule seu número para acompanhar pelo app os atendimentos do WhatsApp." onPress={navigation.openSupportWhatsApp} testID="profile-whatsapp" /> : null}
         <SettingRow kind="link" icon="help-buoy-outline" label="Com quem falar" description="Coordenação, professores e a equipe do ASA." onPress={assistant ? askHelp : () => navigation?.openAssistant('conversation')} />
         <SettingRow kind="link" icon="grid-outline" label="Serviços" description="Análises, histórico e orientações." onPress={() => navigation?.changeTab('services')} />
         <SettingRow kind="info" icon="information-circle-outline" label="Versão" value="ASA Conecta 1.1.0" />

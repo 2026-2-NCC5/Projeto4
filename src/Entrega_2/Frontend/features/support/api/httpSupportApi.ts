@@ -2,15 +2,18 @@ import { request } from '../../../services/apiClient';
 import type {
   SupportAttachmentLink,
   SupportCatalog,
+  SupportContactVerificationView,
+  SupportEventFeed,
   SupportNotificationList,
   SupportOverview,
   SupportTicket,
   SupportTicketList,
   SupportUpload,
+  SupportWhatsAppLinkState,
 } from '../../../types/api';
 import { SUPPORT, SUPPORT_ROUTES } from '../config';
 
-import type { ListTicketsParams, SupportApi } from './types';
+import type { ListTicketsParams, SupportApi, SupportEventsParams } from './types';
 
 /** Envio de arquivo (até 5 MB em base64) tem tempo limite próprio, maior que o das chamadas comuns. */
 const UPLOAD_TIMEOUT_MS = 60_000;
@@ -23,6 +26,12 @@ export function ticketsQuery(params: ListTicketsParams): string {
   query.push(`limit=${params.limit ?? SUPPORT.PAGE_SIZE}`);
   if (params.cursor) query.push(`cursor=${encodeURIComponent(params.cursor)}`);
   return `${SUPPORT_ROUTES.tickets}?${query.join('&')}`;
+}
+
+export function eventsQuery(params: SupportEventsParams): string {
+  const query = [`wait=${params.wait}`];
+  if (params.since) query.unshift(`since=${encodeURIComponent(params.since)}`);
+  return `${SUPPORT_ROUTES.myEvents}?${query.join('&')}`;
 }
 
 /** Atendimento pela API Node.js (o estudante é sempre o da sessão; nada de studentId no corpo). */
@@ -44,4 +53,12 @@ export const httpSupportApi: SupportApi = {
   getAttachmentLink: (ticketId, attachmentId) => request<SupportAttachmentLink>(SUPPORT_ROUTES.attachmentLink(ticketId, attachmentId)),
   getNotifications: (limit = 20) => request<SupportNotificationList>(`${SUPPORT_ROUTES.notifications}?limit=${limit}`),
   markNotificationsRead: (ids) => request<SupportNotificationList>(SUPPORT_ROUTES.notificationsRead, { method: 'POST', body: ids && ids.length > 0 ? { ids } : {} }),
+  // ---- support-whatsapp
+  getEvents: (params, options) =>
+    request<SupportEventFeed>(eventsQuery(params), { ...(params.wait > 0 ? { timeoutMs: SUPPORT.EVENTS_TIMEOUT_MS } : {}), ...(options?.signal ? { signal: options.signal } : {}) }),
+  getWhatsAppLink: () => request<SupportWhatsAppLinkState>(SUPPORT_ROUTES.whatsapp),
+  createWhatsAppVerification: (body) => request<SupportContactVerificationView>(SUPPORT_ROUTES.whatsappVerifications, { method: 'POST', body }),
+  getWhatsAppVerification: (id) => request<SupportContactVerificationView>(SUPPORT_ROUTES.whatsappVerification(id)),
+  confirmWhatsAppVerification: (id, body) => request<SupportWhatsAppLinkState>(SUPPORT_ROUTES.whatsappVerificationConfirm(id), { method: 'POST', body }),
+  revokeWhatsAppLink: (linkId) => request<SupportWhatsAppLinkState>(SUPPORT_ROUTES.whatsappLink(linkId), { method: 'DELETE' }),
 };

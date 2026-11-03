@@ -15,11 +15,11 @@ export function useSupportCatalog(): SupportResource<SupportCatalog> {
 
 /** Resumo para a Home e o hub do Atendimento. */
 export function useSupportOverview(options: { enabled?: boolean } = {}): SupportResource<SupportOverview> {
-  return useSupportResource('overview', () => getSupportApi().getOverview(), { enabled: options.enabled ?? true });
+  return useSupportResource('overview', () => getSupportApi().getOverview(), { enabled: options.enabled ?? true, live: true });
 }
 
 export function useSupportNotifications(options: { enabled?: boolean } = {}): SupportResource<SupportNotificationList> {
-  return useSupportResource('notifications', () => getSupportApi().getNotifications(20), { enabled: options.enabled ?? true });
+  return useSupportResource('notifications', () => getSupportApi().getNotifications(20), { enabled: options.enabled ?? true, live: true });
 }
 
 export interface TicketsState {
@@ -41,7 +41,7 @@ export function useTickets(filter: TicketFilterKey, search: string): TicketsStat
   const statuses = findFilter(filter).statuses;
   const term = search.trim();
   const listKey = `tickets:${filter}:${term.toLowerCase()}`;
-  const list = useSupportResource(listKey, () => getSupportApi().listTickets({ statuses, search: term, limit: SUPPORT.PAGE_SIZE }), { pollMs: SUPPORT.LIST_POLL_MS });
+  const list = useSupportResource(listKey, () => getSupportApi().listTickets({ statuses, search: term, limit: SUPPORT.PAGE_SIZE }), { pollMs: SUPPORT.LIST_POLL_MS, live: true });
   const [extra, setExtra] = useState<{ key: string; items: SupportTicketSummary[]; cursor: string | null }>({ key: listKey, items: [], cursor: null });
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
@@ -82,7 +82,7 @@ export function useTickets(filter: TicketFilterKey, search: string): TicketsStat
 
 /** Detalhe do chamado, atualizado em segundo plano enquanto a tela está aberta. */
 export function useTicket(id: string): SupportResource<SupportTicket> {
-  return useSupportResource(`ticket:${id}`, () => getSupportApi().getTicket(id), { pollMs: SUPPORT.DETAIL_POLL_MS });
+  return useSupportResource(`ticket:${id}`, () => getSupportApi().getTicket(id), { pollMs: SUPPORT.DETAIL_POLL_MS, live: id });
 }
 
 export interface TicketUpdates {

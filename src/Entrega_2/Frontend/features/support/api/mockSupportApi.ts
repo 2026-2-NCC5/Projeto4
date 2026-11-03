@@ -11,6 +11,7 @@ import type {
   SupportTicketStatus,
   SupportTicketSummary,
   SupportUpload,
+  SupportWhatsAppLinkState,
 } from '../../../types/api';
 
 import { MOCK_CATALOG } from './mockCatalog';
@@ -67,6 +68,13 @@ function notFound(): ApiClientError {
 
 function conflict(message: string, reason: string): ApiClientError {
   return new ApiClientError({ kind: 'unknown', status: 409, code: 'CONFLICT', message, reason });
+}
+
+/** Sem canal real por trás, a demonstração não finge um vínculo: a tela explica que o WhatsApp não está disponível. */
+const DEMO_WHATSAPP_STATE: SupportWhatsAppLinkState = { available: false, demoMode: true, consentVersion: 'demo', consentText: '', links: [], pending: null };
+
+function whatsappUnavailable(): ApiClientError {
+  return conflict('O canal WhatsApp não está disponível no modo de demonstração.', 'provider_unavailable');
 }
 
 function invalid(message: string, field: string): ApiClientError {
@@ -717,6 +725,31 @@ export function createMockSupportApi(options: MockSupportOptions = {}): SupportA
       const at = iso(now().getTime());
       for (const item of notifications) if (!item.readAt && (!ids || ids.length === 0 || ids.includes(item.id))) item.readAt = at;
       return { items: clone(notifications.slice(0, 20)), unreadCount: notifications.filter((item) => !item.readAt).length };
+    },
+    // ---- support-whatsapp: nada em tempo real nem WhatsApp na demonstração (o tempo real nem é ligado neste modo)
+    async getEvents() {
+      await wait();
+      return { events: [], nextCursor: 'demo', hasMore: false, resyncRequired: false, serverTime: iso(now().getTime()) };
+    },
+    async getWhatsAppLink() {
+      await wait();
+      return clone(DEMO_WHATSAPP_STATE);
+    },
+    async createWhatsAppVerification() {
+      await wait();
+      throw whatsappUnavailable();
+    },
+    async getWhatsAppVerification() {
+      await wait();
+      throw whatsappUnavailable();
+    },
+    async confirmWhatsAppVerification() {
+      await wait();
+      throw whatsappUnavailable();
+    },
+    async revokeWhatsAppLink() {
+      await wait();
+      throw whatsappUnavailable();
     },
   };
   return api;

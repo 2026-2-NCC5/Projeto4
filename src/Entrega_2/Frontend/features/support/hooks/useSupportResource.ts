@@ -5,6 +5,7 @@ import { toApiClientError } from '../../../hooks/useResource';
 import { useOptionalSession } from '../../../hooks/useSession';
 import type { ApiClientError } from '../../../services/apiClient';
 import { peekCache, readCache, writeCache } from '../cache';
+import { changeAffects, subscribeSupportChanges, type SupportChangeScope } from '../realtime/changes';
 
 export type SupportResourceStatus = 'loading' | 'ready' | 'error';
 
@@ -39,6 +40,8 @@ export interface SupportResourceOptions {
   enabled?: boolean;
   /** atualização periódica, só com o app em primeiro plano (sem polling agressivo) */
   pollMs?: number;
+  /** recarrega em segundo plano quando chega um aviso de mudança: `true` = qualquer chamado; texto = só este chamado */
+  live?: SupportChangeScope;
 }
 
 /** Usuário dono do cache local (sem sessão — testes isolados — o cache fica em memória com uma chave neutra). */
@@ -56,7 +59,7 @@ function initial<T>(userId: string, key: string): Entry<T> {
  * com dados em tela mantêm os dados (modo offline); sem dados, viram estado de erro.
  */
 export function useSupportResource<T>(key: string, fetcher: () => Promise<T>, options: SupportResourceOptions = {}): SupportResource<T> {
-  const { enabled = true, pollMs } = options;
+  const { enabled = true, pollMs, live } = options;
   const userId = useSupportUserId();
   const cacheId = `${userId}|${key}`;
   const [entry, setEntry] = useState<Entry<T>>(() => initial<T>(userId, key));
@@ -126,6 +129,14 @@ export function useSupportResource<T>(key: string, fetcher: () => Promise<T>, op
     const timer = setInterval(() => setVersion((value) => value + 1), pollMs);
     return () => clearInterval(timer);
   }, [enabled, pollMs, appActive]);
+
+  // Aviso do tempo real (features/support/realtime): mesma origem das demais buscas.
+  useEffect(() => {
+    if (!enabled || !live) return undefined;
+    return subscribeSupportChanges((change) => {
+      if (changeAffects(change, live)) setVersion((value) => value + 1);
+    });
+  }, [enabled, live]);
 
   const reload = useCallback(() => setVersion((value) => value + 1), []);
 

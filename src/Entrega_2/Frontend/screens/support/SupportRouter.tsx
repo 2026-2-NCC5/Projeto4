@@ -6,8 +6,9 @@ import { CreateTicketScreen } from './CreateTicketScreen';
 import { SupportHomeScreen } from './SupportHomeScreen';
 import { TicketDetailScreen } from './TicketDetailScreen';
 import { TicketsScreen } from './TicketsScreen';
+import { WhatsAppLinkScreen } from './WhatsAppLinkScreen';
 
-/** Telas do Atendimento: hub, "Meus chamados", abertura e detalhe do chamado. */
+/** Telas do Atendimento: hub, "Meus chamados", abertura, detalhe do chamado e vinculação do WhatsApp. */
 export function SupportRouter({ route }: { route: SupportRoute }) {
   switch (route.screen) {
     case 'support-tickets':
@@ -17,6 +18,8 @@ export function SupportRouter({ route }: { route: SupportRoute }) {
     case 'support-ticket':
       // key: trocar de chamado (ex.: aviso de outro chamado) remonta a tela do zero.
       return <TicketDetailScreen key={route.id} ticketId={route.id} />;
+    case 'support-whatsapp':
+      return <WhatsAppLinkScreen />;
     default:
       return <SupportHomeScreen />;
   }

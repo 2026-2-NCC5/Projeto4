@@ -27,6 +27,8 @@ export interface AppNavigation extends NavigationState {
   openNewTicket: (categoryId?: string) => void;
   /** `replace`: substitui a tela atual (ex.: confirmação da abertura → detalhe do chamado). */
   openTicket: (id: string, options?: { replace?: boolean }) => void;
+  /** Perfil → WhatsApp do atendimento (vinculação verificada do número). */
+  openSupportWhatsApp: () => void;
   // ---- queue (Fila presencial do ASA)
   /** Atendimento → Fila presencial (também usado pelo deep link asaconecta://atendimento/fila). */
   openQueue: () => void;
@@ -71,6 +73,7 @@ export function NavigationProvider({ children, initialState }: { children: React
   const openSupportTickets = useCallback((filter?: SupportListFilter) => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.tickets(filter) }), []);
   const openNewTicket = useCallback((categoryId?: string) => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.newTicket(categoryId) }), []);
   const openTicket = useCallback((id: string, options?: { replace?: boolean }) => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.ticket(id), replace: Boolean(options?.replace) }), []);
+  const openSupportWhatsApp = useCallback(() => dispatch({ type: 'OPEN_SUPPORT_ROUTE', route: supportRoutes.whatsapp() }), []);
   // ---- queue (Fila presencial do ASA)
   const openQueue = useCallback(() => dispatch({ type: 'OPEN_QUEUE' }), []);
   // ---- appointments (Agendamentos com o ASA)
@@ -105,6 +108,7 @@ export function NavigationProvider({ children, initialState }: { children: React
       openSupportTickets,
       openNewTicket,
       openTicket,
+      openSupportWhatsApp,
       openQueue,
       openAppointments,
       openBookAppointment,
@@ -130,6 +134,7 @@ export function NavigationProvider({ children, initialState }: { children: React
       openSupportTickets,
       openNewTicket,
       openTicket,
+      openSupportWhatsApp,
       openQueue,
       openAppointments,
       openBookAppointment,

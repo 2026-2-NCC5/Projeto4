@@ -6,7 +6,13 @@ import { SectionHeader } from '../../components/ui';
 import { useSupportNotifications, useSupportOverview } from '../../features/support';
 import type { AppNavigation } from '../../navigation/AppNavigator';
 import { useOptionalAppNavigation } from '../../navigation/AppNavigator';
-import type { SupportNotificationKind } from '../../types/api';
+import type { SupportNotificationKind, SupportOverview } from '../../types/api';
+
+/** "2 em andamento · 1 aguardando você" (vazio quando só há um chamado recém-resolvido em destaque). */
+function openTicketsSummary(overview: SupportOverview): string | undefined {
+  const parts = [overview.activeCount > 0 ? `${overview.activeCount} em andamento` : null, overview.waitingStudentCount > 0 ? `${overview.waitingStudentCount} aguardando você` : null];
+  return parts.filter(Boolean).join(' · ') || undefined;
+}
 
 /**
  * Bloco "Atendimento" da Home: um card compacto com o chamado mais relevante (ação pendente, mensagem nova ou
@@ -20,10 +26,10 @@ export function SupportHomeSection({ now }: { now?: Date | undefined }) {
 function SupportHomeCard({ navigation, now }: { navigation: AppNavigation; now?: Date | undefined }) {
   const overview = useSupportOverview();
   const highlight = overview.data?.highlight;
-  if (!highlight) return null;
+  if (!overview.data || !highlight) return null;
   return (
     <>
-      <SectionHeader title="Atendimento" action="Meus chamados" onAction={() => navigation.openSupportTickets()} />
+      <SectionHeader title="Atendimento" subtitle={openTicketsSummary(overview.data)} action="Meus chamados" onAction={() => navigation.openSupportTickets()} />
       <Appear>
         <TicketSummaryCard ticket={highlight} onPress={() => navigation.openTicket(highlight.id)} now={now} testID="home-support-card" />
       </Appear>

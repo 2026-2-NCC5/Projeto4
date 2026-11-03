@@ -2,6 +2,10 @@ import type {
   SupportAttachmentLink,
   SupportCancelRequest,
   SupportCatalog,
+  SupportContactVerificationConfirmRequest,
+  SupportContactVerificationCreateRequest,
+  SupportContactVerificationView,
+  SupportEventFeed,
   SupportMessageCreateRequest,
   SupportNotificationList,
   SupportOverview,
@@ -13,6 +17,7 @@ import type {
   SupportTicketStatus,
   SupportUpload,
   SupportUploadRequest,
+  SupportWhatsAppLinkState,
 } from '../../../types/api';
 
 export interface ListTicketsParams {
@@ -20,6 +25,13 @@ export interface ListTicketsParams {
   search?: string | undefined;
   cursor?: string | null | undefined;
   limit?: number | undefined;
+}
+
+export interface SupportEventsParams {
+  /** cursor salvo; sem ele o servidor devolve só o cursor atual, sem eventos */
+  since?: string | null | undefined;
+  /** segundos que o servidor pode segurar a resposta (long polling, até 25) */
+  wait: number;
 }
 
 /**
@@ -44,4 +56,13 @@ export interface SupportApi {
   getAttachmentLink(ticketId: string, attachmentId: string): Promise<SupportAttachmentLink | null>;
   getNotifications(limit?: number): Promise<SupportNotificationList>;
   markNotificationsRead(ids?: string[]): Promise<SupportNotificationList>;
+  // ---- support-whatsapp
+  /** Feed de mudanças dos chamados do estudante. A entrega é "ao menos uma vez" e `data` traz só ids e rótulos públicos. */
+  getEvents(params: SupportEventsParams, options?: { signal?: AbortSignal }): Promise<SupportEventFeed>;
+  getWhatsAppLink(): Promise<SupportWhatsAppLinkState>;
+  /** O `code` só existe nesta resposta: fica no estado do componente, nunca em cache ou log. */
+  createWhatsAppVerification(body: SupportContactVerificationCreateRequest): Promise<SupportContactVerificationView>;
+  getWhatsAppVerification(id: string): Promise<SupportContactVerificationView>;
+  confirmWhatsAppVerification(id: string, body: SupportContactVerificationConfirmRequest): Promise<SupportWhatsAppLinkState>;
+  revokeWhatsAppLink(linkId: string): Promise<SupportWhatsAppLinkState>;
 }

@@ -9,6 +9,7 @@ import {
   Appear,
   BottomSheet,
   FileRow,
+  SupportLiveStatus,
   SupportNotice,
   TicketActionRequired,
   TicketComposer,
@@ -19,10 +20,12 @@ import {
   TicketSla,
   TicketStatusBadge,
   TicketTimeline,
+  TicketWhatsAppNote,
 } from '../../components/tickets';
 import { AppButton, AppText, Divider, List, ListItem, SectionHeader, Skeleton, Surface } from '../../components/ui';
 import {
   buildProgress,
+  CHANNEL_LABELS,
   formatFullDateTime,
   formatUpdated,
   isConnectivityError,
@@ -216,12 +219,14 @@ export function TicketDetailScreen({ ticketId }: { ticketId: string }) {
           <AppText variant="caption" tone="muted">
             {`Aberto em ${formatFullDateTime(ticket.createdAt)} · ${formatUpdated(ticket.updatedAt)}`}
           </AppText>
+          <SupportLiveStatus updatedAt={resource.updatedAt} />
         </View>
 
         <View style={styles.stack}>
           <SupportNotice message={updates.notice} tone="neutral" icon="sparkles-outline" autoHideMs={4000} onHide={updates.dismissNotice} testID="ticket-update-notice" />
           <SupportNotice message={notice?.message ?? null} tone={notice?.tone ?? 'neutral'} icon={notice?.tone === 'success' ? 'checkmark-circle-outline' : notice?.tone === 'danger' ? 'alert-circle-outline' : 'information-circle-outline'} autoHideMs={3200} onHide={() => setNotice(null)} />
           {offline ? <SupportNotice message="Você está offline. Mostrando a última atualização disponível." tone="warning" icon="cloud-offline-outline" testID="ticket-offline" /> : null}
+          {ticket.channel === 'whatsapp' ? <TicketWhatsAppNote /> : null}
 
           {ticket.pendingAction ? (
             <TicketActionRequired
@@ -281,7 +286,7 @@ export function TicketDetailScreen({ ticketId }: { ticketId: string }) {
           </>
         ) : null}
 
-        <SectionHeader title="Mensagens" subtitle={messageCount > 0 ? undefined : 'Converse com a equipe sobre este chamado.'} />
+        <SectionHeader title="Mensagens" subtitle={messageCount > 0 || !ticket.canReply ? undefined : 'Converse com a equipe sobre este chamado.'} />
         <View onLayout={(event) => setMessagesY(event.nativeEvent.layout.y)}>
           {messageCount > 0 ? (
             <TicketMessages
@@ -294,8 +299,8 @@ export function TicketDetailScreen({ ticketId }: { ticketId: string }) {
               onFirstUnreadLayout={setUnreadY}
             />
           ) : (
-            <AppText variant="bodySmall" tone="muted">
-              {ticket.canReply ? 'Nenhuma mensagem ainda. Use o campo abaixo se quiser complementar sua solicitação.' : 'Nenhuma mensagem neste chamado.'}
+            <AppText variant="bodySmall" tone="muted" testID="ticket-no-messages">
+              {emptyMessagesText(ticket)}
             </AppText>
           )}
         </View>
@@ -389,6 +394,15 @@ export function TicketDetailScreen({ ticketId }: { ticketId: string }) {
   );
 }
 
+/** Chamado do WhatsApp pode não ter mensagens visíveis no app, só o histórico: isso é esperado e a tela explica. */
+function emptyMessagesText(ticket: SupportTicket): string {
+  if (ticket.channel === 'whatsapp') {
+    const base = 'A conversa deste atendimento fica no WhatsApp e não aparece aqui. O andamento está no histórico logo abaixo.';
+    return ticket.canReply ? `${base} Se quiser, você também pode escrever para a equipe pelo campo no fim da tela.` : base;
+  }
+  return ticket.canReply ? 'Nenhuma mensagem ainda. Use o campo abaixo se quiser complementar sua solicitação.' : 'Nenhuma mensagem neste chamado.';
+}
+
 function FileGroup({ title, files, onOpen }: { title: string; files: SupportAttachment[]; onOpen: (attachment: SupportAttachment) => void }) {
   const styles = useStyles();
   return (
@@ -415,7 +429,7 @@ function TicketDetails({ ticket }: { ticket: SupportTicket }) {
       <ListItem title="Data de abertura" value={formatFullDateTime(ticket.createdAt)} />
       <ListItem title="Última atualização" value={formatFullDateTime(ticket.updatedAt)} />
       <ListItem title="Equipe responsável" value={ticket.assignedTeam} />
-      <ListItem title="Canal" value="Aplicativo ASA Conecta" />
+      <ListItem title="Origem" value={CHANNEL_LABELS[ticket.channel]} testID="ticket-origin" />
       {ticket.priority !== 'normal' ? <ListItem title="Prioridade" value={PRIORITY_LABELS[ticket.priority]} /> : null}
       {ticket.reopenedCount > 0 ? <ListItem title="Reaberturas" value={String(ticket.reopenedCount)} /> : null}
     </List>

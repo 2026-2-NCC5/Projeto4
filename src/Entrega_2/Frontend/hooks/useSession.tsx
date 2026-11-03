@@ -77,6 +77,8 @@ export interface SessionContextValue {
   sessionEpoch: number;
   /** Nome salvo da sessão sendo restaurada (tela de boot/conexão). */
   restoreHint: { fullName: string } | null;
+  /** O estudante pediu para sair e o logout remoto está em andamento: leituras em segundo plano já devem parar. */
+  signingOut: boolean;
   /** false no web: tokens nunca são persistidos e "Manter conectado" fica oculto. */
   canRememberSession: boolean;
   signIn: (email: string, password: string, options?: SignInOptions) => Promise<void>;
@@ -108,6 +110,7 @@ interface SessionState {
   authMethod: AuthMethod | null;
   sessionEpoch: number;
   restoreHint: { fullName: string } | null;
+  signingOut: boolean;
 }
 
 const INITIAL_STATE: SessionState = {
@@ -120,6 +123,7 @@ const INITIAL_STATE: SessionState = {
   authMethod: null,
   sessionEpoch: 0,
   restoreHint: null,
+  signingOut: false,
 };
 
 function unauthenticatedState(current: SessionState, signOutReason: SignOutReason): SessionState {
@@ -255,6 +259,7 @@ export function SessionProvider({ children, biometricEnvironment }: SessionProvi
         authMethod: method,
         sessionEpoch: current.sessionEpoch + 1,
         restoreHint: null,
+        signingOut: false,
       }));
     },
     [sessionHolder],
@@ -350,6 +355,7 @@ export function SessionProvider({ children, biometricEnvironment }: SessionProvi
   const signOut = useCallback(async () => {
     autoPromptConsumed.current = true;
     restoreRun.current += 1; // cancela uma restauração em andamento ("Entrar com outra conta")
+    setState((current) => (current.status === 'authenticated' ? { ...current, signingOut: true } : current));
     const refreshToken = sessionHolder.get()?.refreshToken ?? (await loadPersistedSession().catch(() => null))?.refreshToken;
     try {
       await authService.logout(refreshToken);
@@ -521,6 +527,7 @@ export function SessionProvider({ children, biometricEnvironment }: SessionProvi
       authMethod: state.authMethod,
       sessionEpoch: state.sessionEpoch,
       restoreHint: state.restoreHint,
+      signingOut: state.signingOut,
       canRememberSession: canPersistSession(),
       signIn,
       register,
