@@ -46,6 +46,7 @@ const MATRIX: Record<UserRole, Permission[]> = {
     'integrations:read',
     'health:read',
     'permissions:read',
+    'support_channels:manage',
   ],
 };
 

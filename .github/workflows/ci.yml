@@ -179,6 +179,8 @@ jobs:
       MAIL_TRANSPORT: disabled
       PUSH_PROVIDER: disabled
       ASA_QUEUE_PROVIDER: mock
+      # Central de Atendimento: provedor de demonstração, nada sai para o WhatsApp
+      ASA_WHATSAPP_PROVIDER: fake
       # muitos logins seguidos no mesmo IP do runner (só no CI)
       RATE_LIMIT_ENABLED: "false"
       WEB_ORIGINS: http://localhost:4173,http://127.0.0.1:4173,http://localhost:4174,http://127.0.0.1:4174

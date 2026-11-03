@@ -3,7 +3,7 @@ import { useId, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { formatBytes, formatDateTime } from '@/lib/format';
 import { messageForError } from '@/services/api/client';
-import type { SupportAttachment, SupportAttachmentLink, SupportLimits, SupportUpload, SupportUploadRequest } from '@/types/api';
+import type { SupportAttachment, SupportAttachmentLink, SupportLimits, SupportStaffAttachment, SupportUpload, SupportUploadRequest } from '@/types/api';
 
 const iconFor = (mime: string) => (mime.startsWith('image/') ? FileImage : mime === 'application/pdf' || mime.startsWith('text/') ? FileText : File);
 
@@ -16,7 +16,7 @@ export function AttachmentList({
   emptyText,
   ownLabel = 'Você',
 }: {
-  attachments: SupportAttachment[];
+  attachments: Array<SupportAttachment | SupportStaffAttachment>;
   getLink: (attachmentId: string) => Promise<SupportAttachmentLink>;
   emptyText?: string;
   /** como chamar o aluno (portal do aluno: "Você"; portal da equipe: "Aluno") */

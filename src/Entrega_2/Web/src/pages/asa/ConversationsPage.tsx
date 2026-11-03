@@ -145,9 +145,7 @@ function ConversationPane({ id, onBack }: { id: string; onBack: () => void }) {
           <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-small text-slate">
             <span className="font-mono">{data.protocol}</span>
             <span aria-hidden>·</span>
-            <span>
-              {data.student.fullName} (RA {data.student.registrationNumber})
-            </span>
+            <span>{data.student ? `${data.student.fullName} (RA ${data.student.registrationNumber})` : `Contato não identificado${data.conversation ? ` (${data.conversation.contactLabel})` : ''}`}</span>
             <StatusBadge status={data.status} audience="staff" />
           </p>
         </div>

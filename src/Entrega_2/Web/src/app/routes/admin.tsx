@@ -19,6 +19,7 @@ export const adminRoutes: RouteObject[] = [
   { path: 'sla', element: page(() => import('@/pages/admin/SlaPoliciesPage')) },
   { path: 'automacoes', element: page(() => import('@/pages/admin/automations/AutomationsPage')) },
   { path: 'integracoes', element: page(() => import('@/pages/admin/IntegrationsPage')) },
+  { path: 'canais/whatsapp', element: page(() => import('@/pages/admin/WhatsAppChannelPage')) },
   { path: 'oportunidades', element: page(() => import('@/pages/admin/CareerSourcesPage')) },
   { path: 'auditoria', element: page(() => import('@/pages/admin/AuditPage')) },
   { path: 'configuracoes', element: page(() => import('@/pages/admin/settings/SettingsPage')) },

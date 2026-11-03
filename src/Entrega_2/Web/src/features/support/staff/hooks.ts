@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/Toast';
-import { messageForError } from '@/services/api/client';
+import { isApiError, messageForError } from '@/services/api/client';
 import { supportApi } from '@/services/api/endpoints';
 import type { SupportStaffMessageRequest, SupportStaffTicket, SupportTicketPriority, SupportTicketStatus } from '@/types/api';
 import { isTicketChanged, staffKeys, staffTicketsApi } from './api';
@@ -70,6 +70,8 @@ const SUCCESS: Record<Exclude<TicketAction['kind'], 'assign'>, string> = {
 };
 
 export function successMessageFor(action: TicketAction): string {
+  // pelo WhatsApp, aceitar não é enviar: o estado real aparece na própria mensagem
+  if (action.kind === 'message' && action.body.transport === 'whatsapp') return 'Resposta na fila de envio. O estado real aparece na mensagem.';
   if (action.kind !== 'assign') return SUCCESS[action.kind];
   if (action.intent === 'forward') return `Chamado encaminhado para ${action.team}. Ele fica sem atendente até alguém da equipe assumir.`;
   if (action.intent === 'claim') return 'Você assumiu o atendimento.';
@@ -110,6 +112,8 @@ export function useTicketActions(id: string, options: { onConflict?: () => void;
       if (message) toast.show(message);
     },
     onError: (error) => {
+      // decisão humana (responder a chamado de outra pessoa): quem chamou pergunta; não é erro para avisar
+      if (isApiError(error) && error.reason === 'assigned_to_other') return;
       if (isTicketChanged(error)) {
         void queryClient.invalidateQueries({ queryKey: staffKeys.ticket(id) });
         void queryClient.invalidateQueries({ queryKey: staffKeys.tickets });

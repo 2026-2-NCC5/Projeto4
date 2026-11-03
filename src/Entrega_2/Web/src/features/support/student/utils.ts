@@ -62,4 +62,4 @@ export const slaApplies = (status: SupportTicketStatus): boolean => status !== '
 
 export const businessDays = (days: number): string => `${days} ${days === 1 ? 'dia útil' : 'dias úteis'}`;
 
-export const channelLabel = (channel: 'app' | 'web'): string => (channel === 'web' ? 'Portal web' : 'Aplicativo');
+export const channelLabel = (channel: 'app' | 'web' | 'whatsapp'): string => (channel === 'web' ? 'Portal web' : channel === 'whatsapp' ? 'WhatsApp' : 'Aplicativo');

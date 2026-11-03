@@ -29,6 +29,11 @@ export interface StaffTicketQuery {
   /** só chamados com mensagens do aluno ainda não lidas pela equipe */
   unread?: '1';
   sort?: 'updated' | 'due';
+  /** canal de abertura: app, web, whatsapp */
+  channel?: string;
+  /** só contatos sem vínculo verificado */
+  unidentified?: '1';
+  tag?: string;
 }
 
 /**

@@ -265,7 +265,8 @@ export function AppShell({ area, children }: { area: Area; children?: ReactNode 
               <UserMenu area={area} />
             </div>
           </header>
-          <main ref={contentRef} id="conteudo" tabIndex={-1} className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:py-8 focus:outline-none">
+          {/* a Central de Atendimento usa a largura toda: são três painéis lado a lado */}
+          <main ref={contentRef} id="conteudo" tabIndex={-1} className={cn('mx-auto w-full flex-1 px-4 focus:outline-none', location.pathname.startsWith('/asa/atendimento') ? 'py-3 sm:px-4' : 'max-w-7xl py-6 sm:px-6 lg:py-8')}>
             {area === 'admin' ? <div key={location.pathname} className="asa-page-in">{children ?? <Outlet />}</div> : children ?? <Outlet />}
           </main>
         </div>

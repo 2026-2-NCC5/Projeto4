@@ -3,14 +3,14 @@ import { useId, useState, type FormEvent, type ReactNode } from 'react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 import { formatDateTime, formatRelative } from '@/lib/format';
-import type { SupportStaffTicketEvent, SupportTicketEvent, SupportTicketMessage } from '@/types/api';
+import type { SupportStaffTicketEvent, SupportStaffTicketMessage, SupportTicketEvent, SupportTicketMessage } from '@/types/api';
 import { EVENT_ICONS } from '../labels';
 
 /**
  * Mensagens do chamado. `viewer` decide o lado ("minhas" à direita) e a confirmação de leitura:
  * o aluno vê se a equipe leu; a equipe vê se o aluno leu.
  */
-export function MessageThread({ messages, viewer, renderAttachments }: { messages: SupportTicketMessage[]; viewer: 'student' | 'staff'; renderAttachments?: (message: SupportTicketMessage) => ReactNode }) {
+export function MessageThread<T extends SupportTicketMessage | SupportStaffTicketMessage>({ messages, viewer, renderAttachments, renderStatus }: { messages: T[]; viewer: 'student' | 'staff'; renderAttachments?: (message: T) => ReactNode; /** substitui a confirmação de leitura (ex.: estado de entrega no WhatsApp) */ renderStatus?: (message: T) => ReactNode }) {
   if (messages.length === 0) return <p className="text-small text-mist">Nenhuma mensagem ainda.</p>;
   return (
     <ol className="flex flex-col gap-3" aria-label="Mensagens">
@@ -29,12 +29,12 @@ export function MessageThread({ messages, viewer, renderAttachments }: { message
               </header>
               {message.content ? <p className="whitespace-pre-wrap break-words text-body text-ink">{message.content}</p> : null}
               {renderAttachments?.(message)}
-              {mine ? (
+              {(renderStatus ? renderStatus(message) : null) ?? (mine ? (
                 <p className="mt-1 flex items-center justify-end gap-1 text-caption text-slate">
                   {message.readAt ? <CheckCheck size={14} aria-hidden /> : <Check size={14} aria-hidden />}
                   <span>{readLabel}</span>
                 </p>
-              ) : null}
+              ) : null)}
             </article>
           </li>
         );

@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Download, Loader2, RefreshCw, ShieldCheck, Timer } from 'lucide-react';
 import { useId, useState, type MouseEvent } from 'react';
+import { WhatsAppMetricsSection } from '@/features/support/central/WhatsAppMetricsSection';
 import { Link } from 'react-router';
 import { Button, ButtonLink, buttonClasses } from '@/components/ui/Button';
 import { PageHeader, Surface } from '@/components/ui/Display';
@@ -234,6 +235,7 @@ export default function MetricsPage() {
           <Surface>
             <DailyChart series={data.series} />
           </Surface>
+          <WhatsAppMetricsSection />
           <Surface aria-labelledby="metricas-distribuicao">
             <PanelHeader id="metricas-distribuicao" title="Distribuição" description="Categorias dos chamados abertos no período e situação da fila agora." />
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">

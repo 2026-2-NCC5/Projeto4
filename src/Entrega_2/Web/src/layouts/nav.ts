@@ -12,9 +12,11 @@ import {
   FileText,
   Gauge,
   GraduationCap,
+  Headset,
   History,
   LayoutDashboard,
   ListChecks,
+  MessageCircle,
   MessagesSquare,
   Plug,
   ScrollText,
@@ -89,6 +91,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
     {
       items: [
         { to: '/asa', label: 'Painel', icon: LayoutDashboard, end: true },
+        { to: '/asa/atendimento', label: 'Central de Atendimento', icon: Headset, permission: 'tickets:read:any' },
         { to: '/asa/chamados', label: 'Fila de chamados', icon: ClipboardList, permission: 'tickets:read:any' },
         { to: '/asa/conversas', label: 'Conversas', icon: MessagesSquare, permission: 'tickets:read:any' },
         { to: '/asa/agendamentos', label: 'Agendamentos', icon: CalendarClock, permission: 'appointments:read:any', feature: 'appointments', end: true },
@@ -145,6 +148,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
       title: 'Governança',
       items: [
         { to: '/admin/integracoes', label: 'Integrações', icon: Plug, permission: 'integrations:read' },
+        { to: '/admin/canais/whatsapp', label: 'Canal WhatsApp', icon: MessageCircle, permission: 'support_channels:manage' },
         { to: '/admin/oportunidades', label: 'Fontes de oportunidades', icon: BriefcaseBusiness, permission: 'settings:manage' },
         { to: '/admin/metricas', label: 'Métricas e relatórios', icon: BarChart3, permission: 'metrics:read' },
         { to: '/admin/auditoria', label: 'Auditoria', icon: ScrollText, permission: 'audit:read:any' },

@@ -150,7 +150,7 @@ export function UnreadBadge({ count }: { count: number }) {
   );
 }
 
-export const CHANNEL_LABELS: Record<'app' | 'web', string> = { app: 'Aplicativo', web: 'Portal web' };
+export const CHANNEL_LABELS: Record<'app' | 'web' | 'whatsapp', string> = { app: 'Aplicativo', web: 'Portal web', whatsapp: 'WhatsApp' };
 
 /** Aviso de minimização: o que a equipe vê (e não vê) de cada aluno. */
 export function MinimizationNote() {

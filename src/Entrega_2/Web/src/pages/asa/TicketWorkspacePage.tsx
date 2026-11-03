@@ -115,15 +115,19 @@ export default function TicketWorkspacePage() {
           <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="font-mono">{data.protocol}</span>
             <span aria-hidden>·</span>
-            <span>
-              {data.student.fullName} (RA {data.student.registrationNumber})
-            </span>
+            <span>{data.student ? `${data.student.fullName} (RA ${data.student.registrationNumber})` : `Contato não identificado${data.conversation ? ` (${data.conversation.contactLabel})` : ''}`}</span>
             <UnreadBadge count={data.unreadFromStudent ?? 0} />
           </span>
         }
         actions={<Freshness updatedAt={ticket.dataUpdatedAt} fetching={ticket.isFetching} failed={ticket.isRefetchError} onRefresh={() => void ticket.refetch()} />}
       />
       {conflict ? <ConflictNotice onDismiss={() => setConflict(false)} /> : null}
+      {data.conversation ? (
+        <p className="mb-4 rounded-md border border-line bg-snow px-3 py-2 text-small text-slate">
+          Esta conversa veio do WhatsApp. Para responder por lá e ver o estado de cada envio,{' '}
+          <Link to={`/asa/atendimento/${encodeURIComponent(data.id)}`} className="font-medium text-action underline">abra na Central de Atendimento</Link>.
+        </p>
+      ) : null}
       <SectionJumps
         sections={[
           { id: 'secao-conversa', label: 'Conversa' },

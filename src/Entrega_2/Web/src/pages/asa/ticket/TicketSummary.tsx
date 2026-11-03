@@ -91,6 +91,20 @@ export function TicketSummary({ ticket }: { ticket: SupportStaffTicket }) {
 }
 
 export function StudentCard({ ticket, canOpenContext }: { ticket: SupportStaffTicket; canOpenContext: boolean }) {
+  if (!ticket.student) {
+    return (
+      <Surface aria-labelledby="aluno">
+        <SectionHeader id="aluno" title="Contato não identificado" />
+        <div className="flex items-start gap-3">
+          <UserRound size={20} aria-hidden className="mt-0.5 shrink-0 text-slate" />
+          <div className="min-w-0">
+            <p className="text-body font-medium text-ink break-words">{ticket.conversation?.contactLabel ?? 'Contato do WhatsApp'}</p>
+            <p className="text-small text-slate">Sem vínculo verificado com um estudante. Dados acadêmicos ficam indisponíveis até o estudante vincular o número pelo app.</p>
+          </div>
+        </div>
+      </Surface>
+    );
+  }
   return (
     <Surface aria-labelledby="aluno">
       <SectionHeader id="aluno" title="Aluno" />
