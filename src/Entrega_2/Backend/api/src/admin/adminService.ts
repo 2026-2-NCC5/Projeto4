@@ -411,6 +411,22 @@ export class AdminService {
         checkedAt,
       },
       {
+        id: 'whatsapp',
+        name: 'WhatsApp (Central de Atendimento)',
+        description: 'Canal institucional de atendimento. O estado da conexão fica em "Canal WhatsApp".',
+        state: config.whatsapp.provider === 'fake' ? 'demo' : config.whatsapp.provider ? 'configured' : 'not_configured',
+        detail:
+          config.whatsapp.provider === 'fake'
+            ? 'Provedor de demonstração: dados fictícios e nada sai para o WhatsApp.'
+            : config.whatsapp.provider === 'wa-akg'
+              ? 'Gateway não oficial, só para piloto autorizado. Não é a operação institucional definitiva.'
+              : config.whatsapp.provider === 'meta-cloud-api'
+                ? 'API oficial configurada. Confira a conexão em "Canal WhatsApp".'
+                : (config.whatsapp.disabledReason ?? 'Sem provedor: o atendimento funciona pelo app e pelo portal.'),
+        configuredBy: ['ASA_WHATSAPP_PROVIDER', 'ASA_WHATSAPP_PII_KEY', 'ASA_WHATSAPP_WEBHOOK_SECRET'],
+        checkedAt,
+      },
+      {
         id: 'jev',
         name: 'JEV (provedor de IA)',
         description: 'Integração futura do assistente. Contrato técnico ainda não definido.',

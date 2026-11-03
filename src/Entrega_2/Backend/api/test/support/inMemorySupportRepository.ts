@@ -4,6 +4,7 @@ import { ConflictError, ValidationError } from '../../src/errors/AppError.js';
 import type { SupportTicketStatus } from '../../src/contracts/mobileApi.v1.js';
 import type {
   NewSupportEvent,
+  NewSupportMessage,
   NewSupportNotification,
   SupportAttachmentLink,
   SupportAttachmentRecord,
@@ -29,6 +30,27 @@ export interface InMemorySupportStore {
 }
 
 const clone = <T>(value: T): T => structuredClone(value);
+
+/** Mesmos padrões das colunas do PostgreSQL. */
+function storedMessage({ transportFields, ...message }: NewSupportMessage, ticketId: string, now: Date): SupportMessageRecord {
+  return {
+    ...clone(message),
+    ticketId,
+    readAt: null,
+    createdAt: now,
+    transport: 'in_app',
+    channelId: null,
+    externalMessageId: null,
+    deliveryState: 'not_applicable',
+    deliveryErrorCode: null,
+    deliveryUpdatedAt: null,
+    providerTimestamp: null,
+    contentKind: 'text',
+    replyToExternalId: null,
+    studentVisible: true,
+    ...clone(transportFields ?? {}),
+  };
+}
 const unattach = ({ content: _content, ...record }: SupportAttachmentRecord & { content: Buffer }): SupportAttachmentRecord => clone(record);
 
 /** Repositório de chamados em memória (testes unitários), com as mesmas regras do PostgreSQL. */
@@ -39,7 +61,8 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
   const pushEvents = (ticketId: string, events: NewSupportEvent[], now: Date) => {
     for (const item of events) store.events.push({ ...clone(item), id: randomUUID(), ticketId, createdAt: now });
   };
-  const pushNotifications = (ticketId: string, studentId: string, notifications: NewSupportNotification[], now: Date) => {
+  const pushNotifications = (ticketId: string, studentId: string | null, notifications: NewSupportNotification[], now: Date) => {
+    if (!studentId) return;
     for (const item of notifications) store.notifications.push({ ...item, id: randomUUID(), ticketId, studentId, createdAt: now, readAt: null });
   };
   const canLink = (link: SupportAttachmentLink, now: Date) =>
@@ -64,6 +87,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
         protocol: `ASA-${input.now.getUTCFullYear()}-${String(protocolSequence).padStart(5, '0')}`,
         studentId: input.studentId,
         channel: input.channel,
+        conversationId: input.conversationId ?? null,
         clientRequestId: input.clientRequestId,
         categoryId: input.categoryId,
         subcategoryId: input.subcategoryId,
@@ -88,6 +112,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
         version: 1,
       };
       store.tickets.push(ticket);
+      for (const message of input.messages ?? []) store.messages.push(storedMessage(message, ticket.id, input.now));
       pushEvents(ticket.id, input.events, input.now);
       if (input.attachments) link(ticket.id, input.attachments);
       pushNotifications(ticket.id, ticket.studentId, input.notifications, input.now);
@@ -105,7 +130,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
       const term = query.search ?? '';
       const cursor = query.cursor;
       const now = query.now ?? new Date();
-      const unreadSender = query.perspective === 'staff' ? 'student' : 'agent';
+      const isUnread = (message: SupportMessageRecord) => (query.perspective === 'staff' ? message.senderType === 'student' || message.senderType === 'contact' : message.senderType === 'agent' && message.studentVisible) && !message.readAt;
       const byDue = query.orderBy === 'due';
       const key = (ticket: StoredTicket) => (byDue ? ticket.sla.dueAt : ticket.updatedAt).getTime();
       const risky = (ticket: StoredTicket) => {
@@ -123,7 +148,9 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
         .filter((ticket) => !query.categoryIds || query.categoryIds.includes(ticket.categoryId))
         .filter((ticket) => !query.priorities || query.priorities.includes(ticket.priority))
         .filter((ticket) => !query.slaRisk || risky(ticket))
-        .filter((ticket) => !query.unreadByStaff || store.messages.some((message) => message.ticketId === ticket.id && message.senderType === 'student' && !message.readAt))
+        .filter((ticket) => !query.unreadByStaff || store.messages.some((message) => message.ticketId === ticket.id && (message.senderType === 'student' || message.senderType === 'contact') && !message.readAt))
+        .filter((ticket) => !query.channels || query.channels.includes(ticket.channel))
+        .filter((ticket) => !query.unidentifiedOnly || ticket.studentId === null)
         .sort((a, b) => (byDue ? key(a) - key(b) || (a.id < b.id ? -1 : 1) : key(b) - key(a) || (a.id < b.id ? 1 : -1)))
         .filter((ticket) => !cursor || (byDue ? key(ticket) > cursor.updatedAt.getTime() || (key(ticket) === cursor.updatedAt.getTime() && ticket.id > cursor.id) : key(ticket) < cursor.updatedAt.getTime() || (key(ticket) === cursor.updatedAt.getTime() && ticket.id < cursor.id)))
         .slice(0, query.limit)
@@ -131,7 +158,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
           const lastPublic = store.events.filter((event) => event.ticketId === ticket.id && event.visibility === 'public').at(-1);
           return {
             ...stripSearch(ticket),
-            unreadCount: store.messages.filter((message) => message.ticketId === ticket.id && message.senderType === unreadSender && !message.readAt).length,
+            unreadCount: store.messages.filter((message) => message.ticketId === ticket.id && isUnread(message)).length,
             lastActivity: lastPublic ? { title: lastPublic.title, createdAt: lastPublic.createdAt } : null,
           };
         });
@@ -139,7 +166,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
     async markReadByStaff(ticketId, now) {
       let changed = 0;
       for (const message of store.messages) {
-        if (message.ticketId === ticketId && message.senderType === 'student' && !message.readAt) {
+        if (message.ticketId === ticketId && (message.senderType === 'student' || message.senderType === 'contact') && !message.readAt) {
           message.readAt = now;
           changed += 1;
         }
@@ -154,15 +181,28 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
     async listEvents(ticketId, options) {
       return store.events.filter((event) => event.ticketId === ticketId && (options.includeInternal || event.visibility === 'public')).map(clone);
     },
-    async listMessages(ticketId) {
-      return store.messages.filter((message) => message.ticketId === ticketId).map(clone);
+    async firstStaffResponseAt(ticketId) {
+      const first = store.events
+        .filter((event) => event.ticketId === ticketId && (event.actorType === 'agent' || event.actorType === 'department') && (event.visibility === 'public' || event.type === 'message_received'))
+        .reduce<Date | null>((earliest, event) => (!earliest || event.createdAt < earliest ? event.createdAt : earliest), null);
+      return first;
+    },
+    async listMessages(ticketId, options = {}) {
+      return store.messages.filter((message) => message.ticketId === ticketId && (!options.studentVisibleOnly || message.studentVisible)).map(clone);
     },
     async findMessageByClientId(ticketId, clientMessageId) {
       const message = store.messages.find((item) => item.ticketId === ticketId && item.clientMessageId === clientMessageId);
       return message ? clone(message) : null;
     },
-    async listAttachments(ticketId) {
-      return store.attachments.filter((item) => item.ticketId === ticketId).map(unattach);
+    async listAttachments(ticketId, options = {}) {
+      return store.attachments.filter((item) => item.ticketId === ticketId && (!options.studentVisibleOnly || item.studentVisible)).map(unattach);
+    },
+    async reviewAttachment(id, ticketId, input) {
+      const record = store.attachments.find((item) => item.id === id && item.ticketId === ticketId);
+      if (!record) return null;
+      record.reviewStatus = input.reviewStatus;
+      if (input.studentVisible !== undefined) record.studentVisible = input.studentVisible;
+      return unattach(record);
     },
     async findRating(ticketId) {
       const rating = store.ratings.find((item) => item.ticketId === ticketId);
@@ -176,7 +216,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
       if (!changes.attachments.every((attachment) => canLink(attachment, changes.now))) throw unavailable();
       if (changes.rating && store.ratings.some((item) => item.ticketId === ticket.id)) throw new ConflictError('Você já avaliou este atendimento.', 'already_rated');
       Object.assign(ticket, clone(changes.patch), { version: ticket.version + 1, updatedAt: changes.now });
-      for (const message of changes.messages) store.messages.push({ ...clone(message), ticketId: ticket.id, readAt: null, createdAt: changes.now });
+      for (const message of changes.messages) store.messages.push(storedMessage(message, ticket.id, changes.now));
       for (const attachment of changes.attachments) link(ticket.id, attachment);
       pushEvents(ticket.id, changes.events, changes.now);
       pushNotifications(ticket.id, ticket.studentId, changes.notifications, changes.now);
@@ -186,7 +226,7 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
     async markRead(ticketId, studentId, now) {
       let changed = 0;
       for (const message of store.messages) {
-        if (message.ticketId === ticketId && message.senderType === 'agent' && !message.readAt) {
+        if (message.ticketId === ticketId && message.senderType === 'agent' && message.studentVisible && !message.readAt) {
           message.readAt = now;
           changed += 1;
         }
@@ -212,6 +252,9 @@ export function createInMemorySupportRepository(): SupportRepository & { store: 
         createdAt: input.now,
         expiresAt: input.expiresAt,
         content: input.content,
+        origin: 'upload' as const,
+        studentVisible: true,
+        reviewStatus: 'received' as const,
       };
       store.attachments.push(record);
       return unattach(record);

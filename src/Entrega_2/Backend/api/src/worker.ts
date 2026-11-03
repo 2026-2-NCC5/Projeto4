@@ -7,12 +7,13 @@ import { createRuntime } from './runtime.js';
  * - varre os prazos das automações a cada AUTOMATION_SCAN_INTERVAL_SECONDS.
  * Pode coexistir com a API serverless e com outras réplicas: a concessão no banco elege um leitor por vez.
  */
-const { config, logger, pool, notifications, queue, automationEngine } = createRuntime('worker');
+const { config, logger, pool, notifications, queue, automationEngine, whatsapp } = createRuntime('worker');
 
 let automationTimer: NodeJS.Timeout | null = null;
 
 async function main(): Promise<void> {
   await queue.start();
+  whatsapp?.start();
   if (automationEngine && config.automations.scanIntervalSeconds > 0) {
     automationTimer = setInterval(() => {
       void automationEngine.scanSla().then((executed) => {
@@ -29,6 +30,7 @@ async function main(): Promise<void> {
 async function shutdown(signal: string): Promise<void> {
   logger.info({ signal }, 'worker shutting down');
   if (automationTimer) clearInterval(automationTimer);
+  whatsapp?.stop();
   // a Vercel espera 30 s depois do SIGTERM: termina a leitura em curso e libera a concessão
   await queue.stop().catch(() => undefined);
   notifications.stop();

@@ -1,6 +1,7 @@
 import type { Express } from 'express';
 import type { AutomationEngine } from './admin/automationEngine.js';
-import { automationEngineOf, createApp } from './createApp.js';
+import { automationEngineOf, createApp, whatsAppModuleOf } from './createApp.js';
+import type { WhatsAppModule } from './support/whatsapp/module.js';
 import { loadConfig, type AppConfig } from './config/env.js';
 import { createLogger, type Logger } from './config/logger.js';
 import { createPool, type DbPool } from './db/pool.js';
@@ -27,6 +28,8 @@ export interface Runtime {
   queue: QueueModule;
   app: Express;
   automationEngine: AutomationEngine | null;
+  /** canal WhatsApp: as entradas residentes ligam os laços da fila e da saúde; serverless usa os jobs */
+  whatsapp: WhatsAppModule | null;
 }
 
 /** Composição única das três entradas (mesmos serviços, mesmo banco; muda só quem dirige os laços). */
@@ -64,5 +67,5 @@ export function createRuntime(kind: RuntimeKind): Runtime {
     logger.warn({ status: 'cors_open' }, 'CORS_ORIGIN=* em produção: defina as origens permitidas (o portal usa a mesma origem e não precisa de CORS)');
   }
   const app = createApp({ config, repos, logger, notifications, queue, pool });
-  return { config, logger, pool, repos, notifications, queue, app, automationEngine: automationEngineOf(app) };
+  return { config, logger, pool, repos, notifications, queue, app, automationEngine: automationEngineOf(app), whatsapp: whatsAppModuleOf(app) };
 }

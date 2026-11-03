@@ -97,9 +97,9 @@ const FINISHED = "('resolved', 'closed', 'cancelled')";
 /** chamados considerados (sem contas fictícias quando a demonstração está desligada) */
 const TICKETS = (excludeParam: string) => `
   select t.* from support_tickets t
-    join students s on s.id = t.student_id
-    join users u on u.id = s.user_id
-   where not (${excludeParam}::boolean and u.is_demo)`;
+    left join students s on s.id = t.student_id
+    left join users u on u.id = s.user_id
+   where not (${excludeParam}::boolean and coalesce(u.is_demo, false))`;
 
 const FOLD = (column: string) => `translate(lower(${column}), 'áàâãäéèêëíìîïóòôõöúùûüçñ', 'aaaaaeeeeiiiiooooouuuucn')`;
 
@@ -116,7 +116,7 @@ export class PgAnalyticsRepository implements AnalyticsRepository {
          count(*) filter (where status not in ${FINISHED} and assigned_agent_id is null)::int as "unassigned",
          count(*) filter (where status not in ${FINISHED} and assigned_agent_id = $2::uuid)::int as "assignedToMe",
          count(*) filter (where status not in ${FINISHED} and exists (
-           select 1 from support_ticket_messages m where m.ticket_id = t.id and m.sender_type = 'student' and m.read_at is null))::int as "unreadFromStudents",
+           select 1 from support_ticket_messages m where m.ticket_id = t.id and m.sender_type in ('student', 'contact') and m.read_at is null))::int as "unreadFromStudents",
          count(*) filter (where sla_completed_at is null and sla_paused_at is null and sla_due_at > $3
            and sla_due_at - $3 <= greatest((sla_due_at - sla_started_at) * 0.25, interval '8 hours'))::int as "slaNearDeadline",
          count(*) filter (where sla_completed_at is null and sla_paused_at is null and sla_due_at <= $3)::int as "slaOverdue"
@@ -136,19 +136,19 @@ export class PgAnalyticsRepository implements AnalyticsRepository {
          (select percentile_cont(0.5) within group (order by extract(epoch from (fr.first_at - t.created_at)) / 60)
             from t join lateral (
               select min(e.created_at) as first_at from support_ticket_events e
-               where e.ticket_id = t.id and e.visibility = 'public' and e.actor_type in ('agent', 'department')
+               where e.ticket_id = t.id and (e.visibility = 'public' or e.type = 'message_received') and e.actor_type in ('agent', 'department')
             ) fr on fr.first_at is not null
            where t.created_at >= $1 and t.created_at < $2) as "firstResponseMedianMinutes",
          (select (count(*) filter (where fr.first_at is not null and fr.first_at <= t.first_response_due_at))::float / nullif(count(*), 0)
             from t left join lateral (
               select min(e.created_at) as first_at from support_ticket_events e
-               where e.ticket_id = t.id and e.visibility = 'public' and e.actor_type in ('agent', 'department')
+               where e.ticket_id = t.id and (e.visibility = 'public' or e.type = 'message_received') and e.actor_type in ('agent', 'department')
             ) fr on true
            where t.created_at >= $1 and t.created_at < $2 and t.first_response_due_at is not null
              and (fr.first_at is not null or t.first_response_due_at < now())) as "firstResponseOnTime",
          (select count(*) from t left join lateral (
               select min(e.created_at) as first_at from support_ticket_events e
-               where e.ticket_id = t.id and e.visibility = 'public' and e.actor_type in ('agent', 'department')
+               where e.ticket_id = t.id and (e.visibility = 'public' or e.type = 'message_received') and e.actor_type in ('agent', 'department')
             ) fr on true
            where t.created_at >= $1 and t.created_at < $2 and t.first_response_due_at is not null
              and (fr.first_at is not null or t.first_response_due_at < now()))::int as "firstResponseMeasured",
@@ -214,7 +214,7 @@ export class PgAnalyticsRepository implements AnalyticsRepository {
        select t.protocol, t.created_at as "createdAt", t.category_id as "categoryId", t.subcategory_id as "subcategoryId", t.status, t.priority,
               t.assigned_team as "assignedTeam", t.channel, t.sla_started_at as "slaStartedAt", t.sla_due_at as "slaDueAt",
               t.sla_paused_at as "slaPausedAt", t.sla_completed_at as "slaCompletedAt",
-              (select min(e.created_at) from support_ticket_events e where e.ticket_id = t.id and e.visibility = 'public' and e.actor_type in ('agent', 'department')) as "firstResponseAt",
+              (select min(e.created_at) from support_ticket_events e where e.ticket_id = t.id and (e.visibility = 'public' or e.type = 'message_received') and e.actor_type in ('agent', 'department')) as "firstResponseAt",
               t.resolved_at as "resolvedAt", r.rating
          from t left join support_ticket_ratings r on r.ticket_id = t.id
         where t.created_at >= $1 and t.created_at < $2

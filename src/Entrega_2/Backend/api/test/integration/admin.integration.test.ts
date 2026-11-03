@@ -145,7 +145,8 @@ describeDb('integração administração ↔ PostgreSQL (contas, SLA, automaçõ
     expect(reply.status).toBe(201);
     const view = await request(app).get(`/api/support/staff/tickets/${id}`).set(bearer(staff.accessToken));
     expect(view.body.data.firstResponse.status).toBe('met');
-    const today = new Date().toISOString().slice(0, 10);
+    // o período é interpretado no fuso da instituição: em UTC, das 21h às 24h daqui o teste consultaria o dia seguinte
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
     const metrics = await request(app).get(`/api/asa/metrics?from=${today}&to=${today}`).set(bearer(staff.accessToken));
     expect(metrics.body.data.kpis.firstResponseMeasured).toBeGreaterThanOrEqual(1);
     expect(metrics.body.data.kpis.firstResponseOnTime).toBeGreaterThan(0);

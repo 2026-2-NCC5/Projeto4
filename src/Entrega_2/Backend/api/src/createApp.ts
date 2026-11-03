@@ -23,6 +23,10 @@ import { hmacHex } from './auth/secrets.js';
 import { SUPPORT_UPLOAD_BODY_LIMIT, SUPPORT_UPLOAD_PATHS } from './routes/support.js';
 import { SupportCore, SupportService, type SupportPushNotifier } from './support/supportService.js';
 import { SupportStaffService } from './support/supportStaffService.js';
+// ---- support-whatsapp (Central de Atendimento WhatsApp)
+import { runWithCorrelation } from './support/realtime/correlation.js';
+import { createWhatsAppModule, type WhatsAppModule } from './support/whatsapp/module.js';
+import { createWhatsAppRouter, WHATSAPP_WEBHOOK_BODY_LIMIT, WHATSAPP_WEBHOOK_PATHS } from './support/whatsapp/routes.js';
 // ---- queue (Fila presencial do ASA)
 import { authenticate, requirePermission } from './middlewares/auth.js';
 import { createNotificationsModule, type NotificationsModule } from './notifications/module.js';
@@ -62,6 +66,11 @@ export function automationEngineOf(app: Express): AutomationEngine | null {
   return (app.locals.automationEngine as AutomationEngine | undefined) ?? null;
 }
 
+/** Canal WhatsApp criado pela aplicação (as entradas residentes ligam os laços; os testes chamam a fila direto). */
+export function whatsAppModuleOf(app: Express): WhatsAppModule | null {
+  return (app.locals.whatsapp as WhatsAppModule | null | undefined) ?? null;
+}
+
 export interface AppDeps {
   config: AppConfig;
   repos: Repositories;
@@ -82,6 +91,8 @@ export interface AppDeps {
   queue?: QueueModule;
   /** Banco da runtime. Opcional para manter a fábrica de testes sem banco. */
   pool?: DbPool;
+  /** Testes do canal WhatsApp: fila acionada à mão e `fetch` simulado para os adapters. */
+  whatsappOptions?: { autoKick?: boolean; fetch?: typeof fetch };
 }
 
 /** Fábrica da aplicação Express com injeção de dependências (testável sem rede/banco). */
@@ -179,9 +190,12 @@ export function createApp(deps: AppDeps): Express {
     : null;
   if (automationEngine) supportCore.hooks.onTicketCreated = (ticket) => automationEngine.onTicketCreated(ticket);
   // ---- end admin
+  // ---- support-whatsapp (Central de Atendimento WhatsApp): só com PostgreSQL (como admin e analytics)
+  const whatsapp = createWhatsAppModule({ config: deps.config, repos: deps.repos, core: supportCore, audit, logger, now, ...(deps.whatsappOptions?.autoKick === undefined ? {} : { autoKick: deps.whatsappOptions.autoKick }), ...(deps.whatsappOptions?.fetch ? { fetch: deps.whatsappOptions.fetch } : {}) });
 
   const app = express();
   app.locals.automationEngine = automationEngine;
+  app.locals.whatsapp = whatsapp;
   app.disable('x-powered-by');
   // Só confie em X-Forwarded-For atrás de um proxy conhecido (TRUST_PROXY); senão o limite por IP seria burlável.
   app.set('trust proxy', deps.config.trustProxy);
@@ -189,10 +203,16 @@ export function createApp(deps: AppDeps): Express {
   app.use(cors({ origin: deps.config.corsOrigin === '*' ? true : deps.config.corsOrigin.split(',').map((item) => item.trim()) }));
   // ---- support (Atendimento): envio de arquivos em base64 aceita corpo maior só nestas rotas
   app.use(SUPPORT_UPLOAD_PATHS, express.json({ limit: SUPPORT_UPLOAD_BODY_LIMIT }));
+  // ---- support-whatsapp: a assinatura do webhook é sobre os bytes recebidos, então o corpo fica cru nestas rotas
+  app.use(WHATSAPP_WEBHOOK_PATHS, express.raw({ type: () => true, limit: WHATSAPP_WEBHOOK_BODY_LIMIT }));
   // Inventário do crawler é limitado e validado; requer corpo maior que as rotas comuns.
   app.use('/api/v1/portal/sync', express.json({ limit: '2mb' }));
   app.use(express.json({ limit: '64kb' }));
   app.use(requestContext(logger));
+  // ---- support-whatsapp: o correlation_id da requisição acompanha os eventos gravados
+  app.use((req, _res, next) => {
+    runWithCorrelation(req.ctx.correlationId, next);
+  });
   // ---- platform: respostas da API nunca ficam em cache compartilhado e informam o modo de dados
   app.use('/api', (_req, res, next) => {
     if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'no-store');
@@ -241,6 +261,11 @@ export function createApp(deps: AppDeps): Express {
   if (deps.pool) app.use(createInternshipRouter({ pool: deps.pool, authed: platformAuthed, asStudent: requireStudent(studentService), dataMode: platform.dataMode }));
   if (deps.pool) app.use(createPortalRouter({ pool: deps.pool, authed: platformAuthed, asStudent: requireStudent(studentService) }));
   if (careerMatch) app.use(createCareerRouter({ service: careerMatch, authed: platformAuthed, asStudent: requireStudent(studentService), admin: requirePermission('settings:manage', onDenied) }));
+  // ---- support-whatsapp: eventos, canal, vínculo e webhooks (rotas em support/whatsapp/routes.ts)
+  if (whatsapp) {
+    const simulatorEnabled = deps.config.whatsapp.provider === 'fake' && deps.config.nodeEnv !== 'production' && deps.config.appEnv !== 'production';
+    app.use(createWhatsAppRouter({ module: whatsapp, core: supportCore, audit, authed: platformAuthed, asStudent: requireStudent(studentService), onDenied, rateLimitEnabled: deps.config.rateLimit.enabled, now, simulatorEnabled }));
+  }
   app.use(notifications.router(queueRouteDeps));
   app.use(queue.router(queueRouteDeps));
   // ---- jobs: o que o servidor residente faz com timers, para quando a API roda em funções serverless
@@ -254,6 +279,7 @@ export function createApp(deps: AppDeps): Express {
           return { queue: queue.service.sync().status };
         },
         ...(careerMatch ? { 'asa-match-collect': async () => ({ ...await careerMatch.enqueueDueSources(), ...await careerMatch.processCollectionQueue(5), ...await careerMatch.deliverDueAlerts(200) }) } : {}),
+        ...(whatsapp ? whatsapp.jobs : {}),
       },
     }),
   );

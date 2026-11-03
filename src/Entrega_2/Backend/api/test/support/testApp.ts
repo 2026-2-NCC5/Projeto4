@@ -19,6 +19,7 @@ export interface TestAppOptions {
   intentInterpreter?: IntentInterpreter;
   now?: () => Date;
   mailer?: Mailer;
+  whatsappOptions?: { autoKick?: boolean; fetch?: typeof fetch };
 }
 
 export function buildTestConfig(options: TestAppOptions = {}): AppConfig {
@@ -48,6 +49,7 @@ export function createTestApp(options: TestAppOptions = {}): { app: Express; rep
     ...(options.intentInterpreter ? { intentInterpreter: options.intentInterpreter } : {}),
     ...(options.now ? { now: options.now } : {}),
     ...(options.mailer ? { mailer: options.mailer } : {}),
+    ...(options.whatsappOptions ? { whatsappOptions: options.whatsappOptions } : {}),
   });
   return { app, repos, config };
 }

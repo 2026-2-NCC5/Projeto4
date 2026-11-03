@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import type {
+  SupportAttachmentReviewRequest,
   SupportCancelRequest,
   SupportMessageCreateRequest,
   SupportNotificationsReadRequest,
@@ -10,9 +11,11 @@ import type {
   SupportStaffMessageRequest,
   SupportStaffNoteRequest,
   SupportStaffPriorityRequest,
+  SupportStaffReopenRequest,
   SupportStaffResolveRequest,
   SupportStaffStatusRequest,
   SupportTicketCreateRequest,
+  SupportTicketTransferRequest,
   SupportUploadRequest,
 } from '../contracts/mobileApi.v1.js';
 import { NotFoundError } from '../errors/AppError.js';
@@ -70,6 +73,11 @@ export const supportNotificationsReadSchema = z.object({ ids: z.array(z.string()
 
 export const staffStatusSchema = z.object({ status: z.enum(ALL_STATUSES as [string, ...string[]]), publicNote: z.string().trim().max(500).optional() }).strict();
 export const staffAssignSchema = z.object({ team: z.enum(SUPPORT_TEAMS), publicNote: z.string().trim().max(500).optional() }).strict();
+export const staffTransferSchema = z
+  .object({ team: z.enum(SUPPORT_TEAMS), reason: z.string().trim().min(5, 'Informe o motivo da transferência.').max(500), publicNote: z.string().trim().max(500).optional(), expectedVersion: z.number().int().positive().optional() })
+  .strict();
+export const staffReopenSchema = z.object({ reason: z.string().trim().min(5, 'Informe o motivo da reabertura.').max(500) }).strict();
+export const staffAttachmentReviewSchema = z.object({ reviewStatus: z.enum(['received', 'analyzed', 'rejected', 'released']), studentVisible: z.boolean().optional() }).strict();
 export const staffMessageSchema = z
   .object({
     content: z.string().trim().min(1).max(L.messageMaxLength),
@@ -78,6 +86,9 @@ export const staffMessageSchema = z
       .object({ title: z.string().trim().min(3).max(120), description: z.string().trim().min(10).max(500), expectsAttachment: z.boolean().optional() })
       .strict()
       .optional(),
+    transport: z.enum(['in_app', 'whatsapp']).optional(),
+    clientMessageId: clientKey.optional(),
+    overrideAssignee: z.boolean().optional(),
   })
   .strict();
 export const staffNoteSchema = z.object({ content: z.string().trim().min(1).max(L.messageMaxLength) }).strict();
@@ -115,6 +126,9 @@ const staffListQuery = (req: Request): ListQuery => {
     ...(category ? { category: category.slice(0, 200) } : {}),
     ...(priority ? { priority: priority.slice(0, 40) } : {}),
     ...(queryString(req.query.unread) === '1' ? { unread: true } : {}),
+    ...(queryString(req.query.channel) ? { channel: queryString(req.query.channel)!.slice(0, 40) } : {}),
+    ...(queryString(req.query.unidentified) === '1' ? { unidentified: true } : {}),
+    ...(queryString(req.query.tag) ? { tag: queryString(req.query.tag)!.toLowerCase().slice(0, 40) } : {}),
   };
 };
 
@@ -218,7 +232,18 @@ export function createSupportStaffController(staff: SupportStaffService, repos: 
       ok(req, res, await staff.assign(await actorFor(req, repos), param(req, 'id'), req.body as SupportStaffAssignRequest));
     },
     async message(req: Request, res: Response): Promise<void> {
-      ok(req, res, await staff.message(await actorFor(req, repos), param(req, 'id'), req.body as SupportStaffMessageRequest), 201);
+      const body = req.body as SupportStaffMessageRequest;
+      // 202: pelo WhatsApp, a resposta entrou na fila; o estado real chega depois, por evento
+      ok(req, res, await staff.message(await actorFor(req, repos), param(req, 'id'), body), body.transport === 'whatsapp' ? 202 : 201);
+    },
+    async transfer(req: Request, res: Response): Promise<void> {
+      ok(req, res, await staff.transfer(await actorFor(req, repos), param(req, 'id'), req.body as SupportTicketTransferRequest));
+    },
+    async reopen(req: Request, res: Response): Promise<void> {
+      ok(req, res, await staff.reopen(await actorFor(req, repos), param(req, 'id'), req.body as SupportStaffReopenRequest));
+    },
+    async reviewAttachment(req: Request, res: Response): Promise<void> {
+      ok(req, res, await staff.reviewAttachment(await actorFor(req, repos), param(req, 'id'), param(req, 'attachmentId'), req.body as SupportAttachmentReviewRequest));
     },
     async note(req: Request, res: Response): Promise<void> {
       ok(req, res, await staff.note(await actorFor(req, repos), param(req, 'id'), req.body as SupportStaffNoteRequest), 201);

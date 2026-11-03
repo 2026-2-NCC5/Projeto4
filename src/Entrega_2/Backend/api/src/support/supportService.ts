@@ -4,6 +4,7 @@ import type {
   SupportAttachmentLink as SupportAttachmentLinkDto,
   SupportCancelRequest,
   SupportCatalog,
+  SupportConversationInfo,
   SupportHelpArticle,
   SupportMessageCreateRequest,
   SupportNotificationList,
@@ -26,7 +27,7 @@ import { categoryIdsMatching, findCategory, findSubcategoryLabel, MAX_ATTACHMENT
 import { reopenDeadline, toEvent, toNotification, toSummary, toTicket, type TicketBundle } from './mappers.js';
 import { completeSla, restartSla, resumeSla, startSla } from './sla.js';
 import { ALL_STATUSES, isActiveStatus } from './statuses.js';
-import type { NewSupportEvent, NewSupportNotification, SupportAttachmentRecord, SupportTicketChanges, SupportTicketRecord } from './types.js';
+import type { NewSupportEvent, NewSupportMessage, NewSupportNotification, NewSupportOutboxItem, SupportAttachmentRecord, SupportTicketChanges, SupportTicketRecord } from './types.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
@@ -114,6 +115,10 @@ export interface ListQuery {
   sla?: 'at_risk' | 'near_deadline' | 'overdue';
   unread?: boolean;
   sort?: 'updated' | 'due';
+  // ---- support-whatsapp (Central de Atendimento)
+  channel?: string;
+  unidentified?: boolean;
+  tag?: string;
 }
 
 /** Meta padrão de primeira resposta (horas corridas) quando a administração não definiu outra. */
@@ -127,6 +132,16 @@ export interface SupportCoreHooks {
   firstResponseHours?: (categoryId: string) => Promise<number>;
   /** Chamado criado (depois da transação). Não lança: falhas ficam no histórico das automações. */
   onTicketCreated?: (ticket: SupportTicketRecord) => Promise<void>;
+  // ---- support-whatsapp
+  /** Valida e prepara uma resposta pelo WhatsApp; lança o erro de negócio quando ela não pode sair. */
+  prepareWhatsAppReply?: (ticket: SupportTicketRecord, input: { actorUserId: string; messageId: string; overrideAssignee: boolean }) => Promise<{ transportFields: NonNullable<NewSupportMessage['transportFields']>; outbox: NewSupportOutboxItem }>;
+  /** Depois da transação: tenta entregar o que entrou na outbox (sem bloquear a resposta). */
+  kickOutbox?: () => void;
+  /** Dados da conversa do WhatsApp para a tela da equipe. */
+  conversationInfo?: (ticket: SupportTicketRecord) => Promise<SupportConversationInfo | null>;
+  ticketTags?: (ticketId: string) => Promise<string[]>;
+  /** Contato mascarado, etiquetas e início da última mensagem de cada linha da fila da equipe. */
+  inboxExtras?: (ticketIds: string[]) => Promise<Map<string, { contactLabel: string | null; tags: string[]; lastMessagePreview: string | null }>>;
 }
 
 /** Operações compartilhadas entre a visão do estudante e a da equipe. */
@@ -160,13 +175,15 @@ export class SupportCore {
   }
 
   async loadBundle(ticket: SupportTicketRecord, includeInternal: boolean): Promise<TicketBundle> {
-    const [events, messages, attachments, rating] = await Promise.all([
+    const [events, messages, attachments, rating, firstResponseAt] = await Promise.all([
       this.repos.support.listEvents(ticket.id, { includeInternal }),
-      this.repos.support.listMessages(ticket.id),
-      this.repos.support.listAttachments(ticket.id),
+      // visão do estudante: o filtro é na consulta, para nada interno sair do banco
+      this.repos.support.listMessages(ticket.id, { studentVisibleOnly: !includeInternal }),
+      this.repos.support.listAttachments(ticket.id, { studentVisibleOnly: !includeInternal }),
       this.repos.support.findRating(ticket.id),
+      this.repos.support.firstStaffResponseAt(ticket.id),
     ]);
-    return { ticket, events, messages, attachments, rating };
+    return { ticket, events, messages, attachments, rating, firstResponseAt };
   }
 
   /** Valida envios pendentes do próprio usuário antes de vinculá-los (o repositório confere de novo na transação). */
@@ -244,7 +261,7 @@ export class SupportCore {
 
   /** Push best-effort: o registro no centro de avisos já foi gravado na transação. */
   deliverPush(ticket: SupportTicketRecord, notifications: NewSupportNotification[]): void {
-    if (!this.push) return;
+    if (!this.push || !ticket.studentId) return;
     const push = this.push;
     void this.repos.students
       .findById(ticket.studentId)
@@ -301,7 +318,8 @@ export class SupportService {
   /** Carrega o chamado garantindo que pertence ao estudante da sessão. */
   private async owned(studentId: string, ticketId: string): Promise<SupportTicketRecord> {
     const ticket = await this.core.findTicketOrThrow(ticketId);
-    if (ticket.studentId !== studentId) throw new ForbiddenError('Este chamado pertence a outro estudante.');
+    // mesma resposta de "não existe": nunca revela que o chamado é de outra pessoa
+    if (ticket.studentId !== studentId) throw new NotFoundError('Chamado não encontrado.');
     return ticket;
   }
 
@@ -602,7 +620,7 @@ export class SupportService {
   async attachmentLink(studentId: string, ticketId: string, attachmentId: string): Promise<SupportAttachmentLinkDto> {
     const ticket = await this.owned(studentId, ticketId);
     const attachment = await this.repos.support.findAttachment(attachmentId);
-    if (!attachment || attachment.ticketId !== ticket.id) throw new NotFoundError('Arquivo não encontrado.');
+    if (!attachment || attachment.ticketId !== ticket.id || !attachment.studentVisible) throw new NotFoundError('Arquivo não encontrado.');
     return this.core.link(attachment.id);
   }
 

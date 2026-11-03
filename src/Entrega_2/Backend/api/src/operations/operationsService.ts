@@ -188,7 +188,7 @@ export class OperationsService {
         STATUS_LABELS[row.status],
         PRIORITY_LABELS[row.priority] ?? row.priority,
         row.assignedTeam,
-        row.channel === 'web' ? 'Portal' : 'App',
+        row.channel === 'web' ? 'Portal' : row.channel === 'whatsapp' ? 'WhatsApp' : 'App',
         stamp(row.slaDueAt),
         SLA_STATUS_LABELS[slaStatus({ targetBusinessDays: 0, startedAt: row.slaStartedAt, dueAt: row.slaDueAt, pausedAt: row.slaPausedAt, resumedAt: null, completedAt: row.slaCompletedAt }, now)],
         stamp(row.firstResponseAt),

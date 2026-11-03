@@ -4,11 +4,14 @@ import {
   createSupportFileController,
   createSupportStaffController,
   staffAssignSchema,
+  staffAttachmentReviewSchema,
   staffMessageSchema,
   staffNoteSchema,
   staffPrioritySchema,
+  staffReopenSchema,
   staffResolveSchema,
   staffStatusSchema,
+  staffTransferSchema,
   supportCancelSchema,
   supportCreateSchema,
   supportMessageSchema,
@@ -87,7 +90,6 @@ export function createSupportRouter(deps: SupportRouteDeps): Router {
   router.get('/api/support/staff/tickets', authed, asStaff, wrap(staff.list));
   router.get('/api/support/staff/tickets/:id', authed, asStaff, wrap(staff.get));
   router.post('/api/support/staff/tickets/:id/read', authed, asStaff, wrap(staff.read));
-  router.get('/api/support/staff/tickets/:id/attachments/:attachmentId/link', authed, asStaff, wrap(staff.attachmentLink));
   // Cada ação da equipe também entra na auditoria geral (quem, quando, canal, correlação), além do histórico do chamado.
   const audited = (action: string, metadata: (req: Request) => Record<string, unknown> = () => ({})): RequestHandler => (req, res, next) => {
     res.on('finish', () => {
@@ -96,9 +98,14 @@ export function createSupportRouter(deps: SupportRouteDeps): Router {
     next();
   };
   const body = (req: Request) => (req.body ?? {}) as Record<string, unknown>;
+  // emitir o link temporário é o acesso ao documento: fica na auditoria com o chamado e o arquivo
+  router.get('/api/support/staff/tickets/:id/attachments/:attachmentId/link', authed, asStaff, audited('ticket.attachment_accessed', (req) => ({ attachmentId: String(req.params.attachmentId ?? '') })), wrap(staff.attachmentLink));
+  router.patch('/api/support/staff/tickets/:id/attachments/:attachmentId', authed, asStaff, canManage, validateBody(staffAttachmentReviewSchema), audited('ticket.attachment_reviewed', (req) => ({ attachmentId: String(req.params.attachmentId ?? ''), reviewStatus: String(body(req).reviewStatus) })), wrap(staff.reviewAttachment));
   router.post('/api/support/staff/tickets/:id/status', authed, asStaff, canManage, validateBody(staffStatusSchema), audited('ticket.status_changed', (req) => ({ to: String(body(req).status) })), wrap(staff.status));
   router.post('/api/support/staff/tickets/:id/assign', authed, asStaff, canManage, validateBody(staffAssignSchema), audited('ticket.assigned', (req) => ({ team: String(body(req).team) })), wrap(staff.assign));
-  router.post('/api/support/staff/tickets/:id/messages', authed, asStaff, canManage, validateBody(staffMessageSchema), audited('ticket.message_sent', (req) => ({ requestedAction: Boolean(body(req).requestAction) })), wrap(staff.message));
+  router.post('/api/support/staff/tickets/:id/messages', authed, asStaff, canManage, validateBody(staffMessageSchema), audited('ticket.message_sent', (req) => ({ requestedAction: Boolean(body(req).requestAction), transport: String(body(req).transport ?? 'in_app'), overrideAssignee: Boolean(body(req).overrideAssignee) })), wrap(staff.message));
+  router.post('/api/support/staff/tickets/:id/transfer', authed, asStaff, canManage, validateBody(staffTransferSchema), audited('ticket.transferred', (req) => ({ team: String(body(req).team) })), wrap(staff.transfer));
+  router.post('/api/support/staff/tickets/:id/reopen', authed, asStaff, canManage, validateBody(staffReopenSchema), audited('ticket.reopened'), wrap(staff.reopen));
   router.post('/api/support/staff/tickets/:id/notes', authed, asStaff, canNote, validateBody(staffNoteSchema), audited('ticket.internal_note'), wrap(staff.note));
   router.post('/api/support/staff/tickets/:id/priority', authed, asStaff, canManage, validateBody(staffPrioritySchema), audited('ticket.priority_changed', (req) => ({ to: String(body(req).priority) })), wrap(staff.priority));
   router.post('/api/support/staff/tickets/:id/resolve', authed, asStaff, canManage, validateBody(staffResolveSchema), audited('ticket.resolved'), wrap(staff.resolve));

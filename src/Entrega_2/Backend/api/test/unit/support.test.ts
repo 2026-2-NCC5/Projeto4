@@ -108,14 +108,14 @@ describe('Atendimento — abertura', () => {
 });
 
 describe('Atendimento — acesso e consulta', () => {
-  it('o estudante só vê os próprios chamados (403 para outro estudante, 404 para inexistente)', async () => {
+  it('o estudante só vê os próprios chamados (404 para outro estudante e para inexistente: não revela que existe)', async () => {
     const { app } = setup();
     const auth = await sessions(app);
     const created = await request(app).post('/api/support/tickets').set(auth.student).send(ticketBody());
     const id = created.body.data.id as string;
-    expect((await request(app).get(`/api/support/tickets/${id}`).set(auth.other)).status).toBe(403);
-    expect((await request(app).post(`/api/support/tickets/${id}/messages`).set(auth.other).send({ clientMessageId: 'msg-12345678', content: 'oi' })).status).toBe(403);
-    expect((await request(app).post(`/api/support/tickets/${id}/cancel`).set(auth.other).send({})).status).toBe(403);
+    expect((await request(app).get(`/api/support/tickets/${id}`).set(auth.other)).status).toBe(404);
+    expect((await request(app).post(`/api/support/tickets/${id}/messages`).set(auth.other).send({ clientMessageId: 'msg-12345678', content: 'oi' })).status).toBe(404);
+    expect((await request(app).post(`/api/support/tickets/${id}/cancel`).set(auth.other).send({})).status).toBe(404);
     expect((await request(app).get('/api/support/tickets/ticket-inexistente').set(auth.student)).status).toBe(404);
     const otherList = await request(app).get('/api/support/tickets').set(auth.other);
     expect(otherList.body.data.items).toEqual([]);
@@ -299,7 +299,7 @@ describe('Atendimento — anexos', () => {
 
     const link = await request(app).get(`/api/support/tickets/${created.body.data.id}/attachments/${attachment.id}/link`).set(auth.student);
     expect(link.status).toBe(200);
-    expect((await request(app).get(`/api/support/tickets/${created.body.data.id}/attachments/${attachment.id}/link`).set(auth.other)).status).toBe(403);
+    expect((await request(app).get(`/api/support/tickets/${created.body.data.id}/attachments/${attachment.id}/link`).set(auth.other)).status).toBe(404);
     const file = await request(app).get(link.body.data.url);
     expect(file.status).toBe(200);
     expect(file.headers['content-type']).toContain('application/pdf');

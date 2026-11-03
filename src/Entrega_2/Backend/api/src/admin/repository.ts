@@ -40,7 +40,7 @@ export interface TicketMetadataRow {
   status: SupportTicketStatus;
   priority: SupportTicketPriority;
   team: string;
-  channel: 'app' | 'web';
+  channel: 'app' | 'web' | 'whatsapp';
   createdAt: Date;
   updatedAt: Date;
   slaStartedAt: Date;
@@ -132,13 +132,13 @@ export class PgAdminRepository implements AdminRepository {
 
   async ticketMetadata(filter: { statuses?: SupportTicketStatus[]; categoryId?: string; excludeDemo: boolean; limit: number; offset: number }) {
     const { rows } = await this.pool.query<{
-      id: string; protocol: string; category_id: string; status: SupportTicketStatus; priority: SupportTicketPriority; assigned_team: string; channel: 'app' | 'web';
+      id: string; protocol: string; category_id: string; status: SupportTicketStatus; priority: SupportTicketPriority; assigned_team: string; channel: 'app' | 'web' | 'whatsapp';
       created_at: Date; updated_at: Date; sla_started_at: Date; sla_due_at: Date; sla_paused_at: Date | null; sla_completed_at: Date | null; total: number;
     }>(
       `select t.id, t.protocol, t.category_id, t.status, t.priority, t.assigned_team, t.channel, t.created_at, t.updated_at,
               t.sla_started_at, t.sla_due_at, t.sla_paused_at, t.sla_completed_at, count(*) over ()::int as total
-         from support_tickets t join students s on s.id = t.student_id join users u on u.id = s.user_id
-        where ($1::text[] is null or t.status = any($1)) and ($2::text is null or t.category_id = $2) and not ($3::boolean and u.is_demo)
+         from support_tickets t left join students s on s.id = t.student_id left join users u on u.id = s.user_id
+        where ($1::text[] is null or t.status = any($1)) and ($2::text is null or t.category_id = $2) and not ($3::boolean and coalesce(u.is_demo, false))
         order by t.updated_at desc, t.id limit $4 offset $5`,
       [filter.statuses ?? null, filter.categoryId ?? null, filter.excludeDemo, filter.limit, filter.offset],
     );
