@@ -126,8 +126,9 @@ DATABASE_URL="$(grep '^ASA_MIGRATOR_DATABASE_URL=' ~/.config/asa-conecta/product
 
 ## 6. Tarefas agendadas
 
-- O `vercel.json` do backend agenda `0 9 * * *` (06h de Brasília) para `/api/internal/jobs/sla-scan`. O Hobby só
-  aceita uma execução por dia, e expressões mais frequentes **falham no deploy**.
+- O `vercel.json` do backend agenda `0 9 * * *` (06h de Brasília) para `/api/internal/jobs/sla-scan` e `0 10 * * *`
+  (07h) para `/api/internal/jobs/asa-match-collect`. O Hobby só aceita uma execução por dia, e expressões mais
+  frequentes **falham no deploy**.
 - No Pro, use `*/5 * * * *`. Sem Pro, um agendador externo pode chamar
   `curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://asa-conecta-api.vercel.app/api/internal/jobs/sla-scan`
   (o segredo está no painel: `vercel env pull` na pasta do backend).
