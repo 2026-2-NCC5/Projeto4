@@ -1,0 +1,51 @@
+{
+  "modelo": "Random Forest (300 árvores, min_samples_leaf=5, class_weight=balanced_subsample)",
+  "versao": "1.0.0",
+  "features": [
+    "Forma de Ingresso",
+    "Grau Acadêmico",
+    "Turno",
+    "tempo_de_curso",
+    "Idade",
+    "mora_sp_capital",
+    "total_parcelas",
+    "pct_parcelas_em_aberto",
+    "pct_parcelas_acordo",
+    "atraso_medio_dias",
+    "tem_bolsa",
+    "valor_total_periodo",
+    "media_notas",
+    "media_assiduidade",
+    "pct_reprovacao",
+    "tendencia_notas",
+    "tendencia_assiduidade",
+    "total_semestres",
+    "total_contatos",
+    "dias_desde_ultimo_contato"
+  ],
+  "atributos_excluidos": [
+    "Sexo",
+    "Estado Civil"
+  ],
+  "faixas": {
+    "verde_ate": 0.35,
+    "vermelho_a_partir": 0.65
+  },
+  "sklearn": "1.9.1",
+  "semente": 42,
+  "base_sha256": "3bd8ed7d31b40c1f37f9407a1040f53956c025980d859ad07a5a935b75cd22df",
+  "n_treino": 10273,
+  "n_teste": 2569,
+  "metricas_teste_limiar_050": {
+    "roc_auc": 0.9271467035155957,
+    "pr_auc": 0.8257325661671827,
+    "precision": 0.7390438247011952,
+    "recall": 0.7375745526838966,
+    "f1": 0.7383084577114428,
+    "brier": 0.0811825017454849,
+    "p_at_10": 0.94140625,
+    "p_at_20": 0.7309941520467836
+  },
+  "cv_pr_auc": 0.8508397899603466,
+  "cv_roc_auc": 0.937228601534092
+}
