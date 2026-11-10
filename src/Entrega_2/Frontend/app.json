@@ -3,6 +3,14 @@
     "name": "ASA Conecta",
     "slug": "asa-conecta",
     "version": "1.0.0",
+    "owner": "uxbrasil",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5fdd5c41-1692-4544-b951-e0eee3120aa3",
+      "fallbackToCacheTimeout": 0
+    },
     "orientation": "portrait",
     "scheme": "asaconecta",
     "icon": "./assets/branding/asa-app-icon.png",
@@ -64,10 +72,15 @@
         {
           "backgroundColor": "#299B60",
           "image": "./assets/branding/asa-splash.png",
-          "imageWidth": 250,
+          "imageWidth": 180,
           "resizeMode": "contain"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5fdd5c41-1692-4544-b951-e0eee3120aa3"
+      }
+    }
   }
 }
