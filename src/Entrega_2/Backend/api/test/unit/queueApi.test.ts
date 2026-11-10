@@ -58,7 +58,15 @@ describe('API da fila presencial', () => {
     expect(withUser.status).toBe(400);
   });
 
-  it('cadastro mostra a posição real na hora; "29" vira "0029" como no painel; outro aluno não vê o vínculo', async () => {
+  it('não cria acompanhamento para senha ausente do snapshot oficial', async () => {
+    const { app, auth } = await setup();
+    const response = await request(app).post('/api/queue/subscriptions').set(auth).send({ ticket: '9999' });
+    expect(response.status).toBe(404);
+    expect(response.body.error.message).toMatch(/não aparece na atualização atual do painel oficial/i);
+    expect(data<QueueStatus>(await request(app).get('/api/queue/status').set(auth)).subscription).toBeNull();
+  });
+
+  it('cadastro usa a posição observada no snapshot; "29" vira "0029" como no painel; outro aluno não vê o vínculo', async () => {
     const { app, auth, push } = await setup();
     const created = await request(app).post('/api/queue/subscriptions').set(auth).send({ ticket: '29', voiceEnabled: false });
     expect(created.status).toBe(201);
@@ -193,7 +201,7 @@ describe('ASA IA — perguntas sobre a fila', () => {
   const ask = async (ctx: Awaited<ReturnType<typeof setup>>, text: string, extra: Record<string, unknown> = {}) =>
     data<AssistantResponse>(await request(ctx.app).post('/api/assistant/message').set(ctx.auth).send({ inputType: 'voice', text, ...extra }));
 
-  it('"quantas pessoas faltam para mim?" responde com a posição real', async () => {
+  it('"quantas pessoas faltam para mim?" responde com a posição observada no snapshot', async () => {
     const ctx = await setup();
     const before = await ask(ctx, 'ASA, quantas pessoas faltam para mim?');
     expect(before.intent).toBe('get_queue_status');
@@ -206,7 +214,7 @@ describe('ASA IA — perguntas sobre a fila', () => {
     expect(after.speech.text).toBe('Existem cinco atendimentos antes da sua senha.');
   });
 
-  it('"qual senha está sendo atendida?" usa os dados reais mais recentes, com a mesa', async () => {
+  it('"qual senha está sendo atendida?" usa os dados mais recentes do snapshot, com a mesa', async () => {
     const ctx = await setup();
     const response = await ask(ctx, 'Qual senha está sendo atendida?');
     expect(response.intent).toBe('get_queue_current_call');

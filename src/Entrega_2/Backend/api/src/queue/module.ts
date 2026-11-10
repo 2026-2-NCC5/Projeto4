@@ -160,7 +160,7 @@ export function createQueueModule(options: CreateQueueModuleOptions): QueueModul
     async start() {
       if (mode === 'on-demand') return;
       if (!config.queue.enabled) {
-        logger.info({ status: 'queue_monitor_disabled' }, 'queue monitor disabled (ASA_QUEUE_ENABLED=false)');
+        logger.info({ status: 'queue_monitor_disabled', disabled_reason: config.queue.disabledReason }, 'queue monitor disabled until the real FECAP source is authorized and available');
         return;
       }
       await monitor.start();

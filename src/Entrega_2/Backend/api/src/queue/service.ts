@@ -158,9 +158,17 @@ export class QueueService {
     if (!this.options.enabled) throw new DependencyError('O acompanhamento da fila presencial não está disponível no momento.', undefined, 'queue_disabled');
     const typed = normalizeTicket(input.ticket);
     if (!isValidTicket(typed)) throw new ValidationError('Digite uma senha válida.', [{ field: 'ticket', message: 'Digite uma senha válida.' }], { reason: 'invalid_ticket' });
-    // "29" digitado vira "0029" quando a senha já aparece no painel (exibição igual à da fonte).
+    // Só iniciar acompanhamento com uma senha observada em um snapshot recente da fonte oficial.
+    // Um valor digitado pelo usuário não pode criar um registro de fila que a FECAP não publicou.
     const snapshot = this.snapshot();
+    if (!snapshot || this.sync().status !== 'live') {
+      throw new DependencyError('A fonte oficial não está atualizada. Tente novamente quando a fila estiver disponível.', undefined, 'queue_data_unavailable');
+    }
     const location = snapshot ? locateTicket(snapshot, typed) : { kind: 'not_found' as const };
+    if (location.kind === 'not_found') {
+      throw new NotFoundError('Essa senha não aparece na atualização atual do painel oficial. Confira o número e tente novamente.');
+    }
+    // "29" digitado vira "0029" quando a senha aparece na fonte (exibição igual à da FECAP).
     const ticket = location.kind === 'called' ? location.call.ticket : location.kind === 'waiting' ? (snapshot?.upcoming[location.ahead]?.ticket ?? typed) : typed;
     const now = this.now();
     const serviceDate = localDate(now, this.options.timeZone);

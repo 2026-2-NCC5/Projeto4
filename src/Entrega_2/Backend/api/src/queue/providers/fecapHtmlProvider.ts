@@ -1,4 +1,5 @@
 import { buildSnapshot } from '../snapshot.js';
+import { assertQueueAccessAllowed } from '../fecapParser.js';
 import { htmlToText, parseQueueText } from '../textParser.js';
 import { timezoneOffsetMinutes } from '../time.js';
 import type { QueueProvider, QueueSnapshot } from '../types.js';
@@ -32,6 +33,7 @@ export class FecapQueueHtmlProvider implements QueueProvider {
   async getCurrentQueue(): Promise<QueueSnapshot> {
     const response = await fetchWithTimeout(this.fetchFn, this.options.sourceUrl, { headers: { 'User-Agent': QUEUE_USER_AGENT, Accept: 'text/html' } }, this.options.timeoutMs);
     const html = await readText(response, this.options.sourceUrl);
+    assertQueueAccessAllowed(html);
     const now = this.now();
     const parsed = parseQueueText(htmlToText(html), { timezoneOffsetMinutes: timezoneOffsetMinutes(now, this.options.timeZone) });
     return buildSnapshot({

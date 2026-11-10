@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { parseAntiForgeryToken, parseGridResponse, parsePortalPage, recordsToCalls, recordsToWaiting } from '../../src/queue/fecapParser.js';
+import { assertQueueAccessAllowed, parseAntiForgeryToken, parseGridResponse, parsePortalPage, recordsToCalls, recordsToWaiting } from '../../src/queue/fecapParser.js';
 import { buildSnapshot, currentCallsByDesk, locateTicket } from '../../src/queue/snapshot.js';
 import { htmlToText, parseQueueText } from '../../src/queue/textParser.js';
 import { isValidTicket, normalizeTicket, sameTicket, ticketKey } from '../../src/queue/ticket.js';
@@ -53,6 +53,17 @@ describe('portal FECAP (Power Pages): estrutura e JSON das listas', () => {
     }
   });
 
+  it('resposta da página com aviso de permissão nunca é interpretada como fila vazia', () => {
+    const denied = '<html><body><h2>PRÓXIMAS SENHAS</h2><p>Não há registros a serem exibidos.</p><p>Você não tem permissões para exibir estes registros.</p></body></html>';
+    expect(() => assertQueueAccessAllowed(denied)).toThrow(expect.objectContaining({ kind: 'http', status: 403 }));
+    expect(() => parsePortalPage(denied)).toThrow(expect.objectContaining({ kind: 'http', status: 403 }));
+  });
+
+  it('resposta JSON com erro de permissão não vira lista vazia', () => {
+    expect(() => parseGridResponse({ Records: [], MoreRecords: false, error: 'Você não tem permissões para exibir estes registros.' }))
+      .toThrow(expect.objectContaining({ kind: 'http', status: 403 }));
+  });
+
   it('lê o token anti-CSRF; sem token pede nova sessão', () => {
     expect(parseAntiForgeryToken(fixture('fecap-tokenhtml.html'))).toBe('FIXTURE-ANTIFORGERY-TOKEN');
     expect(() => parseAntiForgeryToken('<html></html>')).toThrow(expect.objectContaining({ renewSession: true }));
@@ -100,6 +111,14 @@ describe('portal FECAP (Power Pages): estrutura e JSON das listas', () => {
       }).records,
     );
     expect(calls[0]).toMatchObject({ ticket: '0031', desk: null, calledAt: '2026-10-06T23:23:19.000Z', serviceStatus: 'unknown' });
+  });
+
+  it('não confunde uma senha chamada com atendimento já iniciado', () => {
+    const calls = recordsToCalls(parseGridResponse({ Records: [{ Attributes: [
+      { Name: 'fecap_senhanopresencial', Value: '0032' },
+      { Name: 'statuscode', FormattedValue: 'Senha chamada' },
+    ] }] }).records);
+    expect(calls[0]?.serviceStatus).toBe('unknown');
   });
 });
 

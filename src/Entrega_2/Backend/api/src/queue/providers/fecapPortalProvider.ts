@@ -1,4 +1,4 @@
-import { parseAntiForgeryToken, parseGridResponse, parsePortalPage, recordsToCalls, recordsToWaiting, type PortalPage, type PortalViewConfig } from '../fecapParser.js';
+import { assertQueueAccessAllowed, parseAntiForgeryToken, parseGridResponse, parsePortalPage, recordsToCalls, recordsToWaiting, type PortalPage, type PortalViewConfig } from '../fecapParser.js';
 import { buildSnapshot } from '../snapshot.js';
 import { timezoneOffsetMinutes } from '../time.js';
 import { QueueSourceError, type QueueProvider, type QueueSnapshot } from '../types.js';
@@ -112,6 +112,9 @@ export class FecapPortalQueueProvider implements QueueProvider {
     );
     session.cookies.store(response);
     if (!response.ok) {
+      // Um 403 pode ser token anti-CSRF expirado. Só tenta renovar a sessão uma vez, exceto quando
+      // a própria resposta identifica falta de permissão para os registros.
+      if (response.status === 403) assertQueueAccessAllowed(await response.clone().text());
       // 4xx: token/configuração recusados → renovar sessão; 5xx: falha da fonte (backoff do monitor).
       throw new QueueSourceError('http', `HTTP ${response.status} na lista ${view.viewId ?? '?'}`, { status: response.status, renewSession: response.status >= 400 && response.status < 500 });
     }

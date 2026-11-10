@@ -4,11 +4,11 @@ import { QueueSourceError, type QueueCall, type QueueServiceStatus, type QueueWa
 /**
  * Interpretação da página https://presencial.fecap.br/ (Microsoft Power Pages / Dataverse).
  *
- * Investigação (06/10/2026): a página não traz as senhas no HTML. "PRÓXIMAS SENHAS" e
- * "SENHAS ANTERIORES" são listas de entidade (tabela `ret_relacionamento`) carregadas pelo próprio
- * portal via POST /_services/entity-grid-data.json/<site> (JSON estruturado, acesso anônimo,
- * protegido por token anti-CSRF de /_layout/tokenhtml). "ÚLTIMA SENHA" é um card gallery que
- * renderiza no navegador os mesmos registros. Não há WebSocket/SSE na origem.
+ * A página identifica as listas "PRÓXIMAS SENHAS" e "SENHAS ANTERIORES" como entity-grids do
+ * Power Pages, com dados carregados por POST /_services/entity-grid-data.json/<site>. O acesso aos
+ * registros depende das permissões configuradas na FECAP; o HTML público ou um token anti-CSRF não
+ * comprovam autorização. O provider só consulta as listas quando a integração foi habilitada após
+ * aprovação institucional. Não há WebSocket/SSE documentado na origem.
  *
  * As listas são identificadas pelas COLUNAS (nomes lógicos), não pela posição no HTML.
  */
@@ -39,6 +39,40 @@ export interface PortalPage {
 }
 
 const ENTITY_GRID_TAG = /<div\b[^>]*class="[^"]*\bentity-grid\b[^"]*"[^>]*>/gi;
+
+/**
+ * A página pode responder HTTP 200 e, ainda assim, renderizar o aviso de permissão do Power Pages.
+ * Não interpretar a mensagem subsequente "Não há registros" como uma fila realmente vazia.
+ */
+export function assertQueueAccessAllowed(content: unknown): void {
+  let text: string;
+  if (typeof content === 'string') text = content;
+  else {
+    try { text = JSON.stringify(content); } catch { text = String(content); }
+  }
+  text = text
+    .replace(/&nbsp;|&#160;/gi, ' ')
+    .replace(/&atilde;|&#227;/gi, 'a')
+    .replace(/&otilde;|&#245;/gi, 'o')
+    .replace(/&ccedil;|&#231;/gi, 'c')
+    .replace(/&aacute;|&#225;|&acirc;|&#226;|&agrave;|&#224;/gi, 'a')
+    .replace(/&eacute;|&#233;|&ecirc;|&#234;/gi, 'e')
+    .replace(/&iacute;|&#237;/gi, 'i')
+    .replace(/&oacute;|&#243;|&ocirc;|&#244;/gi, 'o')
+    .replace(/&uacute;|&#250;|&uuml;|&#252;/gi, 'u')
+    .replace(/<[^>]*>/g, ' ')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+
+  const denied =
+    /voce nao tem permissoes para exibir estes registros/.test(text) ||
+    /you do not have permission to view these records/.test(text) ||
+    /you don't have permission to view these records/.test(text) ||
+    /access denied/.test(text);
+  if (denied) throw new QueueSourceError('http', 'A fonte da fila negou permissão para ler os registros', { status: 403 });
+}
 
 function attribute(tag: string, name: string): string | null {
   const match = new RegExp(`\\b${name}\\s*=\\s*(?:'([^']*)'|"([^"]*)")`, 'i').exec(tag);
@@ -76,6 +110,7 @@ function decodeViewLayouts(encoded: string): PortalViewConfig[] {
 
 /** Localiza as duas listas da fila na página do portal. Lança QueueSourceError('parse') se a estrutura mudou. */
 export function parsePortalPage(html: string): PortalPage {
+  assertQueueAccessAllowed(html);
   let gridDataPath: string | null = null;
   const views: PortalViewConfig[] = [];
   for (const match of html.matchAll(ENTITY_GRID_TAG)) {
@@ -123,6 +158,7 @@ export interface GridPage {
 
 /** Valida a resposta de entity-grid-data.json e devolve os registros em forma neutra. */
 export function parseGridResponse(json: unknown): GridPage {
+  assertQueueAccessAllowed(json);
   if (typeof json !== 'object' || json === null || !Array.isArray((json as Record<string, unknown>).Records)) {
     throw new QueueSourceError('parse', 'resposta da lista sem "Records"', { renewSession: true });
   }
@@ -196,7 +232,7 @@ function serviceStatusOf(field: GridField | undefined): QueueServiceStatus {
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase();
   if (label.includes('conclu') || label.includes('finaliz') || label.includes('encerr')) return 'completed';
-  if (label.includes('atendimento') || label.includes('chamad')) return 'in_service';
+  if (/^(em atendimento|atendimento iniciado|in service)$/.test(label)) return 'in_service';
   return 'unknown';
 }
 
