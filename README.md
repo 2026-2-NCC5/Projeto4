@@ -1,26 +1,36 @@
-# FECAP - Fundação de Comércio Álvares Penteado
+# ASA Conecta — Agentes Inteligentes para o Sucesso do Estudante
 
 <p align="center">
+  <a href="https://www.fecap.br/asa/">
+    <img src="imagens/Asa_Logo.svg" alt="Área do Sucesso Alvarista — ASA" height="76">
+  </a>
+  &nbsp;&nbsp;&nbsp;
   <a href="https://www.fecap.br/">
-    <img
-      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZPrRa89Kma0ZZogxm0pi-tCn_TLKeHGVxywp-LXAFGR3B1DPouAJYHgKZGV0XTEf4AE&usqp=CAU"
-      alt="FECAP - Fundação de Comércio Álvares Penteado"
-      border="0"
-      width="300"
-    >
+    <img src="imagens/FECAP_Logo.svg" alt="FECAP — Fundação Escola de Comércio Álvares Penteado" height="76">
   </a>
 </p>
 
-# 🤖 ASA - Agentes Inteligentes para o Sucesso do Estudante
+> Plataforma acadêmica desenvolvida pelo Grupo 4 — TDR Devs para apoiar estudantes e profissionais da Área do Sucesso Alvarista da FECAP.
 
-## Projeto Integrador - Inteligência Artificial e Aprendizado de Máquina
-
-**Curso:** Ciências da Computação - Noturno
-**Semestre:** 5º semestre
-**Turma:** A
-**Turno:** Noturno
+**Projeto Integrador — Inteligência Artificial e Aprendizado de Máquina**<br>
+**Curso:** Ciências da Computação - Noturno<br>
+**Semestre:** 5º semestre · **Turma:** A · **Turno:** Noturno<br>
 **Período:** 2º semestre de 2026
 
+> **Dados reais:** a execução normal não serve dados acadêmicos ou de fila sintéticos. Integrações institucionais permanecem indisponíveis até receberem acesso real e autorizado.
+
+## Navegação
+
+- [Sobre o projeto](#-descrição)
+- [Capturas Web e Mobile](#-capturas-do-sistema)
+- [Objetivos e solução](#-objetivo-geral)
+- [Perfis e recursos](#-perfis-de-usuário)
+- [Segurança e privacidade](#-segurança-privacidade-e-lgpd)
+- [Arquitetura](#-arquitetura-geral)
+- [Estrutura do repositório](#-estrutura-de-pastas)
+- [Como executar](#-como-executar-o-asa-conecta)
+- [Configuração e testes](#-variáveis-de-ambiente)
+- [Equipe e referências](#-grupo-4---tdr-devs)
 ---
 
 # 👥 Grupo 4 - TDR Devs
@@ -146,6 +156,20 @@ A solução deverá auxiliar estudantes e profissionais do ASA por meio de recur
 
 ---
 
+# 📸 Capturas do sistema
+
+As capturas mostram as telas reais de entrada do portal Web e do aplicativo Mobile, sem sessão autenticada e sem registros acadêmicos de estudantes.
+
+<table>
+  <tr><th>Portal Web — desktop</th><th>Aplicativo Mobile — viewport 390 × 844</th></tr>
+  <tr>
+    <td><img src="imagens/screenshots/asa-conecta-web-login.png" alt="Tela de entrada do ASA Conecta Web, sem sessão iniciada" width="760"></td>
+    <td><img src="imagens/screenshots/asa-conecta-mobile-login.png" alt="Tela de entrada do ASA Conecta Mobile em viewport de celular" width="260"></td>
+  </tr>
+</table>
+
+---
+
 # 🎯 Objetivo Geral
 
 Desenvolver uma solução baseada em **agentes inteligentes** capaz de apoiar a Área do Sucesso Alvarista no atendimento e acompanhamento dos estudantes da FECAP.
@@ -262,7 +286,7 @@ O uso de modelos generativos deverá considerar mecanismos que minimizem respost
 * intenções em português por regras;
 * recuperação de informações por busca full-text do PostgreSQL na base de conhecimento, com **citações** e
   **abstenção** quando não há resposta confiável;
-* recomendações a partir de dados acadêmicos de demonstração.
+* recomendações baseadas no contexto acadêmico autorizado disponível à conta autenticada; sem uma fonte institucional confiável, o agente deve se abster.
 
 LLMs, embeddings e RAG generativo **não** fazem parte do MVP. O provedor generativo (JEV) está planejado e
 desligado.
@@ -283,6 +307,17 @@ cada permissão. Os menus só escondem o que o perfil não pode usar. Detalhes e
   um chamado quando não há resposta confiável;
 * chamados ao ASA, com protocolo, conversa, anexos, prazo e avaliação;
 * agendamentos (presencial e online), central de ajuda, avisos, fila presencial (app) e sessões.
+
+## Fila presencial do ASA
+
+A tela de acompanhamento e a API não inventam senhas, posições ou mesas. Na verificação atual, o painel oficial [presencial.fecap.br](https://presencial.fecap.br/) responde que não há permissão para exibir os registros. Por isso, o ASA Conecta informa indisponibilidade e não apresenta uma fila vazia como se fosse um resultado confirmado.
+
+A consulta individual só poderá ser ativada quando a FECAP disponibilizar acesso autorizado aos dados e um mecanismo verificável de vínculo do atendimento com o estudante. Número público de senha ou CPF isolado não confirma titularidade. Até lá, nenhum dado de fila é exibido como real ou simulado.
+
+- [Investigação técnica do painel](docs/integrations/fecap-queue-investigation.md)
+- [Relatório de implementação, testes e dependências](docs/integrations/FECAP_QUEUE_IMPLEMENTATION_REPORT.md)
+
+---
 
 ## Equipe ASA (portal `/asa`)
 
@@ -416,7 +451,7 @@ Projeto4/
 │       ├── Backend/
 │       │   ├── api/                       # API principal / BFF — Node.js + TypeScript + PostgreSQL
 │       │   ├── agent-service/             # Agent Service (FastAPI) + Student Agent Engine (Python puro)
-│       │   ├── database/                  # migrations (npm run db:migrate) e seeds sintéticos (npm run db:seed)
+│       │   ├── database/                  # migrations (npm run db:migrate); seeds de teste não são carregados no fluxo normal
 │       │   ├── contracts/                 # contratos Node ↔ Python (JSON Schema) e Mobile ↔ Node (TypeScript)
 │       │   ├── scripts/                   # e2e.sh, check-contracts-sync.sh, smoke.mjs (verifica uma implantação)
 │       │   ├── vercel.json                # projeto Vercel do backend: Services api + agent (privado) + Cron
@@ -445,7 +480,7 @@ Projeto4/
 * Python 3.12
 * PostgreSQL 16+ instalado na máquina **ou** um banco gerenciado de desenvolvimento. Docker com Compose v2 é
   opcional (Opção A)
-* Expo Go **para o SDK 57** no celular (versão atual das lojas) ou emulador
+* Expo Go compatível com o **SDK 58** no celular ou emulador
 
 ## Produção — Vercel
 
@@ -477,8 +512,7 @@ docker compose logs -f api        # aguarde "api listening"
 curl -s localhost:3000/health     # {"data":{"status":"ok",...}}
 ```
 
-O container da API aplica as migrations e os seeds fictícios automaticamente. Os e-mails de
-recuperação de senha e de convite chegam na caixa local do Mailpit: <http://localhost:8025>.
+O container da API aplica as migrations. Seeds e contas sintéticas ficam desativados por padrão; a inicialização normal não cria dados fictícios. Os e-mails de recuperação de senha e de convite chegam na caixa local do Mailpit: <http://localhost:8025>.
 O **portal web** fica em <http://localhost:8080>. O nginx serve o build e repassa `/api` para a API.
 
 ### Portal web em desenvolvimento (com a API rodando em :3000)
@@ -513,7 +547,7 @@ uvicorn app.main:app --reload --port 8000
 cd "src/Entrega_2/Backend/api"
 cp .env.example .env
 npm install
-npm run db:migrate && npm run db:seed
+npm run db:migrate
 npm run dev                        # http://localhost:3000 (processo tradicional)
 # npm run start:vercel-entry       # alternativa: a MESMA entrada da Vercel (sem laços, fila sob demanda)
 ```
@@ -531,7 +565,7 @@ DATABASE_SSL=auto
 
 ```bash
 cd "src/Entrega_2/Backend"
-( cd api && npm run db:migrate && npm run db:seed )    # schema + contas fictícias no Supabase
+( cd api && npm run db:migrate )    # aplica somente o schema; não carregar seeds em banco compartilhado/produção
 docker compose up -d --build api agent-service mailpit # ou: ( cd api && npm run dev )
 ```
 
@@ -567,28 +601,11 @@ npx expo run:android               # ou: npx expo run:ios
 Depois, no app: **Perfil → Assistente ASA → Ativação "Hey Asa"** (o onboarding explica o uso do
 microfone antes de pedir a permissão). A detecção funciona apenas com o app em primeiro plano.
 
-## Contas fictícias (senha: `Demo@2026`)
+## Dados de demonstração e testes
 
-As contas abaixo existem apenas no seed (`src/Entrega_2/Backend/database/seeds/001_demo_students.sql`); a tela de login não
-exibe atalhos nem senhas — entra-se com e-mail e senha, como em produção.
+A execução normal do aplicativo não deve utilizar contas, notas, documentos ou filas sintéticas como se fossem dados reais. Seeds e dados demonstrativos permanecem desativados por padrão. Fixtures podem existir exclusivamente em testes automatizados isolados; elas não representam estudantes nem devem ser carregadas em ambientes compartilhados ou de produção.
 
-| E-mail | Cenário demonstrado |
-| --- | --- |
-| `estudante.exemplo@demo.asa` | atividade pendente → recomendação com evidência e próxima ação |
-| `estudante.regular@demo.asa` | sem alertas (`no_action`) |
-| `estudante.frequencia@demo.asa` | frequência que merece atenção |
-| `estudante.desempenho@demo.asa` | desempenho que merece atenção |
-| `estudante.multiplo@demo.asa` | múltiplos fatores simultâneos |
-| `estudante.semdados@demo.asa` | dados insuficientes → abstenção |
-| `estudante.inconsistente@demo.asa` | dados inconsistentes → validação humana |
-| `estudante.validacao@demo.asa` | frequência abaixo do mínimo → validação humana |
-| `atendente.asa@demo.asa` | equipe ASA no portal (`/asa`): fila, agenda, base de conhecimento |
-| `responsavel.exemplo@demo.asa` | segunda pessoa da equipe ASA |
-| `admin.plataforma@demo.asa` | administração no portal (`/admin`) |
-
-Essas contas só entram com o modo demonstração ligado (`DEMO_DATA_ENABLED=true`). Todas as telas mostram
-"DEMONSTRAÇÃO — Dados fictícios"
-([DEMO_DATA_POLICY.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/plataforma/DEMO_DATA_POLICY.md)).
+Não há credenciais compartilhadas de demonstração neste README. A integração com dados institucionais depende de acesso real, autorizado e configurado pela FECAP.
 
 ## Testes
 
@@ -607,7 +624,7 @@ Backend/scripts/check-contracts-sync.sh                              # cópias d
 ## Autenticação
 
 - **Entrar:** e-mail e senha, com "Manter conectado" (sessão de 30 dias no aparelho; desligado por padrão) ou sessão curta. A tela de login dá acesso a **Criar conta**, **Esqueci minha senha** e, quando ativada, **Entrar com biometria**.
-- **Criar conta:** nome, e-mail institucional (`@edu.fecap.br`, `@fecap.br` ou `@demo.asa` para demonstração), RA de 8 dígitos, curso opcional e senha forte.
+- **Criar conta:** nome, e-mail institucional autorizado, RA de 8 dígitos, curso opcional e senha forte.
 - **Esqueci minha senha:** o código de 6 dígitos chega por e-mail (em desenvolvimento, no Mailpit em <http://localhost:8025>), depois defina a nova senha.
 - **Biometria:** após entrar com senha, o app oferece Face ID, impressão digital ou biometria do aparelho. Funciona no Expo Go Android e em development builds; não funciona no navegador nem com Face ID no Expo Go iOS.
 
@@ -630,8 +647,8 @@ navegação (toque = abrir; toque e segure = falar agora), **overlay** sobre qua
 
 Como testar o assistente:
 
-1. Entre com uma conta de demonstração e, na Home, toque no **microfone** da linha "Como posso ajudar hoje?"
-   (ou na própria linha para digitar, no Expo Go).
+1. Entre com uma conta institucional autorizada e, na Home, toque no **microfone** da linha "Como posso ajudar hoje?"
+   (ou na própria linha para digitar, no Expo Go). Os testes automatizados usam fixtures isoladas e não devem ser confundidos com dados reais.
 2. Pergunte "Tenho alguma atividade pendente?" e depois "E essa semana?" (contexto conversacional).
 3. Na tela **Acadêmico → Avaliações**, toque e segure o botão central e pergunte "Qual foi a menor?"
    (contexto da tela).
@@ -705,22 +722,26 @@ Credenciais e configurações sensíveis não são armazenadas no código. Cada 
 
 ---
 
-# 📱 Instalação Android
+# 📱 App mobile no Expo Go
 
-Quando uma versão APK estiver disponível, ela deverá ser adicionada à pasta:
+O app é distribuído como atualização EAS (projeto `@uxbrasil/asa-conecta`, canal `production`) e abre no
+Expo Go do **SDK 58**, apontando para a API publicada (`https://asa-conecta-api.vercel.app`).
 
-```text
-executáveis/android/
+1. instale o Expo Go (SDK 58) no celular;
+2. abra no computador o QR code
+   <https://qr.expo.dev/eas-update?projectId=5fdd5c41-1692-4544-b951-e0eee3120aa3&runtimeVersion=exposdk:58.0.0&channel=production>;
+3. escaneie com a câmera (iOS) ou pelo próprio Expo Go (Android).
+
+O app só abre quando a API confirma o modo institucional; dados de demonstração continuam bloqueados.
+Notas, frequência e pendências aparecem como indisponíveis até existir a integração acadêmica oficial.
+Entrada por voz e "Hey Asa" exigem development build; push remoto não é garantido no Expo Go.
+
+Para publicar uma nova versão (em `src/Entrega_2/Frontend`):
+
+```bash
+EXPO_PUBLIC_API_URL=https://asa-conecta-api.vercel.app \
+  npx eas-cli@latest update --channel production --environment production --message "<resumo>"
 ```
-
-Para instalar:
-
-1. baixe o arquivo `.apk`;
-2. transfira-o para o dispositivo Android, caso necessário;
-3. autorize temporariamente a instalação pela origem utilizada;
-4. execute o APK;
-5. siga as instruções apresentadas pelo Android;
-6. abra o aplicativo.
 
 ---
 

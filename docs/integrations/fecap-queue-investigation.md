@@ -1,48 +1,56 @@
-# Investigação do painel público de fila da FECAP
+# Investigação do painel de fila presencial da FECAP
 
-Atualizado em 01/11/2026. Inspeção limitada a uma requisição `GET` da página pública e ao código/fixtures já presentes no ASA Conecta. Não foram usados cookies institucionais, credenciais, CPFs, POSTs ao serviço de dados, endpoints de escrita ou conta de estudante.
+**Verificado em:** 01/11/2026
+**Fonte:** [Painel presencial ASA](https://presencial.fecap.br/)
 
-## Resultado da inspeção pública
+## Resultado da consulta pública
 
-- `GET https://presencial.fecap.br/` respondeu HTTP 200 com `text/html; charset=utf-8`; o título é `FILA ASA`.
-- A página usa Microsoft Power Pages/Dataverse. O HTML inclui duas grades de entidade e configurações serializadas das visualizações.
-- As grades apontam para `/_services/entity-grid-data.json/<site-id>`. Uma visualização lista `fecap_posicaonafilapresencial` e `fecap_senhanopresencial`, ordenadas pela posição. A outra lista `fecap_senhanopresencial`, `fecap_mesaasa_porextenso` e `fecap_datadeatribuicao`, ordenadas pela data.
-- A resposta estática contém também uma mensagem de falta de permissão para visualizar registros. O HTML obtido não foi evidência de senhas atuais: não foi feita a chamada POST que carrega as grades, e o número de quatro dígitos encontrado na marcação não foi tratado como senha.
-- A captura por leitor web nesta execução também mostrou a página em modo somente leitura/offline, sem registros utilizáveis. Isso não determina a disponibilidade para o usuário final do site.
-- Não há WebSocket/SSE institucional documentado no HTML inspecionado. O ASA Conecta distribui suas próprias leituras por SSE/polling, depois de uma fonte habilitada.
+A página oficial foi consultada sem autenticação por um único `GET`; respondeu HTTP 200 (`text/html; charset=utf-8`). O HTML inclui as grades dinâmicas e, ao mesmo tempo, a resposta apresentada está em modo somente leitura/offline e informa:
 
-## Campos e limites
+- “Não há registros a serem exibidos.”
+- “Você não tem permissões para exibir estes registros.”
+- “Erro ao concluir solicitação.”
 
-| Informação | Evidência na página | Uso permitido nesta implementação |
+Como a própria página comunica falta de permissão, a mensagem de ausência de linhas **não comprova que a fila esteja vazia**. Nenhum número de senha, mesa, posição, titular ou horário atual foi obtido. Nenhuma chamada foi feita ao endpoint interno das grades e nenhum controle de acesso foi contornado. A presença da marcação `entity-grid` no HTML não altera essa conclusão.
+
+O HTML e fixtures de inspeções anteriores mostram que a página usa Microsoft Power Pages com grades de entidade carregadas pelo próprio portal. A configuração pública inclui uma URL `/_services/entity-grid-data.json/<site>` e nomes lógicos de colunas referentes a posição, senha, mesa e data de atribuição. Isso descreve a interface observada; não concede autorização para ler os registros subjacentes.
+
+## Dados e limitações confirmados
+
+| Informação | Evidência disponível agora | Conclusão |
 |---|---|---|
-| Número da senha | Nome lógico da coluna nas grades | Parser existente preserva como texto e zeros à esquerda; leitura conectada requer autorização |
-| Posição | Coluna da grade de próximas senhas | Usada apenas se a fonte preencher a coluna |
-| Mesa | Coluna da grade de chamadas | `null` se ausente; nunca inferida |
-| Data/hora de chamada | Coluna da grade de chamadas | `null` se ausente |
-| CPF, RA e titular | Não observados | Não acessados nem inferidos |
-| Identidade do atendimento/QR | Não observados | Não há vínculo institucional nem reivindicação segura |
-| Conclusão/cancelamento/no-show | Não confirmados por evidência nesta consulta | Não inferidos a partir do desaparecimento da senha |
+| Estrutura da página | Título `FILA ASA`, seções de últimas, próximas e anteriores senhas | Estrutura identificável |
+| Endpoint/grades | Configuração de grades no HTML observado anteriormente | O portal usa carregamento dinâmico |
+| Senhas atuais | Nenhum registro legível nesta consulta | Indisponíveis |
+| Posição, mesa e horários atuais | Nenhum registro legível nesta consulta | Indisponíveis |
+| CPF, RA ou titular | Não expostos na página consultada | Não inferir nem consultar |
+| Identificador de QR/atendimento | Não documentado | Vínculo individual não implementável sem contrato da FECAP |
+| Conclusão/cancelamento/ausência | Não confirmados nesta consulta | Não inferir pelo desaparecimento da senha |
 
-O exemplo de senhas fornecido no escopo e fixtures locais são amostras históricas. Eles não são apresentados como estado atual da fila.
+O exemplo datado de 31/10/2026 no escopo e as fixtures existentes não são estado atual. Fixtures sintéticas servem apenas aos testes automatizados e nunca devem ser servidas pelo app, portal ou API fora do ambiente de testes.
 
-## Estratégia recomendada
+## Tratamento implementado
 
-1. Preferir API/webhook institucional documentado, com credenciais de serviço e escopos mínimos.
-2. Se a FECAP autorizar por escrito a leitura do painel, ativar o provedor público por configuração separada. O monitor é centralizado no backend; clientes não fazem scraping individual.
-3. Manter posição, mesa, chamada e horário como desconhecidos quando a origem não os apresentar.
-4. Manter o acompanhamento manual como alerta por senha informada. Isso não comprova titularidade do estudante.
-5. Implementar vínculo individual somente quando houver prova emitida/validada pela FECAP (por exemplo, identificador opaco do QR verificável por API). Um número público ou CPF digitado isoladamente não é prova.
+- O backend seleciona somente os providers institucionais reais por padrão.
+- A coleta permanece desativada até as flags de autorização e leitura estarem habilitadas no ambiente correto.
+- O parser detecta avisos explícitos de permissão em HTML ou JSON e retorna erro de fonte (`403`), em vez de converter a resposta em fila vazia.
+- O adaptador HTML aplica a mesma proteção; o fallback não contorna o aviso.
+- A API só aceita acompanhamento manual quando a senha aparece em um snapshot recente e saudável da fonte oficial.
+- Um acompanhamento por número digitado continua sem comprovar que a pessoa é titular. O ASA Conecta não pede CPF como prova.
+- A interface não apresenta dados de demonstração e o Compose não ativa seeds sintéticas por padrão.
 
-## Evidências e reprodução
+## Evidência e limites
 
-Requisição usada: um `GET` da página inicial, timeout de 10 segundos, sem autenticação. Foram examinados status, content type, título e configurações das grades já embutidas no HTML. Não foram solicitados `/_services/entity-grid-data.json`, `/_layout/tokenhtml`, URLs de edição/exclusão, nem chamadas de escrita.
+A consulta feita em 01/11/2026 foi uma abertura pública sem login. O leitor recebeu a página em modo somente leitura/offline e o aviso de permissão listado acima. Não foram enviados cookies institucionais, credenciais, CPFs ou RAs. Não foram feitas requisições `POST` às grades nem consultados dados de qualquer estudante.
 
-Os arquivos `src/Entrega_2/Backend/api/test/fixtures/queue/` contêm fixtures de desenvolvimento. A documentação das fixtures descreve a origem e a data registradas no próprio repositório; os testes de parsing não equivalem a consulta real nesta execução.
+Não foi possível verificar frequência real de atualização, formato do payload de registros acessíveis ou funcionamento do parser contra um snapshot atual. Não há evidência de webhook, SSE, API oficial de vinculação ou mecanismo de verificação do QR Code.
 
-## Pendências institucionais
+## Pendências para ativar dados reais
 
-- Aprovação explícita da FECAP para uso automatizado e frequência aceitável.
-- Documentação ou autorização de API/webhook e contrato de titularidade.
-- Conta/ambiente de homologação e definição do formato do comprovante/QR.
-- Confirmação de retenção, finalidade e papéis de tratamento conforme LGPD.
-- Validação com captura atual autorizada antes de homologar o parser contra registros reais.
+1. A FECAP deve habilitar permissões de leitura para a integração ou fornecer API/webhook documentado e autorizado.
+2. A FECAP deve confirmar frequência de consulta permitida e ambiente de homologação.
+3. Para vínculo pessoal, a FECAP deve fornecer identificador ou fluxo de comprovação de titularidade verificável.
+4. A instituição deve validar finalidade, retenção e responsabilidades LGPD.
+5. Depois disso, validar o provider com resposta real autorizada antes de habilitar produção.
+
+Até essas dependências serem resolvidas, a fonte deve permanecer indisponível no ASA Conecta. Não existe um modo seguro de obter registros reais por meio da página atualmente apresentada sem ultrapassar a permissão observada.
