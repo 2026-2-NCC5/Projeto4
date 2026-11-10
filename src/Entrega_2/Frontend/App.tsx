@@ -41,7 +41,7 @@ import { NotificationsScreen } from './screens/NotificationsScreen';
 import { setPreferredVoice } from './services/voice/speechSynthesis';
 import { ThemeProvider, useTheme } from './theme';
 import { MESSAGES } from './utils/messages';
-import { usePlatformInfo } from './features/platform/platformInfo';
+import { appDataGate, usePlatformInfo } from './features/platform/platformInfo';
 import { AppButton } from './components/ui/AppButton';
 
 export default function App() {
@@ -68,19 +68,13 @@ export function AppShell() {
   const theme = useTheme();
   const platform = usePlatformInfo();
 
-  const demoData = platform.info?.dataMode === 'demo' || platform.info?.academicSource.status === 'demo';
-  const releaseNotReady = !__DEV__ && (
-    platform.status !== 'ready'
-    || platform.info?.dataMode !== 'institutional'
-    || platform.info.academicSource.provider !== 'institutional'
-    || platform.info.academicSource.status !== 'available'
-  );
-  const blocked = demoData || releaseNotReady;
+  const gate = appDataGate(platform, __DEV__);
+  const blocked = gate !== 'open';
 
   return (
     <View style={[styles.app, { backgroundColor: theme.colors.background.primary }]}>
       <StatusBar style={status === 'booting' || theme.isDark ? 'light' : 'dark'} />
-      {blocked ? <DataReadinessGate demoData={demoData} retry={platform.reload} /> : null}
+      {blocked ? <DataReadinessGate gate={gate} retry={platform.reload} /> : null}
       {!blocked && status === 'booting' ? <Splash /> : null}
       {!blocked && status === 'unauthenticated' ? <AuthFlow /> : null}
       {/* key: outra conta remonta a área inteira, sem herdar estado de tela da conta anterior */}
@@ -89,16 +83,15 @@ export function AppShell() {
   );
 }
 
-function DataReadinessGate({ demoData, retry }: { demoData: boolean; retry: () => void }) {
+function DataReadinessGate({ gate, retry }: { gate: Exclude<ReturnType<typeof appDataGate>, 'open'>; retry: () => void }) {
   const theme = useTheme();
-  const platform = usePlatformInfo();
-  const checking = !demoData && platform.status === 'loading';
-  const title = checking ? 'Verificando a origem dos dados…' : demoData ? 'Este ambiente usa dados de demonstração' : 'O serviço ainda não está pronto para distribuição';
+  const checking = gate === 'checking';
+  const title = checking ? 'Verificando a origem dos dados…' : gate === 'demo' ? 'Este ambiente usa dados de demonstração' : 'Não foi possível conectar ao ASA Conecta';
   const description = checking
-    ? 'Estamos verificando se a fonte acadêmica institucional está ativa.'
-    : demoData
-    ? 'Para proteger os estudantes, o ASA Conecta não abre com dados acadêmicos fictícios. Configure a API com a fonte institucional GameFY e tente novamente.'
-    : 'Não foi possível confirmar uma fonte acadêmica institucional ativa. O acesso será liberado quando a API informar dados institucionais disponíveis.';
+    ? 'Estamos confirmando que o serviço usa a fonte institucional.'
+    : gate === 'demo'
+    ? 'Para proteger os estudantes, o ASA Conecta não abre com dados acadêmicos fictícios. Configure a API com a fonte institucional e tente novamente.'
+    : 'Não conseguimos confirmar que o serviço está no modo institucional. Verifique sua conexão com a internet e tente novamente.';
 
   return (
     <View style={[styles.readiness, { backgroundColor: theme.colors.background.primary }]} accessibilityRole="alert" testID="data-readiness-gate">

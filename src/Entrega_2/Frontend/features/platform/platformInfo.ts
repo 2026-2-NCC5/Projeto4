@@ -85,6 +85,24 @@ export function appointmentsEnabled(info: PlatformInfo | null | undefined): bool
   return info?.features.appointments !== false;
 }
 
+export type AppDataGate = 'open' | 'demo' | 'checking' | 'unconfirmed';
+
+/**
+ * Decide se o app pode abrir o login e as áreas autenticadas (mesma regra do portal web):
+ * - dados fictícios (modo demo) bloqueiam sempre;
+ * - em builds publicados (EAS Update/loja), só abre quando a API confirma modo e fonte institucionais.
+ * A fonte acadêmica "indisponível" NÃO bloqueia: chamados, agendamentos, base de conhecimento e assistente
+ * funcionam, e as telas acadêmicas mostram `academicUnavailableMessage` em vez de dados.
+ */
+export function appDataGate(snapshot: Pick<PlatformInfoSnapshot, 'info' | 'status'>, isDevelopment: boolean): AppDataGate {
+  const { info, status } = snapshot;
+  if (info?.dataMode === 'demo' || info?.academicSource.status === 'demo') return 'demo';
+  if (isDevelopment) return 'open';
+  if (status === 'loading' && !info) return 'checking';
+  if (info?.dataMode === 'institutional' && info.academicSource.provider === 'institutional') return 'open';
+  return 'unconfirmed';
+}
+
 /** Mensagem da fonte acadêmica quando ela está indisponível (null quando há dados acadêmicos). */
 export function academicUnavailableMessage(info: PlatformInfo | null | undefined): string | null {
   return info?.academicSource.status === 'unavailable' ? info.academicSource.message || 'Dados acadêmicos indisponíveis no momento.' : null;

@@ -54,7 +54,7 @@ describe('Fila presencial — origem dos dados', () => {
     renderQueue({ kind: 'public_panel', label: 'Painel público do ASA (presencial.fecap.br)', authorized: false });
     expect(await screen.findByText('Fonte pública sem autorização institucional registrada')).toBeTruthy();
     expect(screen.queryByTestId('queue-source-demo')).toBeNull();
-    expect(screen.getByText(/Dados do painel público presencial\.fecap\.br/)).toBeTruthy();
+    expect(screen.getByText(/Dados lidos da fonte oficial presencial\.fecap\.br/)).toBeTruthy();
   });
 
   it('painel público autorizado ou fonte não informada: nenhuma marcação extra', async () => {

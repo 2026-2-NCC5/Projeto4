@@ -8,7 +8,6 @@ import { AppButton, AppText, CardSkeleton, OfflineBanner, SectionHeader, Surface
 import { makeStyles, useTheme } from '../../../theme';
 import { QueueAlertSettings } from '../components/QueueAlertSettings';
 import { QueueCurrentCall } from '../components/QueueCurrentCall';
-import { QueueDevPanel } from '../components/QueueDevPanel';
 import { QueueHistory } from '../components/QueueHistory';
 import { QueueNotificationPrompt } from '../components/QueueNotificationPrompt';
 import { QueueRecentCalls } from '../components/QueueRecentCalls';
@@ -16,7 +15,6 @@ import { QueueSourceLabel } from '../components/QueueSourceLabel';
 import { QueueSyncIndicator } from '../components/QueueSyncIndicator';
 import { QueueTicketCard } from '../components/QueueTicketCard';
 import { QueueTicketForm } from '../components/QueueTicketForm';
-import { QUEUE } from '../config';
 import { formatQueueClock, useQueue, useQueueInterest } from '../hooks/useQueue';
 
 const useStyles = makeStyles((theme) => ({
@@ -190,16 +188,12 @@ export function QueueScreen({ onBack }: QueueScreenProps) {
         </View>
       ) : null}
 
-      {queue.simulationAvailable ? (
-        <View style={styles.footer}>
-          <QueueDevPanel local={QUEUE.USE_MOCK} onSimulate={queue.simulate} />
-        </View>
-      ) : null}
-
       <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.xxl }}>
         {demoSource
           ? 'Dados de demonstração não são exibidos no app. Conecte uma fonte institucional real e autorizada para habilitar a fila.'
-          : 'Dados do painel público presencial.fecap.br, lidos pelo ASA Conecta a cada poucos segundos. Posição e mesa vêm do painel; a estimativa é aproximada.'}
+          : sync?.status === 'live'
+            ? 'Dados lidos da fonte oficial presencial.fecap.br. A disponibilidade, posição, mesa e horários dependem das informações publicadas pela FECAP.'
+            : 'O ASA Conecta não apresenta dados simulados. A fila será exibida quando a fonte oficial estiver acessível e autorizada.'}
       </AppText>
     </Screen>
   );
