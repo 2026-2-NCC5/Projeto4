@@ -4,7 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import LoginPage from '@/pages/auth/LoginPage';
 import { ApiError } from '@/services/api/client';
 import { makeMe, makeSession, mockApi, renderRoutes } from '@/test/utils';
-import { RedirectIfAuthenticated, RequireAuth, RequireRole } from './guards';
+import { platformHasInstitutionalData, RedirectIfAuthenticated, RequireAuth, RequireInstitutionalData, RequireRole } from './guards';
+import type { PlatformInfo } from '@/types/api';
 
 const protectedRoutes = [
   { path: '/login', element: <p>tela de login</p> },
@@ -37,6 +38,40 @@ describe('guardas de rota (experiência; o servidor autoriza de verdade)', () =>
   it('equipe ASA entra na própria área', async () => {
     renderRoutes(protectedRoutes, { initialPath: '/asa', session: makeSession(makeMe('institutional_staff')) });
     expect(await screen.findByText('fila da equipe')).toBeInTheDocument();
+  });
+});
+
+describe('bloqueio de dados não institucionais em produção', () => {
+  const platformInfo = (dataMode: 'demo' | 'institutional', provider: 'demo' | 'institutional') => ({
+    dataMode,
+    academicSource: { provider },
+  }) as PlatformInfo;
+
+  it('reconhece somente a origem marcada como institucional pela API', () => {
+    expect(platformHasInstitutionalData(platformInfo('institutional', 'institutional'))).toBe(true);
+    expect(platformHasInstitutionalData(platformInfo('demo', 'demo'))).toBe(false);
+    expect(platformHasInstitutionalData(platformInfo('institutional', 'demo'))).toBe(false);
+    expect(platformHasInstitutionalData(undefined)).toBe(false);
+  });
+
+  it('bloqueia login quando a API informa dados de demonstração', async () => {
+    mockApi({ 'GET /api/platform/info': () => ({ data: platformInfo('demo', 'demo') }) });
+    renderRoutes([{ path: '/', element: <RequireInstitutionalData enforce><p>tela de login</p></RequireInstitutionalData> }], { session: makeSession(null) });
+    expect(await screen.findByRole('alert')).toHaveTextContent('A API vinculada ao portal informa modo de demonstração');
+    expect(screen.queryByText('tela de login')).toBeNull();
+  });
+
+  it('falha fechada se não consegue confirmar a origem dos dados', async () => {
+    mockApi({});
+    renderRoutes([{ path: '/', element: <RequireInstitutionalData enforce><p>área autenticada</p></RequireInstitutionalData> }], { session: makeSession(null) });
+    expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível confirmar que a API está usando uma fonte institucional');
+    expect(screen.queryByText('área autenticada')).toBeNull();
+  });
+
+  it('permite a área quando a API confirma o modo institucional', async () => {
+    mockApi({ 'GET /api/platform/info': () => ({ data: platformInfo('institutional', 'institutional') }) });
+    renderRoutes([{ path: '/', element: <RequireInstitutionalData enforce><p>área autenticada</p></RequireInstitutionalData> }], { session: makeSession(null) });
+    expect(await screen.findByText('área autenticada')).toBeInTheDocument();
   });
 });
 
