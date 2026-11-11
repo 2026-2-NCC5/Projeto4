@@ -111,6 +111,19 @@ export class PgKnowledgeRepository implements KnowledgeRepository {
     return { items: rows.map(withVersion), total: rows[0]?.total ?? 0 };
   }
 
+  async termDocumentCounts(terms: string[], filter: { audience: string[]; includeDemo?: boolean }): Promise<{ total: number; counts: number[] }> {
+    const safe = terms.map((term) => term.replace(/[^a-z0-9]/g, '')).filter(Boolean);
+    if (safe.length === 0) return { total: 0, counts: [] };
+    const filters = safe.map((_, index) => `count(*) filter (where v.search_vector @@ to_tsquery('portuguese', $${index + 3}))::int`).join(', ');
+    const { rows } = await this.pool.query<{ total: number; counts: number[] }>(
+      `select count(*)::int as total, array[${filters}]::int[] as counts
+         from kb_articles a join kb_article_versions v on v.article_id = a.id and v.version = a.published_version
+        where ${PUBLICLY_VISIBLE} and ($1::boolean or not a.is_demo) and a.audience = any($2::text[])`,
+      [filter.includeDemo ?? true, filter.audience, ...safe.map((term) => `${term}:*`)],
+    );
+    return { total: rows[0]?.total ?? 0, counts: rows[0]?.counts ?? [] };
+  }
+
   async search(filter: Parameters<KnowledgeRepository['search']>[0]): Promise<{ items: KbSearchRow[]; total: number }> {
     const column = filter.scope === 'published' ? 'published_version' : 'current_version';
     // leitura: só o que tem versão publicada (mesmo com alteração em revisão); gestão: filtro opcional de situação

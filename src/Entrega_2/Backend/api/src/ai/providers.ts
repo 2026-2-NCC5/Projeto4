@@ -45,6 +45,8 @@ export interface AIAnswer {
   title: string;
   message: string;
   steps: string[];
+  /** setor responsável, local, horário, canais e condições publicados no artigo */
+  facts: Array<{ label: string; value: string }>;
   speech: string;
 }
 
@@ -56,6 +58,8 @@ export interface AIResponse {
   /** 0–1: cobertura dos termos da pergunta pelo artigo (não é probabilidade calibrada) */
   confidence: number;
   abstentionReason: string | null;
+  /** artigos relacionados que não responderam sozinhos (o assistente sugere como perguntas) */
+  related?: Array<{ slug: string; title: string }>;
 }
 
 export interface AIProviderAdapter {
@@ -97,16 +101,16 @@ export class RuleBasedKnowledgeAdapter implements AIProviderAdapter {
   }
 
   async generate(request: AIRequest): Promise<AIResponse> {
-    const { answer: match, candidates } = await this.knowledge.bestAnswer(request.text, KNOWLEDGE_THRESHOLDS);
+    const { answer: match, candidates, related } = await this.knowledge.bestAnswer(request.text, KNOWLEDGE_THRESHOLDS);
     if (!match) {
       // low_confidence: há artigos relacionados, mas nenhum cobre a pergunta; knowledge_not_found: assunto fora da base
-      return { status: 'abstained', providerId: this.id, answer: null, sources: [], confidence: 0, abstentionReason: candidates > 0 ? 'low_confidence' : 'knowledge_not_found' };
+      return { status: 'abstained', providerId: this.id, answer: null, sources: [], confidence: 0, abstentionReason: candidates > 0 ? 'low_confidence' : 'knowledge_not_found', related };
     }
     const version = match.article.shown;
     return {
       status: 'answered',
       providerId: this.id,
-      answer: { title: version.title, message: version.summary, steps: match.steps, speech: version.summary },
+      answer: { title: version.title, message: version.summary, steps: match.steps.filter((step) => step !== version.summary && !version.summary.startsWith(step) && !step.startsWith(version.summary.replace(/…$/, ''))), facts: match.facts, speech: version.summary },
       sources: [
         {
           type: 'knowledge_article',
@@ -121,6 +125,7 @@ export class RuleBasedKnowledgeAdapter implements AIProviderAdapter {
       ],
       confidence: Math.round(match.coverage * 100) / 100,
       abstentionReason: null,
+      related,
     };
   }
 }

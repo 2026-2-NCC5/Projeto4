@@ -63,6 +63,8 @@ export interface KnowledgeRepository {
   /** busca lexical (português) na versão publicada (leitura) ou atual (gestão) */
   search(filter: { tsQuery: string; audience: KnowledgeAudience[]; scope: 'published' | 'current'; categoryId?: string; statuses?: KnowledgeArticleStatus[]; limit: number; offset: number; includeDemo?: boolean }): Promise<{ items: KbSearchRow[]; total: number }>;
   findPublished(idOrSlug: string, audience: KnowledgeAudience[], includeDemo?: boolean): Promise<KbArticleWithVersion | null>;
+  /** Em quantos artigos publicados cada termo aparece (pesa termos raros na escolha da resposta). */
+  termDocumentCounts?(terms: string[], filter: { audience: KnowledgeAudience[]; includeDemo?: boolean }): Promise<{ total: number; counts: number[] }>;
   listManaged(filter: { statuses?: KnowledgeArticleStatus[]; categoryId?: string; limit: number; offset: number }): Promise<{ items: KbArticleWithVersion[]; total: number; counts: Partial<Record<KnowledgeArticleStatus, number>> }>;
   findById(id: string): Promise<KbArticleRecord | null>;
   getVersion(id: string, version: number): Promise<KbVersionRecord | null>;

@@ -2,7 +2,8 @@ import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { AiProviderRegistry, JevAdapter, ProviderUnavailableError } from '../../src/ai/providers.js';
 import { createLogger } from '../../src/config/logger.js';
-import { extractSteps, queryTerms, slugify, stripMarkdown, termCoverage, toTsQuery } from '../../src/knowledge/text.js';
+import { buildOfficialArticles, channelsLine, officialCategory, officialSlug, summarize, type OfficialSnapshot } from '../../src/knowledge/official.js';
+import { canonicalSearchText, extractFacts, extractSteps, fallbackTerms, idfWeights, queryTerms, slugify, stripMarkdown, termCoverage, titlePrecision, toTsQuery, weightedCoverage } from '../../src/knowledge/text.js';
 import type { KnowledgeService } from '../../src/knowledge/service.js';
 import { bearer, buildTestConfig, createTestApp, loginAs } from '../support/testApp.js';
 
@@ -64,7 +65,7 @@ describe('provedores de IA: JEV planejado e desligado, sem respostas falsas', ()
 
 describe('texto da base de conhecimento', () => {
   it('termos da pergunta sem acento e sem palavras vazias; consulta com prefixo em OU', () => {
-    expect(queryTerms('Como eu emito a segunda via do boleto?')).toEqual(['emito', 'segunda', 'via', 'boleto']);
+    expect(queryTerms('Como eu emito a segunda via do boleto?')).toEqual(['segunda', 'via', 'boleto']);
     expect(toTsQuery(['segunda', 'boleto'])).toBe('segunda:* | boleto:*');
     expect(toTsQuery([])).toBeNull();
   });
@@ -75,5 +76,78 @@ describe('texto da base de conhecimento', () => {
     expect(extractSteps('Resumo\n\n## Passo a passo\n\n1. Entre no **portal**.\n2. Abra [Financeiro](https://x.y).')).toEqual(['Entre no portal.', 'Abra Financeiro.']);
     expect(stripMarkdown('**a** _b_ `c`')).toBe('a b c');
     expect(slugify('Como pedir revisão de prova?')).toBe('como-pedir-revisao-de-prova');
+  });
+});
+
+describe('busca na base: grafias, siglas, pesos e fatos de atendimento', () => {
+  it('unifica grafias e mantém siglas curtas', () => {
+    expect(canonicalSearchText('Wi-Fi e e-mail, 2ª via')).toBe('wifi e email, segunda via');
+    expect(queryTerms('Como solicito minha DP?')).toEqual(['dp']);
+    expect(queryTerms('O que é o ASA?')).toEqual([]);
+    expect(fallbackTerms('O que é o ASA?')).toEqual(['asa']);
+  });
+
+  it('termo raro pesa mais que termo comum; título exato vence título com palavras extras', () => {
+    const weights = idfWeights(180, [170, 10]);
+    expect(weights[1]!).toBeGreaterThan(weights[0]!);
+    expect(weightedCoverage(['segunda', 'boleto'], 'boleto mensal', weights)).toBeGreaterThan(weightedCoverage(['segunda', 'boleto'], 'segunda a sexta', weights));
+    expect(titlePrecision(['rematricula'], 'rematricula')).toBe(1);
+    expect(titlePrecision(['rematricula'], 'rematricula fora de epoca')).toBeLessThan(1);
+    expect(titlePrecision(['asa'], 'o que e o asa?')).toBe(1);
+  });
+
+  it('passos ignoram as seções de referência; fatos trazem condições, setor, local e horário', () => {
+    const body = 'Acesse o portal.\n\n## Condições\n\n- Ter matrícula ativa\n\n## Onde e quando\n\n- **Setor responsável:** Secretaria\n- **Horário de atendimento:** Segunda a Sexta';
+    expect(extractSteps(body)).toEqual(['Acesse o portal.']);
+    expect(extractFacts(body)).toEqual([
+      { label: 'Condições', value: 'Ter matrícula ativa' },
+      { label: 'Setor responsável', value: 'Secretaria' },
+      { label: 'Horário de atendimento', value: 'Segunda a Sexta' },
+    ]);
+  });
+});
+
+describe('conteúdo oficial da Cesta de Serviços → artigos', () => {
+  const snapshot: OfficialSnapshot = {
+    source: 'https://www.fecap.br/asa/cesta-de-servicos/',
+    fetchedAt: '2026-11-10T23:44:38Z',
+    audience: 'Graduação',
+    about: { url: 'https://www.fecap.br/asa/', paragraphs: ['O ASA acolhe e acompanha os estudantes.'] },
+    services: [
+      {
+        slug: '51199', url: 'https://www.fecap.br/asa/cesta-de-servicos/51199/', title: 'Atestado Personalizado',
+        category: { slug: 'documentos-academicos', label: 'Documentos Acadêmicos' },
+        blocks: [
+          { tag: 'p', text: 'Solicite pelo portal[Requerimento](https://portal.fecap.br/)e aguarde.' },
+          { tag: 'p', text: 'Ficou com dúvidas? Entre em contato por meio dos nossos canais de atendimento. Será um prazer te ajudar!' },
+        ],
+        conditions: ['- Ter registro de aluno ativo.'],
+        sector: 'Secretaria Acadêmica', location: 'Área do Sucesso Alvarista', hours: 'Segunda a Sexta, das 7h00 às 21h00',
+        channels: { phones: ['+551132722222', '+5532722222'], emails: ['sucessoalvarista@fecap.br', '(11) 94018-5617'], whatsapp: ['5511940185617'] },
+      },
+    ],
+  };
+
+  it('gera artigos publicáveis com fonte original, sem texto genérico e sem contato inválido', () => {
+    const articles = buildOfficialArticles(snapshot);
+    expect(articles.map((article) => article.slug)).toEqual(['canais-de-atendimento-do-asa', 'o-que-e-o-asa', 'atestado-personalizado']);
+    const service = articles[2]!;
+    expect(service).toMatchObject({ id: 'asa-cesta-atestado-personalizado', categoryId: 'documents', sourceUrl: 'https://www.fecap.br/asa/cesta-de-servicos/51199/', reviewDueAt: '2027-05-09' });
+    expect(service.body).toContain('portal [Requerimento](https://portal.fecap.br/) e aguarde.');
+    expect(service.body).not.toContain('Ficou com dúvidas');
+    expect(service.body).toContain('- Ter registro de aluno ativo.');
+    expect(service.body).toContain('- **Canais:** telefone (11) 3272-2222 · WhatsApp (11) 94018-5617 · e-mail sucessoalvarista@fecap.br');
+    // horário e canais não entram na busca (repetem em todo artigo); o setor entra
+    expect(service.searchDocument).not.toContain('segunda a sexta');
+    expect(service.searchDocument).toContain('secretaria academica');
+  });
+
+  it('categorias, slug, resumo e canais', () => {
+    expect(officialCategory({ slug: 'rematricula', category: { slug: 'servicos-academicos', label: null } })).toBe('enrollment');
+    expect(officialCategory({ slug: 'abono-de-faltas', category: { slug: 'servicos-academicos', label: null } })).toBe('academic');
+    expect(officialCategory({ slug: 'x', category: { slug: 'eventos', label: null } })).toBe('asa_service');
+    expect(officialSlug('a'.repeat(50) + '-' + 'b'.repeat(40)).length).toBeLessThanOrEqual(80);
+    expect(summarize(`${'Frase longa. '.repeat(40)}`).length).toBeLessThanOrEqual(400);
+    expect(channelsLine({ phones: ['+5532722222'], emails: [], whatsapp: [] })).toBeNull();
   });
 });

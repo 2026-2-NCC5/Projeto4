@@ -20,10 +20,35 @@ import type { AuditActor, AuditService } from '../platform/auditService.js';
 import type { PlatformService } from '../platform/platformService.js';
 import type { SettingsService } from '../platform/settingsService.js';
 import { findCategory } from '../support/catalog.js';
-import { extractSteps, queryTerms, searchDocument, slugify, stripMarkdown, termCoverage, toTsQuery } from './text.js';
+import {
+  canonicalSearchText,
+  extractFacts,
+  extractSteps,
+  fallbackTerms,
+  idfWeights,
+  queryTerms,
+  searchDocument,
+  slugify,
+  stripMarkdown,
+  titlePrecision,
+  toTsQuery,
+  weightedCoverage,
+  type ArticleFact,
+} from './text.js';
 import type { KbArticleRecord, KbArticleWithVersion, KbVersionRecord, KnowledgeRepository } from './types.js';
 
-const STATUSES: KnowledgeArticleStatus[] = ['draft', 'in_review', 'published', 'archived'];
+/**
+ * "Segunda via de X": quem decide o assunto é X (boleto, crachá, diploma). Com outro termo na pergunta,
+ * "segunda" e "via" pesam menos.
+ */
+function modifierWeights(terms: string[], weights: number[] | undefined): number[] | undefined {
+  const hasModifier = terms.includes('segunda') && terms.includes('via');
+  if (!hasModifier || terms.length <= 2) return weights;
+  const base = weights ?? terms.map(() => 1);
+  return base.map((weight, index) => (terms[index] === 'segunda' || terms[index] === 'via' ? weight * 0.3 : weight));
+}
+
+const STATUSES: KnowledgeArticleStatus[] =['draft', 'in_review', 'published', 'archived'];
 const RESERVED_SLUGS = new Set(['manage']);
 const MAX_PAGE = 50;
 
@@ -31,8 +56,16 @@ const MAX_PAGE = 50;
 export interface KnowledgeAnswer {
   article: KbArticleWithVersion;
   steps: string[];
+  /** setor, local, horário, canais e condições publicados no artigo */
+  facts: ArticleFact[];
   coverage: number;
   score: number;
+}
+
+/** Artigo relacionado à pergunta que não a respondeu sozinho (vira sugestão de pergunta). */
+export interface KnowledgeRelated {
+  slug: string;
+  title: string;
 }
 
 /**
@@ -116,20 +149,51 @@ export class KnowledgeService {
    * Melhor artigo publicado (público de alunos) para uma pergunta em linguagem natural. Devolve null quando
    * nada cobre a pergunta de forma confiável — o assistente então se abstém e oferece atendimento humano.
    */
-  async bestAnswer(question: string, options: { minCoverage: number; minScore: number }): Promise<{ answer: KnowledgeAnswer | null; candidates: number }> {
-    if (!this.store || !(await this.platform.isEnabled('assistantKnowledgeAnswers'))) return { answer: null, candidates: 0 };
-    const terms = queryTerms(question);
+  async bestAnswer(
+    question: string,
+    options: { minCoverage: number; minScore: number },
+  ): Promise<{ answer: KnowledgeAnswer | null; candidates: number; related: KnowledgeRelated[] }> {
+    if (!this.store || !(await this.platform.isEnabled('assistantKnowledgeAnswers'))) return { answer: null, candidates: 0, related: [] };
+    const primary = queryTerms(question);
+    const terms = primary.length > 0 ? primary : fallbackTerms(question);
     const tsQuery = toTsQuery(terms);
-    if (!tsQuery) return { answer: null, candidates: 0 };
-    const { items } = await this.store.search({ tsQuery, audience: ['student'], scope: 'published', limit: 3, offset: 0, includeDemo: this.includeDemo });
+    if (!tsQuery) return { answer: null, candidates: 0, related: [] };
+    const filter = { audience: ['student'] as KnowledgeAudience[], includeDemo: this.includeDemo };
+    const [{ items }, frequencies] = await Promise.all([
+      this.store.search({ tsQuery, ...filter, scope: 'published', limit: 12, offset: 0 }),
+      terms.length > 1 && this.store.termDocumentCounts ? this.store.termDocumentCounts(terms, filter) : Promise.resolve(null),
+    ]);
+    const weights = modifierWeights(terms, frequencies && frequencies.total > 0 ? idfWeights(frequencies.total, frequencies.counts) : undefined);
+    const maxScore = Math.max(...items.map((row) => row.score), Number.EPSILON);
+    // cobertura ponderada (termos raros pesam mais) decide; empate → título que mais cobre a pergunta →
+    // título exato ("Rematrícula" antes de "Rematrícula fora de época") combinado com o ranking do PostgreSQL
     const ranked = items
-      .map((row) => ({ row, coverage: termCoverage(terms, row.searchDocument) }))
-      .filter((candidate) => candidate.coverage >= options.minCoverage && candidate.row.score >= options.minScore)
-      .sort((a, b) => b.coverage - a.coverage || b.row.score - a.row.score);
-    const best = ranked[0];
+      .map((row) => {
+        const title = canonicalSearchText(row.shown.title);
+        const precision = titlePrecision(terms, title);
+        return {
+          row,
+          coverage: weightedCoverage(terms, row.searchDocument, weights),
+          titleCoverage: weightedCoverage(terms, title, weights),
+          tieBreak: 0.6 * precision + 0.4 * (row.score / maxScore),
+        };
+      })
+      .sort((a, b) => b.coverage - a.coverage || b.titleCoverage - a.titleCoverage || b.tieBreak - a.tieBreak);
+    // pergunta curta (até 2 termos) precisa ser coberta inteira: "perdi a prova" não é respondida por "Achados e Perdidos"
+    const minCoverage = terms.length <= 2 ? 0.999 : options.minCoverage;
+    // o título precisa ter algo da pergunta: artigo que só cita o assunto no texto vira sugestão, não resposta
+    const best = ranked.find((candidate) => candidate.coverage >= minCoverage && candidate.titleCoverage > 0 && candidate.row.score >= options.minScore);
+    const related = ranked
+      .filter((candidate) => candidate !== best && candidate.coverage > 0)
+      .slice(0, 3)
+      .map((candidate) => ({ slug: candidate.row.slug, title: candidate.row.shown.title }));
     // `candidates` > 0 sem resposta = assunto relacionado ao ASA, mas sem artigo que responda com segurança
-    if (!best) return { answer: null, candidates: items.length };
-    return { answer: { article: best.row, steps: extractSteps(best.row.shown.body), coverage: best.coverage, score: best.row.score }, candidates: items.length };
+    if (!best) return { answer: null, candidates: items.length, related };
+    return {
+      answer: { article: best.row, steps: extractSteps(best.row.shown.body), facts: extractFacts(best.row.shown.body), coverage: best.coverage, score: best.row.score },
+      candidates: items.length,
+      related,
+    };
   }
 
   /** Artigos publicados no formato da Central de ajuda do app (passo a passo). null = sem banco. */
