@@ -1,0 +1,40 @@
+# Coleta a cada 5 s (o teste de carga dura minutos; em produção 15–30 s bastam).
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+  external_labels:
+    sistema: asa-conecta
+
+rule_files:
+  - /etc/prometheus/alertas.yml
+
+scrape_configs:
+  # API Node.js: latência e erros por rota, CPU, memória, event loop e pool do banco (GET /metrics com Bearer)
+  - job_name: api
+    metrics_path: /metrics
+    authorization:
+      type: Bearer
+      credentials_file: /run/secrets/metrics_token
+    static_configs:
+      - targets: ["api:3000"]
+        labels:
+          servico: api
+
+  # CPU, memória, rede e disco de cada contêiner (cgroups)
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]
+    metric_relabel_configs:
+      # só as séries usadas no painel (o cAdvisor expõe centenas)
+      - source_labels: [__name__]
+        regex: "container_(cpu_usage_seconds_total|memory_working_set_bytes|memory_usage_bytes|spec_memory_limit_bytes|spec_cpu_quota|spec_cpu_period|network_receive_bytes_total|network_transmit_bytes_total|fs_reads_bytes_total|fs_writes_bytes_total|cpu_cfs_throttled_periods_total|cpu_cfs_periods_total|oom_events_total|last_seen)"
+        action: keep
+
+  # PostgreSQL: conexões, transações, cache hit, tamanho
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

@@ -1,0 +1,148 @@
+# ASA Conecta — observabilidade e teste de carga (Entrega 2 de Sistemas Operacionais e Computação em Nuvem).
+# Complementa o docker-compose.yml da pasta Backend: não substitui nada, só acrescenta serviços e limites.
+#
+#   cd src/Entrega_2/Backend
+#   cp observability/.env.example observability/.env     # e troque os dois segredos
+#   docker compose --env-file observability/.env -f docker-compose.yml -f observability/docker-compose.observability.yml \
+#     up -d --build db agent-service api prometheus grafana cadvisor postgres-exporter
+#   # painel: http://127.0.0.1:3300 (usuário admin, senha = GRAFANA_ADMIN_PASSWORD) · Prometheus: http://127.0.0.1:9090
+#   # carga:  docker compose ... --profile carga run --rm k6 run /scripts/jornada-aluno.js
+#
+# Segredos: METRICS_TOKEN e GRAFANA_ADMIN_PASSWORD vêm do ambiente (arquivo .env fora do Git) e chegam ao
+# Prometheus e ao Grafana como "secrets" do Compose (arquivos em /run/secrets, nunca na linha de comando).
+# Todas as portas novas ficam presas em 127.0.0.1; cAdvisor e postgres-exporter não publicam porta.
+
+secrets:
+  metrics_token:
+    environment: METRICS_TOKEN
+  grafana_admin_password:
+    environment: GRAFANA_ADMIN_PASSWORD
+
+services:
+  # Limites por contêiner: a API recebe o mesmo orçamento de uma instância de função na nuvem (1 vCPU),
+  # o que torna o teste de carga reprodutível e mostra o gargalo de CPU de um processo Node.js.
+  api:
+    environment:
+      METRICS_TOKEN: ${METRICS_TOKEN:?defina METRICS_TOKEN (pelo menos 24 caracteres) em observability/.env}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_POOL_MAX: ${DATABASE_POOL_MAX:-10}
+    cpus: ${API_CPUS:-1.0}
+    mem_limit: ${API_MEMORY:-1g}
+
+  agent-service:
+    environment:
+      AGENT_SERVICE_WORKERS: ${AGENT_SERVICE_WORKERS:-1}
+    command: ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $${AGENT_SERVICE_PORT} --workers $${AGENT_SERVICE_WORKERS:-1}"]
+    cpus: ${AGENT_CPUS:-1.0}
+    mem_limit: ${AGENT_MEMORY:-512m}
+
+  # pg_stat_statements: consultas mais caras durante o teste (análise de gargalos)
+  db:
+    command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements", "-c", "pg_stat_statements.track=top", "-c", "max_connections=100"]
+    cpus: ${DB_CPUS:-1.0}
+    mem_limit: ${DB_MEMORY:-1g}
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: asa-conecta-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      # o k6 envia as métricas do lado do cliente por remote write (latência vista pelo usuário)
+      - --web.enable-remote-write-receiver
+    volumes:
+      - ./observability/prometheus:/etc/prometheus:ro
+      - asa-conecta-prometheus:/prometheus
+    secrets:
+      - source: metrics_token
+        target: metrics_token
+        mode: 0444
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
+    depends_on:
+      api:
+        condition: service_started
+
+  grafana:
+    image: grafana/grafana:12.1.1
+    container_name: asa-conecta-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/asa-conecta.json
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - asa-conecta-grafana:/var/lib/grafana
+    secrets:
+      - source: grafana_admin_password
+        target: grafana_admin_password
+        mode: 0444
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3300}:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+
+  # CPU, memória, rede e disco de cada contêiner (cgroups do kernel Linux)
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    container_name: asa-conecta-cadvisor
+    privileged: true
+    command:
+      - --docker_only=true
+      - --housekeeping_interval=5s
+      - --store_container_labels=false
+      - --whitelisted_container_labels=com.docker.compose.service,com.docker.compose.project
+      - --disable_metrics=percpu,sched,tcp,udp,hugetlb,referenced_memory,cpu_topology,resctrl
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+
+  # Conexões, transações, cache hit e tamanho do banco
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
+    container_name: asa-conecta-postgres-exporter
+    environment:
+      DATA_SOURCE_URI: db:5432/${POSTGRES_DB:-asa_conecta}?sslmode=disable
+      DATA_SOURCE_USER: ${POSTGRES_USER:-asa}
+      DATA_SOURCE_PASS: ${POSTGRES_PASSWORD:-asa_dev_password}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Gerador de carga (só sob demanda: --profile carga). Resultados vão para o Prometheus e para ./observability/resultados
+  k6:
+    image: grafana/k6:1.3.0
+    profiles: ["carga"]
+    # grava os resultados com o seu usuário (id -u / id -g) na pasta montada
+    user: "${K6_UID:-1000}:${K6_GID:-1000}"
+    environment:
+      K6_PROMETHEUS_RW_SERVER_URL: http://prometheus:9090/api/v1/write
+      K6_PROMETHEUS_RW_TREND_STATS: p(50),p(95),p(99),avg,max
+      K6_PROMETHEUS_RW_PUSH_INTERVAL: 5s
+      BASE_URL: ${K6_BASE_URL:-http://api:3000}
+      AGENT_URL: http://agent-service:8000
+      AGENT_SERVICE_TOKEN: ${AGENT_SERVICE_TOKEN:-}
+      LOAD_TEST_PASSWORD: ${LOAD_TEST_PASSWORD:-}
+    volumes:
+      - ./observability/k6:/scripts:ro
+      - ./contracts/agent/examples:/contracts:ro
+      - ./observability/resultados:/resultados
+    entrypoint: ["k6"]
+    command: ["run", "-o", "experimental-prometheus-rw", "/scripts/jornada-aluno.js"]
+
+volumes:
+  asa-conecta-prometheus:
+  asa-conecta-grafana:
