@@ -1,0 +1,12 @@
+# Local: http://127.0.0.1:3100 · agente http://127.0.0.1:18000 (2026-11-11T22:59:43Z)
+GET /metrics sem token → 401                                             esperado=401    obtido=401    OK
+GET /metrics com token errado → 401                                      esperado=401    obtido=401    OK
+GET /metrics com METRICS_TOKEN → 200                                     esperado=200    obtido=200    OK
+GET /api/student/me sem token → 401                                      esperado=401    obtido=401    OK
+GET /api/student/me como aluno → 200                                     esperado=200    obtido=200    OK
+GET /api/asa/dashboard (equipe ASA) como aluno → 403                     esperado=403    obtido=403    OK
+GET /api/admin/users (administração) como aluno → 403                  esperado=403    obtido=403    OK
+JWT com assinatura adulterada → 401                                      esperado=401    obtido=401    OK
+Agente sem AGENT_SERVICE_TOKEN → 401                                     esperado=401    obtido=401    OK
+Jobs internos sem CRON_SECRET → 401                                      esperado=401    obtido=401    OK
+# falhas: 0

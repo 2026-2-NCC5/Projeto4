@@ -1,0 +1,66 @@
+{
+  "estresse-antes": {
+    "janela": [
+      "2026-11-11T22:45:11Z",
+      "2026-11-11T22:50:45Z"
+    ],
+    "alertas_disparados": {
+      "LatenciaP95Alta": {
+        "primeiro": 1794437381,
+        "amostras_disparado": 5
+      },
+      "PoolDoBancoComEspera": {
+        "primeiro": 1794437366,
+        "amostras_disparado": 6
+      }
+    }
+  },
+  "estresse-depois": {
+    "janela": [
+      "2026-11-11T22:51:28Z",
+      "2026-11-11T22:57:00Z"
+    ],
+    "alertas_disparados": {
+      "CpuDoConteinerLimitada": {
+        "primeiro": 1794437563,
+        "amostras_disparado": 1
+      },
+      "LatenciaP95Alta": {
+        "primeiro": 1794437488,
+        "amostras_disparado": 5
+      }
+    }
+  },
+  "alvos": [
+    {
+      "job": "api",
+      "saude": "up",
+      "ultima_coleta": "2026-11-11T23:00:17.333911587Z"
+    },
+    {
+      "job": "cadvisor",
+      "saude": "up",
+      "ultima_coleta": "2026-11-11T23:00:18.776816226Z"
+    },
+    {
+      "job": "postgres",
+      "saude": "up",
+      "ultima_coleta": "2026-11-11T23:00:18.531160714Z"
+    },
+    {
+      "job": "prometheus",
+      "saude": "up",
+      "ultima_coleta": "2026-11-11T23:00:21.180239691Z"
+    }
+  ],
+  "regras": [
+    "ApiIndisponivel",
+    "LatenciaP95Alta",
+    "TaxaDeErros5xx",
+    "EventLoopBloqueado",
+    "PoolDoBancoComEspera",
+    "MemoriaDoConteinerAlta",
+    "CpuDoConteinerLimitada",
+    "BancoComMuitasConexoes"
+  ]
+}

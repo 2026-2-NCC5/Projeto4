@@ -1,0 +1,53 @@
+{
+  "host": {
+    "so": "Kali GNU/Linux Rolling",
+    "kernel": "7.0.12+kali-amd64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11375H @ 3.30GHz",
+    "nucleos": 8,
+    "memoria": "15 GiB de RAM",
+    "docker": "28.5.2+dfsg4",
+    "compose": "5.5.1",
+    "cgroup": "cgroup v2 (systemd)"
+  },
+  "conteineres": {
+    "api": {
+      "id_usuario": "uid=1000(node) gid=1000(node) groups=1000(node),1000(node)",
+      "os": "Alpine Linux v3.24",
+      "cgroup_cpu_max": "100000 100000",
+      "cgroup_memory_max": "1073741824",
+      "processos": "PID   USER     RSS  COMMAND\n    1 node     118m {MainThread} node dist/server.js\n  423 node      768 sh -c ps -o pid,user,rss,args 2>/dev/null | head -6 || ps aux | head -6\n  429 node      924 ps -o pid,user,rss,args\n  430 node      808 head -6",
+      "portas_publicadas": "3000/tcp -> 0.0.0.0:3100\n3000/tcp -> [::]:3100"
+    },
+    "agent": {
+      "id_usuario": "uid=10001(agent) gid=999(agent) groups=999(agent)",
+      "os": "Debian GNU/Linux 13 (trixie)",
+      "cgroup_cpu_max": "100000 100000",
+      "cgroup_memory_max": "536870912",
+      "processos": "",
+      "portas_publicadas": "8000/tcp -> 127.0.0.1:18000"
+    },
+    "db": {
+      "id_usuario": "uid=0(root) gid=0(root) groups=0(root),0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)",
+      "os": "Alpine Linux v3.24",
+      "cgroup_cpu_max": "200000 100000",
+      "cgroup_memory_max": "1073741824",
+      "processos": "PID   USER     RSS  COMMAND\n    1 postgres  27m postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=top -c max_connections=100\n   33 postgres  18m postgres: checkpointer \n   34 postgres 6800 postgres: background writer \n   37 postgres 9204 postgres: walwriter \n   38 postgres 7620 postgres: autovacuum launcher",
+      "portas_publicadas": "5432/tcp -> 127.0.0.1:55433"
+    }
+  },
+  "imagens": {
+    "api": "imagem de 196 MB",
+    "agent": "imagem de 161 MB"
+  },
+  "portas_em_escuta_no_host": [
+    "0.0.0.0:3100",
+    "127.0.0.1:11025",
+    "127.0.0.1:13300",
+    "127.0.0.1:18000",
+    "127.0.0.1:18025",
+    "127.0.0.1:19090",
+    "127.0.0.1:55433",
+    "[::]:3100"
+  ],
+  "observacao": "ambiente de medição isolado (projeto Compose asa-so-e2, portas deslocadas); em uso normal as portas são as do README"
+}

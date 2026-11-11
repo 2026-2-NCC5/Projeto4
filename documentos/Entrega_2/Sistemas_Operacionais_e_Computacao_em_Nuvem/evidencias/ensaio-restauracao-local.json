@@ -1,0 +1,14 @@
+{
+  "backup": "local-20261111-195854.dump.enc",
+  "sha256": "563ab99fcb8f42cab9cf70cf637f27f4914afecdb6c28a4784244dab4e3798a2",
+  "schema": "*",
+  "tabelas_backup": 76,
+  "tabelas_restauradas": 76,
+  "linhas_backup": 28522,
+  "linhas_restauradas": 28522,
+  "divergencias": {},
+  "ok": true,
+  "tempo_subida_banco_s": 1.4,
+  "tempo_restauracao_s": 1.19,
+  "tempo_total_s": 2.6
+}

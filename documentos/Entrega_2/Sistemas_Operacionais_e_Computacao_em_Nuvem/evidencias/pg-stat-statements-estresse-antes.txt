@@ -1,0 +1,6 @@
+21786 | 691541.1 | 31.742 | select a.id, a.slug, a.category_id, a.audience, a.status, a.current_version, a.published_v
+8518 | 67072.5 | 7.874 | select count(*)::int as total, array[count(*) filter (where v.search_vector @@ to_tsquery(
+1915 | 23193.3 | 12.111 | select count(*)::int as total, array[count(*) filter (where v.search_vector @@ to_tsquery(
+67 | 11079.6 | 165.367 | SELECT current_database() datname, schemaname, relname, seq_scan, seq_tup_read, idx_scan, 
+9481 | 3760.8 | 0.397 | insert into assistant_interactions (interaction_id, student_id, input_type, intent, intent
+37924 | 2386.6 | 0.063 | select id, user_id, token_hash, expires_at, revoked_at, remember_me, channel, family_id, d

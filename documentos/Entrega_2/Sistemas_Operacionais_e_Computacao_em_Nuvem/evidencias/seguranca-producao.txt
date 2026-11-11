@@ -1,0 +1,15 @@
+# Produção: https://asa-conecta-api.vercel.app · https://asa-conecta.vercel.app (2026-11-11T22:37:57Z)
+GET /health (público, sem dados pessoais)                                 esperado=200    obtido=200    OK
+GET /api/student/me sem token → 401                                      esperado=401    obtido=401    OK
+GET /api/admin/users sem token → 401                                     esperado=401    obtido=401    OK
+GET /api/asa/dashboard com token inválido → 401                         esperado=401    obtido=401    OK
+POST /internal/v1/student-agent/evaluate (agente não é público) → 404 esperado=404    obtido=404    OK
+GET /api/internal/jobs/sla-scan sem CRON_SECRET → 401                    esperado=401    obtido=401    OK
+GET /metrics (coleta desligada sem METRICS_TOKEN) → 404                  esperado=404    obtido=404    OK
+HTTP sem TLS redireciona para HTTPS (308)                                  esperado=308    obtido=308    OK
+Portal via HTTP redireciona para HTTPS (308)                               esperado=308    obtido=308    OK
+Cabeçalho HSTS na API                                                     esperado=max-age=31536000; obtido=max-age=31536000; OK
+X-Content-Type-Options na API                                              esperado=nosniff obtido=nosniff OK
+Cabeçalho CSP no portal                                                   esperado=sim    obtido=sim    OK
+Versão do TLS negociada                                                   esperado=TLSv1.3 obtido=TLSv1.3 OK
+# falhas: 0

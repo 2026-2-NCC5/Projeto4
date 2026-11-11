@@ -1,0 +1,109 @@
+# EXPLAIN ANALYZE da busca da base de conhecimento (banco local, 179 artigos oficiais, 2026-11-11T23:00:38Z)
+# Pergunta: 'Como faço para pedir a segunda via do boleto?' → tsquery com prefixos
+== plano completo da consulta original
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=7.347..8.732 rows=12 loops=1)
+   Buffers: shared hit=227
+   ->  Result (actual time=7.346..8.730 rows=12 loops=1)
+         Buffers: shared hit=227
+         ->  Sort (actual time=7.169..7.172 rows=12 loops=1)
+               Sort Key: (ts_rank_cd(v.search_vector, '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)) DESC, v.title
+               Sort Method: top-N heapsort  Memory: 52kB
+               Buffers: shared hit=207
+               ->  WindowAgg (actual time=1.072..7.080 rows=66 loops=1)
+                     Buffers: shared hit=201
+                     ->  Hash Join (actual time=0.816..0.877 rows=66 loops=1)
+                           Hash Cond: ((a.id = v.article_id) AND (a.published_version = v.version))
+                           Buffers: shared hit=163
+                           ->  Seq Scan on kb_articles a (actual time=0.005..0.029 rows=179 loops=1)
+                                 Filter: ((NOT is_demo) AND (status <> 'archived'::text))
+                                 Buffers: shared hit=5
+                           ->  Hash (actual time=0.795..0.795 rows=66 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 104kB
+                                 Buffers: shared hit=158
+                                 ->  Seq Scan on kb_article_versions v (actual time=0.003..0.719 rows=66 loops=1)
+                                       Filter: (search_vector @@ '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)
+                                       Rows Removed by Filter: 113
+                                       Buffers: shared hit=158
+ Planning:
+   Buffers: shared hit=381
+ Planning Time: 2.589 ms
+ Execution Time: 8.916 ms
+(27 rows)
+
+== A: original (ts_rank_cd + ts_headline)
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual rows=12 loops=1)
+   ->  Result (actual rows=12 loops=1)
+         ->  Sort (actual rows=12 loops=1)
+               Sort Key: (ts_rank_cd(v.search_vector, '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)) DESC, v.title
+               Sort Method: top-N heapsort  Memory: 52kB
+               ->  WindowAgg (actual rows=66 loops=1)
+                     ->  Hash Join (actual rows=66 loops=1)
+                           Hash Cond: ((a.id = v.article_id) AND (a.published_version = v.version))
+                           ->  Seq Scan on kb_articles a (actual rows=179 loops=1)
+                                 Filter: ((NOT is_demo) AND (status <> 'archived'::text))
+                           ->  Hash (actual rows=66 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 104kB
+                                 ->  Seq Scan on kb_article_versions v (actual rows=66 loops=1)
+                                       Filter: (search_vector @@ '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)
+                                       Rows Removed by Filter: 113
+ Planning Time: 0.377 ms
+ Execution Time: 8.824 ms
+(17 rows)
+
+== B: sem ts_headline
+                                                                QUERY PLAN                                                                
+------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual rows=12 loops=1)
+   ->  Sort (actual rows=12 loops=1)
+         Sort Key: (ts_rank_cd(v.search_vector, '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)) DESC, v.title
+         Sort Method: top-N heapsort  Memory: 42kB
+         ->  WindowAgg (actual rows=66 loops=1)
+               ->  Hash Join (actual rows=66 loops=1)
+                     Hash Cond: ((a.id = v.article_id) AND (a.published_version = v.version))
+                     ->  Seq Scan on kb_articles a (actual rows=179 loops=1)
+                           Filter: ((NOT is_demo) AND (status <> 'archived'::text))
+                     ->  Hash (actual rows=66 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 78kB
+                           ->  Seq Scan on kb_article_versions v (actual rows=66 loops=1)
+                                 Filter: (search_vector @@ '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)
+                                 Rows Removed by Filter: 113
+ Planning Time: 0.699 ms
+ Execution Time: 7.005 ms
+(16 rows)
+
+== C: ts_rank no lugar de ts_rank_cd
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual rows=12 loops=1)
+   ->  Sort (actual rows=12 loops=1)
+         Sort Key: (ts_rank(v.search_vector, '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)) DESC, v.title
+         Sort Method: top-N heapsort  Memory: 44kB
+         ->  WindowAgg (actual rows=66 loops=1)
+               ->  Hash Join (actual rows=66 loops=1)
+                     Hash Cond: ((a.id = v.article_id) AND (a.published_version = v.version))
+                     ->  Seq Scan on kb_articles a (actual rows=179 loops=1)
+                           Filter: ((NOT is_demo) AND (status <> 'archived'::text))
+                     ->  Hash (actual rows=66 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 78kB
+                           ->  Seq Scan on kb_article_versions v (actual rows=66 loops=1)
+                                 Filter: (search_vector @@ '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)
+                                 Rows Removed by Filter: 113
+ Planning Time: 0.431 ms
+ Execution Time: 1.102 ms
+(16 rows)
+
+== D: só o filtro @@ (sem ranking)
+                                                  QUERY PLAN                                                  
+--------------------------------------------------------------------------------------------------------------
+ Aggregate (actual rows=1 loops=1)
+   ->  Seq Scan on kb_article_versions v (actual rows=66 loops=1)
+         Filter: (search_vector @@ '''fac'':* | ''ped'':* | ''segund'':* | ''via'':* | ''bolet'':*'::tsquery)
+         Rows Removed by Filter: 113
+ Planning Time: 0.223 ms
+ Execution Time: 0.597 ms
+(6 rows)
+
