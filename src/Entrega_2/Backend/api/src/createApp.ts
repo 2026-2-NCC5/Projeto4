@@ -55,6 +55,8 @@ import { createPortalRouter } from './portal/routes.js';
 import { CareerMatchService } from './career/service.js';
 import { createCareerRouter } from './career/routes.js';
 import { GamefyDirectory } from './academic/gamefyDirectory.js';
+// ---- observabilidade (métricas Prometheus)
+import { HttpMetrics, metricsEndpoint } from './observability/metrics.js';
 
 export const API_VERSION = '1.0.0';
 
@@ -201,6 +203,11 @@ export function createApp(deps: AppDeps): Express {
   app.disable('x-powered-by');
   // Só confie em X-Forwarded-For atrás de um proxy conhecido (TRUST_PROXY); senão o limite por IP seria burlável.
   app.set('trust proxy', deps.config.trustProxy);
+  // ---- observabilidade: latência/erros por rota + CPU, memória e pool do banco em GET /metrics (só com METRICS_TOKEN)
+  const httpMetrics = new HttpMetrics({ version: API_VERSION, runtime: deps.config.platform.vercel ? 'serverless' : 'server' });
+  app.use(httpMetrics.middleware());
+  app.get('/metrics', metricsEndpoint(httpMetrics, { token: deps.config.metrics.token, pool: deps.pool ?? null }));
+  // ---- end observabilidade
   app.use(helmet());
   app.use(cors({ origin: deps.config.corsOrigin === '*' ? true : deps.config.corsOrigin.split(',').map((item) => item.trim()) }));
   // ---- support (Atendimento): envio de arquivos em base64 aceita corpo maior só nestas rotas

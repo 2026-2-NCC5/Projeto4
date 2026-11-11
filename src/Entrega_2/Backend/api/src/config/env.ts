@@ -119,6 +119,8 @@ const envSchema = z.object({
   AUTOMATION_SCAN_INTERVAL_SECONDS: z.coerce.number().int().min(0).max(86_400).default(300),
   // Rotas /api/internal/jobs/* (Vercel Cron, agendador externo): exigem Authorization: Bearer <CRON_SECRET>. Sem valor: desativadas
   CRON_SECRET: z.string().min(16, 'CRON_SECRET deve ter pelo menos 16 caracteres').optional(),
+  // GET /metrics (Prometheus) exige Authorization: Bearer <METRICS_TOKEN>. Sem valor: a rota não existe (404)
+  METRICS_TOKEN: z.string().min(24, 'METRICS_TOKEN deve ter pelo menos 24 caracteres').optional(),
   // Tamanho máximo de cada anexo de chamado. Sem valor: 3 MiB na Vercel (corpo da função limitado a 4,5 MB; o envio
   // vai em base64), 5 MiB fora dela
   SUPPORT_MAX_ATTACHMENT_BYTES: z.coerce.number().int().min(64 * 1024).max(5 * 1024 * 1024).optional(),
@@ -165,6 +167,8 @@ export interface AppConfig {
   };
   /** onde a API está rodando (padrões que dependem da plataforma) */
   platform: { vercel: boolean; region: string | null };
+  /** coleta de métricas (GET /metrics); null = desativada */
+  metrics: { token: string | null };
   database: { poolMax: number };
   jobs: { cronSecret: string | null };
   support: { maxAttachmentBytes: number };
@@ -339,6 +343,7 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     databaseSsl: { mode: env.DATABASE_SSL, caFile: env.DATABASE_SSL_CA_FILE },
     allowRemoteDbReset: flag(env.ALLOW_REMOTE_DB_RESET),
     platform: { vercel: onVercel, region: source.VERCEL_REGION ?? null },
+    metrics: { token: env.METRICS_TOKEN ?? null },
     database: { poolMax: env.DATABASE_POOL_MAX },
     jobs: { cronSecret: env.CRON_SECRET ?? null },
     support: { maxAttachmentBytes: env.SUPPORT_MAX_ATTACHMENT_BYTES ?? (onVercel ? 3 * 1024 * 1024 : 5 * 1024 * 1024) },
