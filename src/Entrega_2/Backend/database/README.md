@@ -6,7 +6,8 @@ exclusivamente por migrations; nada é criado manualmente.
 ```text
 database/
 ├── migrations/   # SQL aplicado em ordem lexicográfica, uma vez cada (tabela schema_migrations)
-└── seeds/        # SQL idempotente com dados 100% fictícios (on conflict do nothing)
+├── seeds/        # SQL idempotente com dados 100% fictícios (on conflict do nothing)
+└── content/      # conteúdo OFICIAL da base de conhecimento (Cesta de Serviços pública do ASA)
 ```
 
 ## Comandos (executados a partir de `src/Entrega_2/Backend/api`)
@@ -18,6 +19,20 @@ npm run db:reset     # DROP SCHEMA public + migrate + seed (bloqueado em NODE_EN
 ```
 
 `DATABASE_URL` vem do `.env` de `src/Entrega_2/Backend/api` (veja `src/Entrega_2/Backend/api/.env.example`).
+
+## Conteúdo oficial da base de conhecimento (`content/`)
+
+O assistente (Hermes) responde dúvidas com artigos publicados. Fora do modo demonstração, os artigos fictícios
+dos seeds não aparecem; por isso existe o conteúdo oficial, que **pode** ser aplicado em produção:
+
+- `content/asa_cesta_de_servicos.json`: retrato da [Cesta de Serviços](https://www.fecap.br/asa/cesta-de-servicos/)
+  pública do ASA (aba Graduação de cada serviço, com condições, setor, local, horário e canais) e da página Quem Somos.
+  Gerado por `python3 -I scripts/fetch_asa_cesta_servicos.py` (a partir de `src/Entrega_2/Backend`; só páginas
+  públicas do sitemap oficial, com intervalo entre requisições). Revise o diff antes de versionar.
+- `npm run db:content` (em `api/`) transforma o retrato em artigos publicados (`is_demo = false`, fonte = página
+  original, revisão sugerida em 180 dias) e grava no banco do `DATABASE_URL`. `npm run db:content -- --dry-run` só conta.
+- Idempotente e conservador: artigo que já existe (mesmo id ou slug) **não é alterado**, então edições feitas pela
+  equipe do ASA no painel nunca são sobrescritas. Novas versões de um artigo existente são feitas pelo painel.
 
 ## Banco online (Supabase)
 

@@ -24,6 +24,7 @@
     "test:all": "vitest run",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
+    "db:content": "tsx src/db/content.ts",
     "db:reset": "tsx src/db/reset.ts",
     "agent:stub": "tsx scripts/agentStub.ts",
     "docs:permissions": "tsx scripts/permission-matrix.ts",
