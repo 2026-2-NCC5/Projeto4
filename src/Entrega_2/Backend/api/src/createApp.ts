@@ -131,6 +131,8 @@ export function createApp(deps: AppDeps): Express {
     now,
     queue.service,
     aiRegistry,
+    // sem fonte acadêmica integrada (modo institucional), o assistente orienta pelos artigos em vez de falhar com 503
+    () => platform.academicSource().status !== 'unavailable',
   );
 
   // ---- support (Atendimento)

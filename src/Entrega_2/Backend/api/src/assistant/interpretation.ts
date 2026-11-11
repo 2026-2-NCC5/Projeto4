@@ -17,6 +17,8 @@ export interface InterpretationDetails {
   followUp?: boolean;
   lowConfidence?: boolean;
   rejected?: boolean;
+  /** pergunta de procedimento ("como faço…", "onde vejo…"): o serviço tenta a base de conhecimento antes */
+  procedural?: boolean;
 }
 
 export interface Interpretation {
@@ -106,6 +108,7 @@ const interpretationSchema = z
         followUp: z.boolean().optional(),
         lowConfidence: z.boolean().optional(),
         rejected: z.boolean().optional(),
+        procedural: z.boolean().optional(),
       })
       .strict(),
   })
@@ -150,7 +153,7 @@ export function validateInterpretation(
       intent: 'unknown',
       confidence: interpretation.confidence,
       entities: {},
-      details: { lowConfidence: true },
+      details: { lowConfidence: true, ...(interpretation.details.procedural ? { procedural: true } : {}) },
     };
   }
   return interpretation;

@@ -93,8 +93,9 @@ const CONTROL_CLARIFY = /^(nao entendi( nada)?|como assim|hein|nao compreendi|ex
 
 const GREETING =
   /^((oi|ola|ei|hey|e ai|alo|opa|bom dia|boa tarde|boa noite|tudo bem)( (asa|assistente|hermes))?( tudo bem)?|asa|assistente|hermes)$/;
+// "como funciona o estágio?" é dúvida sobre o serviço (base de conhecimento), não sobre o assistente
 const HELP =
-  /\b(o que (voce )?(pode|sabe|consegue) fazer|como (voce )?funciona|como (te )?uso|o que (eu )?posso perguntar|quais perguntas|comandos)\b|^(ajuda|me ajuda|help)$/;
+  /\b(o que (voce )?(pode|sabe|consegue) fazer|como (voce|vc) funciona|como funciona (o hermes|o assistente|o asa conecta|o app|o aplicativo|isso aqui|voce)|como (te )?uso|o que (eu )?posso perguntar|quais perguntas|comandos)\b|^(ajuda|me ajuda|help|como funciona)$/;
 const PREDICT =
   /\b((vou|irei|vai|sera que (eu )?vou|to|estou|posso|corro risco de|risco de|chance de|chances de) (ser )?(reprovar|reprovad[oa]|passar|aprovad[oa]|ficar de dp|pegar dp|rodar|bombar|ficar reprovad[oa])|passo (de ano|de semestre|na materia|nessa materia|nessa disciplina))\b/;
 
@@ -121,6 +122,26 @@ const NEXT_ACTION =
 const HISTORY = /\b(historico( de analises)?|analises (anteriores|passadas|antigas)|ultimas analises|analises que (voce )?fez|ja analisou)\b/;
 const HUMAN =
   /\b(falar com (alguem|uma pessoa|um humano|humano|atendente|a coordenacao|o coordenador|a coordenadora|coordenacao|o professor|a professora|professor|professora|a secretaria|secretaria)|preciso de ajuda|quero ajuda|ajuda humana|atendimento humano|com quem (eu )?(falo|posso falar|devo falar|procuro|converso)|quem (eu )?procuro|procurar a coordenacao)\b/;
+// ------------------------------------------------- dúvidas de procedimento ("como faço…")
+
+/**
+ * Pergunta de procedimento/orientação ("como tranco uma disciplina?", "onde vejo minhas notas?",
+ * "perdi a prova, o que fazer?"). Não muda a intenção: o serviço consulta primeiro os artigos publicados
+ * do ASA e só cai na intenção quando nenhum artigo responde com segurança. Perguntas de situação
+ * ("como estão minhas faltas?", "como eu estou?") ficam de fora.
+ */
+const PROCEDURAL = new RegExp(
+  [
+    '\\bcomo (?!(?:eu |voce |vc |que |a gente )?(?:estou|esta|estao|to|ta|tao|vou|vai|vao|ando|anda|andam|foi|foram|fui|fica|ficou|ficaram|sou|e|era|assim)\\b)[a-z]',
+    '\\bonde (?:(?:eu|que|se|a gente) )?(?:vejo|ver|consigo|encontro|acho|pego|solicito|peco|emito|tiro|consulto|fica|ficam|faco|posso|devo|retiro|entrego|tem|esta|estao|e|sao)\\b',
+    '\\bo que (?:eu )?(?:faco|devo fazer|preciso fazer|fazer|e preciso|e necessario|precisa)\\b',
+    '\\b(?:preciso|quero|gostaria|queria|posso|tem como|da para|da pra|e possivel) (?:de |do |da |dum |duma )?(?:um |uma |o |a |me )?(?:solicitar|pedir|emitir|tirar|trancar|cancelar|abrir|renovar|agendar|reservar|alterar|mudar|trocar|transferir|requerer|obter|imprimir|acessar|recuperar|cadastrar|entregar|negociar|parcelar|pagar|consultar|inscrever|participar|rematricular|destrancar|justificar|abonar|revisar|contestar|validar|aproveitar|dispensar|retirar|devolver|segunda via|atestado|declaracao|certificado|diploma|carteirinha|boleto|bolsa|estagio)\\b',
+    '\\bpreciso (?:de|do|da|dum|duma) (?!ajuda\\b|alguem\\b|atendimento\\b)',
+    '\\b(?:segunda via|passo a passo|procedimento|requerimento|qual (?:e )?o prazo|prazo (?:para|pra|de)|quanto custa|qual (?:e )?o valor|horario de atendimento|onde fica)\\b',
+    '\\b(?:perdi|esqueci|nao consegui|nao consigo|nao recebi|nao chegou|nao aparece|faltei (?:na|a|em|no|da|de))\\b',
+  ].join('|'),
+);
+
 const VAGUE = /\b(aquilo|aquela coisa|aquele negocio|o negocio|a coisa|isso ai|aquele assunto)\b/;
 const SUBJECT_PRONOUN = /\b(nela|nessa (materia|disciplina)|dessa (materia|disciplina)|nesta (materia|disciplina)|desta (materia|disciplina)|mesma (materia|disciplina))\b/;
 const FOLLOW_UP_PREFIX = /^e (em |na |no |de |da |do |sobre |a |o |as |os |pra |para )?/;
@@ -183,6 +204,7 @@ export class RuleBasedIntentInterpreter implements IntentInterpreter {
     if (GREETING.test(normalized)) return result('greeting', 0.95);
 
     const q = stripWakeWord(normalized);
+    if (PROCEDURAL.test(q)) details.procedural = true;
 
     // 1. Política: identidade e autorização nunca mudam por linguagem natural.
     if (INJECTION.test(q)) {

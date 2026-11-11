@@ -243,3 +243,42 @@ describe('navegação por voz (open_screen) e contexto da tela (v1.2)', () => {
     expect(withScreen('Como está minha frequência?', 'academic.assessments').intent).toBe('get_attendance');
   });
 });
+
+describe('dúvidas de procedimento ("como faço…") vão primeiro para a base de conhecimento', () => {
+  it.each([
+    'Como faço a rematrícula?',
+    'como trancar a matrícula?',
+    'onde vejo minhas notas?',
+    'Preciso de atestado de matrícula',
+    'perdi a prova, o que fazer?',
+    'esqueci minha senha do portal',
+    'como funciona o estágio?',
+    'Quero pedir a segunda via do boleto',
+  ])('"%s" → procedural', (text) => {
+    expect(interpret(text).details.procedural).toBe(true);
+  });
+
+  it.each([
+    'Como eu estou?',
+    'Como estão minhas faltas?',
+    'Como está minha frequência?',
+    'Tenho alguma atividade pendente?',
+    'Preciso falar com alguém?',
+    'preciso de ajuda',
+    'Corrige minha nota.',
+    'O que eu tenho que fazer essa semana?',
+  ])('"%s" → não é procedimento (a intenção responde sozinha)', (text) => {
+    expect(interpret(text).details.procedural).toBeUndefined();
+  });
+
+  it('a intenção não muda: o serviço decide se um artigo responde antes', () => {
+    expect(interpret('como trancar a matrícula?').intent).toBe('administrative_request');
+    expect(interpret('onde vejo minhas notas?').intent).toBe('get_assessments');
+  });
+
+  it('"como funciona o estágio?" é dúvida de serviço, não pedido de ajuda sobre o assistente', () => {
+    expect(interpret('como funciona o estágio?').intent).not.toBe('help');
+    expect(interpret('como você funciona?').intent).toBe('help');
+    expect(interpret('como funciona?').intent).toBe('help');
+  });
+});

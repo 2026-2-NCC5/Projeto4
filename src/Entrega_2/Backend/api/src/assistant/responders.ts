@@ -51,6 +51,11 @@ export interface ResponderInput {
   today: string;
   requestContext: RequestContext;
   logger: Logger;
+  /**
+   * Fonte acadêmica disponível? Em modo institucional sem integração, notas, frequência e disciplinas não existem
+   * aqui: as sugestões passam a ser sobre os serviços do ASA (base de conhecimento) em vez de dados próprios.
+   */
+  academicAvailable?: boolean;
 }
 
 export interface ResponderOutput {
@@ -92,11 +97,27 @@ export const SUGGESTIONS: AssistantNextAction[] = [
   { type: 'run_analysis', label: 'Analisar minha situação' },
 ];
 
+/** Sugestões quando os dados acadêmicos não estão integrados: perguntas que os artigos publicados do ASA respondem. */
+export const SERVICE_SUGGESTIONS: AssistantNextAction[] = [
+  { type: 'ask', label: 'Atestado de matrícula', text: 'Como emito o atestado de matrícula?' },
+  { type: 'ask', label: 'Segunda via do boleto', text: 'Como peço a segunda via do boleto?' },
+  { type: 'ask', label: 'Rematrícula', text: 'Como faço a rematrícula?' },
+  { type: 'ask', label: 'Falar com o ASA', text: 'Quero falar com alguém do ASA' },
+];
+
+export function suggestionsFor(input: Pick<ResponderInput, 'academicAvailable'>): AssistantNextAction[] {
+  return input.academicAvailable === false ? SERVICE_SUGGESTIONS : SUGGESTIONS;
+}
+
 const HUMAN_HELP_ACTION: AssistantNextAction = { type: 'ask', label: 'Como pedir ajuda', text: 'Com quem eu falo?' };
 const ANALYZE_ACTION: AssistantNextAction = { type: 'run_analysis', label: 'Analisar minha situação' };
 
 export const UNKNOWN_MESSAGE =
   'Não consegui entender exatamente o que você quer consultar. Você pode perguntar sobre suas disciplinas, atividades, avaliações, frequência ou recomendações.';
+export const UNKNOWN_SERVICES_MESSAGE =
+  'Não consegui entender a sua dúvida. Você pode perguntar sobre documentos, matrícula, financeiro, bolsas, estágio, provas, frequência ou plataformas da FECAP — por exemplo: "Como emito o atestado de matrícula?".';
+export const ACADEMIC_UNAVAILABLE_MESSAGE =
+  'Ainda não consigo consultar suas notas, frequência, disciplinas e atividades: a integração do ASA Conecta com o sistema acadêmico da FECAP está em andamento. Enquanto isso, consulte esses dados nos canais oficiais da FECAP. Posso orientar você sobre os serviços do ASA ou preparar um chamado para a equipe.';
 export const PREDICT_MESSAGE =
   'Não tenho informações suficientes para afirmar isso. Posso mostrar os dados acadêmicos disponíveis ou indicar com quem você pode confirmar essa situação.';
 
@@ -152,6 +173,15 @@ function subjectProblem(input: ResponderInput, intent: AssistantIntent): Respond
 const greeting: Responder = async (input) => {
   const name = firstName(input.userFullName);
   const hello = name ? `Olá, ${name}.` : 'Olá.';
+  if (input.academicAvailable === false) {
+    return {
+      status: 'success',
+      title: 'Olá!',
+      message: `${hello} Posso orientar você sobre os serviços do ASA — documentos, matrícula, financeiro, bolsas, estágio, provas e plataformas — com base nos artigos publicados, e preparar um chamado para a equipe quando precisar. O que você quer saber?`,
+      speech: `${hello} Posso orientar você sobre os serviços do ASA. O que você precisa?`,
+      nextActions: SERVICE_SUGGESTIONS,
+    };
+  }
   return {
     status: 'success',
     title: 'Olá!',
@@ -161,7 +191,30 @@ const greeting: Responder = async (input) => {
   };
 };
 
-const help: Responder = async () => ({
+const SERVICE_HELP_ITEMS: AssistantDisplayItem[] = [
+  { id: 'help-documents', title: 'Documentos', description: '"Como emito o atestado de matrícula?" · "Como peço meu histórico escolar?"', meta: null, badge: null, tone: 'info', subjectId: null },
+  { id: 'help-enrollment', title: 'Matrícula e disciplinas', description: '"Como faço a rematrícula?" · "Como peço transferência de turno?"', meta: null, badge: null, tone: 'info', subjectId: null },
+  { id: 'help-financial', title: 'Financeiro e bolsas', description: '"Como peço a segunda via do boleto?" · "Como funciona o ProUni?"', meta: null, badge: null, tone: 'info', subjectId: null },
+  { id: 'help-exams', title: 'Provas e frequência', description: '"Como peço vista de prova?" · "Como peço abono de faltas?"', meta: null, badge: null, tone: 'info', subjectId: null },
+  { id: 'help-platforms', title: 'Plataformas', description: '"Como acesso o Moodle?" · "Como acesso o Wi-Fi?"', meta: null, badge: null, tone: 'info', subjectId: null },
+];
+
+const help: Responder = async (input) => {
+  if (input.academicAvailable === false) {
+    return {
+      status: 'success',
+      title: 'O que posso fazer',
+      message:
+        'Respondo dúvidas sobre os serviços do ASA com base nos artigos publicados e indico o setor, o local e o horário de atendimento. Suas notas, frequência e disciplinas ainda não estão integradas ao ASA Conecta. Eu não altero notas, frequência ou matrícula.',
+      speech: 'Você pode perguntar sobre documentos, matrícula, financeiro, bolsas, provas, frequência ou plataformas. Por exemplo: como emito o atestado de matrícula?',
+      items: SERVICE_HELP_ITEMS,
+      nextActions: SERVICE_SUGGESTIONS,
+    };
+  }
+  return academicHelp();
+};
+
+const academicHelp = (): ResponderOutput => ({
   status: 'success',
   title: 'O que posso fazer',
   message:
@@ -176,6 +229,28 @@ const help: Responder = async () => ({
   nextActions: SUGGESTIONS,
 });
 
+/**
+ * Consulta acadêmica sem fonte integrada (modo institucional): explica o motivo, não trata como erro
+ * e oferece o que funciona (orientação pelos artigos e atendimento humano).
+ */
+export function academicUnavailable(input: Pick<ResponderInput, 'questionText'>): ResponderOutput {
+  return {
+    status: 'abstained',
+    title: 'Dados acadêmicos ainda não integrados',
+    message: ACADEMIC_UNAVAILABLE_MESSAGE,
+    speech: 'Ainda não consigo consultar seus dados acadêmicos aqui. Posso orientar sobre os serviços do ASA ou preparar um chamado para a equipe.',
+    abstained: true,
+    abstentionReason: 'academic_source_unavailable',
+    nextActions: SERVICE_SUGGESTIONS,
+    handoff: {
+      categoryId: 'academic',
+      subject: 'Dúvida sobre meus dados acadêmicos',
+      description: input.questionText ?? 'Gostaria de consultar meus dados acadêmicos.',
+      reason: 'Dados acadêmicos ainda não integrados ao ASA Conecta',
+    },
+  };
+}
+
 const unknown: Responder = async (input) => {
   if (input.interpretation.details.vagueReference) {
     return {
@@ -184,15 +259,16 @@ const unknown: Responder = async (input) => {
       message:
         'Não consegui identificar a que você se refere. Diga, por exemplo, o nome da disciplina ou se quer saber sobre atividades, avaliações ou frequência.',
       speech: 'Não consegui identificar a que você se refere. Pode dizer de outro jeito?',
-      nextActions: SUGGESTIONS,
+      nextActions: suggestionsFor(input),
     };
   }
+  const message = input.academicAvailable === false ? UNKNOWN_SERVICES_MESSAGE : UNKNOWN_MESSAGE;
   return {
     status: 'needs_clarification',
     title: 'Não entendi',
-    message: UNKNOWN_MESSAGE,
-    speech: UNKNOWN_MESSAGE,
-    nextActions: SUGGESTIONS,
+    message,
+    speech: message,
+    nextActions: suggestionsFor(input),
   };
 };
 
@@ -290,9 +366,9 @@ const accessOtherStudent: Responder = async (input) => {
   return {
     status: 'refused',
     title: 'Acesso não permitido',
-    message: `${message} Posso mostrar suas disciplinas, atividades, avaliações ou frequência.`,
+    message: input.academicAvailable === false ? `${message} Posso orientar você sobre os serviços do ASA.` : `${message} Posso mostrar suas disciplinas, atividades, avaliações ou frequência.`,
     speech: message,
-    nextActions: SUGGESTIONS,
+    nextActions: suggestionsFor(input),
   };
 };
 
