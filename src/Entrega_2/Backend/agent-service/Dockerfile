@@ -11,6 +11,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
+# processo sem privilégios (uid fixo, sem shell de login nem diretório home gravável)
+RUN useradd --system --uid 10001 --no-create-home --shell /usr/sbin/nologin agent
+USER agent
+
 EXPOSE 8000
 
 HEALTHCHECK --interval=10s --timeout=3s --retries=5 \

@@ -16,6 +16,8 @@ RUN npm ci --omit=dev --no-audit --no-fund
 COPY --from=build /srv/api/dist ./dist
 # migrations e seeds sao lidos em runtime a partir de /srv/database
 COPY --from=build /srv/api/dist/db ./dist/db
+# processo sem privilégios: o usuário `node` (uid 1000) já existe na imagem oficial
+USER node
 EXPOSE 3000
 HEALTHCHECK --interval=10s --timeout=3s --retries=5 \
   CMD wget -qO- http://127.0.0.1:3000/health || exit 1
