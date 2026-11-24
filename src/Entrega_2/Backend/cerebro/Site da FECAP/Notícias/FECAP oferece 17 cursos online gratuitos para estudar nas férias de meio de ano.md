@@ -1,0 +1,36 @@
+---
+title: FECAP oferece 17 cursos online gratuitos para estudar nas férias de meio de ano
+tags: [site-fecap, noticia]
+source_label: Site da FECAP — FECAP oferece 17 cursos online gratuitos para estudar nas férias de meio de ano
+source_url: https://www.fecap.br/2026/07/07/fecap-oferece-17-cursos-online-gratuitos-para-estudar-nas-ferias-de-meio-de-ano/
+updated: 2026-07-07
+generated: true
+---
+# FECAP oferece 17 cursos online gratuitos para estudar nas férias de meio de ano
+
+%% Nota gerada por `npm run brain:site` (e atualizada todo dia pela API) — edições à mão aqui se perdem. %%
+A FECAP, uma das instituições de ensino mais tradicionais e respeitadas do Brasil, oferece 17 cursos online totalmente gratuitos.
+Extensão | 07/07/2026
+O período de férias pode ser um bom momento para se especializar em uma área ou adquirir e atualizar conhecimentos. Por isso, a Fundação Escola de Comércio Álvares Penteado (FECAP), uma das instituições de ensino mais tradicionais e respeitadas do Brasil, oferece 17 cursos online, totalmente gratuitos, nas áreas de Educação, Finanças e Gestão e Negócios.
+As oportunidades são voltadas a profissionais que querem se especializar ou adicionar conhecimento à sua formação acadêmica. Para participar, basta acessar o site, realizar a inscrição e começar a estudar. Os cursos também oferecem certificado de conclusão, mediante aproveitamento do aluno.
+CONFIRA A LISTA DE CURSOS GRATUITOS ONLINE!
+ÁREA: EDUCAÇÃO
+BLENDED: POSSIBILIDADES PARA INOVAR O PROCESSO DE ENSINO-APRENDIZAGEM Voltado a gestores, professores e outros profissionais da área da educação interessados em conhecer conceitos e aplicações do ensino híbrido “Blended“. O curso possibilita conhecer os tipos de ensino híbrido, organizar um processo de ensino híbrido, objetos de aprendizagem que podem compor o ensino híbrido, além de conceitos e aspectos operacionais de um processo de ensino híbrido. Carga Horária: 8 horas Informações e inscrições: clique aqui!
+DICAS PARA PRODUÇÃO DE VIDEOAULAS Voltado a professores, produtores de conteúdos que utilizam vídeos ou qualquer pessoa que tenha interesse em produzir vídeos de boa qualidade. O curso mostra, de uma maneira rápida, alguns aspectos que podem ajudar os professores e outros interessados na produção de vídeos educativos; usando para isso uma trilha de aprendizagem autoinstrucional composta por videoaulas, quizzes e leituras de materiais de apoio. Carga Horária: 2 horas Informações e inscrições: clique aqui!
+FORMAÇÃO DE TUTORES PARA O EAD NO ENSINO SUPERIOR Voltado a professores e outros profissionais que tenham interesse em atuar com processos de Educação a Distância. O curso busca desenvolver algumas competências que são necessárias ao processo de Tutoria em EAD no ensino superior. Essas competências são fundamentais para que profissionais da Educação Superior que atual com o ensino a distância possam acompanhar os alunos sejam como professores ou tutores durante seus processos de ensino-aprendizagem. Carga Horária: 40 horas Informações e inscrições: clique aqui!
+INTRODUÇÃO AO ENSINO POR COMPETÊNCIAS E OBJETIVOS DE APRENDIZAGEM O curso apresenta os conceitos fundamentais do ensino por competências, orientando acerca do uso dos conceitos Competência e Objetivos de Aprendizagem. Carga Horária: 2 horas Informações e inscrições: clique aqui!
+VIDEOCONFERÊNCIA: INCENTIVO E BOAS PRÁTICAS DO USO DAS CÂMERAS DE VÍDEO O curso discute algumas diferenças fundamentais entre o Ensino a Distância e o Ensino Remoto Emergencial, investigando por que alguns participantes não abrem suas câmeras durante as videoconferências, discutindo algumas medidas que podem motivá-los a abrirem as câmeras e consequentemente melhorar o processo de comunicação. Carga Horária: 8 horas Informações e inscrições: clique aqui!
+ÁREA: FINANÇAS
+DEMONSTRAÇÃO DO FLUXO DE CAIXA Entenda como um fluxo de caixa e os demonstrativos que deles se originam são fundamentais para que um gestor possa avaliar corretamente o andamento dos seus negócios. Carga horária: 4 horas Informações e inscrições: clique aqui!
+INTRODUÇÃO AO MERCADO DE AÇÕES O mercado financeiro no Brasil passou por diversas mudanças importantes, e este curso introdutório ao Mercado de Capitais tem como principal meta eliminar as dúvidas que limitam o acesso de todos ao mercado de investimento em ações. Carga horária: 8 horas Informações e inscrições: clique aqui!
+INTRODUÇÃO ÀS FINANÇAS SUSTENTÁVEIS O curso de finanças sustentáveis é voltado a um público diversificado interessado em combinar princípios financeiros com práticas ambientalmente responsáveis e socialmente conscientes. Carga horária: 4 horas Informações e inscrições: clique aqui!
+SIMPLES NACIONAL O curso aborda temas sobre a Lei Complementar nº 123, de 2006, que estabelece normas gerais relativas às Microempresas e às Empresas de Pequeno Porte no âmbito dos Poderes da União, dos Estados, do Distrito Federal e dos Municípios. Carga horária: 4 horas Informações e inscrições: clique aqui!
+TÍTULOS PÚBLICOS Conheça os principais títulos públicos federais ofertados pelo Tesouro Direto, entenda como esses papéis remuneram e os riscos para o investidor, identificar as situações que direcionam na escolha do título mais apropriado e conheça conceitos e aspectos operacionais de como aplicar no tesouro direto. Carga horária: 4 horas Informações e inscrições: clique aqui!
+ÁREA: GESTÃO E NEGÓCIOS
+A INTELIGÊNCIA EMOCIONAL NA FORMAÇÃO DOS LÍDERES O objetivo é ensinar o que significa ser emocionalmente inteligente, relacionar a inteligência emocional com diferentes tipos de liderança, identificar os comportamentos de líderes de sucesso, dentre outros. Carga horária: 4h Informações e inscrições: clique aqui!
+AUTOGESTÃO DE CARREIRA Entenda a importância de um projeto de carreira e como se motivar para isso. Como fazer a gestão da carreira individual e também da carreira organizacional. Carga horária: 6 horas Informações e inscrições: clique aqui!
+BÁSICO DE TÉCNICA EM RISCOS PESSOAIS (VG/AP) O curso tem como foco profissionais de Corretoras, Assessorias e Seguradoras, que estejam ingressando na área técnica ou comercial de Vida, possibilitando a aquisição de conhecimentos conceituais sobre Riscos Pessoais. Carga horária: 15h Informações e inscrições: clique aqui!
+COMUNICAÇÃO NÃO VIOLENTA Entenda os comportamentos tóxicos e seus impactos sobre os profissionais, equipes e organizações. Carga horária: 8 horas Informações e inscrições: clique aqui!
+INTRODUÇÃO AO AGRONEGÓCIO BRASILEIRO O objetivo do curso é capacitar os participantes a desenvolver uma compreensão abrangente e sistêmica do agronegócio brasileiro, explorando a complexidade das relações ao longo das cadeias produtivas, desde a pré-produção até a comercialização. Carga horária: 30 horas Informações e inscrições: clique aqui!
+NETWORKING: MITOS E VERDADES EM GESTÃO DE CARREIRAS O curso esclarece as principais dúvidas em relação ao que é se relacionar de modo correto, tanto do ponto de vista pessoal como profissional, e a importância do networking. Carga horária: 3 horas Informações e inscrições: clique aqui!
+RESOLUÇÃO DE PROBLEMAS E TOMADAS DE DECISÃO Desenvolva o conhecimento em estratégia e métodos aplicados a resolução de problemas e ao processo decisório. Carga horária: 4 horas Informações e inscrições: clique aqui!

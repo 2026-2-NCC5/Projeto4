@@ -1,0 +1,4 @@
+# estado local do Obsidian (cada pessoa tem o seu)
+.obsidian/workspace*.json
+.obsidian/cache
+.trash/
