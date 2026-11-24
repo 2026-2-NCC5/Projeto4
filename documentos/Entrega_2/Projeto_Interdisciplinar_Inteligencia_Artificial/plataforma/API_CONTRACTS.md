@@ -23,8 +23,11 @@
 | 1.6 | appointments | Agendamentos do aluno e da equipe, disponibilidade, `.ics` |
 | 1.7 | knowledge/assistant/agent | Base de conhecimento, `sources`/`handoff`/`provider` no assistente, feedback e indicadores do agente |
 | 1.8 | admin | Administração completa. Também: `location` na reserva e na remarcação, `rescheduledToId`, filtro `sla=near_deadline`, `?limit` no `PATCH /api/notifications`, primeira resposta da equipe (`SupportTicket.firstResponse`, `SupportCategory.firstResponseHours`, `kpis.firstResponseOnTime`/`firstResponseMeasured`) |
+| 1.9 | support/whatsapp | Central de Atendimento WhatsApp (canal, conversas, eventos em tempo real) |
+| 1.10 | assistant | `history` opcional na mensagem do assistente (até 6 turnos, nunca persistidos) |
+| 1.11 | assistant-brain | Cérebro do assistente: `GET /api/assistant-brain` (notas, páginas do site, lacunas) e `PATCH /api/assistant-brain/gaps/:id` — ver [ADR-009](../adr/ADR-009-cerebro-do-assistente.md) |
 
-`GET /api/platform/info` informa `contractVersion` (hoje `1.8`). Campos novos são opcionais ou têm valor padrão.
+`GET /api/platform/info` informa `contractVersion` (hoje `1.11`). Campos novos são opcionais ou têm valor padrão.
 Nenhum campo existente mudou de tipo nem de significado.
 
 ## Envelope
@@ -108,6 +111,7 @@ Nenhum campo existente mudou de tipo nem de significado.
 | Alunos atendidos | `GET /api/asa/students` · `GET /api/asa/students/:id` (auditado) |
 | Agenda | `GET /api/asa/appointments?from&to&status&attendant=mine` · `GET|PATCH /api/asa/appointments/:id` · `GET|POST /api/asa/availability` · `PATCH /api/asa/availability/:id` |
 | Base de conhecimento | `GET|POST /api/knowledge-base/manage` · `GET|PUT /api/knowledge-base/manage/:id` · `POST …/:id/{submit,publish,archive,restore}` |
+| Cérebro do assistente | `GET /api/assistant-brain?status&limit` (`kb:read:all`) · `PATCH /api/assistant-brain/gaps/:id` (`kb:write`) |
 | Indicadores do agente | `GET /api/asa/agent-insights?from&to` |
 
 ### Administração

@@ -288,8 +288,12 @@ O uso de modelos generativos deverá considerar mecanismos que minimizem respost
   **abstenção** quando não há resposta confiável;
 * recomendações baseadas no contexto acadêmico autorizado disponível à conta autenticada; sem uma fonte institucional confiável, o agente deve se abster.
 
-LLMs, embeddings e RAG generativo **não** fazem parte do MVP. O provedor generativo (JEV) está planejado e
-desligado.
+* **linguagem natural com Gemini, presa à base oficial**: a IA só usa os artigos do ASA e o **cérebro da FECAP**
+  (vault do Obsidian em `src/Entrega_2/Backend/cerebro`, atualizado todo dia pelo site público www.fecap.br) e
+  nunca recebe dados acadêmicos pessoais; perguntas sem base viram lacunas que a equipe responde no painel
+  ([ADR-009](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-009-cerebro-do-assistente.md)).
+
+Embeddings não são usados (a busca é lexical, BM25). O provedor generativo JEV continua planejado e desligado.
 
 ---
 
@@ -400,8 +404,10 @@ Como a solução está implementada hoje (detalhes e diagramas em
 (Supabase). Nada de produção depende de Docker. Migração, decisões, variáveis, testes e pendências estão em
 [`docs/migration/`](docs/migration/10-relatorio-final.md).
 
-Não há LLM nem RAG com embeddings no MVP. O assistente combina regras determinísticas com busca lexical do
-PostgreSQL na base de conhecimento, e só responde com fontes. A integração com o JEV está documentada e
+O assistente combina regras determinísticas, busca lexical na base de conhecimento (PostgreSQL) e no cérebro da
+FECAP, e o Gemini para responder em linguagem natural **somente** com esses trechos oficiais (sem eles, só regras).
+O job diário `fecap-site-sync` mantém o cérebro em dia com o site público da FECAP sem novo deploy
+([ADR-009](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/ADR-009-cerebro-do-assistente.md)). A integração com o JEV está documentada e
 desligada até existir contrato técnico
 ([JEV_INTEGRATION_ADR.md](documentos/Entrega_2/Projeto_Interdisciplinar_Inteligencia_Artificial/adr/JEV_INTEGRATION_ADR.md)).
 
@@ -722,7 +728,24 @@ Credenciais e configurações sensíveis não são armazenadas no código. Cada 
 
 ---
 
-# 📱 App mobile no Expo Go
+# 📱 App mobile (APK e Expo Go)
+
+Página de download: <https://asa-conecta.vercel.app/app>. Também dá para abrir pelo QR code abaixo,
+pronto para impressão em [`imagens/qrcodes/`](imagens/qrcodes/).
+
+<img src="imagens/qrcodes/asa-conecta-app.png" alt="QR code da página de download do app ASA Conecta" width="160">
+
+## Android: APK
+
+A página oferece o APK (`/downloads/asa-conecta.apk`), uma build de testes **arm64-v8a** para Android 7.0+,
+assinada com a chave debug. Ela não serve para a Play Store. O APK aponta para a API publicada e recebe as
+atualizações EAS do canal `production`. É o único caminho com entrada por voz e "Hey Asa".
+
+O APK não é versionado (cerca de 25 MB). Ele vai no deploy do portal, em `src/Entrega_2/Web/public/downloads/`,
+que o `.gitignore` do portal ignora. **Todo deploy do portal precisa levar o arquivo**, senão o botão de
+download devolve 404. Uma cópia local fica em `executáveis/android/`.
+
+## iPhone e Android: Expo Go
 
 O app é distribuído como atualização EAS (projeto `@uxbrasil/asa-conecta`, canal `production`) e abre no
 Expo Go do **SDK 58**, apontando para a API publicada (`https://asa-conecta-api.vercel.app`).
@@ -734,7 +757,7 @@ Expo Go do **SDK 58**, apontando para a API publicada (`https://asa-conecta-api.
 
 O app só abre quando a API confirma o modo institucional; dados de demonstração continuam bloqueados.
 Notas, frequência e pendências aparecem como indisponíveis até existir a integração acadêmica oficial.
-Entrada por voz e "Hey Asa" exigem development build; push remoto não é garantido no Expo Go.
+Entrada por voz e "Hey Asa" exigem o APK ou uma development build; push remoto não é garantido no Expo Go.
 
 Para publicar uma nova versão (em `src/Entrega_2/Frontend`):
 

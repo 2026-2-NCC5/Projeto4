@@ -28,6 +28,17 @@ npm run dev                   # http://localhost:3000 (tsx watch)
 
 Produção/containers: `npm run build && npm start`.
 
+### Cérebro do assistente (vault do Obsidian)
+
+```bash
+npm run brain:site    # relê o site público da FECAP e recria ../cerebro/Site da FECAP (opcional)
+npm run brain:build   # compila ../cerebro em src/brain/vault.generated.ts (obrigatório depois de editar notas)
+npm run brain:gaps    # copia as perguntas sem resposta do banco para ../cerebro/00 Entrada
+```
+
+Em produção o job diário `GET /api/internal/jobs/fecap-site-sync` (Vercel Cron, `Authorization: Bearer $CRON_SECRET`)
+atualiza as páginas do site direto no banco, sem novo deploy. Detalhes: `../cerebro/README.md` e o ADR-009.
+
 ## Scripts
 
 | Script | Descrição |
