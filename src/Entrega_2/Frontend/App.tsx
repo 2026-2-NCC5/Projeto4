@@ -37,6 +37,7 @@ import { NativeNotificationBridge } from './features/dynamicNotifications/Native
 import { isAppointmentRoute } from './navigation';
 import { AppointmentsRouter } from './screens/appointments/AppointmentsRouter';
 import { NotificationsPushRouter } from './screens/NotificationsPushRouter';
+import { usePushRegistration } from './features/notifications/pushRegistration';
 import { NotificationsScreen } from './screens/NotificationsScreen';
 import { setPreferredVoice } from './services/voice/speechSynthesis';
 import { ThemeProvider, useTheme } from './theme';
@@ -238,6 +239,8 @@ function AppContent() {
       <SupportPushRouter />
       {/* ---- notifications (Central de avisos): toque em push de agendamento/aviso abre o registro */}
       <NotificationsPushRouter />
+      {/* ---- push da conta: registra o aparelho após o login (chamados, agendamentos e avisos do ASA) */}
+      <PushRegistrationBridge />
       <HeyAsaOnboarding visible={assistant.onboardingVisible} onComplete={(accept) => void assistant.completeOnboarding(accept)} voiceUnavailableReason={assistant.wakeWord.availability?.available === false ? assistant.wakeWord.availability.reason ?? 'not_supported' : null} />
     </View>
   );
@@ -258,3 +261,9 @@ const styles = StyleSheet.create({
   readinessTitle: { maxWidth: 420 },
   readinessDescription: { maxWidth: 440, textAlign: 'center' },
 });
+
+/** Registra o aparelho para push assim que a área autenticada abre (sem pedir permissão). */
+function PushRegistrationBridge() {
+  usePushRegistration();
+  return null;
+}

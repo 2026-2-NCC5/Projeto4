@@ -25,6 +25,7 @@ import { appointmentDay, formatClock, modeLabel, useNextAppointment } from '../f
 import { useInbox } from '../features/notifications/useInbox';
 import { academicUnavailableMessage, appointmentsEnabled, DataModeBadge, usePlatformInfo } from '../features/platform';
 import type { Appointment } from '../types/api';
+import { PushOptInCard } from '../features/notifications/PushOptInCard';
 
 interface HomeScreenProps {
   onNavigate: (tab: TabKey) => void;
@@ -197,6 +198,8 @@ export function HomeScreen({ onNavigate, now }: HomeScreenProps) {
 
       {/* ---- queue (Fila presencial do ASA): só aparece enquanto o aluno acompanha uma senha */}
       <QueueHomeCard style={{ marginTop: theme.spacing.lg }} />
+      {/* ---- push da conta: convite para ativar as notificações (some quando ativo ou dispensado) */}
+      <PushOptInCard dismissible style={{ marginTop: theme.spacing.lg }} testID="home-push-opt-in" />
 
       <SectionHeader title="Resumo acadêmico" action={summary.data && !academicUnavailable ? 'Ver tudo' : undefined} onAction={() => onNavigate('academic')} />
       {/* ---- platform: fonte acadêmica indisponível → a mensagem da plataforma no lugar do resumo */}

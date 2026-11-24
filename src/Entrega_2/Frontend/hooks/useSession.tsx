@@ -27,6 +27,7 @@ import type { AuthSession, AuthStudent, AuthUser, RegisterRequest } from '../typ
 import { normalizeEmail } from '../utils/authValidation';
 
 import { loadAuthPolicyOrDefault } from './useAuthPolicy';
+import { unregisterPushDevice } from '../features/notifications/pushRegistration';
 
 export type SessionStatus = 'booting' | 'unauthenticated' | 'authenticated';
 
@@ -357,6 +358,8 @@ export function SessionProvider({ children, biometricEnvironment }: SessionProvi
     restoreRun.current += 1; // cancela uma restauração em andamento ("Entrar com outra conta")
     setState((current) => (current.status === 'authenticated' ? { ...current, signingOut: true } : current));
     const refreshToken = sessionHolder.get()?.refreshToken ?? (await loadPersistedSession().catch(() => null))?.refreshToken;
+    // o aparelho deixa de receber push desta conta (antes do logout, enquanto o token de acesso vale)
+    await unregisterPushDevice().catch(() => undefined);
     try {
       await authService.logout(refreshToken);
     } catch {

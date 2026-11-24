@@ -6,7 +6,7 @@ import { Screen } from '../components/Screen';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { AppButton, AppText, Divider, EmptyState, OfflineBanner, ScheduleSkeleton, SectionHeader, Surface } from '../components/ui';
 import { InlineNotice } from '../features/appointments/components/InlineNotice';
-import { categoryMeta, groupInbox, inboxErrorMessage, inboxTarget, targetHint, useInbox } from '../features/notifications';
+import { categoryMeta, groupInbox, inboxErrorMessage, inboxTarget, PushOptInCard, targetHint, useInbox } from '../features/notifications';
 import { formatRelative } from '../features/support/format';
 import { isConnectivityError } from '../features/support/errors';
 import { useAppNavigation } from '../navigation/AppNavigator';
@@ -86,6 +86,7 @@ export function NotificationsScreen({ now }: NotificationsScreenProps) {
       ) : null}
 
       <View style={{ gap: theme.spacing.sm }}>
+        <PushOptInCard testID="notifications-push-opt-in" />
         <InlineNotice message={problem} tone="danger" testID="notifications-problem" />
         {offline ? <InlineNotice message="Você está offline. Mostrando a última atualização disponível." tone="warning" icon="cloud-offline-outline" /> : null}
       </View>
