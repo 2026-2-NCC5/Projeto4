@@ -132,6 +132,15 @@ const envSchema = z.object({
   // Provedor de IA do assistente: existing (regras + base de conhecimento) | jev (integração futura, desligada)
   AI_PROVIDER: z.enum(['existing', 'jev']).default('existing'),
   JEV_ENABLED: z.enum(['true', 'false', '1', '0']).default('false'),
+  // ---- conversa natural (LLM): Gemini reescreve/compõe a resposta SOMENTE com os artigos oficiais do ASA.
+  // Sem GEMINI_API_KEY (ou com ASSISTANT_LLM_ENABLED=false) o assistente funciona como antes, só por regras.
+  GEMINI_API_KEY: z.string().optional().transform((value) => (value && value.trim().length >= 10 ? value.trim() : undefined)),
+  GEMINI_MODEL: z.string().regex(/^[a-z0-9.-]{3,64}$/).default('gemini-2.5-flash'),
+  GEMINI_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(20_000).default(7_000),
+  ASSISTANT_LLM_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  // ---- cérebro: job diário `fecap-site-sync` lê o site PÚBLICO da FECAP e atualiza o cérebro sem novo deploy
+  BRAIN_SITE_SYNC_ENABLED: z.enum(['true', 'false', '1', '0']).default('true'),
+  BRAIN_SITE_SYNC_MAX_PAGES: z.coerce.number().int().min(1).max(500).default(150),
   GAMEFY_SUPABASE_URL: z.string().url().optional(),
   GAMEFY_SUPABASE_SERVICE_ROLE_KEY: z.string().min(20).optional(),
   GAMEFY_INSTITUTION_SLUG: z.string().min(1).default('fecap'),
@@ -171,6 +180,7 @@ export interface AppConfig {
   metrics: { token: string | null };
   database: { poolMax: number };
   jobs: { cronSecret: string | null };
+  brain: { siteSync: { enabled: boolean; maxPages: number } };
   support: { maxAttachmentBytes: number };
   whatsapp: WhatsAppConfig;
   mail: {
@@ -213,7 +223,7 @@ export interface AppConfig {
   features: { tickets: boolean; appointments: boolean; knowledgeBase: boolean; notifications: boolean; realtime: boolean };
   automations: { scanIntervalSeconds: number };
   web: { origins: string[]; cookieSecure: boolean };
-  ai: { provider: Env['AI_PROVIDER']; jevEnabled: boolean };
+  ai: { provider: Env['AI_PROVIDER']; jevEnabled: boolean; llm?: { apiKey: string; model: string; timeoutMs: number } | null };
   gamefy: { url: string | null; serviceRoleKey: string | null; institutionSlug: string };
 }
 
@@ -346,6 +356,7 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     metrics: { token: env.METRICS_TOKEN ?? null },
     database: { poolMax: env.DATABASE_POOL_MAX },
     jobs: { cronSecret: env.CRON_SECRET ?? null },
+    brain: { siteSync: { enabled: flag(env.BRAIN_SITE_SYNC_ENABLED), maxPages: env.BRAIN_SITE_SYNC_MAX_PAGES } },
     support: { maxAttachmentBytes: env.SUPPORT_MAX_ATTACHMENT_BYTES ?? (onVercel ? 3 * 1024 * 1024 : 5 * 1024 * 1024) },
     whatsapp: resolveWhatsAppConfig(env, appEnv),
     jwt: { secret: env.JWT_SECRET, expiresIn: env.JWT_EXPIRES_IN, issuer: 'asa-conecta-api', audience: 'asa-conecta-mobile' },
@@ -431,7 +442,11 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
       origins: webOrigins,
       cookieSecure: env.WEB_COOKIE_SECURE === 'auto' ? env.NODE_ENV === 'production' : env.WEB_COOKIE_SECURE === 'true',
     },
-    ai: { provider: env.AI_PROVIDER, jevEnabled: flag(env.JEV_ENABLED) },
+    ai: {
+      provider: env.AI_PROVIDER,
+      jevEnabled: flag(env.JEV_ENABLED),
+      llm: env.GEMINI_API_KEY && flag(env.ASSISTANT_LLM_ENABLED) ? { apiKey: env.GEMINI_API_KEY, model: env.GEMINI_MODEL, timeoutMs: env.GEMINI_TIMEOUT_MS } : null,
+    },
     gamefy: {
       url: env.GAMEFY_SUPABASE_URL?.replace(/\/+$/, '') ?? null,
       serviceRoleKey: env.GAMEFY_SUPABASE_SERVICE_ROLE_KEY ?? null,

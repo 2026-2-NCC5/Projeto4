@@ -30,6 +30,7 @@
   "rewrites": [{ "source": "/(.*)", "destination": { "service": "api" } }],
   "crons": [
     { "path": "/api/internal/jobs/sla-scan", "schedule": "0 9 * * *" },
-    { "path": "/api/internal/jobs/asa-match-collect", "schedule": "0 10 * * *" }
+    { "path": "/api/internal/jobs/asa-match-collect", "schedule": "0 10 * * *" },
+    { "path": "/api/internal/jobs/fecap-site-sync", "schedule": "0 7 * * *" }
   ]
 }

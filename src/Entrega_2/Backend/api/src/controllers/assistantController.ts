@@ -31,6 +31,11 @@ export const assistantMessageSchema = z
       .object({ speechRecognitionMs: z.number().int().min(0).max(300_000).optional() })
       .strict()
       .optional(),
+    // v1.10: últimos turnos da conversa (texto) para a IA entender continuações; nunca persistidos
+    history: z
+      .array(z.object({ role: z.enum(['user', 'assistant']), text: z.string().trim().min(1).max(600) }).strict())
+      .max(6)
+      .optional(),
   })
   .strict();
 

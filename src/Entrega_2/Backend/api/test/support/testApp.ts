@@ -1,3 +1,6 @@
+import type { SitePageStore } from '../../src/brain/siteStore.js';
+import type { Fetcher } from '../../src/brain/siteSync.js';
+import type { BrainSnapshot } from '../../src/brain/vault.js';
 import type { Express } from 'express';
 import request from 'supertest';
 import { createApp } from '../../src/createApp.js';
@@ -20,6 +23,8 @@ export interface TestAppOptions {
   now?: () => Date;
   mailer?: Mailer;
   whatsappOptions?: { autoKick?: boolean; fetch?: typeof fetch };
+  brainSnapshot?: BrainSnapshot;
+  brainSite?: { store: SitePageStore; fetchText: Fetcher };
 }
 
 export function buildTestConfig(options: TestAppOptions = {}): AppConfig {
@@ -50,6 +55,8 @@ export function createTestApp(options: TestAppOptions = {}): { app: Express; rep
     ...(options.now ? { now: options.now } : {}),
     ...(options.mailer ? { mailer: options.mailer } : {}),
     ...(options.whatsappOptions ? { whatsappOptions: options.whatsappOptions } : {}),
+    ...(options.brainSnapshot ? { brainSnapshot: options.brainSnapshot } : {}),
+    ...(options.brainSite ? { brainSite: options.brainSite } : {}),
   });
   return { app, repos, config };
 }

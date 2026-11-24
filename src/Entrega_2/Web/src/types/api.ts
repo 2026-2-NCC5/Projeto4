@@ -480,6 +480,13 @@ export interface AssistantClientMetrics {
   speechRecognitionMs?: number;
 }
 
+/** v1.10: turno anterior da conversa (só texto), enviado para a IA entender perguntas de continuação. */
+export interface AssistantHistoryTurn {
+  role: 'user' | 'assistant';
+  /** 1–600 caracteres */
+  text: string;
+}
+
 export interface AssistantMessageRequest {
   inputType: AssistantInputType;
   /** texto digitado ou transcrição da fala (1–500 caracteres) */
@@ -488,6 +495,8 @@ export interface AssistantMessageRequest {
   /** tela em que o estudante estava ao perguntar; nunca define identidade nem autorização */
   currentScreen?: AssistantScreenContext;
   clientMetrics?: AssistantClientMetrics;
+  /** v1.10: últimos turnos (até 6, do mais antigo ao mais novo); nunca persistidos pela API */
+  history?: AssistantHistoryTurn[];
 }
 
 export type AssistantResponseStatus =
@@ -2498,3 +2507,48 @@ export interface AdminOverview {
   source: MetricSource;
 }
 
+
+// ---- cérebro do assistente (v1.11)
+/** v1.11: pergunta que o assistente não conseguiu responder com base oficial (sem dados de quem perguntou). */
+export type AssistantKnowledgeGapStatus = 'open' | 'resolved' | 'ignored';
+
+export interface AssistantKnowledgeGap {
+  id: string;
+  /** exemplo mais recente, com e-mails e números longos mascarados */
+  question: string;
+  timesAsked: number;
+  lastChannel: 'text' | 'voice';
+  status: AssistantKnowledgeGapStatus;
+  resolutionNote: string | null;
+  resolvedAt: string | null;
+  firstAskedAt: string;
+  lastAskedAt: string;
+}
+
+/** v1.11: o cérebro (vault do Obsidian em Backend/cerebro, compilado na API) e as lacunas a resolver. */
+export interface AssistantBrainOverview {
+  brain: {
+    hash: string;
+    notes: number;
+    sections: number;
+    links: number;
+    /** notas por pasta do vault */
+    folders: Record<string, number>;
+    /** links [[...]] sem nota correspondente */
+    danglingLinks: string[];
+    /** a IA de linguagem natural está ligada (sem ela, o cérebro não é consultado) */
+    llmEnabled: boolean;
+    /** páginas do site da FECAP lidas pelo job diário (null = sincronização desligada) */
+    site: { pages: number; lastFetchedAt: string | null } | null;
+  };
+  gaps: {
+    items: AssistantKnowledgeGap[];
+    counts: Record<AssistantKnowledgeGapStatus, number>;
+  };
+}
+
+export interface AssistantKnowledgeGapUpdate {
+  status: AssistantKnowledgeGapStatus;
+  resolutionNote?: string | null;
+}
+// ---- end cérebro do assistente

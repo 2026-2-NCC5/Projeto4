@@ -22,6 +22,8 @@ import type { Repositories } from '../repositories/types.js';
 import type { RequestContext } from '../types/domain.js';
 import type { QueueAssistantSource } from '../assistant/queueResponders.js';
 import type { AgentService } from './agentService.js';
+import type { ConversationalComposer } from '../assistant/conversational.js';
+import type { GroundingArticle } from '../knowledge/service.js';
 import type { StudentService } from './studentService.js';
 
 export function newInteractionId(): string {
@@ -48,6 +50,30 @@ const ACADEMIC_GUIDANCE_QUERY: Partial<Record<AssistantIntent, string>> = {
   // "Acesso ao Moodle": conteúdo das aulas e atividades
   get_pending_items: 'acesso ao moodle',
 };
+
+// ---- conversa natural (LLM)
+/** Camada opcional de linguagem natural: compositor (Gemini) + artigos oficiais próximos da pergunta. */
+export interface ConversationalLayer {
+  composer: ConversationalComposer;
+  articles: (question: string) => Promise<GroundingArticle[]>;
+  /** cérebro: guarda a dúvida que ficou sem base oficial para a equipe do ASA responder (aprendizado) */
+  recordGap?: (question: string, channel: 'text' | 'voice') => void;
+  label: string;
+}
+
+/**
+ * A IA só reescreve/compõe respostas SEM dados acadêmicos pessoais: conversa, artigos, orientação e
+ * encaminhamento. Consultas com dados reais, análises do Agente, fila, comandos e recusas ficam com as regras.
+ */
+export function isConversationalEligible(intent: AssistantIntent, output: ResponderOutput, academicAvailable: boolean): boolean {
+  const kind = INTENT_KIND[intent];
+  if (kind === 'control' || kind === 'analysis') return false;
+  if (intent === 'access_other_student' || intent === 'predict_outcome' || intent.startsWith('get_queue_')) return false;
+  if (kind === 'query' && intent !== 'knowledge_question' && academicAvailable) return false;
+  if (output.clientCommand || output.navigation || output.runId || (output.recommendations?.length ?? 0) > 0) return false;
+  return true;
+}
+// ---- end conversa natural
 
 /** Hermes público: só perguntas (nada que leve a áreas logadas). */
 const PUBLIC_SUGGESTIONS: AssistantNextAction[] = SERVICE_SUGGESTIONS.filter((action) => action.type === 'ask' && !/falar com/i.test(action.text));
@@ -178,7 +204,70 @@ export class AssistantService {
     private readonly ai: AiProviderRegistry | null = null,
     /** fonte acadêmica integrada? (modo institucional sem integração = false) */
     private readonly academicAvailable: () => boolean = () => true,
+    /** conversa natural (Gemini); null = só regras */
+    private readonly conversational: ConversationalLayer | null = null,
   ) {}
+
+  // ---- conversa natural (LLM)
+  /**
+   * Reescreve a resposta das regras em linguagem natural, ou responde pelos artigos oficiais quando as
+   * regras não entenderam. Qualquer falha (tempo, cota, resposta inválida) mantém a resposta das regras.
+   */
+  private async naturalize(
+    request: AssistantMessageRequest,
+    intent: AssistantIntent,
+    output: ResponderOutput,
+    academicAvailable: boolean,
+    ctx: RequestContext,
+    logger: Logger,
+  ): Promise<{ intent: AssistantIntent; output: ResponderOutput; used: boolean }> {
+    const layer = this.conversational;
+    if (!layer || !isConversationalEligible(intent, output, academicAvailable)) return { intent, output, used: false };
+    const startedAt = Date.now();
+    try {
+      const previousQuestion = [...(request.history ?? [])].reverse().find((turn) => turn.role === 'user')?.text ?? '';
+      const articles = await layer.articles(`${request.text} ${previousQuestion}`.trim()).catch(() => []);
+      const reply = await layer.composer.compose({
+        question: request.text,
+        inputType: request.inputType,
+        history: request.history ?? [],
+        draft: { title: output.title, message: output.message, status: output.status, items: (output.items ?? []).map((item) => ({ title: item.title, description: item.description })) },
+        articles,
+        today: todayInTimezone(this.config.assistant.timezone, this.clock()),
+      });
+      logger.info({ correlation_id: ctx.correlationId, model: layer.composer.model, outcome: reply ? (reply.useDraft ? 'rephrased' : reply.grounded ? 'answered' : 'ungrounded') : 'discarded', articles: articles.length, brain_notes: articles.filter((article) => article.origin === 'brain').length, llm_duration_ms: Date.now() - startedAt }, 'assistant llm');
+      if (!reply) return { intent, output, used: false };
+      if (!reply.useDraft && !reply.grounded) layer.recordGap?.(request.text, request.inputType);
+      const speech = limitSpeech(reply.speech);
+      if (reply.useDraft) return { intent, output: { ...output, message: reply.message, speech }, used: true };
+      const used = articles.filter((article) => reply.sourceSlugs.includes(article.slug));
+      if (reply.grounded && used.length > 0) {
+        return {
+          intent: 'knowledge_question',
+          used: true,
+          output: {
+            status: 'success',
+            title: reply.title || used[0]!.title,
+            message: reply.message,
+            speech,
+            items: [],
+            // notas do cérebro embasam a resposta, mas só artigos da base têm página de ajuda para citar
+            sources: used.filter((article) => article.origin !== 'brain').map((article) => ({
+              type: 'knowledge_article' as const, articleId: article.articleId, slug: article.slug, title: article.title,
+              version: article.version, publishedAt: article.publishedAt, sourceLabel: article.sourceLabel, sourceUrl: article.sourceUrl,
+            })),
+            nextActions: [TALK_TO_ASA],
+          },
+        };
+      }
+      // sem base oficial: mantém status, encaminhamento e sugestões das regras; só a conversa fica natural
+      return { intent, output: { ...output, ...(reply.title ? { title: reply.title } : {}), message: reply.message, speech, items: reply.grounded ? (output.items ?? []) : [] }, used: true };
+    } catch (error) {
+      logger.warn({ correlation_id: ctx.correlationId, error_type: error instanceof Error ? error.message : typeof error, llm_duration_ms: Date.now() - startedAt }, 'assistant llm failed');
+      return { intent, output, used: false };
+    }
+  }
+  // ---- end conversa natural
 
   /** Consulta os artigos publicados; falha da base não derruba a conversa (vira "sem resposta"). */
   private async searchKnowledge(text: string, ctx: RequestContext, role: 'student' | 'public', logger?: Logger): Promise<AIResponse | null> {
@@ -329,6 +418,12 @@ export class AssistantService {
       throw error;
     }
 
+    // ---- conversa natural (LLM)
+    const natural = await this.naturalize(request, interpretation.intent, output, academicAvailable, ctx, logger);
+    interpretation.intent = natural.intent;
+    output = natural.output;
+    // ---- end conversa natural
+
     // sem fonte acadêmica, botões para telas de notas/frequência/disciplinas levariam a telas vazias
     if (!academicAvailable) output = { ...output, nextActions: withoutAcademicScreens(output.nextActions ?? []) };
 
@@ -363,7 +458,7 @@ export class AssistantService {
       createdAt: new Date().toISOString(),
       ...(output.sources && output.sources.length > 0 ? { sources: output.sources } : {}),
       ...(output.handoff ? { handoff: output.handoff } : {}),
-      provider: { id: this.ai?.selection.active ?? 'existing', label: this.ai?.active.label ?? 'Regras do ASA Conecta (sem LLM)' },
+      provider: { id: this.ai?.selection.active ?? 'existing', label: natural.used && this.conversational ? this.conversational.label : (this.ai?.active.label ?? 'Regras do ASA Conecta (sem LLM)') },
     };
 
     const totalDurationMs = Date.now() - startedAt;

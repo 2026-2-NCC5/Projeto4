@@ -1,3 +1,13 @@
+import { ConversationalComposer } from './assistant/conversational.js';
+import { GeminiClient } from './ai/gemini.js';
+// ---- cérebro do assistente
+import { MemoryGapStore, PgGapStore } from './brain/gaps.js';
+import { BrainService, createBrainRouter } from './brain/service.js';
+import { PgSitePageStore, type SitePageStore } from './brain/siteStore.js';
+import { siteFetcher, type Fetcher } from './brain/siteSync.js';
+import { BRAIN_SNAPSHOT } from './brain/vault.generated.js';
+import type { BrainSnapshot } from './brain/vault.js';
+// ---- end cérebro do assistente
 import cors from 'cors';
 import { z } from 'zod';
 import express, { type Express } from 'express';
@@ -95,6 +105,10 @@ export interface AppDeps {
   pool?: DbPool;
   /** Testes do canal WhatsApp: fila acionada à mão e `fetch` simulado para os adapters. */
   whatsappOptions?: { autoKick?: boolean; fetch?: typeof fetch };
+  /** Testes: cérebro (vault) no lugar do compilado em brain/vault.generated.ts. */
+  brainSnapshot?: BrainSnapshot;
+  /** Testes: páginas do site e leitor simulados (sem rede, sem banco). */
+  brainSite?: { store: SitePageStore; fetchText: Fetcher };
 }
 
 /** Fábrica da aplicação Express com injeção de dependências (testável sem rede/banco). */
@@ -116,6 +130,19 @@ export function createApp(deps: AppDeps): Express {
   const knowledge = new KnowledgeService(deps.repos.knowledge ?? null, platform, settings, audit, now);
   const aiRegistry = new AiProviderRegistry(deps.config, knowledge, logger, now);
   // ---- end platform
+  // ---- cérebro do assistente: notas do vault (Obsidian) + lacunas (perguntas sem resposta)
+  const brain = new BrainService(
+    deps.brainSnapshot ?? BRAIN_SNAPSHOT,
+    deps.pool ? new PgGapStore(deps.pool) : new MemoryGapStore(),
+    logger,
+    now,
+    Boolean(deps.config.ai.llm),
+    // site da FECAP: só com banco (as páginas lidas ficam em assistant_site_pages)
+    deps.config.brain.siteSync.enabled && (deps.pool || deps.brainSite)
+      ? { store: deps.brainSite?.store ?? new PgSitePageStore(deps.pool!), fetchText: deps.brainSite?.fetchText ?? siteFetcher(), maxPages: deps.config.brain.siteSync.maxPages, budgetMs: 220_000, delayMs: deps.brainSite ? 0 : 400 }
+      : null,
+  );
+  // ---- end cérebro do assistente
   const studentService = new StudentService(deps.repos, () => platform.assertAcademicAvailable());
   const agentService = new AgentService(deps.repos, studentService, agentClient, deps.config, now);
   // ---- queue (Fila presencial do ASA)
@@ -135,6 +162,20 @@ export function createApp(deps: AppDeps): Express {
     aiRegistry,
     // sem fonte acadêmica integrada (modo institucional), o assistente orienta pelos artigos em vez de falhar com 503
     () => platform.academicSource().status !== 'unavailable',
+    // ---- conversa natural (LLM): só com GEMINI_API_KEY; sem ela, respostas apenas pelas regras
+    deps.config.ai.llm
+      ? {
+          composer: new ConversationalComposer(new GeminiClient(deps.config.ai.llm)),
+          // artigos publicados do ASA primeiro, depois os trechos do cérebro da FECAP
+          articles: async (question: string) => {
+            const [kb, notes] = await Promise.all([knowledge.contextArticles(question, 3), brain.grounding(question, 3)]);
+            return [...kb, ...notes];
+          },
+          recordGap: (question: string, channel: 'text' | 'voice') => brain.recordGap(question, channel),
+          label: 'Base oficial do ASA e cérebro da FECAP com linguagem natural (Gemini)',
+        }
+      : null,
+    // ---- end conversa natural
   );
 
   // ---- support (Atendimento)
@@ -263,6 +304,9 @@ export function createApp(deps: AppDeps): Express {
   app.use(createOperationsRouter({ operations, audit, authed: platformAuthed, onDenied, agentInsights: (input) => operations.agentInsights(input, { agentClient, ai: aiRegistry }) }));
   // ---- platform: base de conhecimento (rotas em routes/knowledge.ts)
   app.use(createKnowledgeRouter({ knowledge, audit, authed: platformAuthed, onDenied }));
+  // ---- cérebro do assistente (painel: notas compiladas + perguntas sem resposta)
+  app.use(createBrainRouter({ brain, audit, authed: platformAuthed, onDenied }));
+  // ---- end cérebro do assistente
   // ---- platform: agendamentos (rotas em routes/appointments.ts)
   app.use(createAppointmentRouter({ appointments, audit, authed: platformAuthed, asStudent: requireStudent(studentService), onDenied }));
   // ---- admin (rotas em routes/admin.ts)
@@ -289,6 +333,8 @@ export function createApp(deps: AppDeps): Express {
         },
         ...(careerMatch ? { 'asa-match-collect': async () => ({ ...await careerMatch.enqueueDueSources(), ...await careerMatch.processCollectionQueue(5), ...await careerMatch.deliverDueAlerts(200) }) } : {}),
         ...(whatsapp ? whatsapp.jobs : {}),
+        // ---- cérebro: lê o que mudou no site público da FECAP (diário; o resto fica para a próxima execução)
+        'fecap-site-sync': () => brain.syncSite(),
       },
     }),
   );

@@ -37,6 +37,24 @@ import {
 } from './text.js';
 import type { KbArticleRecord, KbArticleWithVersion, KbVersionRecord, KnowledgeRepository } from './types.js';
 
+/** Artigo oficial entregue à IA como base da resposta (texto completo da versão publicada). */
+export interface GroundingArticle {
+  articleId: string;
+  slug: string;
+  title: string;
+  summary: string;
+  body: string;
+  version: number;
+  publishedAt: string | null;
+  sourceLabel: string | null;
+  sourceUrl: string | null;
+  /** 'brain' = nota do cérebro (vault do Obsidian); sem valor = artigo publicado da base do ASA */
+  origin?: 'kb' | 'brain';
+}
+
+/** Limite do corpo de cada artigo enviado à IA (mantém a requisição pequena e rápida). */
+const GROUNDING_BODY_MAX = 3_500;
+
 /**
  * "Segunda via de X": quem decide o assunto é X (boleto, crachá, diploma). Com outro termo na pergunta,
  * "segunda" e "via" pesam menos.
@@ -195,6 +213,31 @@ export class KnowledgeService {
       related,
     };
   }
+
+  // ---- conversa natural (LLM)
+  /**
+   * Artigos publicados (público de alunos) mais próximos da pergunta, com o texto completo, para a IA
+   * responder SOMENTE com base oficial. Sem banco, desligado ou sem termos: lista vazia.
+   */
+  async contextArticles(question: string, limit = 4): Promise<GroundingArticle[]> {
+    if (!this.store || !(await this.platform.isEnabled('assistantKnowledgeAnswers'))) return [];
+    const primary = queryTerms(question);
+    const tsQuery = toTsQuery(primary.length > 0 ? primary : fallbackTerms(question));
+    if (!tsQuery) return [];
+    const { items } = await this.store.search({ tsQuery, audience: ['student'], includeDemo: this.includeDemo, scope: 'published', limit, offset: 0 });
+    return items.map((row) => ({
+      articleId: row.id,
+      slug: row.slug,
+      title: row.shown.title,
+      summary: row.shown.summary,
+      body: row.shown.body.length > GROUNDING_BODY_MAX ? `${row.shown.body.slice(0, GROUNDING_BODY_MAX)}…` : row.shown.body,
+      version: row.shown.version,
+      publishedAt: row.publishedAt?.toISOString() ?? null,
+      sourceLabel: row.shown.sourceLabel,
+      sourceUrl: row.shown.sourceUrl,
+    }));
+  }
+  // ---- end conversa natural
 
   /** Artigos publicados no formato da Central de ajuda do app (passo a passo). null = sem banco. */
   async helpArticles(): Promise<SupportHelpArticle[] | null> {

@@ -1,12 +1,12 @@
 import { normalizeSearch } from '../support/catalog.js';
 
 /** Palavras muito comuns em perguntas (não ajudam a achar artigos). */
-const STOPWORDS = new Set(
+export const STOPWORDS = new Set(
   'a o as os um uma uns umas de da do das dos em na no nas nos para pra por com sem que qual quais quando onde como porque por que e ou se eu me meu minha meus minhas voce vc isso isto esse essa este esta ao aos sobre mais menos ja nao sim tem ter ha quero queria preciso gostaria saber posso pode poderia fazer faz faco ola oi bom dia boa tarde noite obrigado obrigada asa favor consigo conseguir vejo ver acho encontro encontrar sei tenho alguem agora fecap faculdade aluno aluna estudante pedir peco solicitar solicito emitir emito tirar tiro obter obtenho realizar realizo requerer funciona funcionar'.split(' '),
 );
 
 /** Siglas curtas que identificam serviços (o limite de 3 letras as descartaria). */
-const SHORT_TERMS = new Set(['dp', 'ra', 'ir', 'ti', 'rg']);
+export const SHORT_TERMS = new Set(['dp', 'ra', 'ir', 'ti', 'rg']);
 
 /** Grafias equivalentes unificadas antes da busca ("wi-fi" → "wifi", "e-mail" → "email", "2ª via" → "segunda via"). */
 export function canonicalSearchText(text: string): string {
