@@ -53,6 +53,7 @@ Regras de governança (verificadas no servidor, com testes):
 | Operação | `metrics:read` | Ver métricas e indicadores | — | ✅ | ✅ |
 | Operação | `reports:export` | Exportar relatórios (CSV sem dados pessoais) | — | ✅ | ✅ |
 | Operação | `agent:insights:read` | Ver indicadores agregados do Agente e do Assistente | — | ✅ | ✅ |
+| Operação | `notifications:broadcast` | Enviar aviso para todos os alunos (central de avisos e push no app) | — | ✅ | ✅ |
 | Governança | `audit:read:own` | Ver a própria trilha de auditoria | — | ✅ | ✅ |
 | Governança | `audit:read:any` | Consultar a trilha de auditoria completa | — | — | ✅ |
 | Governança | `users:manage` | Convidar contas, mudar papéis e ativar/desativar | — | — | ✅ |
