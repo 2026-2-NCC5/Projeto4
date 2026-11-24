@@ -1,3 +1,4 @@
+import type { NotificationsModule } from '../../src/notifications/module.js';
 import type { SitePageStore } from '../../src/brain/siteStore.js';
 import type { Fetcher } from '../../src/brain/siteSync.js';
 import type { BrainSnapshot } from '../../src/brain/vault.js';
@@ -25,6 +26,7 @@ export interface TestAppOptions {
   whatsappOptions?: { autoKick?: boolean; fetch?: typeof fetch };
   brainSnapshot?: BrainSnapshot;
   brainSite?: { store: SitePageStore; fetchText: Fetcher };
+  notifications?: NotificationsModule;
 }
 
 export function buildTestConfig(options: TestAppOptions = {}): AppConfig {
@@ -57,6 +59,7 @@ export function createTestApp(options: TestAppOptions = {}): { app: Express; rep
     ...(options.whatsappOptions ? { whatsappOptions: options.whatsappOptions } : {}),
     ...(options.brainSnapshot ? { brainSnapshot: options.brainSnapshot } : {}),
     ...(options.brainSite ? { brainSite: options.brainSite } : {}),
+    ...(options.notifications ? { notifications: options.notifications } : {}),
   });
   return { app, repos, config };
 }

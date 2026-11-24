@@ -42,6 +42,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<UserRole, readonly Permission[]>>
     'reports:export',
     'agent:insights:read',
     'audit:read:own',
+    'notifications:broadcast',
   ],
   technical_admin: [
     ...OWN_ACCOUNT,
@@ -66,6 +67,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<UserRole, readonly Permission[]>>
     'health:read',
     'permissions:read',
     'support_channels:manage',
+    'notifications:broadcast',
   ],
 };
 
@@ -115,6 +117,7 @@ export const PERMISSION_DESCRIPTIONS: Readonly<Record<Permission, { group: strin
   'health:read': { group: 'Governança', label: 'Ver a saúde dos serviços' },
   'permissions:read': { group: 'Governança', label: 'Ver a matriz de permissões' },
   'support_channels:manage': { group: 'Governança', label: 'Conectar e configurar canais de atendimento (WhatsApp), sem ler as conversas' },
+  'notifications:broadcast': { group: 'Operação', label: 'Enviar aviso para todos os alunos (central de avisos e push no app)' },
 };
 
 export const ALL_PERMISSIONS = Object.keys(PERMISSION_DESCRIPTIONS) as Permission[];

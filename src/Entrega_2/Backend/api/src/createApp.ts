@@ -54,6 +54,7 @@ import { requireStudent } from './middlewares/auth.js';
 import { AiProviderRegistry } from './ai/providers.js';
 import { KnowledgeService } from './knowledge/service.js';
 import { createKnowledgeRouter } from './routes/knowledge.js';
+import { createBroadcastRouter } from './routes/broadcast.js';
 import { AdminService } from './admin/adminService.js';
 import { AutomationEngine } from './admin/automationEngine.js';
 import { createAdminRouter } from './routes/admin.js';
@@ -304,6 +305,9 @@ export function createApp(deps: AppDeps): Express {
   app.use(createOperationsRouter({ operations, audit, authed: platformAuthed, onDenied, agentInsights: (input) => operations.agentInsights(input, { agentClient, ai: aiRegistry }) }));
   // ---- platform: base de conhecimento (rotas em routes/knowledge.ts)
   app.use(createKnowledgeRouter({ knowledge, audit, authed: platformAuthed, onDenied }));
+  // ---- avisos e push: aviso da equipe para todos os alunos e push de teste
+  app.use(createBroadcastRouter({ inbox, audit, authed: platformAuthed, onDenied, includeDemo: deps.config.demo.dataEnabled, rateLimitEnabled: deps.config.rateLimit.enabled, now }));
+  // ---- end avisos e push
   // ---- cérebro do assistente (painel: notas compiladas + perguntas sem resposta)
   app.use(createBrainRouter({ brain, audit, authed: platformAuthed, onDenied }));
   // ---- end cérebro do assistente

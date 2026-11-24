@@ -1,3 +1,4 @@
+import { createHash, randomUUID } from 'node:crypto';
 import type {
   InboxNotification,
   InboxNotificationList,
@@ -20,6 +21,8 @@ export const NOTIFICATION_CATEGORY_LABELS: Record<NotificationCategory, string> 
 
 const ALL_CATEGORIES = Object.keys(NOTIFICATION_CATEGORY_LABELS) as NotificationCategory[];
 export const MAX_INBOX_ITEMS = 100;
+const BROADCAST_BATCH = 500;
+const PUSH_CONCURRENCY = 20;
 
 /** Entrega por push (módulo de notificações); opcional e best-effort. */
 export interface InboxPushSender {
@@ -115,14 +118,59 @@ export class InboxService {
    * Cria avisos para várias pessoas (idempotente pela dedupeKey). Push é best-effort e respeita a
    * preferência da categoria; falhas nunca afetam a operação que gerou o aviso.
    */
+  // ---- avisos e push: aviso da equipe para todos os alunos
+  /**
+   * Aviso para todos os alunos ativos: entra na central (app e portal) e vai por push para quem tem aparelho
+   * registrado e a categoria "Avisos da plataforma" ligada. O mesmo texto repetido em 10 minutos (clique duplo,
+   * reenvio) não duplica. Espera os envios: em função serverless, trabalho depois da resposta pode ser cortado.
+   */
+  async broadcast(input: { title: string; body: string }, includeDemo: boolean): Promise<{ recipients: number; pushSent: number; pushEnabled: boolean }> {
+    const studentIds = await this.repos.users.listActiveIdsByRole('student', includeDemo);
+    const window = Math.floor(this.now().getTime() / 600_000);
+    const fingerprint = createHash('sha256').update(`${input.title}\n${input.body}`).digest('hex').slice(0, 16);
+    const dedupeKey = `broadcast:${fingerprint}:${window}`;
+    let recipients = 0;
+    let pushSent = 0;
+    // em lotes: milhares de alunos não viram uma única consulta gigante nem milhares de envios simultâneos
+    for (let start = 0; start < studentIds.length; start += BROADCAST_BATCH) {
+      const batch = studentIds.slice(start, start + BROADCAST_BATCH).map((userId) => ({ userId, category: 'system' as const, kind: 'broadcast', title: input.title, body: input.body, dedupeKey, push: true }));
+      const result = await this.deliver(batch, true);
+      recipients += result.created;
+      pushSent += result.pushed;
+    }
+    return { recipients, pushSent, pushEnabled: Boolean(this.push?.enabled) };
+  }
+
+  /** Push de teste para os aparelhos da própria conta (confere se as notificações chegam). */
+  async testPush(userId: string): Promise<{ status: string; devices: number }> {
+    if (!this.push?.enabled) return { status: 'skipped', devices: 0 };
+    // cada pedido é um teste novo (o limite por usuário na rota evita abuso)
+    const result = (await this.push.sendToUser({
+      userId,
+      category: 'system',
+      idempotencyKey: `push-test:${userId}:${randomUUID()}`,
+      title: 'Notificações do ASA ativadas',
+      body: 'Tudo certo! Você vai receber aqui os avisos do ASA, respostas de chamados e lembretes.',
+      data: { type: 'inbox', category: 'system' },
+    })) as { status?: string; devices?: number } | undefined;
+    return { status: result?.status ?? 'pending', devices: result?.devices ?? 0 };
+  }
+  // ---- end avisos e push
+
   async notify(inputs: NotifyInput[]): Promise<number> {
-    if (inputs.length === 0) return 0;
+    return (await this.deliver(inputs, false)).created;
+  }
+
+  private async deliver(inputs: NotifyInput[], awaitPush: boolean): Promise<{ created: number; pushed: number }> {
+    if (inputs.length === 0) return { created: 0, pushed: 0 };
     const now = this.now();
     const created = await this.repos.inbox.createMany(inputs.map(({ push: _push, ...input }) => ({ ...input, now })));
     const push = this.push;
+    const pending: Array<Promise<boolean>> = [];
+    let pushedSoFar = 0;
     if (push?.enabled) {
       for (const input of inputs.filter((item) => item.push)) {
-        void this.pushAllowed(input.userId, input.category)
+        const sending = this.pushAllowed(input.userId, input.category)
           .then((allowed) =>
             allowed
               ? push.sendToUser({
@@ -135,10 +183,21 @@ export class InboxService {
                 })
               : undefined,
           )
-          .catch((error: unknown) => this.logger.warn({ category: input.category, error_type: error instanceof Error ? error.name : typeof error }, 'inbox push failed'));
+          .then((result) => {
+            const status = (result as { status?: string } | undefined)?.status;
+            return status === 'sent' || status === 'partial';
+          })
+          .catch((error: unknown) => {
+            this.logger.warn({ category: input.category, error_type: error instanceof Error ? error.name : typeof error }, 'inbox push failed');
+            return false;
+          });
+        pending.push(sending);
+        if (awaitPush && pending.length >= PUSH_CONCURRENCY) pushedSoFar += (await Promise.all(pending.splice(0))).filter(Boolean).length;
       }
     }
-    return created;
+    // sem awaitPush (avisos de eventos), o envio segue em segundo plano como antes
+    const pushed = awaitPush ? pushedSoFar + (await Promise.all(pending)).filter(Boolean).length : 0;
+    return { created, pushed };
   }
 
   private async pushAllowed(userId: string, category: NotificationCategory): Promise<boolean> {

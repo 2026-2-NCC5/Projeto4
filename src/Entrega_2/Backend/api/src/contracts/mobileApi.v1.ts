@@ -1668,7 +1668,9 @@ export type Permission =
   | 'health:read'
   | 'permissions:read'
   // v1.9: canais institucionais de atendimento (WhatsApp): conexão, QR e saúde do provedor
-  | 'support_channels:manage';
+  | 'support_channels:manage'
+  // v1.11: enviar aviso (central de avisos + push) para todos os alunos
+  | 'notifications:broadcast';
 
 /** Uma sessão (aparelho ou navegador). `id` é estável entre renovações do token. */
 export interface AuthSessionSummary {
@@ -2552,3 +2554,27 @@ export interface AssistantKnowledgeGapUpdate {
   resolutionNote?: string | null;
 }
 // ---- end cérebro do assistente
+
+// ---- avisos e push (v1.11)
+/** v1.11: POST /api/notifications/broadcast — aviso da equipe para todos os alunos ativos (central + push). */
+export interface NotificationBroadcastInput {
+  title: string;
+  body: string;
+}
+
+export interface NotificationBroadcastResult {
+  /** alunos que receberam o aviso na central (repetição do mesmo aviso em 10 min não conta) */
+  recipients: number;
+  /** pushes aceitos pelo serviço de envio (aparelhos com notificação ativada) */
+  pushSent: number;
+  /** o servidor tem envio de push configurado */
+  pushEnabled: boolean;
+}
+
+/** v1.11: POST /api/notifications/push-test — push de teste para os aparelhos da própria conta. */
+export interface PushTestResult {
+  status: 'sent' | 'partial' | 'failed' | 'skipped' | 'pending' | 'duplicate';
+  /** aparelhos registrados que receberam a tentativa */
+  devices: number;
+}
+// ---- end avisos e push
