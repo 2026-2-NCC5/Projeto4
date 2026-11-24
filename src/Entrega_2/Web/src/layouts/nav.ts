@@ -4,6 +4,7 @@ import {
   Bell,
   BriefcaseBusiness,
   BookOpenText,
+  BrainCircuit,
   Bot,
   CalendarClock,
   CalendarCog,
@@ -104,6 +105,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
         { to: '/asa/alunos', label: 'Alunos atendidos', icon: Users, permission: 'students:read:support_context' },
         { to: '/asa/diretorio-academico', label: 'Diretório acadêmico', icon: GraduationCap, permission: 'academic:directory:read' },
         { to: '/asa/base-conhecimento', label: 'Base de conhecimento', icon: BookOpenText, permission: 'kb:write', feature: 'knowledgeBase' },
+        { to: '/asa/cerebro-assistente', label: 'Cérebro do assistente', icon: BrainCircuit, permission: 'kb:read:all' },
         { to: '/asa/agente-ia', label: 'Agente e assistente', icon: Bot, permission: 'agent:insights:read' },
       ],
     },
@@ -141,6 +143,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
       title: 'Inteligência',
       items: [
         { to: '/admin/base-conhecimento', label: 'Base de conhecimento', icon: BookOpenText, permission: 'kb:write', feature: 'knowledgeBase' },
+        { to: '/admin/cerebro-assistente', label: 'Cérebro do assistente', icon: BrainCircuit, permission: 'kb:read:all' },
         { to: '/admin/agente-ia', label: 'Agente e provedores de IA', icon: Bot, permission: 'agent:insights:read' },
       ],
     },
