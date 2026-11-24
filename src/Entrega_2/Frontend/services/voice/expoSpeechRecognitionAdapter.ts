@@ -14,6 +14,8 @@ import type {
   VoiceErrorKind,
 } from '../../types/voice';
 
+import { sharedRecognizerArbiter, type RecognizerArbiter, type RecognizerClaim } from './recognizerArbiter';
+
 /** Nome do módulo nativo registrado por expo-speech-recognition. */
 export const NATIVE_MODULE_NAME = 'ExpoSpeechRecognition';
 
@@ -132,6 +134,14 @@ export interface RecognitionOptionsInput {
   wakeWord?: boolean;
 }
 
+/** Junta trechos reconhecidos com um espaço (sem espaços duplicados). */
+export function joinTranscript(...parts: string[]): string {
+  return parts
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(' ');
+}
+
 /** Opções de start() — áudio nunca é persistido (recordingOptions.persist = false). */
 export function buildRecognitionOptions(input: RecognitionOptionsInput = {}): ExpoSpeechRecognitionOptions {
   const wakeWord = input.wakeWord === true;
@@ -146,6 +156,8 @@ export function buildRecognitionOptions(input: RecognitionOptionsInput = {}): Ex
     recordingOptions: { persist: false },
     volumeChangeEventOptions: { enabled: !wakeWord, intervalMillis: input.volumeIntervalMs ?? VOICE.VOLUME_EVENT_INTERVAL_MS },
     iosCategory: { category: 'playAndRecord', categoryOptions: ['defaultToSpeaker', 'allowBluetooth'], mode: 'measurement' },
+    // Ditado (frases longas e naturais) na conversa; o "Hey Asa" só procura uma frase curta.
+    ...(wakeWord ? {} : { iosTaskHint: 'dictation' as const }),
     androidIntentOptions: { EXTRA_LANGUAGE_MODEL: 'free_form' },
   };
 }
@@ -166,7 +178,28 @@ interface ListenSession {
   lastPartial: string;
   result: SpeechRecognitionResult | null;
   waiters: ((result: SpeechRecognitionResult) => void)[];
+  /** Posse do reconhecedor compartilhado (ver recognizerArbiter). */
+  claim: RecognizerClaim | null;
+  /** O sistema confirmou que está ouvindo (evento `start`). */
+  started: boolean;
+  stopRequested: boolean;
+  startCalledAt: number;
+  busyRetries: number;
+  /** Religando após `busy`/`client` na abertura: o `end` dessa tentativa não encerra a escuta. */
+  restarting: boolean;
+  /** Escuta contínua: trechos já finalizados pelo reconhecedor (a fala inteira é a soma deles). */
+  committed: string;
 }
+
+/** Espera máxima pelo `end` da sessão do "Hey Asa" antes de abrir a da conversa. */
+export const HANDOFF_TIMEOUT_MS = 600;
+/** Atraso para tentar abrir de novo quando o serviço de voz ainda está ocupado. */
+export const BUSY_RETRY_DELAY_MS = 300;
+const MAX_BUSY_RETRIES = 1;
+/** Um `end` sem `start` logo após abrir a escuta é resto da sessão anterior (abort), não desta. */
+const STALE_END_WINDOW_MS = 250;
+/** Erros em que a última parcial ouvida vale como resposta (o Android costuma fechar assim). */
+const PARTIAL_FALLBACK_KINDS: readonly VoiceErrorKind[] = ['no_speech', 'stt_failed', 'network'];
 
 export interface ExpoSpeechRecognitionAdapterOptions {
   module: ExpoSpeechModuleLike | null;
@@ -174,17 +207,33 @@ export interface ExpoSpeechRecognitionAdapterOptions {
   platformOS?: string;
   language?: string;
   onDeviceOnly?: boolean;
+  /** Árbitro do reconhecedor compartilhado com o "Hey Asa" (padrão: o do app). */
+  arbiter?: RecognizerArbiter;
+  handoffTimeoutMs?: number;
+  busyRetryDelayMs?: number;
+  now?: () => number;
+  /**
+   * Escuta contínua: o reconhecedor NÃO encerra na primeira pausa (o Android corta a frase em ~1 s de
+   * silêncio). Cada trecho finalizado é acumulado; quem decide o fim é o app (silêncio prolongado,
+   * toque no botão ou tempo máximo), chamando stop().
+   */
+  continuous?: boolean;
 }
 
 /**
  * Adapter de expo-speech-recognition (nativo iOS/Android e Web Speech API).
- * Garante: um único resultado por escuta, listeners sempre removidos no `end`/`cancel`
- * e nenhum áudio persistido.
+ * Garante: um único resultado por escuta, listeners sempre removidos no `end`/`cancel`,
+ * nenhum áudio persistido e convivência com o "Hey Asa" no mesmo reconhecedor.
  */
 export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitionAdapterOptions): SpeechRecognitionService {
   const speechModule = options.module;
   const language = options.language ?? VOICE.LANGUAGE;
   const isWeb = (options.platformOS ?? Platform.OS) === 'web';
+  const arbiter = options.arbiter ?? sharedRecognizerArbiter;
+  const handoffTimeoutMs = options.handoffTimeoutMs ?? HANDOFF_TIMEOUT_MS;
+  const busyRetryDelayMs = options.busyRetryDelayMs ?? BUSY_RETRY_DELAY_MS;
+  const now = options.now ?? Date.now;
+  const continuous = options.continuous === true;
   let session: ListenSession | null = null;
 
   const emptyResult = (): SpeechRecognitionResult => ({ transcript: '', language });
@@ -199,6 +248,7 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
         // listener já removido
       }
     }
+    target.claim?.release();
     if (session === target) session = null;
   }
 
@@ -212,6 +262,8 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
     if (target.settled) return;
     target.settled = true;
     target.result = result;
+    // A escuta acabou: o reconhecedor fica livre para o "Hey Asa" (os listeners saem no `end`).
+    target.claim?.release();
     try {
       target.handlers.onFinalResult?.(result);
     } finally {
@@ -223,11 +275,54 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
     if (target.settled) return;
     target.settled = true;
     target.result = emptyResult();
+    target.claim?.release();
     try {
       target.handlers.onError?.(error);
     } finally {
       resolveWaiters(target, target.result);
     }
+  }
+
+  /** O "Hey Asa" ou outra escuta tomou o reconhecedor: solta tudo sem abort() (a sessão nativa já é de outro). */
+  function preempted(target: ListenSession) {
+    if (target.settled || target.cancelled) {
+      cleanup(target);
+      return;
+    }
+    const partial = target.lastPartial.trim();
+    cleanup(target);
+    if (partial) settleFinal(target, { transcript: partial, language });
+    else settleError(target, { kind: 'stt_failed' });
+  }
+
+  /** abort() da sessão de outro cliente e espera o `end` que o Android emite em seguida (com limite). */
+  function abortAndWaitForEnd(module: ExpoSpeechModuleLike): Promise<void> {
+    return new Promise<void>((resolve) => {
+      let finished = false;
+      let subscription: SpeechSubscription | null = null;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        try {
+          subscription?.remove();
+        } catch {
+          // já removido
+        }
+        resolve();
+      };
+      const timer = setTimeout(finish, handoffTimeoutMs);
+      try {
+        subscription = module.addListener('end', finish);
+      } catch {
+        // sem eventos: resta o limite de tempo
+      }
+      try {
+        module.abort();
+      } catch {
+        finish();
+      }
+    });
   }
 
   async function cancel(): Promise<void> {
@@ -239,10 +334,13 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
       target.result = emptyResult();
       resolveWaiters(target, target.result);
     }
-    try {
-      speechModule?.abort();
-    } catch {
-      // serviço já parado
+    // Só aborta se a sessão nativa ainda é desta escuta; senão derrubaria a do "Hey Asa"/da próxima escuta.
+    if (target.claim?.isCurrent()) {
+      try {
+        speechModule?.abort();
+      } catch {
+        // serviço já parado
+      }
     }
     cleanup(target);
   }
@@ -289,9 +387,39 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
       }
       if (session) await cancel();
 
-      const target: ListenSession = { handlers, subscriptions: [], settled: false, cancelled: false, lastPartial: '', result: null, waiters: [] };
+      const target: ListenSession = {
+        handlers,
+        subscriptions: [],
+        settled: false,
+        cancelled: false,
+        lastPartial: '',
+        result: null,
+        waiters: [],
+        claim: null,
+        started: false,
+        stopRequested: false,
+        startCalledAt: 0,
+        busyRetries: 0,
+        restarting: false,
+        committed: '',
+      };
       session = target;
       const isActive = () => session === target && !target.settled && !target.cancelled;
+
+      const taken = arbiter.claim('conversation', () => preempted(target));
+      target.claim = taken.claim;
+      if (taken.preempted === 'wake_word') {
+        // O "Hey Asa" estava ouvindo: encerra a sessão dele e espera o `end` antes de abrir a nossa.
+        // Sem isso, o `end` dele (ou o serviço ainda ocupado) derrubaria a pergunta logo ao abrir.
+        await abortAndWaitForEnd(speechModule);
+        if (!isActive()) return;
+      }
+
+      const recognitionOptions = buildRecognitionOptions({ language, onDeviceOnly: options.onDeviceOnly, continuous });
+      const openNative = () => {
+        target.startCalledAt = now();
+        speechModule.start(recognitionOptions);
+      };
 
       const listen = <K extends keyof ExpoSpeechRecognitionNativeEventMap>(
         eventName: K,
@@ -301,10 +429,29 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
       };
 
       try {
+        listen('start', () => {
+          if (isActive()) target.started = true;
+        });
         listen('result', (event) => {
           if (!isActive()) return;
           const best = event?.results?.[0];
           const transcript = best?.transcript ?? '';
+          if (continuous) {
+            if (event.isFinal) {
+              const segment = transcript.trim();
+              // Alguns aparelhos repetem o último trecho finalizado: não duplica.
+              if (segment && !target.committed.endsWith(segment)) target.committed = joinTranscript(target.committed, segment);
+              target.lastPartial = target.committed;
+              if (target.stopRequested) {
+                settleFinal(target, { transcript: target.committed, language });
+                return;
+              }
+            } else {
+              target.lastPartial = joinTranscript(target.committed, transcript);
+            }
+            if (target.lastPartial) target.handlers.onPartialTranscript?.(target.lastPartial);
+            return;
+          }
           if (event.isFinal) {
             const confidence = typeof best?.confidence === 'number' && best.confidence >= 0 ? best.confidence : undefined;
             settleFinal(target, { transcript: transcript.trim(), language, ...(confidence !== undefined ? { confidence } : {}) });
@@ -314,23 +461,50 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
           }
         });
         listen('speechend', () => {
-          if (isActive()) target.handlers.onSpeechEnd?.();
+          // Na escuta contínua uma pausa não encerra a pergunta: o fim é decidido pelo app.
+          if (isActive() && !continuous) target.handlers.onSpeechEnd?.();
         });
         listen('volumechange', (event) => {
           if (isActive()) target.handlers.onAudioLevel?.(normalizeVolume(event?.value ?? -2));
         });
         listen('error', (event) => {
-          if (target.cancelled || session !== target) return;
-          const kind = mapRecognitionError(event?.error ?? 'unknown', target.cancelled);
-          if (kind) settleError(target, { kind, message: event?.message });
+          if (target.cancelled || session !== target || target.settled) return;
+          const code = event?.error ?? 'unknown';
+          // Serviço de voz ainda ocupado com a sessão anterior: tenta abrir de novo uma vez.
+          if ((code === 'busy' || code === 'client') && !target.started && !target.stopRequested && target.busyRetries < MAX_BUSY_RETRIES) {
+            target.busyRetries += 1;
+            target.restarting = true;
+            setTimeout(() => {
+              target.restarting = false;
+              if (!isActive()) return;
+              try {
+                openNative();
+              } catch (error) {
+                settleError(target, { kind: 'stt_failed', message: error instanceof Error ? error.message : undefined });
+                cleanup(target);
+              }
+            }, busyRetryDelayMs);
+            return;
+          }
+          const kind = mapRecognitionError(code, target.cancelled);
+          if (!kind) return;
+          const partial = target.lastPartial.trim();
+          // O Android encerra com no-speech/client mesmo depois de mostrar o texto: aproveita a parcial.
+          if (partial && PARTIAL_FALLBACK_KINDS.includes(kind)) {
+            settleFinal(target, { transcript: partial, language });
+            return;
+          }
+          settleError(target, { kind, message: event?.message });
         });
         listen('end', () => {
+          if (target.restarting) return;
+          if (!target.settled && !target.cancelled && !target.started && !target.stopRequested && now() - target.startCalledAt < STALE_END_WINDOW_MS) return;
           // Sem resultado final explícito (ex.: iOS encerrou por silêncio): usa a última parcial.
           if (!target.cancelled && !target.settled) settleFinal(target, { transcript: target.lastPartial.trim(), language });
           cleanup(target);
         });
 
-        speechModule.start(buildRecognitionOptions({ language, onDeviceOnly: options.onDeviceOnly }));
+        openNative();
       } catch (error) {
         settleError(target, { kind: 'stt_failed', message: error instanceof Error ? error.message : undefined });
         cleanup(target);
@@ -341,7 +515,14 @@ export function createExpoSpeechRecognitionAdapter(options: ExpoSpeechRecognitio
       const target = session;
       if (!speechModule || !target) return emptyResult();
       if (target.settled) return target.result ?? emptyResult();
+      target.stopRequested = true;
       const result = new Promise<SpeechRecognitionResult>((resolve) => target.waiters.push(resolve));
+      if (!target.claim?.isCurrent()) {
+        // Outro cliente tomou o reconhecedor: fica com o que já foi ouvido.
+        settleFinal(target, { transcript: target.lastPartial.trim(), language });
+        cleanup(target);
+        return result;
+      }
       try {
         speechModule.stop();
       } catch {

@@ -74,7 +74,16 @@ export const VOICE = {
   /** Timeout de POST /api/assistant/message (pode disparar uma análise do agente). */
   ASSISTANT_TIMEOUT_MS: readPositiveInt(process.env.EXPO_PUBLIC_ASSISTANT_TIMEOUT_MS, 15_000),
   /** Duração máxima de uma escuta; ao atingir, a fala é finalizada e enviada. */
-  LISTEN_MAX_MS: 15_000,
+  LISTEN_MAX_MS: 30_000,
+  /**
+   * Escuta contínua: o aluno pode pausar para pensar sem que a pergunta seja cortada. O envio acontece
+   * após END_OF_SPEECH_SILENCE_MS sem palavras novas, no toque do botão ou no tempo máximo.
+   */
+  CONTINUOUS_LISTENING: readBoolean(process.env.EXPO_PUBLIC_SPEECH_CONTINUOUS, true),
+  /** Silêncio (sem palavras novas) que encerra a pergunta e a envia. */
+  END_OF_SPEECH_SILENCE_MS: 2_000,
+  /** Sem nenhuma palavra reconhecida neste tempo, a escuta termina com "não ouvi nada". */
+  NO_SPEECH_TIMEOUT_MS: 8_000,
   /** Tempo máximo entre o fim da fala e a transcrição final. */
   TRANSCRIBE_TIMEOUT_MS: 6_000,
   /** Após este atraso sem resposta, a UI passa de "Entendendo..." para "Analisando suas informações...". */
@@ -86,7 +95,11 @@ export const VOICE = {
   /** Limite de caracteres aceito pela API para `text`. */
   MAX_TEXT_CHARS: 500,
   /** Vocabulário de viés (contextualStrings no iOS / EXTRA_BIASING_STRINGS no Android 13+). */
-  CONTEXTUAL_STRINGS: ['ASA', 'Hey Asa', 'frequência', 'pendência', 'pendências', 'avaliação', 'Banco de Dados', 'Estruturas de Dados', 'coordenação'],
+  CONTEXTUAL_STRINGS: [
+    'ASA', 'Hey Asa', 'FECAP', 'frequência', 'pendência', 'pendências', 'avaliação', 'Banco de Dados', 'Estruturas de Dados', 'coordenação',
+    'matrícula', 'rematrícula', 'trancamento', 'trancar a matrícula', 'abono de faltas', 'segunda chamada', 'Portal do Aluno', 'Moodle',
+    'boleto', 'mensalidade', 'bolsa', 'FIES', 'histórico escolar', 'declaração de matrícula', 'estágio', 'TCC', 'secretaria', 'senha',
+  ],
 } as const;
 
 /**

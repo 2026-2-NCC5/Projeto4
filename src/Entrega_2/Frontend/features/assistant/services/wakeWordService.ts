@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 
 import { WAKE_WORD } from '../../../config/services';
 import { buildRecognitionOptions, loadExpoSpeechRecognitionModule, type ExpoSpeechModuleLike, type SpeechModuleLoaderDeps, type SpeechSubscription } from '../../../services/voice/expoSpeechRecognitionAdapter';
+import { sharedRecognizerArbiter, type RecognizerArbiter, type RecognizerClaim } from '../../../services/voice/recognizerArbiter';
 import type { PermissionState, SpeechAvailability } from '../../../types/voice';
 
 import { matchWakeWord, type WakeWordMatch } from './wakeWordMatcher';
@@ -49,6 +50,8 @@ export interface CreateWakeWordServiceOptions extends SpeechModuleLoaderDeps {
   unavailableReason?: SpeechAvailability['reason'];
   featureEnabled?: boolean;
   language?: string;
+  /** Árbitro do reconhecedor compartilhado com a conversa (padrão: o do app). */
+  arbiter?: RecognizerArbiter;
   now?: () => number;
   setTimeout?: typeof globalThis.setTimeout;
   clearTimeout?: typeof globalThis.clearTimeout;
@@ -94,6 +97,7 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
   const now = options.now ?? Date.now;
   const setTimer = options.setTimeout ?? globalThis.setTimeout.bind(globalThis);
   const clearTimer = options.clearTimeout ?? globalThis.clearTimeout.bind(globalThis);
+  const arbiter = options.arbiter ?? sharedRecognizerArbiter;
 
   let active = false;
   let generation = 0;
@@ -104,6 +108,8 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
   let consecutiveFailures = 0;
   let lastDetectionAt = Number.NEGATIVE_INFINITY;
   let status: WakeWordServiceStatus = 'idle';
+  /** Posse do reconhecedor; a conversa pode tomá-lo a qualquer momento (botão do microfone). */
+  let claim: RecognizerClaim | null = null;
 
   function setStatus(next: WakeWordServiceStatus, failure?: WakeWordFailure) {
     if (status === next && !failure) return;
@@ -130,12 +136,30 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
     }
   }
 
+  /** Só aborta a sessão nativa enquanto ela é do "Hey Asa": se a conversa tomou, o abort mataria a pergunta. */
   function abortRecognizer() {
+    if (!claim?.isCurrent()) return;
     try {
       module.abort();
     } catch {
       // reconhecedor já parado
     }
+  }
+
+  function releaseClaim() {
+    claim?.release();
+    claim = null;
+  }
+
+  /** A conversa tomou o reconhecedor: solta listeners e timers sem abort() (ela já abre a sessão dela). */
+  function onPreempted() {
+    claim = null;
+    if (!active && subscriptions.length === 0) return;
+    active = false;
+    generation += 1;
+    clearTimers();
+    removeListeners();
+    setStatus('stopped');
   }
 
   function scheduleRestart(delayMs: number) {
@@ -172,6 +196,7 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
     clearTimers();
     generation += 1;
     abortRecognizer();
+    releaseClaim();
     active = false;
     setStatus('stopped');
     handlers?.onDetected({ ...match, transcript, isFinal });
@@ -182,6 +207,14 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
     removeListeners();
     const myGeneration = ++generation;
     setStatus('starting');
+    if (!claim?.isCurrent()) {
+      if (arbiter.current() === 'conversation') {
+        // O aluno está falando com o assistente: não disputa o microfone, tenta de novo depois.
+        scheduleRestart(WAKE_WORD.RETRY_DELAY_MS);
+        return;
+      }
+      claim = arbiter.claim('wake_word', onPreempted).claim;
+    }
     try {
       subscriptions.push(
         module.addListener('result', (event) => {
@@ -217,8 +250,9 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
         }),
         module.addListener('end', () => {
           if (myGeneration !== generation || !active) return;
-          // O serviço do sistema encerra sozinho após silêncio: religa em seguida.
-          scheduleRestart(WAKE_WORD.RESTART_DELAY_MS);
+          // O serviço do sistema encerra sozinho após silêncio: religa em seguida. Depois de um erro
+          // o `end` também chega; ele não encurta a espera já marcada (RETRY_DELAY_MS).
+          if (restartTimer === null) scheduleRestart(WAKE_WORD.RESTART_DELAY_MS);
         }),
       );
       module.start(buildRecognitionOptions({ ...(language ? { language } : {}), continuous: true, wakeWord: true }));
@@ -236,12 +270,16 @@ export function createWakeWordService(options: CreateWakeWordServiceOptions = {}
   }
 
   function stopInternal() {
-    if (!active && subscriptions.length === 0) return;
+    if (!active && subscriptions.length === 0) {
+      releaseClaim();
+      return;
+    }
     active = false;
     generation += 1;
     clearTimers();
     removeListeners();
     abortRecognizer();
+    releaseClaim();
   }
 
   return {

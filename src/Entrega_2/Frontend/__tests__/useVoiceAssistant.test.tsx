@@ -140,18 +140,58 @@ describe('useVoiceAssistant', () => {
     expect(t.requests[0]?.body.inputType).toBe('voice');
   });
 
-  it('escuta atinge LISTEN_MAX_MS → finaliza automaticamente', async () => {
+  it('escuta atinge LISTEN_MAX_MS → finaliza automaticamente (mesmo falando sem parar)', async () => {
     const t = await setup();
     t.recognition.stopTranscript = null;
     await listen(t);
-    await act(async () => {
-      jest.advanceTimersByTime(VOICE.LISTEN_MAX_MS);
-    });
+    const step = 1_000;
+    for (let elapsed = 0; elapsed < VOICE.LISTEN_MAX_MS; elapsed += step) {
+      act(() => t.recognition.emitPartial(`palavra ${elapsed}`));
+      await act(async () => {
+        jest.advanceTimersByTime(step);
+      });
+    }
     expect(t.recognition.stop).toHaveBeenCalledTimes(1);
     expect(t.current().state.phase).toBe('transcribing');
     await act(async () => t.recognition.emitFinal('Qual é minha próxima prova?'));
     expect(t.current().state.phase).toBe('understanding');
     expect(t.send).toHaveBeenCalledTimes(1);
+  });
+
+  it('pausa curta não encerra; silêncio de END_OF_SPEECH_SILENCE_MS após falar envia a pergunta', async () => {
+    const t = await setup();
+    t.recognition.stopTranscript = null;
+    await listen(t);
+    act(() => t.recognition.emitPartial('eu queria saber'));
+    await act(async () => {
+      jest.advanceTimersByTime(VOICE.END_OF_SPEECH_SILENCE_MS - 500);
+    });
+    act(() => t.recognition.emitPartial('eu queria saber como tranco a matrícula'));
+    await act(async () => {
+      jest.advanceTimersByTime(VOICE.END_OF_SPEECH_SILENCE_MS - 500);
+    });
+    expect(t.recognition.stop).not.toHaveBeenCalled();
+    expect(t.current().state.phase).toBe('listening');
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+    });
+    expect(t.recognition.stop).toHaveBeenCalledTimes(1);
+    await act(async () => t.recognition.emitFinal('Eu queria saber como tranco a matrícula'));
+    expect(t.requests[0]?.body).toMatchObject({ inputType: 'voice', text: 'Eu queria saber como tranco a matrícula' });
+  });
+
+  it('nenhuma palavra em NO_SPEECH_TIMEOUT_MS → encerra a escuta', async () => {
+    const t = await setup();
+    t.recognition.stopTranscript = null;
+    await listen(t);
+    await act(async () => {
+      jest.advanceTimersByTime(VOICE.NO_SPEECH_TIMEOUT_MS - 1);
+    });
+    expect(t.recognition.stop).not.toHaveBeenCalled();
+    await act(async () => {
+      jest.advanceTimersByTime(1);
+    });
+    expect(t.recognition.stop).toHaveBeenCalledTimes(1);
   });
 
   it('texto usa o MESMO sendMessage com inputType text (sem métricas de fala e sem studentId)', async () => {
@@ -163,6 +203,19 @@ describe('useVoiceAssistant', () => {
     expect(body).toEqual({ inputType: 'text', text: 'Qual é minha próxima prova?', conversationContext: {} });
     expect(JSON.stringify(body)).not.toMatch(/student/i);
     expect(t.recognition.start).not.toHaveBeenCalled();
+  });
+
+  it('perguntas seguintes levam os últimos turnos (só texto) para a IA entender continuações', async () => {
+    const t = await setup();
+    await submit(t, 'Como tranco a matrícula?');
+    await respond(t, makeAssistantResponse({ display: { title: 'Trancamento', message: 'Pelo Portal do Aluno.', items: [], recommendations: [] } }));
+    await act(async () => jest.runOnlyPendingTimers());
+    await submit(t, 'E qual o prazo?');
+    const body = t.requests[t.requests.length - 1]!.body;
+    expect(body.history).toEqual([
+      { role: 'user', text: 'Como tranco a matrícula?' },
+      { role: 'assistant', text: 'Pelo Portal do Aluno.' },
+    ]);
   });
 
   it('texto vazio não envia nada', async () => {
@@ -257,6 +310,21 @@ describe('useVoiceAssistant', () => {
     // Resultado atrasado é ignorado.
     act(() => t.recognition.emitFinal('tarde demais'));
     expect(t.send).not.toHaveBeenCalled();
+  });
+
+  it('transcrição final que não chega, mas com texto parcial → envia a parcial (o Android às vezes não fecha)', async () => {
+    const t = await setup();
+    await listen(t);
+    act(() => t.recognition.emitPartial('qual minha frequência'));
+    act(() => t.recognition.emitSpeechEnd());
+    act(() => jest.advanceTimersByTime(VOICE.TRANSCRIBE_TIMEOUT_MS));
+    expect(t.recognition.cancel).toHaveBeenCalled();
+    expect(t.send).toHaveBeenCalledTimes(1);
+    expect(t.requests[0]?.body).toMatchObject({ text: 'qual minha frequência', inputType: 'voice' });
+    expect(t.current().state.error).toBeNull();
+    // Resultado atrasado não gera segundo envio.
+    act(() => t.recognition.emitFinal('qual minha frequência'));
+    expect(t.send).toHaveBeenCalledTimes(1);
   });
 
   it.each([

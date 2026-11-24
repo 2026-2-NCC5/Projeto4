@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAssistant } from '../../features/assistant/hooks/useAssistant';
@@ -169,7 +169,12 @@ export function AssistantOverlay() {
               ) : null}
             </View>
 
-            {phase === 'error' && error ? <ErrorBanner message={error.message} onRetry={!voiceUnavailable && error.kind !== 'permission_denied' && error.kind !== 'unavailable' ? () => void voice.startListening() : undefined} testID="overlay-error" /> : null}
+            {phase === 'error' && error ? <ErrorBanner
+                message={error.message}
+                onRetry={!voiceUnavailable && error.kind !== 'permission_denied' && error.kind !== 'unavailable' ? () => void voice.startListening() : error.kind === 'permission_denied' ? () => void Linking.openSettings().catch(() => undefined) : undefined}
+                retryLabel={error.kind === 'permission_denied' ? MESSAGES.voiceOpenSettings : undefined}
+                testID="overlay-error"
+              /> : null}
             {voiceUnavailable && !turn && phase === 'idle' ? (
               <AppText variant="caption" tone="muted" align="center" style={{ marginTop: theme.spacing.sm }}>
                 {voice.availability?.reason === 'expo_go' ? MESSAGES.voiceUnavailableExpoGo : MESSAGES.voiceUnavailable}

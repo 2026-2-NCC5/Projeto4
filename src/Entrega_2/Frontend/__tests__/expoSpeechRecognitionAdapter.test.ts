@@ -9,6 +9,7 @@ import {
   normalizeVolume,
   type ExpoSpeechModuleLike,
 } from '../services/voice/expoSpeechRecognitionAdapter';
+import { createRecognizerArbiter } from '../services/voice/recognizerArbiter';
 import { createSpeechRecognitionService } from '../services/voice/speechRecognition';
 import type { SpeechRecognitionHandlers } from '../types/voice';
 
@@ -69,7 +70,7 @@ describe('expoSpeechRecognitionAdapter', () => {
   });
 
   function adapter(platformOS = 'android') {
-    return createExpoSpeechRecognitionAdapter({ module: speechModule, platformOS, language: 'pt-BR', onDeviceOnly: false });
+    return createExpoSpeechRecognitionAdapter({ module: speechModule, platformOS, language: 'pt-BR', onDeviceOnly: false, arbiter: createRecognizerArbiter() });
   }
 
   it('start usa pt-BR, resultados parciais, sem persistir áudio e com vocabulário de viés', async () => {
@@ -117,6 +118,65 @@ describe('expoSpeechRecognitionAdapter', () => {
 
     speechModule.emit('end', null);
     expect(speechModule.listenerCount).toBe(0);
+  });
+
+  describe('escuta contínua (conversa)', () => {
+    function continuousAdapter(platformOS = 'android') {
+      return createExpoSpeechRecognitionAdapter({ module: speechModule, platformOS, language: 'pt-BR', onDeviceOnly: false, arbiter: createRecognizerArbiter(), continuous: true });
+    }
+
+    it('abre o reconhecedor em modo contínuo', async () => {
+      await continuousAdapter().start(handlersMock());
+      expect(speechModule.start).toHaveBeenCalledWith(expect.objectContaining({ continuous: true, interimResults: true, addsPunctuation: true }));
+    });
+
+    it('pausas não encerram: os trechos finalizados são acumulados até o stop()', async () => {
+      const service = continuousAdapter();
+      const handlers = handlersMock();
+      await service.start(handlers);
+      speechModule.emit('start', null);
+
+      speechModule.emit('result', result('eu queria saber', false));
+      speechModule.emit('result', result('Eu queria saber', true));
+      speechModule.emit('speechend', null);
+      speechModule.emit('result', result('como faço', false));
+      speechModule.emit('result', result('como faço para trancar a matrícula', true));
+      speechModule.emit('result', result('como faço para trancar a matrícula', true));
+
+      expect(handlers.onSpeechEnd).not.toHaveBeenCalled();
+      expect(handlers.onFinalResult).not.toHaveBeenCalled();
+      expect(handlers.onPartialTranscript).toHaveBeenLastCalledWith('Eu queria saber como faço para trancar a matrícula');
+
+      const stopped = service.stop();
+      speechModule.emit('end', null);
+      await expect(stopped).resolves.toEqual({ transcript: 'Eu queria saber como faço para trancar a matrícula', language: 'pt-BR' });
+      expect(handlers.onFinalResult).toHaveBeenCalledTimes(1);
+      expect(speechModule.listenerCount).toBe(0);
+    });
+
+    it('trecho finalizado depois do stop() entra na resposta', async () => {
+      const service = continuousAdapter();
+      const handlers = handlersMock();
+      await service.start(handlers);
+      speechModule.emit('start', null);
+      speechModule.emit('result', result('Qual o horário', true));
+      speechModule.emit('result', result('da secre', false));
+      const stopped = service.stop();
+      speechModule.emit('result', result('da secretaria?', true));
+      await expect(stopped).resolves.toEqual({ transcript: 'Qual o horário da secretaria?', language: 'pt-BR' });
+    });
+
+    it('erro do serviço depois de ouvir algo aproveita tudo o que foi entendido', async () => {
+      const service = continuousAdapter();
+      const handlers = handlersMock();
+      await service.start(handlers);
+      speechModule.emit('start', null);
+      speechModule.emit('result', result('Preciso de uma declaração', true));
+      speechModule.emit('result', result('de matrícula', false));
+      speechModule.emit('error', { error: 'network', message: 'caiu' });
+      expect(handlers.onError).not.toHaveBeenCalled();
+      expect(handlers.onFinalResult).toHaveBeenCalledWith({ transcript: 'Preciso de uma declaração de matrícula', language: 'pt-BR' });
+    });
   });
 
   it('stop() resolve com a transcrição final emitida após o pedido de parada', async () => {
@@ -178,6 +238,7 @@ describe('expoSpeechRecognitionAdapter', () => {
     const service = adapter();
     const handlers = handlersMock();
     await service.start(handlers);
+    speechModule.emit('start', null);
     speechModule.emit('error', { error: code, message: 'falhou' });
     speechModule.emit('error', { error: 'network', message: 'de novo' });
     expect(handlers.onError).toHaveBeenCalledTimes(1);
@@ -185,6 +246,72 @@ describe('expoSpeechRecognitionAdapter', () => {
     speechModule.emit('end', null);
     expect(handlers.onFinalResult).not.toHaveBeenCalled();
     expect(speechModule.listenerCount).toBe(0);
+  });
+
+  describe('Android: serviço de voz instável', () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it.each(['busy', 'client'] as const)('%s ao abrir (antes de ouvir) → tenta abrir de novo uma vez e segue a escuta', async (code) => {
+      const service = adapter();
+      const handlers = handlersMock();
+      await service.start(handlers);
+      speechModule.emit('error', { error: code, message: 'ocupado' });
+      speechModule.emit('end', null);
+      expect(handlers.onError).not.toHaveBeenCalled();
+      expect(speechModule.start).toHaveBeenCalledTimes(1);
+      jest.advanceTimersByTime(300);
+      expect(speechModule.start).toHaveBeenCalledTimes(2);
+      speechModule.emit('start', null);
+      speechModule.emit('result', result('qual minha próxima aula', true));
+      expect(handlers.onFinalResult).toHaveBeenCalledWith(expect.objectContaining({ transcript: 'qual minha próxima aula' }));
+      expect(handlers.onError).not.toHaveBeenCalled();
+    });
+
+    it('busy de novo na segunda tentativa → stt_failed (não fica tentando para sempre)', async () => {
+      const service = adapter();
+      const handlers = handlersMock();
+      await service.start(handlers);
+      speechModule.emit('error', { error: 'busy', message: 'ocupado' });
+      jest.advanceTimersByTime(300);
+      speechModule.emit('error', { error: 'busy', message: 'ocupado' });
+      expect(handlers.onError).toHaveBeenCalledWith({ kind: 'stt_failed', message: 'ocupado' });
+      expect(speechModule.start).toHaveBeenCalledTimes(2);
+    });
+
+    it('cancelar durante a espera da nova tentativa não reabre o microfone', async () => {
+      const service = adapter();
+      await service.start(handlersMock());
+      speechModule.emit('error', { error: 'client', message: 'ocupado' });
+      await service.cancel();
+      jest.advanceTimersByTime(300);
+      expect(speechModule.start).toHaveBeenCalledTimes(1);
+      expect(speechModule.listenerCount).toBe(0);
+    });
+  });
+
+  it.each(['no-speech', 'client', 'network'] as const)('%s depois do texto parcial → a parcial vira o resultado final', async (code) => {
+    const service = adapter();
+    const handlers = handlersMock();
+    await service.start(handlers);
+    speechModule.emit('start', null);
+    speechModule.emit('result', result('como está minha frequência', false));
+    speechModule.emit('error', { error: code, message: 'fechou' });
+    expect(handlers.onError).not.toHaveBeenCalled();
+    expect(handlers.onFinalResult).toHaveBeenCalledWith({ transcript: 'como está minha frequência', language: 'pt-BR' });
+    speechModule.emit('end', null);
+    expect(speechModule.listenerCount).toBe(0);
+  });
+
+  it('end atrasado da sessão anterior, logo ao abrir, não encerra a escuta nova', async () => {
+    const service = adapter();
+    const handlers = handlersMock();
+    await service.start(handlers);
+    speechModule.emit('end', null);
+    expect(handlers.onFinalResult).not.toHaveBeenCalled();
+    speechModule.emit('start', null);
+    speechModule.emit('result', result('tenho pendências', true));
+    expect(handlers.onFinalResult).toHaveBeenCalledWith(expect.objectContaining({ transcript: 'tenho pendências' }));
   });
 
   it('mapRecognitionError ignora aborted quando o app cancelou', () => {

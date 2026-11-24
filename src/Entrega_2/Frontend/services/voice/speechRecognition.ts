@@ -35,5 +35,5 @@ export function createSpeechRecognitionService(options: CreateSpeechRecognitionO
   const loaded = loadExpoSpeechRecognitionModule(options);
   if (!loaded.module) return createUnavailableSpeechRecognition(loaded.reason, language);
 
-  return createExpoSpeechRecognitionAdapter({ module: loaded.module, language, platformOS: options.platformOS });
+  return createExpoSpeechRecognitionAdapter({ module: loaded.module, language, platformOS: options.platformOS, continuous: VOICE.CONTINUOUS_LISTENING });
 }

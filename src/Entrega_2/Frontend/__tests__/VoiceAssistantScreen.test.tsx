@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
+import { Linking } from 'react-native';
 
 import { PreferencesProvider } from '../hooks/usePreferences';
 import { VoiceAssistantProvider } from '../hooks/useVoiceAssistant';
@@ -77,7 +78,7 @@ describe('AssistantScreen (modo Conversar)', () => {
     const voiceButton = screen.getByLabelText('Falar com o assistente ASA');
     expect(voiceButton.props.accessibilityRole).toBe('button');
     expect(screen.getByLabelText('Assistente ASA, aguardando')).toBeTruthy();
-    expect(screen.getByText('Toque no microfone para falar')).toBeTruthy();
+    expect(screen.getByText('Toque no microfone e fale normalmente, como numa conversa')).toBeTruthy();
     expect(screen.getByText('Tenho atividade pendente?')).toBeTruthy();
     // Campo vazio: o botão à direita é o microfone; ao digitar, vira "Enviar".
     expect(screen.queryByLabelText('Enviar pergunta')).toBeNull();
@@ -196,6 +197,11 @@ describe('AssistantScreen (modo Conversar)', () => {
     expect(t.recognition.requestPermission).toHaveBeenCalledTimes(1);
     expect(screen.getByText(MESSAGES.voicePermissionDenied)).toBeTruthy();
     expect(screen.getByTestId('voice-error').props.accessibilityRole).toBe('alert');
+    // Sem permissão (ou com "não perguntar de novo"), o caminho é liberar o microfone no sistema.
+    const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValue(undefined);
+    fireEvent.press(screen.getByText(MESSAGES.voiceOpenSettings));
+    expect(openSettings).toHaveBeenCalledTimes(1);
+    openSettings.mockRestore();
 
     await typeAndSend('Tenho atividade pendente?');
     expect(t.send).toHaveBeenCalledTimes(1);
@@ -223,7 +229,7 @@ describe('AssistantScreen (modo Conversar)', () => {
     await act(async () => {
       fireEvent.press(screen.getByLabelText('Falar com o assistente ASA'));
     });
-    expect(screen.getByText('Ouvindo...')).toBeTruthy();
+    expect(screen.getByText('Estou ouvindo — fale do seu jeito')).toBeTruthy();
     expect(screen.getByLabelText('Assistente ASA, ouvindo')).toBeTruthy();
     act(() => t.recognition.emitPartial('como está minha'));
     expect(screen.getByText('“como está minha”')).toBeTruthy();

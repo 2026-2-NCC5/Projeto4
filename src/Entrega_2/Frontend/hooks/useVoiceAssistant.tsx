@@ -18,7 +18,7 @@ import type {
   VoiceAssistantMetrics,
   VoiceAssistantState,
 } from '../types/assistant';
-import type { AssistantClientMetrics, AssistantInputType, AssistantMessageRequest, AssistantNavigationAction, AssistantResponse } from '../types/api';
+import type { AssistantClientMetrics, AssistantHistoryTurn, AssistantInputType, AssistantMessageRequest, AssistantNavigationAction, AssistantResponse } from '../types/api';
 import type {
   HapticsService,
   PermissionState,
@@ -41,7 +41,7 @@ export const EMPTY_VOICE_METRICS: VoiceAssistantMetrics = Object.freeze({
   totalMs: null,
 });
 
-type TimerKey = 'listen' | 'transcribe' | 'thinking';
+type TimerKey = 'listen' | 'silence' | 'transcribe' | 'thinking';
 
 interface ControllerDeps {
   recognition: SpeechRecognitionService;
@@ -76,6 +76,23 @@ interface InteractionTiming {
   startedAt: number;
   speechRecognitionMs: number | null;
   requestMs: number | null;
+}
+
+/** Últimos turnos enviados à API (só texto) para a IA entender perguntas de continuação. */
+const HISTORY_TURNS = 3;
+const HISTORY_TEXT_MAX = 600;
+
+export function buildHistory(thread: readonly AssistantTurn[]): AssistantHistoryTurn[] {
+  const clip = (text: string) => text.trim().slice(0, HISTORY_TEXT_MAX);
+  return thread.slice(-HISTORY_TURNS).flatMap((turn) => {
+    const question = clip(turn.transcript ?? '');
+    const answer = clip(turn.response.display?.message ?? turn.response.speech?.text ?? '');
+    if (!question || !answer) return [];
+    return [
+      { role: 'user' as const, text: question },
+      { role: 'assistant' as const, text: answer },
+    ];
+  });
 }
 
 /** Executa uma função possivelmente assíncrona sem deixar exceções/rejeições escaparem. */
@@ -186,8 +203,15 @@ class VoiceAssistantController {
     this.timers[key] = undefined;
   }
 
+  /** Timers da escuta em si (tempo máximo e silêncio). */
+  private clearListenTimers() {
+    this.clearTimer('listen');
+    this.clearTimer('silence');
+  }
+
   private clearTimers() {
     this.clearTimer('listen');
+    this.clearTimer('silence');
     this.clearTimer('transcribe');
     this.clearTimer('thinking');
   }
@@ -260,11 +284,16 @@ class VoiceAssistantController {
       this.resetLevel();
       this.deps.haptics.listenStart();
       this.setTimer('listen', () => void this.stopListening(), VOICE.LISTEN_MAX_MS);
+      // Nada dito até aqui: encerra (o reconhecedor contínuo não desiste sozinho).
+      this.setTimer('silence', () => void this.stopListening(), VOICE.NO_SPEECH_TIMEOUT_MS);
 
       const activeSession = session;
       await this.deps.recognition.start({
         onPartialTranscript: (text) => {
-          if (this.isCurrentListen(activeSession)) this.dispatch({ type: 'PARTIAL_TRANSCRIPT', text });
+          if (!this.isCurrentListen(activeSession)) return;
+          this.dispatch({ type: 'PARTIAL_TRANSCRIPT', text });
+          // Cada palavra nova adia o envio: a pergunta só sai depois de uma pausa real.
+          if (text.trim() && this.state.phase === 'listening') this.setTimer('silence', () => void this.stopListening(), VOICE.END_OF_SPEECH_SILENCE_MS);
         },
         onAudioLevel: (level) => {
           if (this.isCurrentListen(activeSession) && this.state.phase === 'listening') this.animateLevel(level);
@@ -305,13 +334,21 @@ class VoiceAssistantController {
     const before = this.state;
     const next = this.dispatch({ type: 'SPEECH_ENDED' });
     if (next === before) return;
-    this.clearTimer('listen');
+    this.clearListenTimers();
     this.resetLevel();
     this.deps.haptics.listenEnd();
     this.setTimer(
       'transcribe',
       () => {
-        if (this.isCurrentListen(session) && this.state.phase === 'transcribing') this.handleRecognitionError(session, 'stt_failed');
+        if (!this.isCurrentListen(session) || this.state.phase !== 'transcribing') return;
+        const partial = this.state.partialTranscript.trim();
+        if (partial.length >= VOICE.MIN_TRANSCRIPT_CHARS) {
+          // O serviço de voz não entregou o resultado final a tempo: envia o que já tinha reconhecido.
+          safely(() => this.deps.recognition.cancel());
+          this.handleFinalResult(session, { transcript: partial, language: VOICE.LANGUAGE });
+          return;
+        }
+        this.handleRecognitionError(session, 'stt_failed');
       },
       VOICE.TRANSCRIBE_TIMEOUT_MS,
     );
@@ -322,7 +359,7 @@ class VoiceAssistantController {
     const wasListening = this.state.phase === 'listening';
     if (!wasListening && this.state.phase !== 'transcribing') return;
     this.listenHandled = true;
-    this.clearTimer('listen');
+    this.clearListenTimers();
     this.clearTimer('transcribe');
     this.resetLevel();
 
@@ -343,7 +380,7 @@ class VoiceAssistantController {
   private handleRecognitionError(session: number, kind: VoiceErrorKind) {
     if (!this.isCurrentListen(session)) return;
     this.listenHandled = true;
-    this.clearTimer('listen');
+    this.clearListenTimers();
     this.clearTimer('transcribe');
     this.resetLevel();
     this.interaction = null;
@@ -405,10 +442,12 @@ class VoiceAssistantController {
     } catch {
       currentScreen = undefined;
     }
+    const history = buildHistory(before.thread);
     const body: AssistantMessageRequest = {
       inputType,
       text,
       conversationContext: { ...next.context },
+      ...(history.length > 0 ? { history } : {}),
       ...(currentScreen ? { currentScreen } : {}),
       ...(clientMetrics ? { clientMetrics } : {}),
     };
@@ -602,7 +641,7 @@ class VoiceAssistantController {
       this.interaction = null;
       this.dispatch({ type: 'STOP_SPEAKING' });
     }
-    this.clearTimer('listen');
+    this.clearListenTimers();
     this.clearTimer('transcribe');
   };
 

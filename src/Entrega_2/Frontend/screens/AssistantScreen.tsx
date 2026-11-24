@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Keyboard, Platform, ScrollView, StyleSheet, View, type TextInput } from 'react-native';
+import { Keyboard, Linking, Platform, ScrollView, StyleSheet, View, type TextInput } from 'react-native';
 
 import { AnalysisPanel } from '../components/AnalysisPanel';
 import { AssistantTranscript } from '../components/assistant/AssistantTranscript';
@@ -12,7 +12,7 @@ import { ErrorBanner } from '../components/ErrorBanner';
 import { Screen } from '../components/Screen';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { AppButton, AppText, IconButton, List, ListItem } from '../components/ui';
-import { AsaVoiceOrb, VoiceResponse, VoiceStatus, type AsaOrbState, type VoiceButtonMode } from '../components/voice';
+import { AsaVoiceOrb, ListeningPanel, VoiceResponse, VoiceStatus, type AsaOrbState, type VoiceButtonMode } from '../components/voice';
 import { VOICE } from '../config/services';
 import { useOptionalAssistant } from '../features/assistant/hooks/useAssistant';
 import { groupHistoryByDay } from '../features/assistant/services/conversationHistory';
@@ -341,7 +341,7 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
     </AppText>
   );
 
-  const status = <VoiceStatus phase={phase} voiceAvailable={!voiceKnownUnavailable} partialTranscript={state.partialTranscript} showPartial={preferences.transcriptVisible} overrideText={phase === 'idle' ? wakeHint : undefined} />;
+  const status = <VoiceStatus phase={phase} voiceAvailable={!voiceKnownUnavailable} partialTranscript={state.partialTranscript} showPartial={false} overrideText={phase === 'idle' ? wakeHint : undefined} />;
 
   return (
     <Screen scroll={false} withNavSpace={false} keyboardAvoiding contentStyle={styles.screenContent} testID="assistant-screen">
@@ -421,7 +421,12 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
 
         {phase === 'error' && error ? (
           <View>
-            <ErrorBanner message={error.message} onRetry={canRetryByVoice ? () => void assistant.startListening() : undefined} testID="voice-error" />
+            <ErrorBanner
+              message={error.message}
+              onRetry={canRetryByVoice ? () => void assistant.startListening() : error.kind === 'permission_denied' ? () => void Linking.openSettings().catch(() => undefined) : undefined}
+              retryLabel={error.kind === 'permission_denied' ? MESSAGES.voiceOpenSettings : undefined}
+              testID="voice-error"
+            />
             {error.detail ? (
               <AppText variant="caption" tone="muted" style={{ marginTop: theme.spacing.xs, paddingHorizontal: theme.spacing.xxs }}>
                 {error.detail}
@@ -463,7 +468,10 @@ function VoiceConversation({ onNavigate, modeSwitcher }: VoiceConversationProps)
       </ScrollView>
 
       <View style={[styles.composer, { paddingHorizontal: Math.max(theme.spacing.md, gutter - theme.spacing.sm) }]}>
-        {showStatusLine ? <View style={styles.statusLine}>{status}</View> : null}
+        {showStatusLine && phase !== 'listening' ? <View style={styles.statusLine}>{status}</View> : null}
+        {phase === 'listening' ? (
+          <ListeningPanel audioLevel={audioLevel} transcript={state.partialTranscript} showTranscript={preferences.transcriptVisible} onSend={() => void assistant.stopListening()} onCancel={assistant.cancel} />
+        ) : null}
         {phase === 'answering' ? <AppButton label="Parar resposta" icon="stop-circle-outline" variant="secondary" size="small" onPress={stopSpeaking} style={styles.stop} /> : null}
         <ChatInputBar value={draft} onChangeText={setDraft} onSubmit={submit} voiceMode={voiceMode} onVoicePress={onVoicePress} onCancel={assistant.cancel} actions={inputActions} inputRef={inputRef} placeholder="Pergunte ao ASA..." inline={compactComposer} />
         {compactComposer ? null : privacyNotice}

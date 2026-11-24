@@ -33,6 +33,7 @@ export const MESSAGES = {
   voiceUnavailableExpoGo: 'No Expo Go o reconhecimento de voz exige um development build.',
   voiceNoSpeech: 'Não consegui ouvir nada. Toque novamente e tente falar mais perto do microfone.',
   voiceSttFailed: 'Não foi possível reconhecer sua fala. Tente novamente ou digite sua pergunta.',
+  voiceOpenSettings: 'Permitir o microfone nas configurações',
   voiceTtsFailed: 'Não foi possível reproduzir a resposta por voz.',
   assistantTimeout: 'A resposta está demorando mais que o esperado. Tente novamente.',
   assistantGeneric: 'Não foi possível obter uma resposta agora. Tente novamente.',

@@ -9,17 +9,17 @@ import { AppText } from '../ui/AppText';
 export function voiceStatusText(phase: VoicePhase, voiceAvailable = true): string {
   switch (phase) {
     case 'listening':
-      return 'Ouvindo...';
+      return 'Ouvindo... pode falar';
     case 'transcribing':
-      return 'Entendendo o que você disse...';
+      return 'Só um instante, conferindo o que você disse...';
     case 'understanding':
       return 'Entendendo...';
     case 'thinking':
-      return 'Analisando suas informações...';
+      return 'Pensando na resposta...';
     case 'answering':
       return 'Respondendo...';
     default:
-      return voiceAvailable ? 'Toque no microfone para falar' : 'Digite sua pergunta no campo abaixo';
+      return voiceAvailable ? 'Toque no microfone e fale normalmente, como numa conversa' : 'Digite sua pergunta no campo abaixo';
   }
 }
 
