@@ -40,6 +40,7 @@ export const routes = [
   { path: '/empresas', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
   { path: '/equipe', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
   { path: '/atendimento', element: publicPage(() => import('@/pages/public/InstitutionalPage')) },
+  { path: '/app', element: publicPage(() => import('@/pages/public/AppDownloadPage')) },
   { path: '/login', element: <RequireInstitutionalData><RedirectIfAuthenticated>{publicPage(() => import('@/pages/auth/LoginPage'))}</RedirectIfAuthenticated></RequireInstitutionalData> },
   { path: '/cadastro', element: <RequireInstitutionalData><RedirectIfAuthenticated>{publicPage(() => import('@/pages/auth/RegisterPage'))}</RedirectIfAuthenticated></RequireInstitutionalData> },
   { path: '/recuperar-senha', element: <RequireInstitutionalData>{publicPage(() => import('@/pages/auth/RecoverPasswordPage'))}</RequireInstitutionalData> },

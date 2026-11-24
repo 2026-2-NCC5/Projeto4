@@ -1,0 +1,52 @@
+ASA Conecta Android — build para testes internos
+
+Arquivo atual: ASA-Conecta-1.0.0-arm64-v8a-2026-11-10-r2.apk (24,7 MB)
+SHA-256: 5e9ebda040840078c1b72701600db6c7a2348fa897797d680dc0cc10599a0de5
+Download público: https://asa-conecta.vercel.app/app (página) · /downloads/asa-conecta.apk (arquivo)
+Aplicativo: com.asaconecta.app
+Versão: 1.0.0 (versionCode 1)
+Tipo: Release APK, assinado localmente com a chave debug do Android
+Arquitetura: arm64-v8a (celulares Android ARM64)
+SDK mínimo: 24 (Android 7.0) · SDK alvo: 36
+Código: commit e3142fd + correção do microfone (ainda não commitada; ver abaixo)
+
+Esta build embute a API de produção (https://asa-conecta-api.vercel.app) e abre no modo
+institucional: a API confirma o modo e o app mostra a tela de entrada. Dados de demonstração
+continuam bloqueados. Notas, frequência e pendências aparecem como indisponíveis até existir a
+integração acadêmica oficial. Entrada por voz e "Hey Asa" vêm ativadas (padrão de config/services.ts)
+e usam o reconhecimento de fala nativo, que o Expo Go não tem; o microfone não foi testado no emulador.
+
+Atualizações: o APK consulta o EAS Update (projeto @uxbrasil/asa-conecta, canal production,
+runtime exposdk:58.0.0). Um `eas update --channel production` mais novo que esta build chega
+ao APK sem reinstalar.
+
+Como foi gerado (em uma cópia limpa do repositório, src/Entrega_2/Frontend):
+  1. npm install --include=dev
+  2. app.json só na cópia: expo.updates.requestHeaders = {"expo-channel-name": "production"}
+  3. EXPO_PUBLIC_API_URL=https://asa-conecta-api.vercel.app EXPO_PUBLIC_USE_MOCK_TICKETS=false
+     EXPO_PUBLIC_USE_MOCK_QUEUE=false NODE_ENV=production npx expo prebuild --platform android --no-install
+  4. cd android && ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a
+     -Pexpo.useLegacyPackaging=true --max-workers=2
+  Com pouca memória (16 GB), compilar antes o Skia sozinho evita o OOM do clang:
+     ./gradlew --max-workers=1 ':shopify_react-native-skia:buildCMakeRelWithDebInfo[arm64-v8a]'
+  useLegacyPackaging comprime as bibliotecas nativas (o APK cai de 49 para 25 MB) e as extrai
+  na instalação; sem isso o app fecha ao abrir em emuladores x86_64 com tradução ARM.
+
+Correção do microfone (r2): a conversa e o "Hey Asa" usam o MESMO reconhecedor do sistema. Com o
+"Hey Asa" ligado, tocar no microfone abria a escuta e o desligamento da detecção a derrubava logo em
+seguida ("não ouvi nada"). Agora um árbitro (services/voice/recognizerArbiter.ts) passa o reconhecedor
+de um para o outro sem abortar a sessão errada; o app tenta abrir de novo uma vez quando o serviço de voz
+responde "ocupado"; usa o texto parcial quando o Android fecha sem resultado final; o "Hey Asa" respeita
+a espera de 1,5 s após erro; e, com a permissão negada, o aviso oferece abrir as configurações.
+
+Validado em 2026-11-10 no emulador Pixel 8 (Android 16, tradução arm64): instala por cima da
+build anterior (mesma assinatura), abre, carrega o bundle, consulta o EAS Update e chega à
+tela de entrada.
+
+Builds anteriores: ASA-Conecta-1.0.0-arm64-v8a-2026-11-10.apk (sem a correção do microfone) e
+ASA-Conecta-1.0.0-arm64-v8a-release.apk (2026-11-01, 49 MB). A de 2026-11-01 é de quando a API
+ainda estava em modo de demonstração e bloqueava a entrada; as duas estão obsoletas e podem ser apagadas.
+
+A assinatura debug serve para testes internos. Não use para publicação; uma build de loja
+precisa da chave oficial de assinatura e da validação institucional. Nunca embuta credenciais
+do GameFY ou senhas de estudantes no aplicativo.

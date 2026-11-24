@@ -7,3 +7,5 @@ test-results
 *.tsbuildinfo
 e2e/.auth
 blob-report
+# APK do app publicado em /downloads no deploy da Vercel (binário de ~25 MB, nunca versionado)
+public/downloads/*.apk
