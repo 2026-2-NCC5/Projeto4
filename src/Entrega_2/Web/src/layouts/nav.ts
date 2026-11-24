@@ -2,6 +2,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  Megaphone,
   BriefcaseBusiness,
   BookOpenText,
   BrainCircuit,
@@ -115,6 +116,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
         { to: '/asa/sla', label: 'SLA', icon: Timer, permission: 'metrics:read' },
         { to: '/asa/metricas', label: 'Métricas e relatórios', icon: BarChart3, permission: 'metrics:read' },
         { to: '/asa/notificacoes', label: 'Notificações', icon: Bell },
+        { to: '/asa/enviar-aviso', label: 'Enviar aviso', icon: Megaphone, permission: 'notifications:broadcast' },
         { to: '/asa/auditoria', label: 'Minha auditoria', icon: History, permission: 'audit:read:own' },
         { to: '/asa/conta', label: 'Minha conta', icon: User },
       ],
@@ -144,6 +146,7 @@ export const NAVIGATION: Record<Area, NavSection[]> = {
       items: [
         { to: '/admin/base-conhecimento', label: 'Base de conhecimento', icon: BookOpenText, permission: 'kb:write', feature: 'knowledgeBase' },
         { to: '/admin/cerebro-assistente', label: 'Cérebro do assistente', icon: BrainCircuit, permission: 'kb:read:all' },
+        { to: '/admin/enviar-aviso', label: 'Enviar aviso', icon: Megaphone, permission: 'notifications:broadcast' },
         { to: '/admin/agente-ia', label: 'Agente e provedores de IA', icon: Bot, permission: 'agent:insights:read' },
       ],
     },

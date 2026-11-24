@@ -24,6 +24,7 @@ const MATRIX: Record<UserRole, Permission[]> = {
     'reports:export',
     'agent:insights:read',
     'audit:read:own',
+    'notifications:broadcast',
   ],
   technical_admin: [
     ...OWN,
@@ -47,6 +48,7 @@ const MATRIX: Record<UserRole, Permission[]> = {
     'health:read',
     'permissions:read',
     'support_channels:manage',
+    'notifications:broadcast',
   ],
 };
 

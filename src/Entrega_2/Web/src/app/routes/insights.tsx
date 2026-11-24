@@ -12,6 +12,7 @@ const knowledgeList = () => import('@/pages/insights/knowledge/KnowledgeListPage
 const knowledgeDetail = () => import('@/pages/insights/knowledge/KnowledgeDetailPage');
 const knowledgeEditor = () => import('@/pages/insights/knowledge/KnowledgeEditorPage');
 const agentInsights = () => import('@/pages/insights/AgentInsightsPage');
+const broadcast = () => import('@/pages/insights/BroadcastPage');
 
 function knowledgeRoutes(): RouteObject[] {
   return [
@@ -21,6 +22,8 @@ function knowledgeRoutes(): RouteObject[] {
     { path: 'base-conhecimento/:id/editar', element: page(knowledgeEditor) },
     // ---- cérebro do assistente
     { path: 'cerebro-assistente', element: page(() => import('@/pages/insights/knowledge/BrainPage')) },
+    // ---- avisos e push: aviso para todos os alunos
+    { path: 'enviar-aviso', element: page(broadcast) },
   ];
 }
 
