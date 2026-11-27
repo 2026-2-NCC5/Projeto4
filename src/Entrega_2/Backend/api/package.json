@@ -31,7 +31,9 @@
     "db:reset": "tsx src/db/reset.ts",
     "agent:stub": "tsx scripts/agentStub.ts",
     "docs:permissions": "tsx scripts/permission-matrix.ts",
-    "smoke": "node ../scripts/smoke.mjs"
+    "smoke": "node ../scripts/smoke.mjs",
+    "brain:cesta": "tsx scripts/brain-cesta.ts",
+    "brain:probe": "tsx scripts/brain-probe.ts"
   },
   "dependencies": {
     "@vercel/functions": "^3.10.4",

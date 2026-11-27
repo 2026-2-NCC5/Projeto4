@@ -1,6 +1,6 @@
 import { Router, type NextFunction, type Request, type RequestHandler, type Response } from 'express';
 import { z } from 'zod';
-import type { AssistantBrainOverview, AssistantKnowledgeGapStatus, AssistantKnowledgeGapUpdate } from '../contracts/mobileApi.v1.js';
+import type { AssistantBrainGraph, AssistantBrainNoteDetail, AssistantBrainOverview, AssistantKnowledgeGapStatus, AssistantKnowledgeGapUpdate } from '../contracts/mobileApi.v1.js';
 import { ok } from '../controllers/respond.js';
 import { NotFoundError } from '../errors/AppError.js';
 import type { GroundingArticle } from '../knowledge/service.js';
@@ -8,6 +8,7 @@ import { requirePermission, type DeniedAccessRecorder } from '../middlewares/aut
 import { validateBody } from '../middlewares/validate.js';
 import type { AuditService } from '../platform/auditService.js';
 import type { Logger } from '../config/logger.js';
+import { composeBrainAnswer, type BrainAnswer } from './answer.js';
 import type { GapStore } from './gaps.js';
 import { BrainIndex } from './index.js';
 import { runSiteSync, type SitePageStore } from './siteStore.js';
@@ -86,6 +87,29 @@ export class BrainService {
     }
   }
 
+  /** Resposta direta pelo trecho da nota (sem LLM); null = o cérebro não sabe com confiança. Nunca lança. */
+  async answer(question: string): Promise<BrainAnswer | null> {
+    try {
+      await this.refreshSite();
+      return composeBrainAnswer(question, this.index.search(question, 4));
+    } catch (error) {
+      this.logger.warn({ error_type: error instanceof Error ? error.name : typeof error }, 'brain answer failed');
+      return null;
+    }
+  }
+
+  async graph(): Promise<AssistantBrainGraph> {
+    await this.refreshSite();
+    return this.index.graph();
+  }
+
+  async note(id: string): Promise<AssistantBrainNoteDetail> {
+    await this.refreshSite();
+    const note = this.index.note(id);
+    if (!note) throw new NotFoundError('Nota não encontrada.', 'brain_note_not_found');
+    return note;
+  }
+
   /** Job diário `fecap-site-sync`: lê o que mudou no site da FECAP e atualiza o cérebro. */
   async syncSite(): Promise<Record<string, unknown>> {
     if (!this.site) return { skipped: true };
@@ -144,6 +168,15 @@ export function createBrainRouter(deps: { brain: BrainService; audit: AuditServi
     const status = typeof req.query.status === 'string' && STATUSES.has(req.query.status as AssistantKnowledgeGapStatus) ? (req.query.status as AssistantKnowledgeGapStatus) : undefined;
     const limit = Math.min(200, Math.max(1, Number(req.query.limit) || 50));
     ok(req, res, await deps.brain.overview({ status, limit }));
+  }));
+  // grafo e leitura das notas (visão estilo Obsidian no painel)
+  router.get('/api/assistant-brain/graph', deps.authed, can('kb:read:all'), wrap(async (req, res) => {
+    ok(req, res, await deps.brain.graph());
+  }));
+  router.get('/api/assistant-brain/note', deps.authed, can('kb:read:all'), wrap(async (req, res) => {
+    const id = typeof req.query.id === 'string' ? req.query.id : '';
+    if (!id || id.length > 300) throw new NotFoundError('Nota não encontrada.', 'brain_note_not_found');
+    ok(req, res, await deps.brain.note(id));
   }));
   router.patch('/api/assistant-brain/gaps/:id', deps.authed, can('kb:write'), validateBody(gapUpdateSchema), wrap(async (req, res) => {
     const id = String(req.params.id ?? '');

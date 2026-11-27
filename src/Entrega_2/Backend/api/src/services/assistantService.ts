@@ -24,6 +24,7 @@ import type { QueueAssistantSource } from '../assistant/queueResponders.js';
 import type { AgentService } from './agentService.js';
 import type { ConversationalComposer } from '../assistant/conversational.js';
 import type { GroundingArticle } from '../knowledge/service.js';
+import type { BrainAnswer } from '../brain/answer.js';
 import type { StudentService } from './studentService.js';
 
 export function newInteractionId(): string {
@@ -74,6 +75,28 @@ export function isConversationalEligible(intent: AssistantIntent, output: Respon
   return true;
 }
 // ---- end conversa natural
+
+// ---- cérebro: resposta direta (sem LLM)
+/** O cérebro da FECAP respondendo sozinho: trecho da nota do vault + fonte oficial. */
+export interface DirectBrain {
+  answer: (question: string) => Promise<BrainAnswer | null>;
+  /** guarda a dúvida que nem o cérebro soube responder (aprendizado pela equipe) */
+  recordGap: (question: string, channel: 'text' | 'voice') => void;
+}
+
+/** Resposta montada pelo trecho do cérebro; as notas próximas viram "saiba mais". */
+function brainOutput(answer: BrainAnswer, options: { talkToAsa: boolean }): ResponderOutput {
+  const related: AssistantNextAction[] = answer.related.map((title) => ({ type: 'ask', label: title.length > 40 ? `${title.slice(0, 39).trimEnd()}…` : title, text: title }));
+  return {
+    status: 'success',
+    title: answer.title,
+    message: answer.message,
+    speech: limitSpeech(answer.speech),
+    items: [],
+    nextActions: options.talkToAsa ? [...related, TALK_TO_ASA] : related,
+  };
+}
+// ---- end cérebro: resposta direta
 
 /** Hermes público: só perguntas (nada que leve a áreas logadas). */
 const PUBLIC_SUGGESTIONS: AssistantNextAction[] = SERVICE_SUGGESTIONS.filter((action) => action.type === 'ask' && !/falar com/i.test(action.text));
@@ -206,7 +229,24 @@ export class AssistantService {
     private readonly academicAvailable: () => boolean = () => true,
     /** conversa natural (Gemini); null = só regras */
     private readonly conversational: ConversationalLayer | null = null,
+    /** cérebro da FECAP respondendo direto quando nada acima respondeu (e o LLM não está disponível) */
+    private readonly brain: DirectBrain | null = null,
   ) {}
+
+  // ---- cérebro: resposta direta
+  /**
+   * Última tentativa antes do "não encontrei": o trecho da nota do cérebro que casa com a pergunta. Sem resposta
+   * confiável, a dúvida vai para as lacunas do painel (se o LLM respondeu, ele mesmo já registrou).
+   */
+  private async brainFallback(text: string, channel: 'text' | 'voice', ctx: RequestContext, logger?: Logger): Promise<BrainAnswer | null> {
+    if (!this.brain) return null;
+    const startedAt = Date.now();
+    const answer = await this.brain.answer(text).catch(() => null);
+    logger?.info({ correlation_id: ctx.correlationId, outcome: answer ? 'answered' : 'unanswered', brain_score: answer ? Math.round(answer.score * 10) / 10 : null, brain_duration_ms: Date.now() - startedAt }, 'assistant brain direct');
+    if (!answer) this.brain.recordGap(text, channel);
+    return answer;
+  }
+  // ---- end cérebro: resposta direta
 
   // ---- conversa natural (LLM)
   /**
@@ -424,6 +464,18 @@ export class AssistantService {
     output = natural.output;
     // ---- end conversa natural
 
+    // ---- cérebro: resposta direta (quando nem regras, nem artigos, nem LLM responderam)
+    let answeredByBrain = false;
+    if (!natural.used && interpretation.intent === 'unknown' && !interpretation.details.vagueReference) {
+      const direct = await this.brainFallback(request.text, request.inputType, ctx, logger);
+      if (direct) {
+        interpretation.intent = 'knowledge_question';
+        output = brainOutput(direct, { talkToAsa: true });
+        answeredByBrain = true;
+      }
+    }
+    // ---- end cérebro: resposta direta
+
     // sem fonte acadêmica, botões para telas de notas/frequência/disciplinas levariam a telas vazias
     if (!academicAvailable) output = { ...output, nextActions: withoutAcademicScreens(output.nextActions ?? []) };
 
@@ -458,7 +510,14 @@ export class AssistantService {
       createdAt: new Date().toISOString(),
       ...(output.sources && output.sources.length > 0 ? { sources: output.sources } : {}),
       ...(output.handoff ? { handoff: output.handoff } : {}),
-      provider: { id: this.ai?.selection.active ?? 'existing', label: natural.used && this.conversational ? this.conversational.label : (this.ai?.active.label ?? 'Regras do ASA Conecta (sem LLM)') },
+      provider: {
+        id: this.ai?.selection.active ?? 'existing',
+        label: natural.used && this.conversational
+          ? this.conversational.label
+          : answeredByBrain
+            ? 'Cérebro da FECAP — resposta documental (trecho da fonte oficial, sem IA generativa)'
+            : (this.ai?.active.label ?? 'Regras do ASA Conecta (sem LLM)'),
+      },
     };
 
     const totalDurationMs = Date.now() - startedAt;
@@ -549,6 +608,20 @@ export class AssistantService {
       return this.publicResponse(request, ctx, { intent: 'knowledge_question', confidence: result.confidence, ...publicFromOutput(knowledgeOutput(result, { nextActions: relatedActions(result) })) });
     }
 
+    // ---- cérebro: resposta direta (pergunta geral ou de procedimento sem artigo exato)
+    if (general || procedureWithoutArticle(interpretation, request.text, result)) {
+      const direct = await this.brainFallback(request.text, request.inputType, ctx);
+      if (direct) {
+        const output = brainOutput(direct, { talkToAsa: false });
+        return this.publicResponse(request, ctx, {
+          intent: 'knowledge_question', confidence: interpretation.confidence, status: 'success', title: output.title, message: output.message, speech: output.speech,
+          nextActions: output.nextActions && output.nextActions.length > 0 ? output.nextActions : PUBLIC_SUGGESTIONS,
+          providerLabel: 'Cérebro da FECAP — resposta documental (trecho da fonte oficial, sem IA generativa)',
+        });
+      }
+    }
+    // ---- end cérebro: resposta direta
+
     if (!general && procedureWithoutArticle(interpretation, request.text, result)) {
       return this.publicResponse(request, ctx, {
         intent: 'unknown', confidence: interpretation.confidence, status: 'abstained',
@@ -598,6 +671,8 @@ export class AssistantService {
       intent: AssistantIntent; confidence: number; status: AssistantResponse['status']; title: string; message: string; speech: string;
       items?: AssistantResponse['display']['items']; sources?: AssistantResponse['sources']; abstained?: boolean; abstentionReason?: string | null;
       nextActions?: AssistantNextAction[];
+      /** quem respondeu, quando não é o provedor padrão (ex.: resposta documental do cérebro) */
+      providerLabel?: string;
     },
   ): AssistantResponse {
     return {
@@ -608,7 +683,7 @@ export class AssistantService {
       requiresHumanValidation: false, abstained: input.abstained ?? false, abstentionReason: input.abstentionReason ?? null,
       runId: null, context: {}, createdAt: this.clock().toISOString(),
       ...(input.sources?.length ? { sources: input.sources } : {}),
-      provider: { id: this.ai?.selection.active ?? 'existing', label: this.ai?.active.label ?? 'Artigos publicados do ASA' },
+      provider: { id: this.ai?.selection.active ?? 'existing', label: input.providerLabel ?? this.ai?.active.label ?? 'Artigos publicados do ASA' },
     };
   }
 

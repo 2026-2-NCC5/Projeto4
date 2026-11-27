@@ -2538,7 +2538,7 @@ export interface AssistantBrainOverview {
     folders: Record<string, number>;
     /** links [[...]] sem nota correspondente */
     danglingLinks: string[];
-    /** a IA de linguagem natural está ligada (sem ela, o cérebro não é consultado) */
+    /** a IA de linguagem natural está ligada (sem ela, o cérebro responde direto com o trecho da nota) */
     llmEnabled: boolean;
     /** páginas do site da FECAP lidas pelo job diário (null = sincronização desligada) */
     site: { pages: number; lastFetchedAt: string | null } | null;
@@ -2554,6 +2554,47 @@ export interface AssistantKnowledgeGapUpdate {
   resolutionNote?: string | null;
 }
 // ---- end cérebro do assistente
+
+// ---- grafo do cérebro (v1.12)
+/** v1.12: uma nota do cérebro como bolinha do grafo (estilo Obsidian). */
+export interface AssistantBrainGraphNode {
+  /** caminho no vault, sem ".md" (ex.: "FECAP/Campus Liberdade") */
+  id: string;
+  title: string;
+  /** pasta do vault ("FECAP", "Site da FECAP/Notícias"…) — vira a cor do grupo */
+  folder: string;
+  tags: string[];
+  /** nota gerada do site da FECAP (true) ou escrita e revisada pela equipe (false) */
+  generated: boolean;
+  updated: string | null;
+}
+
+/** v1.12: GET /api/assistant-brain/graph — todas as notas e as ligações [[...]] entre elas. */
+export interface AssistantBrainGraph {
+  hash: string;
+  nodes: AssistantBrainGraphNode[];
+  /** uma ligação por par de notas (sem direção repetida) */
+  edges: Array<{ source: string; target: string }>;
+}
+
+/** v1.12: GET /api/assistant-brain/note?id=… — a nota inteira, com links resolvidos e backlinks. */
+export interface AssistantBrainNoteDetail {
+  id: string;
+  title: string;
+  folder: string;
+  aliases: string[];
+  tags: string[];
+  sourceLabel: string | null;
+  sourceUrl: string | null;
+  updated: string | null;
+  generated: boolean;
+  sections: Array<{ anchor: string; heading: string; text: string }>;
+  /** links [[...]] da nota; id null = assunto citado que ainda não tem nota */
+  links: Array<{ label: string; id: string | null }>;
+  /** notas que apontam para esta */
+  backlinks: Array<{ id: string; title: string }>;
+}
+// ---- end grafo do cérebro
 
 // ---- avisos e push (v1.11)
 /** v1.11: POST /api/notifications/broadcast — aviso da equipe para todos os alunos ativos (central + push). */

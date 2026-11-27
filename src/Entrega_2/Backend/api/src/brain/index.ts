@@ -1,4 +1,5 @@
 import { canonicalSearchText, SHORT_TERMS, STOPWORDS } from '../knowledge/text.js';
+import type { AssistantBrainGraph as BrainGraph, AssistantBrainNoteDetail as BrainNoteDetail } from '../contracts/mobileApi.v1.js';
 import type { GroundingArticle } from '../knowledge/service.js';
 import type { BrainNote, BrainSection, BrainSnapshot } from './vault.js';
 
@@ -10,7 +11,11 @@ import type { BrainNote, BrainSection, BrainSnapshot } from './vault.js';
  */
 
 /** "FECAP" e "ASA" são palavras vazias para a base de artigos, mas aqui identificam as notas institucionais. */
-const BRAIN_STOPWORDS = new Set([...STOPWORDS].filter((word) => word !== 'fecap' && word !== 'asa'));
+const BRAIN_STOPWORDS = new Set([
+  ...[...STOPWORDS].filter((word) => word !== 'fecap' && word !== 'asa'),
+  // palavras de pergunta e de conversa que não dizem o assunto ("quantos semestres…", "me explica…")
+  ...'quanto quantos quanta quantas existe existem algum alguma alguns algumas tambem entao qualquer sabe sabia diga diz fala fale falar explica explique explicar conta conte contar gente voces seria sera'.split(' '),
+]);
 
 const K1 = 1.2;
 const B = 0.75;
@@ -26,6 +31,8 @@ const BODY_MAX = 2_800;
 const GENERATED_FACTOR = 0.85;
 
 function stem(term: string): string {
+  // radical de 5 letras ("semestre" = "semestres"); "estacion…" não pode virar "estac", como "estação"
+  if (term.startsWith('estacion')) return 'estcn';
   if (term.length > 5) return term.slice(0, 5);
   return term.length === 5 ? term.slice(0, 4) : term;
 }
@@ -49,6 +56,12 @@ export interface BrainHit {
   note: BrainNote;
   sections: BrainSection[];
   score: number;
+  /** seção que mais casou com a pergunta */
+  best: BrainSection;
+  /** fração dos termos da pergunta (ou sinônimos) presentes na melhor seção, 0–1 */
+  coverage: number;
+  /** a pergunta citou um apelido inteiro da nota */
+  aliasHit: boolean;
 }
 
 export interface BrainStats {
@@ -72,6 +85,10 @@ const SYNONYM_GROUPS = [
   ['inici', 'comec'],
   ['prazo', 'data', 'quando'],
   ['desco', 'bolsa'],
+  ['restaurante', 'refeitorio', 'cantina', 'lanchonete', 'comida', 'almoco'],
+  ['estacionamento', 'carro', 'bicicletario', 'transporte'],
+  ['trancamento', 'trancar', 'tranco', 'destrancamento', 'cancelamento'],
+  ['wifi', 'rede'],
 ].map((group) => group.map((term) => stem(term)));
 const SYNONYM_WEIGHT = 0.5;
 /** Termo da pergunta no título da nota: sinal forte de que a nota é sobre aquilo. */
@@ -139,9 +156,10 @@ export class BrainIndex {
     const normalized = ` ${keyOf(question).replace(/[^a-z0-9]+/g, ' ')} `;
     const aliasHits = new Set(this.aliasKeys.filter(({ key }) => normalized.includes(` ${key.replace(/[^a-z0-9]+/g, ' ').trim()} `)).map(({ note }) => note.id));
 
-    const perNote = new Map<string, { note: BrainNote; scored: Array<{ section: BrainSection; score: number }> }>();
+    const perNote = new Map<string, { note: BrainNote; scored: Array<{ section: BrainSection; score: number; coverage: number }> }>();
     for (const entry of this.sections) {
       let score = 0;
+      let coverage = 0;
       for (const [term, weight] of weights) {
         const freq = entry.tf.get(term);
         if (!freq) continue;
@@ -150,13 +168,18 @@ export class BrainIndex {
       if (score > 0) {
         // seção que cobre TODOS os termos (ou sinônimos) vence a que repete muito um só deles
         const covered = terms.filter((term) => entry.tf.has(term) || (synonymsOf.get(term) ?? []).some((synonym) => entry.tf.has(synonym))).length;
+        // cobertura ponderada pela raridade: faltar "chamada" em "segunda chamada de prova" pesa mais que faltar "prova"
+        const weightOf = (term: string): number => idf.get(term) ?? 0;
+        const totalWeight = terms.reduce((sum, term) => sum + weightOf(term), 0);
+        const coveredWeight = terms.filter((term) => entry.tf.has(term) || (synonymsOf.get(term) ?? []).some((synonym) => entry.tf.has(synonym))).reduce((sum, term) => sum + weightOf(term), 0);
+        coverage = totalWeight > 0 ? coveredWeight / totalWeight : covered / terms.length;
         score = score * (0.4 + (0.6 * covered) / terms.length) + terms.filter((term) => entry.titleTerms.has(term)).length * TITLE_TERM_BONUS;
       }
       if (aliasHits.has(entry.note.id)) score += ALIAS_PHRASE_BONUS;
       if (score <= 0) continue;
       if (entry.note.generated) score *= GENERATED_FACTOR;
       const bucket = perNote.get(entry.note.id) ?? { note: entry.note, scored: [] };
-      bucket.scored.push({ section: entry.section, score });
+      bucket.scored.push({ section: entry.section, score, coverage });
       perNote.set(entry.note.id, bucket);
     }
 
@@ -180,12 +203,12 @@ export class BrainIndex {
     return ranked
       .filter((item) => item.score >= best * RELATIVE_CUTOFF)
       .slice(0, limit)
-      .map(({ note, scored, score }) => {
+      .map(({ note, scored, score }): BrainHit => {
         // a melhor seção, a segunda se for quase tão boa, e a introdução da nota para dar contexto
         const chosen = scored.filter((entry, index) => index === 0 || entry.score >= scored[0]!.score * 0.6).slice(0, 2).map((entry) => entry.section);
         const intro = note.sections[0]!;
         const sections = chosen.includes(intro) ? chosen : [intro, ...chosen];
-        return { note, sections: note.sections.filter((section) => sections.includes(section)), score };
+        return { note, sections: note.sections.filter((section) => sections.includes(section)), score, best: scored[0]!.section, coverage: scored[0]!.coverage, aliasHit: aliasHits.has(note.id) };
       });
   }
 
@@ -208,6 +231,47 @@ export class BrainIndex {
     });
   }
 
+  /** Visão de grafo (estilo Obsidian): uma bolinha por nota e uma linha por [[link]] resolvido. */
+  graph(): BrainGraph {
+    const nodes = this.snapshot.notes.map((note) => ({ id: note.id, title: note.title, folder: folderOf(note), tags: note.tags, generated: Boolean(note.generated), updated: note.updated }));
+    const seen = new Set<string>();
+    const edges: BrainGraph['edges'] = [];
+    for (const note of this.snapshot.notes) {
+      for (const link of note.links) {
+        const target = this.resolve(link);
+        if (!target || target.id === note.id) continue;
+        const key = [note.id, target.id].sort().join('\u0000');
+        if (seen.has(key)) continue;
+        seen.add(key);
+        edges.push({ source: note.id, target: target.id });
+      }
+    }
+    return { hash: this.snapshot.hash, nodes, edges };
+  }
+
+  /** Nota inteira para leitura no painel, com os links resolvidos e quem aponta para ela (backlinks). */
+  note(id: string): BrainNoteDetail | null {
+    const note = this.snapshot.notes.find((item) => item.id === id);
+    if (!note) return null;
+    const backlinks = this.snapshot.notes
+      .filter((other) => other.id !== note.id && other.links.some((link) => this.resolve(link)?.id === note.id))
+      .map((other) => ({ id: other.id, title: other.title }));
+    return {
+      id: note.id,
+      title: note.title,
+      folder: folderOf(note),
+      aliases: note.aliases,
+      tags: note.tags,
+      sourceLabel: note.sourceLabel,
+      sourceUrl: note.sourceUrl,
+      updated: note.updated,
+      generated: Boolean(note.generated),
+      sections: note.sections.map((section) => ({ anchor: section.anchor, heading: section.heading, text: section.text })),
+      links: [...new Set(note.links)].map((label) => ({ label, id: this.resolve(label)?.id ?? null })),
+      backlinks,
+    };
+  }
+
   stats(): BrainStats {
     const folders: Record<string, number> = {};
     const dangling = new Set<string>();
@@ -222,6 +286,12 @@ export class BrainIndex {
     }
     return { hash: this.snapshot.hash, notes: this.snapshot.notes.length, sections: this.sections.length, links, folders, danglingLinks: [...dangling].sort() };
   }
+}
+
+/** Pasta da nota no vault ("Site da FECAP/Notícias", "FECAP"…); notas na raiz ficam em "(raiz)". */
+export function folderOf(note: BrainNote): string {
+  const parts = note.id.split('/');
+  return parts.length > 1 ? parts.slice(0, -1).join('/') : '(raiz)';
 }
 
 export function brainSlug(note: BrainNote): string {

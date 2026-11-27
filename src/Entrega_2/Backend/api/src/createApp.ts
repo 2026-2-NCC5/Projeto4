@@ -177,6 +177,8 @@ export function createApp(deps: AppDeps): Express {
         }
       : null,
     // ---- end conversa natural
+    // ---- cérebro: responde direto pelo trecho da nota quando nada acima respondeu (sempre ligado)
+    { answer: (question: string) => brain.answer(question), recordGap: (question: string, channel: 'text' | 'voice') => brain.recordGap(question, channel) },
   );
 
   // ---- support (Atendimento)
