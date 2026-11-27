@@ -2,8 +2,6281 @@
 import type { BrainSnapshot } from './vault.js';
 
 export const BRAIN_SNAPSHOT: BrainSnapshot = {
- "hash": "f5e8c8ce9240f4cf",
+ "hash": "2d294030952ac4a7",
  "notes": [
+  {
+   "id": "ASA/ASA - Área do Sucesso Alvarista",
+   "title": "ASA - Área do Sucesso Alvarista",
+   "aliases": [
+    "ASA",
+    "o que é o ASA",
+    "Área do Sucesso Alvarista",
+    "Atendimento e Sucesso do Aluno",
+    "sucesso alvarista",
+    "cesta de serviços do ASA",
+    "falar com o ASA",
+    "atendimento ao aluno"
+   ],
+   "tags": [
+    "asa",
+    "atendimento",
+    "cesta-de-servicos"
+   ],
+   "sourceLabel": "Site da FECAP — ASA (Área do Sucesso Alvarista)",
+   "sourceUrl": "https://www.fecap.br/asa/",
+   "updated": "2026-11-26",
+   "links": [
+    "Documentos Acadêmicos",
+    "Serviços Acadêmicos",
+    "Serviços Financeiros",
+    "Documentos Financeiros",
+    "Bolsas e Financiamentos",
+    "Biblioteca",
+    "Empregabilidade & Carreira",
+    "Plataformas Digitais",
+    "Infraestrutura Física e Tecnológica",
+    "Aprendizagem",
+    "Eventos",
+    "Boas Práticas",
+    "Segurança",
+    "Dados Cadastrais",
+    "Reservas e Recursos",
+    "Transporte e Estacionamento",
+    "Serviços Para Candidatos",
+    "Campus Liberdade",
+    "Biblioteca Paulo Ernesto Tolle",
+    "Canais de atendimento da FECAP",
+    "Ouvidoria"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O ASA (Área do Sucesso Alvarista) é o programa da FECAP que acolhe e acompanha os estudantes ao longo de toda a jornada na instituição, com foco em acolhimento, permanência e sucesso do estudante. É formado por uma equipe multidisciplinar e atende estudantes e ex-alunos do Colégio, da Graduação, da Pós-Graduação e do Mestrado (\"uma vez Alvarista, eterno(a) Alvarista\")."
+    },
+    {
+     "anchor": "o-que-o-asa-faz",
+     "heading": "O que o ASA faz",
+     "text": "O ASA oferece a Cesta de Serviços, que ajuda na adaptação ao mundo universitário, ao trabalho e ao relacionamento com a sociedade. Os serviços estão organizados nestas categorias:\n- Documentos Acadêmicos (atestados, diploma, carteirinha, crachá)\n- Serviços Acadêmicos (faltas, provas, disciplinas, destrancamento de curso e de DP)\n- Serviços Financeiros e Documentos Financeiros (boletos, negociação, restituições, declarações e quitação)\n- Bolsas e Financiamentos\n- Biblioteca\n- Empregabilidade & Carreira\n- Plataformas Digitais (Portal do Aluno, Moodle, Office 365)\n- Infraestrutura Física e Tecnológica (Wi-Fi, laboratórios, empréstimo de equipamentos, refeitório, bicicletário)\n- Aprendizagem, Eventos, Boas Práticas, Segurança, Dados Cadastrais\n- Reservas e Recursos, Transporte e Estacionamento e Serviços Para Candidatos"
+    },
+    {
+     "anchor": "horario-e-canais-de-atendimento-do-asa",
+     "heading": "Horário e canais de atendimento do ASA",
+     "text": "- Horário (a maioria dos serviços): segunda a sexta, das 7h00 às 21h00, e sábado, das 9h00 às 12h30.\n- Atendimento presencial: na Área do Sucesso Alvarista, no Campus Liberdade.\n- Telefone: (11) 3272-2222.\n- WhatsApp: (11) 94018-5617.\n- E-mail para estudantes: sucessoalvarista@fecap.br.\n- Serviços da Biblioteca têm horário próprio; veja Biblioteca Paulo Ernesto Tolle.\n\nOutros canais da instituição estão em Canais de atendimento da FECAP; reclamações que não foram resolvidas pelos canais regulares vão para a Ouvidoria."
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem",
+   "title": "Aprendizagem",
+   "aliases": [
+    "serviços de aprendizagem do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Aprendizagem",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Agenda dos Plantões de Dúvidas – Monitoria",
+    "Coach Acadêmico",
+    "English Corner",
+    "Laboratório de Métodos Quantitativos",
+    "Laboratórios de Português e Inglês",
+    "Nivelamento"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 6 serviços."
+    },
+    {
+     "anchor": "servicos-de-aprendizagem",
+     "heading": "Serviços de Aprendizagem",
+     "text": "- Agenda dos Plantões de Dúvidas – Monitoria\n- Coach Acadêmico\n- English Corner\n- Laboratório de Métodos Quantitativos\n- Laboratórios de Português e Inglês\n- Nivelamento"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem/Agenda dos Plantões de Dúvidas – Monitoria",
+   "title": "Agenda dos Plantões de Dúvidas – Monitoria",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "aprendizagem"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Agenda dos Plantões de Dúvidas – Monitoria",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/agenda-dos-plantoes-de-duvidas-monitoria-e-laboratorio-de-metodos-quantitativos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Aprendizagem"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Participe dos Plantões de Monitoria e tenha todas as suas dúvidas esclarecidas! Durante esses plantões, que este semestre iniciam no 16/03/2026, estudantes dos cursos de Graduação oferecem suporte, respondendo a todas as perguntas que possam surgir. O melhor de tudo é que não é necessário se inscrever, basta comparecer nos dias e horários definidos. Não perca essa oportunidade de aprimorar seu aprendizado e alcançar seus objetivos acadêmicos!\nConfira aqui (https://www.fecap.br/wp-content/uploads/2026/05/Agenda-da-Monitoria-2026-1-v7.pdf) as disciplinas e a agenda dos plantões ou acesse o Moodle (https://ead.graduacao.fecap.br/) > Programa de Monitoria.\nQualquer dúvida, entre em contato por meio dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-agenda-dos-plantoes-de-duvidas-monitoria",
+     "heading": "Condições para Agenda dos Plantões de Dúvidas – Monitoria",
+     "text": "A participação nos plantões é livre, ou seja, não é necessária qualquer inscrição, o/a discente pode frequentá-los nos dias e horários que preferir e não é limitado o número de frequência semanal."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-agenda-dos-plantoes-de-duvidas-monitoria",
+     "heading": "Onde e quando pedir Agenda dos Plantões de Dúvidas – Monitoria",
+     "text": "- Setor responsável: Pró-Reitoria de Extensão e Desenvolvimento\n- Onde: Diversos (conferir a programação)\n- Horário: Segunda a Sábado (Horários diversos, confira a programação)\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem/Coach Acadêmico",
+   "title": "Coach Acadêmico",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "aprendizagem"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Coach Acadêmico",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/coach-academico/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Aprendizagem"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Crie hábitos benéficos de estudos para a realização dos seus sonhos e do seu futuro! Com o coach acadêmico, você será um personagem ativo na construção da sua carreira.\n\nPara fazer seu agendamento, basta entrar no Portal do Aluno > URLs externa > “FECAP + Desenvolvimento” e em reservas, selecione a agenda da Profa. Maria de Lurdes.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-coach-academico",
+     "heading": "Condições para Coach Acadêmico",
+     "text": "O agendamento é destinado para alunos e ex-alunos FECAP. Acesso regular ao Portal do Aluno."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-coach-academico",
+     "heading": "Onde e quando pedir Coach Acadêmico",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem/English Corner",
+   "title": "English Corner",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "aprendizagem"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — English Corner",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/english-corner/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Aprendizagem"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O English Corner é um programa que oferece aulas de conversação em inglês para estudantes, funcionários e professores da FECAP, independentemente do nível de proficiência no idioma. É uma oportunidade imperdível para aqueles que desejam praticar a língua, compartilhar conhecimentos e conhecer novas pessoas, sempre conversando em inglês!\n\nDurante a dinâmica, os participantes são convidados a participar de cinco atividades de 15 minutos cada, nas quais têm a oportunidade de discutir temas variados, como experiências passadas, estratégias de aprendizagem, carreira profissional, vivências inusitadas e muito mais. Além disso, os participantes poderão aprender novos métodos de aprendizado e aprimorar suas habilidades de comunicação em inglês.\n\nParticipe do English Corner e comece a construir sua confiança e fluência em inglês!\n\nInício: 20 de fevereiro.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-english-corner",
+     "heading": "Condições para English Corner",
+     "text": "Qualquer pessoa pode participar, independentemente do nível do idioma"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-english-corner",
+     "heading": "Onde e quando pedir English Corner",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Sala Empreendedorismo – Bloco E\n- Horário: Sextas-feiras, em dois horários: das 11h30 às 12h30 e das 18h às 19h\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem/Laboratório de Métodos Quantitativos",
+   "title": "Laboratório de Métodos Quantitativos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "aprendizagem"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Laboratório de Métodos Quantitativos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/o-laboratorio-de-metodos-quantitativos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Aprendizagem"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O laboratório é voltado a todos os alunos da FECAP e oferece suporte acadêmico gratuito, com acompanhamento de professores especializados. O objetivo é fortalecer a aprendizagem e auxiliar os estudantes no desenvolvimento das competências necessárias para as disciplinas quantitativas.\n\nDurante os plantões, os professores poderão:\n\nTirar dúvidas e revisar conteúdos de Cálculo I, Cálculo II e Álgebra Linear;\nAuxiliar na resolução de exercícios e atividades das disciplinas;\nOferecer apoio às atividades do Nivelamento I e II de Matemática.\n\nSegundas e terças-feiras\n11h20 às 13h – Prof. Jefferson Nery\n\nSegundas-feiras\n17h às 18h40 – Prof. Jefferson Nery\n\nTerças e quintas-feiras\n17h às 18h40 – Prof. Aimberê Galdino\n\nSábados\n9h às 12h20 e 13h às 14h40 – Prof. Aimberê Galdino\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-laboratorio-de-metodos-quantitativos",
+     "heading": "Condições para Laboratório de Métodos Quantitativos",
+     "text": "É gratuito e todos(as) os(as) estudantes da FECAP podem participar!\nNão é preciso fazer inscrição, basta aparecer nos dias e horários marcados!"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-laboratorio-de-metodos-quantitativos",
+     "heading": "Onde e quando pedir Laboratório de Métodos Quantitativos",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Sala 503 - Bloco A\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem/Laboratórios de Português e Inglês",
+   "title": "Laboratórios de Português e Inglês",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "aprendizagem"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Laboratórios de Português e Inglês",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/laboratorios-de-portugues-e-ingles/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Aprendizagem"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Os Laboratórios de Português e Inglês da FECAP são aulas gratuitas destinadas a todos os membros da Comunidade Alvarista que desejam aprimorar seus conhecimentos nas duas línguas.\n\nO objetivo dos laboratórios é auxiliar os participantes a resolverem necessidades específicas de aprendizagem, por meio de exercícios orais e escritos que abrangem gramática, vocabulário e pronúncia. Durante as aulas, os alunos têm a oportunidade de trabalhar com temas relevantes e atuais, relacionados aos seus interesses pessoais e profissionais.\n\nParticipe dos Laboratórios de Português e Inglês da FECAP e melhore sua comunicação nas duas línguas!\nEm caso de dúvidas, entre em contato conosco por meio de nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-laboratorios-de-portugues-e-ingles",
+     "heading": "Condições para Laboratórios de Português e Inglês",
+     "text": "Gratuitas para toda a Comunidade Alvarista: estudantes, professores e funcionários interessados em entender melhor sobre algum assunto ou regra gramatical relacionada às duas línguas."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-laboratorios-de-portugues-e-ingles",
+     "heading": "Onde e quando pedir Laboratórios de Português e Inglês",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Sala de reuniões – 4º andar – Bloco B\n- Horário: Segundas-feiras, das 11h30 às 12h30 Início: 02 de março | Sextas-feiras, das 17h00 às 18h00 Início: 06 de março\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Aprendizagem/Nivelamento",
+   "title": "Nivelamento",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "aprendizagem"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Nivelamento",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/nivelamento/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Aprendizagem"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O Programa de Nivelamento da graduação tem como objetivo nivelar conhecimentos em Língua Portuguesa e Matemática dos estudantes dos primeiros e segundos semestres, contribuindo para seu progresso acadêmico. As disciplinas são ofertadas com aulas presenciais e educação a distância (EaD) por meio da plataforma Moodle. Os alunos recebem horas complementares e a oportunidade de obter até 1 ponto na média de todas as disciplinas obrigatórias.\nNão é necessária inscrição, todos os alunos dos primeiros e segundos semestres são automaticamente matriculados. O programa é dividido em Nivelamento I e II para as disciplinas de Língua Portuguesa e Matemática, e o conteúdo programático é detalhado para cada disciplina.\nSaiba mais no Regulamento do Programa de Nivelamento I (https://www.fecap.br/wp-content/uploads/2026/02/Regulamento-Nivelamento-I-2026-1-1.pdf) (para estudantes do 1º Semestre), no Regulamento do Programa de Nivelamento II (https://www.fecap.br/wp-content/uploads/2026/02/Regulamento-Nivelamento-II-2026-1-1.pdf) (para estudantes do 2º Semestre) ou pelo Moodle (https://ead.graduacao.fecap.br/).\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-nivelamento",
+     "heading": "Condições para Nivelamento",
+     "text": "Estarão aptos a participar do Programa somente os alunos/as alunas regularmente matriculados/matriculadas no 1º semestre, para o Nivelamento I, ou no 2º semestre, para o Nivelamento II, da Graduação.\nNão é necessário fazer inscrição."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-nivelamento",
+     "heading": "Onde e quando pedir Nivelamento",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Verificar na disciplina direto pelo Moodle\n- Horário: Verificar diretamente no Regulamento\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca",
+   "title": "Biblioteca",
+   "aliases": [
+    "serviços de biblioteca do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Biblioteca",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Acesso à Biblioteca Digital Catalogus",
+    "Acesso a Obras Raras",
+    "Bibliotroca – Feira de Troca de Livros",
+    "Cadastro de Alumni Alvarista (Ex-aluno)",
+    "Cadastro de Senha",
+    "Cópia de Documentos Técnico-Científicos (COMUT)",
+    "Devolução de Materiais",
+    "Doações de Livros para a Biblioteca",
+    "Empréstimo de Materiais",
+    "Empréstimo entre Bibliotecas",
+    "Guarda-volumes",
+    "Levantamento Bibliográfico",
+    "Orientações a Recursos de Pesquisas",
+    "Orientações às Normas ABNT APA",
+    "Pagamento de Multas",
+    "Renovação de Materiais",
+    "Reserva de Co-labs",
+    "Reserva de Materiais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 18 serviços."
+    },
+    {
+     "anchor": "servicos-de-biblioteca",
+     "heading": "Serviços de Biblioteca",
+     "text": "- Acesso à Biblioteca Digital Catalogus\n- Acesso a Obras Raras\n- Bibliotroca – Feira de Troca de Livros\n- Cadastro de Alumni Alvarista (Ex-aluno)\n- Cadastro de Senha\n- Cópia de Documentos Técnico-Científicos (COMUT)\n- Devolução de Materiais\n- Doações de Livros para a Biblioteca\n- Empréstimo de Materiais\n- Empréstimo entre Bibliotecas\n- Guarda-volumes\n- Levantamento Bibliográfico\n- Orientações a Recursos de Pesquisas\n- Orientações às Normas ABNT APA\n- Pagamento de Multas\n- Renovação de Materiais\n- Reserva de Co-labs\n- Reserva de Materiais"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Acesso à Biblioteca Digital Catalogus",
+   "title": "Acesso à Biblioteca Digital Catalogus",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso à Biblioteca Digital Catalogus",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-a-biblioteca-virtual-cengage/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "A Biblioteca Digital Catalogus é um acervo de e-books disponíveis para todos os alunos, professores e funcionários. Nela, você terá acesso a até 5 títulos por vez, sendo cada título com acesso por 7 dias.\n\nNão sabe como acessar? Vamos descomplicar para você! Acesse Portal FECAP / Sites / Biblioteca / Acervos Digitais > Biblioteca Digital Catalogus > Escolha a Área do Conhecimento > Busque na lista o título do seu interesse > Clique no link > Faça o login com Matrícula + Senha da Biblioteca > Insira um e-mail para cadastro > Preencha com seus dados > Clique em “Ativar” em seguida “Começar a Leitura” > Inicie a sua leitura.\n\nEm caso de dúvidas, entre em contato com o ASA por meio de nossos canais de atendimento e nós iremos te orientar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-a-biblioteca-digital-catalogus",
+     "heading": "Onde e quando pedir Acesso à Biblioteca Digital Catalogus",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Terminais de Pesquisa da Biblioteca (6o andar - Bloco E)\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Acesso a Obras Raras",
+   "title": "Acesso a Obras Raras",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso a Obras Raras",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-a-obras-raras/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você sabia que, na FECAP, é possível ter acesso a obras raras? Demais, não é?! Para isso, basta verificar a disponibilidade do livro no Catálogo On-line da Biblioteca e agendar o acesso ao material físico.\n\nPorém, não é permitido levar a obra para casa, fazer fotocópias, manusear o material sem luvas e máscara, tirar fotos com flash ou comer e beber enquanto estiver folheando o livro.\n\nAproveite a leitura e desfrute da oportunidade de ter contato com obras tão especiais!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-a-obras-raras",
+     "heading": "Onde e quando pedir Acesso a Obras Raras",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Bibliotroca – Feira de Troca de Livros",
+   "title": "Bibliotroca – Feira de Troca de Livros",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bibliotroca – Feira de Troca de Livros",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bibliotroca-feira-de-troca-de-livros/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você já conhece a Bibliotroca? Esse é um evento incrível que permite dar um novo destino aos livros que estão parados em sua casa, além de proporcionar momentos de troca de histórias e experiências com amigos e professores.\n\nA Feira de troca de livros acontece anualmente no pátio da FECAP – Campus Liberdade. Participar é simples: basta trazer obras em bom estado e efetuar a troca de um livro por outro.\n\nNão perca esta chance! Esperamos por você para celebrar o amor pela leitura e pelo compartilhamento de conhecimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bibliotroca-feira-de-troca-de-livros",
+     "heading": "Onde e quando pedir Bibliotroca – Feira de Troca de Livros",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Pátio da FECAP, Campus Liberdade.\n- Horário: Das 09h às 12h e das 17h às 21h, conforme calendário.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Cadastro de Alumni Alvarista (Ex-aluno)",
+   "title": "Cadastro de Alumni Alvarista (Ex-aluno)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cadastro de Alumni Alvarista (Ex-aluno)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cadastro-de-alumni-alvarista-ex-aluno/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Uma vez Alvarista, sempre Alvarista! Como ex-aluno da FECAP, você tem direito a usufruir dos programas, recursos e serviços da Instituição. Incrível, não é mesmo? Se você deseja continuar aproveitando as excelentes leituras da Biblioteca, basta solicitar seu cadastro de Alumni Alvarista e preencher o formulário presente no site (https://forms.office.com/Pages/ResponsePage.aspx?id=jOApPoUwY0OqkRcT3alDihcyvB4ZavNInqfdZYPItuBUMzdFQklIWlEyRllHUks0UlRZUVgwMlBQRS4u).\n\nO cadastro é válido por 6 meses e permite que você retire até 2 materiais, com empréstimo de 7 dias cada. Será um prazer te receber novamente e continuar fortalecendo essa conexão entre você e a FECAP.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cadastro-de-alumni-alvarista-ex-aluno",
+     "heading": "Onde e quando pedir Cadastro de Alumni Alvarista (Ex-aluno)",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6o andar Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h30 | Sábados, das 8h às 16h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Cadastro de Senha",
+   "title": "Cadastro de Senha",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cadastro de Senha",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cadastro-de-senha/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Ainda não possui uma senha de acesso aos serviços da Biblioteca? Não se preocupe, solicitar é muito fácil! Basta comparecer ao balcão da Biblioteca, no 6º andar do Bloco E, e informar seu nome completo e número de matrícula da FECAP. Em instantes, sua senha será cadastrada e você poderá desfrutar de todos os serviços disponíveis.\n\nCaso queira alterar sua senha, é só acessar o site da Biblioteca (https://www.fecap.br/biblioteca/), inserir sua matrícula e senha, ir em Perfil de Usuário e fazer a alteração. Não perca mais tempo e tenha acesso aos acervos da Biblioteca de forma rápida e fácil.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cadastro-de-senha",
+     "heading": "Onde e quando pedir Cadastro de Senha",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Cópia de Documentos Técnico-Científicos (COMUT)",
+   "title": "Cópia de Documentos Técnico-Científicos (COMUT)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cópia de Documentos Técnico-Científicos (COMUT)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/copia-de-documentos-tecnico-cientificos-comut/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer enriquecer ainda mais os seus projetos e embasar seus argumentos? Então, se liga nesta dica: com o serviço pago de COMUT você pode solicitar fotocópias de documentos disponíveis em bibliotecas brasileiras e estrangeiras. Tenha acesso a artigos, teses, dissertações, anais de congressos nacionais e internacionais e capítulos de livros.\n\nAcesse o portal Requerimento/ Cópia de Documentos Técnico-Científicos (COMUT) (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/12/306)e faça a requisição. Caso prefira, entre em contato pelos canais de atendimento do ASA e nós iremos te ajudar.\n\nAh, e para agilizar o serviço tenha em mãos os seguintes dados: título, autor, ano de publicação, volume, número e título do periódico.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-copia-de-documentos-tecnico-cientificos-comut",
+     "heading": "Onde e quando pedir Cópia de Documentos Técnico-Científicos (COMUT)",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Devolução de Materiais",
+   "title": "Devolução de Materiais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Devolução de Materiais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/devolucao-de-materiais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Devolver os materiais da Biblioteca é muito simples! Além de poder realizar a entrega no Balcão de Atendimento (segunda a sexta-feira, das 7h30 às 21h50, e sábado, das 8h às 16h50), você também tem à disposição as caixas de devolução (segunda a sexta, 07h às 23h, e sábado, das 7h às 18h), junto às catracas do térreo e no 7º andar do Bloco E.\n\nAtenção: verifique o prazo de devolução para evitar multas e garantir a utilização de todos os serviços da Biblioteca.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-devolucao-de-materiais",
+     "heading": "Onde e quando pedir Devolução de Materiais",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca: 6° andar, Bloco E | Caixa de Devolução: 7º andar do bloco E e junto às catracas.\n- Horário: Balcão: Segunda a sexta, das 7h30 às 21h50 e sábado, das 8h às 16h50. | Caixas de Devolução: Segunda a sexta, das 07h às 23h e sábado, das 7h às 18h.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Doações de Livros para a Biblioteca",
+   "title": "Doações de Livros para a Biblioteca",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Doações de Livros para a Biblioteca",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/doacoes-de-livros-para-a-biblioteca/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Possui um livro bacana que está parado em sua prateleira? Doe para a Biblioteca!\n\nA Biblioteca aceita doações de alunos, ex-alunos, empresas e Instituições de Ensino. Os materiais passarão por avaliação da Biblioteca e, a partir disso, poderão ser incorporados ao acervo, doados, descartados ou devolvidos ao doador.\n\nEnvie um e-mail para biblioteca@fecap.br com a relação dos materiais que deseja doar, informando autor, título e data da publicação. Caso prefira, procure um agente de sucesso em um de nossos canais.\n\nVamos adorar te ajudar a compartilhar livros e conhecimento!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-doacoes-de-livros-para-a-biblioteca",
+     "heading": "Onde e quando pedir Doações de Livros para a Biblioteca",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Empréstimo de Materiais",
+   "title": "Empréstimo de Materiais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Empréstimo de Materiais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/emprestimo-de-materiais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer levar para casa algum material do acervo da Biblioteca? Você pode!\n\nVerifique no catálogo on-line se o livro está disponível, compareça à Biblioteca com número de matrícula e senha e, mediante as regras de empréstimo, retire o material.\n\nE o melhor, você pode realizar o empréstimo de livros, revistas, jornais, DVD, CD, dissertações, teses, relatórios de empresas, normas técnicas, dicionários e gibis.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-emprestimo-de-materiais",
+     "heading": "Onde e quando pedir Empréstimo de Materiais",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Empréstimo entre Bibliotecas",
+   "title": "Empréstimo entre Bibliotecas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Empréstimo entre Bibliotecas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/emprestimo-entre-bibliotecas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja consultar uma obra de outro acervo? Faremos a ponte entre você e as Bibliotecas de Instituições Conveniadas.\n\nPara isso, entre em contato por meio dos canais de atendimento do ASA, com o título do material e a instituição a qual ele pertence. Estaremos disponíveis para te ajudar!\n\nLembre-se: você será responsável por retirar e devolver o material emprestado à biblioteca a qual solicitou.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-emprestimo-entre-bibliotecas",
+     "heading": "Onde e quando pedir Empréstimo entre Bibliotecas",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Guarda-volumes",
+   "title": "Guarda-volumes",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Guarda-volumes",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/guarda-volumes/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Aproveite sua leitura com tranquilidade e sem pesos extras.\n\nA Biblioteca disponibiliza guarda-volumes para armazenamento de bolsas, mochilas e outros materiais, para você usufruir por até 8 horas e enquanto estiver no recinto. Basta comparecer ao balcão de atendimento da Biblioteca, informar sua matrícula e retirar as chaves.\n\nBoa leitura!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-guarda-volumes",
+     "heading": "Onde e quando pedir Guarda-volumes",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Levantamento Bibliográfico",
+   "title": "Levantamento Bibliográfico",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Levantamento Bibliográfico",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/levantamento-bibliografico/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Que tal uma ajudinha com o seu projeto?\n\nVocê pode solicitar o serviço de levantamento bibliográfico e ter acesso a pesquisas sobre determinado assunto disponível em livros, artigos científicos, entre outros. Acesse o portal Requerimento/Levantamento Bibliográfico (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/12/307) e realize a solicitação. Caso prefira, entre em contato pelos canais de atendimento do ASA e nós iremos te ajudar.\n\nLembre-se de separar todas as informações necessárias para a realização do levantamento, como: delimitação do tema, palavras-chave, tipo de documentos desejados, bases de referência, idioma e local de publicação e formato que deseje receber o material.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-levantamento-bibliografico",
+     "heading": "Onde e quando pedir Levantamento Bibliográfico",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Orientações a Recursos de Pesquisas",
+   "title": "Orientações a Recursos de Pesquisas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Orientações a Recursos de Pesquisas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/orientacoes-a-recursos-de-pesquisas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer saber a melhor maneira de realizar suas pesquisas no Catálogo da Biblioteca On-line e Base de Dados?\n\nVamos te ajudar! Entre em contato por meio dos canais de atendimento do ASA e nós te auxiliaremos com o passo a passo sobre o acesso e utilização das ferramentas disponíveis.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-orientacoes-a-recursos-de-pesquisas",
+     "heading": "Onde e quando pedir Orientações a Recursos de Pesquisas",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Orientações às Normas ABNT APA",
+   "title": "Orientações às Normas ABNT/APA",
+   "aliases": [
+    "Orientações às Normas ABNT APA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Orientações às Normas ABNT/APA",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/orientacoes-as-normas-abnt-apa/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Chegou a hora de fazer um trabalho ou o TCC e bateu dúvidas em relação às normas da ABNT e APA? Não se preocupe, isso é normal.\n\nNo site da Biblioteca você poderá encontrar materiais para consulta em “Manuais e Templates ABNT e APA”.\n\nEm caso de dúvidas, entre em contato por meio de um dos canais de atendimento e nós iremos te ajudar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-orientacoes-as-normas-abnt-apa",
+     "heading": "Onde e quando pedir Orientações às Normas ABNT/APA",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h50 | Sábado, das 8h às 16h50.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Pagamento de Multas",
+   "title": "Pagamento de Multas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Pagamento de Multas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/pagamento-de-multas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Regularize suas multas na Biblioteca e aproveite todos os serviços disponíveis: empréstimo, renovação, reserva de material, reserva de sala de vídeo e das salas Co-labs e emissão de “nada consta” para a retirada de documentos na Secretaria.\n\nCompareça ao Balcão de Atendimento e realize o pagamento por meio de cartão de débito ou crédito.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-pagamento-de-multas",
+     "heading": "Onde e quando pedir Pagamento de Multas",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca no 6° andar| Bloco E.\n- Horário: Segunda a sexta-feira, das 7h30 às 21h30 | Sábado, das 8h às 16h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Renovação de Materiais",
+   "title": "Renovação de Materiais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Renovação de Materiais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/renovacao-de-materiais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Sabemos que a vida do(a) estudante é corrida. E, por isso, se você precisar renovar o empréstimo de materiais da Biblioteca por mais 7 dias, não tem problema.\n\nBasta acessar o Portal FECAP > Sites > Biblioteca > Acesso ao Usuário e Renovação (N° da Matrícula + Senha da Biblioteca) > Clique em Acessar > Renovação > Marque os itens e confirme a operação no botão Renovar > Biblioteca envia automaticamente pelo sistema a confirmação da renovação ao estudante.\n\nAtente-se às regras:\n\n– A obra não pode estar reservada por outro usuário.\n\n– Sua situação na Biblioteca não pode estar irregular (multa e/ou materiais em atraso).\n\n– Não ter ultrapassado a data de devolução da obra.\n\n– Você pode efetuar até 4 renovações.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-renovacao-de-materiais",
+     "heading": "Onde e quando pedir Renovação de Materiais",
+     "text": "- Setor responsável: Biblioteca\n- Horário: Segunda à sexta-feira, das 7h30 às 21h30 | Sábado, das 8h às 16h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Reserva de Co-labs",
+   "title": "Reserva de Co-labs",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reserva de Co-labs",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/reserva-de-co-labs/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Usufrua de salas colaborativas equipadas com computadores para criação de projetos, trabalhos em grupos, orientações e entrevistas.\nVocê poderá usar a sala por até 2 horas, tendo a possibilidade de renovação caso não exista reserva para outro(a) estudante.\n\nFaça a reserva, com até 24 horas de antecedência, via Portal FECAP (https://portal.fecap.br/) > URL’s Externas > Biblioteca – Reserva de Salas OU no balcão de atendimento da Biblioteca.\nÉ necessário retirar a chave da sala no balcão de atendimento.\n\nImportante: O tempo de tolerância de atraso é de até 10 minutos. Vê se não vai se atrasar, ok?\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-reserva-de-co-labs",
+     "heading": "Onde e quando pedir Reserva de Co-labs",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca no 6° andar - Bloco E\n- Horário: Segunda à sexta-feira, das 7h30 às 21h30 | Sábado, das 8h às 16h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Biblioteca/Reserva de Materiais",
+   "title": "Reserva de Materiais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "biblioteca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reserva de Materiais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/reserva-de-materiais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Biblioteca"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa de uma obra que está emprestada a outro usuário? Saiba que você pode solicitar a reserva do material. Se liga no passo a passo: compareça ao Balcão de Atendimento da Biblioteca ou solicite a reserva diretamente no catálogo da biblioteca acessando o Portal da FECAP > Sites > Biblioteca > Consulta ao Acervo > Busque o Material > Clique em “Reserva” > Insira sua Matrícula + Senha da Biblioteca. Pronto! Fique atento(a) a lista para não perder o prazo de retirada do material, pois ficará disponível para você por apenas 24h.\n\nA publicação não poderá ser reservada:\n\n- Caso haja exemplar disponível no acervo;\n\n- Se o usuário estiver com a situação irregular (em atraso);\n\n- Se o usuário estiver com o mesmo livro emprestado;\n\n- Se houver ultrapassado o limite de até 5 reservas.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-reserva-de-materiais",
+     "heading": "Onde e quando pedir Reserva de Materiais",
+     "text": "- Setor responsável: Biblioteca\n- Onde: Balcão de Atendimento da Biblioteca - 6° andar, Bloco E\n- Horário: Segunda a sexta-feira, das 7h30 às 21h30 | Sábado, das 8h às 16h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Boas Práticas",
+   "title": "Boas Práticas",
+   "aliases": [
+    "serviços de boas práticas do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Boas Práticas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Abertura de comissão de ética",
+    "Academia FECAPFIT",
+    "Primeiros Passos para Ingressantes na FECAP"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 3 serviços."
+    },
+    {
+     "anchor": "servicos-de-boas-praticas",
+     "heading": "Serviços de Boas Práticas",
+     "text": "- Abertura de comissão de ética\n- Academia FECAPFIT\n- Primeiros Passos para Ingressantes na FECAP"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Boas Práticas/Abertura de comissão de ética",
+   "title": "Abertura de comissão de ética",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "boas-praticas"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Abertura de comissão de ética",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/abertura-de-comissao-de-etica/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Boas Práticas"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Viveu alguma experiência em que se sentiu desrespeitado(a) ou ofendido(a)? Nós sentimos muito e queremos te ajudar!\n\nSaiba que você pode abrir uma solicitação para a comissão de ética avaliar a situação. Basta requisitar diretamente pelo portal Requerimento/ Abertura de comissão de ética (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/23/313)ou nos procurar nos canais de atendimento do ASA. Estamos ao seu lado! Fique tranquilo(a), o seu sigilo será mantido.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-abertura-de-comissao-de-etica",
+     "heading": "Onde e quando pedir Abertura de comissão de ética",
+     "text": "- Setor responsável: Pró-Reitoria de Graduação\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Boas Práticas/Academia FECAPFIT",
+   "title": "Academia FECAPFIT",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "boas-praticas"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Academia FECAPFIT",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/academia-fecapfit/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Boas Práticas"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Ei, Alvarista! Que tal começar uma mudança de hábitos saudáveis? Na FECAPFIT (https://www.instagram.com/fecapfit/)você como aluno(a), possui desconto semestral na mensalidade da academia.\n\nO investimento é de R$350,00 referente a 1(um) semestre. Você pode fazer sua inscrição e saber mais pelo formulário (https://inscricao.fecap.br/login/12013?fbclid=PAAabsju3PnHo0I5zcCPtJ4s6tQTdJDPpA24bv_so5ecEHMAAsE6BEinHvLdw).\n\nAproveite essa chance!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-academia-fecapfit",
+     "heading": "Condições para Academia FECAPFIT",
+     "text": "- Estar regularmente matriculado\n- O aluno deve entrar em contato através do instagram da academita: @fecapfit"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-academia-fecapfit",
+     "heading": "Onde e quando pedir Academia FECAPFIT",
+     "text": "- Setor responsável: FECAPFIT\n- Onde: 3° andar - Bloco D\n- Horário: Seg. a Sex, das 07:30 às 19:30"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Boas Práticas/Primeiros Passos para Ingressantes na FECAP",
+   "title": "Primeiros Passos para Ingressantes na FECAP",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "boas-praticas"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Primeiros Passos para Ingressantes na FECAP",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/primeiros-passos-para-ingressantes-na-fecap/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Boas Práticas"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Seja bem-vindo(a) à FECAP! Agora você é oficialmente um Alvarista!\n\nOs primeiros dias de aulas podem causar um pouco de nervosismo. Mas não se preocupe! Estamos aqui para te orientar nessas horas.\n\nFique de olho do seu e-mail, iremos te instruir acerca dos seus acessos, Portal do Aluno, serviços disponíveis, e muito mais.\n\nCaso precise, pode nos procurar a qualquer momento em nossos canais de atendimento ASA. Será um prazer te ajudar nesta jornada de sucesso!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-primeiros-passos-para-ingressantes-na-fecap",
+     "heading": "Condições para Primeiros Passos para Ingressantes na FECAP",
+     "text": "- Ter registro de matrícula"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-primeiros-passos-para-ingressantes-na-fecap",
+     "heading": "Onde e quando pedir Primeiros Passos para Ingressantes na FECAP",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos",
+   "title": "Bolsas e Financiamentos",
+   "aliases": [
+    "serviços de bolsas e financiamentos do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsas e Financiamentos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Adesão ao Programa de Assistência Financeira",
+    "Benefício Bolsa Parente (de Colaboradores)",
+    "Bolsa Convenção Trabalhista (de Colaboradores)",
+    "Bolsa Convênio com Organizações Parceiras",
+    "Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)",
+    "Bolsa Estágio",
+    "Bolsa Ex-Aluno",
+    "Bolsa Familiar (de Estudante)",
+    "Bolsa Ingresso Especial (não elegíveis ao ProUni FIES)",
+    "Bolsa Iniciação Científica",
+    "Bolsa Monitoria",
+    "Bolsa Santander",
+    "FIES – Aditamento para Renovação",
+    "FIES – Dilatação do Prazo (Prorrogação)",
+    "Programa de Bolsa Restituível – Adesão",
+    "Programa de Bolsa Restituível – Prorrogação do Prazo",
+    "Programa de Bolsa Restituível – Quitação Antecipada",
+    "Programa de Bolsa Restituível – Renovação",
+    "ProUni Atualização",
+    "ProUni Concessão (vagas remanescentes)",
+    "ProUni Reconsideração da bolsa"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 21 serviços."
+    },
+    {
+     "anchor": "servicos-de-bolsas-e-financiamentos",
+     "heading": "Serviços de Bolsas e Financiamentos",
+     "text": "- Adesão ao Programa de Assistência Financeira\n- Benefício Bolsa Parente (de Colaboradores)\n- Bolsa Convenção Trabalhista (de Colaboradores)\n- Bolsa Convênio com Organizações Parceiras\n- Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)\n- Bolsa Estágio\n- Bolsa Ex-Aluno\n- Bolsa Familiar (de Estudante)\n- Bolsa Ingresso Especial (não elegíveis ao ProUni FIES)\n- Bolsa Iniciação Científica\n- Bolsa Monitoria\n- Bolsa Santander\n- FIES – Aditamento para Renovação\n- FIES – Dilatação do Prazo (Prorrogação)\n- Programa de Bolsa Restituível – Adesão\n- Programa de Bolsa Restituível – Prorrogação do Prazo\n- Programa de Bolsa Restituível – Quitação Antecipada\n- Programa de Bolsa Restituível – Renovação\n- ProUni Atualização\n- ProUni Concessão (vagas remanescentes)\n- ProUni Reconsideração da bolsa"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Adesão ao Programa de Assistência Financeira",
+   "title": "Adesão ao Programa de Assistência Financeira",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Adesão ao Programa de Assistência Financeira",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/adesao-ao-programa-de-assistencia-financeira/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Sabemos que imprevistos podem ocorrer, como desemprego, invalidez por acidente ou perda de renda decorrente de afastamento médico do responsável financeiro. Entretanto, não desanime, pois a FECAP está pronta para ajudá-lo(a) a realizar seu sonho!\n\nA Fundação oferece o Programa de Assistência Financeira para incentivar a continuidade do seu curso. Se este é o seu caso, basta acessar o Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Adesão ao Programa de Assistência Financeira, preencher a solicitação e fazer o upload da documentação necessária. Caso você seja elegível, terá direito a isenção de até 3 mensalidades.\n\nEm caso de dúvidas, não hesite em entrar em contato com um dos nossos agentes de sucesso por meio dos nossos canais de atendimento. Teremos prazer em ajudá-lo(a).\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-adesao-ao-programa-de-assistencia-financeira",
+     "heading": "Onde e quando pedir Adesão ao Programa de Assistência Financeira",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Benefício Bolsa Parente (de Colaboradores)",
+   "title": "Benefício Bolsa Parente (de Colaboradores)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Benefício Bolsa Parente (de Colaboradores)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/beneficio-bolsa-parente-de-colaboradores/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Toda família tem aquele tiozão da piada do pavê, não é mesmo? Boa notícia: ele pode te ajudar a estudar!\n\nSe você tem alguém da família (tios, primos, entre outros) que trabalha na FECAP, conheça a Bolsa Parente: com ela você tem direito a 50% de desconto nas mensalidades! Incrível, não é?!\n\nPara saber como iniciar o processo de aplicação da bolsa, pode nos procurar por meio dos canais do ASA. Estamos à disposição para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-beneficio-bolsa-parente-de-colaboradores",
+     "heading": "Onde e quando pedir Benefício Bolsa Parente (de Colaboradores)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Convenção Trabalhista (de Colaboradores)",
+   "title": "Bolsa Convenção Trabalhista (de Colaboradores)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Convenção Trabalhista (de Colaboradores)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-convencao-trabalhista-de-colaboradores/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Imagine trabalhar em um ambiente descontraído, que estimula o crescimento e ainda te proporciona estudar em uma instituição que é referência em pioneirismo e excelência na educação. Na FECAP é assim!\n\nFuncionários, cônjuges, filhos e dependentes legais têm direito à bolsa integral. Para saber mais sobre o processo de aplicação da bolsa, entre em contato com um dos nossos canais de atendimento. Será um prazer te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-convencao-trabalhista-de-colaboradores",
+     "heading": "Onde e quando pedir Bolsa Convenção Trabalhista (de Colaboradores)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Convênio com Organizações Parceiras",
+   "title": "Bolsa Convênio com Organizações Parceiras",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Convênio com Organizações Parceiras",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-convenio-com-organizacoes-parceiras/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você trabalha em alguma empresa parceira da FECAP? Então, saiba que pode solicitar a Bolsa Convênio a qualquer momento e terá direito a ela enquanto mantiver o vínculo com a organização. Para isso, basta acessar o Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Bolsa Convênio com Organizações Parceiras.\n\nMas, não se preocupe. Caso a sua empresa ainda não seja afiliada à FECAP, basta acessar o link (https://www.fecap.br/parcerias/) para saber mais e se tornar uma empresa parceira.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-convenio-com-organizacoes-parceiras",
+     "heading": "Onde e quando pedir Bolsa Convênio com Organizações Parceiras",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)",
+   "title": "Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-desempenho-academico-bolsa-melhores-alunos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Na FECAP, o seu desempenho acadêmico é valorizado! Os(as) estudantes com a maior média de notas semestrais de cada turma dos Cursos de Graduação são elegíveis a uma bolsa de 40% da mensalidade. Bacana, não é?!\n\nAs Bolsas têm duração de um período letivo e são concedidas no semestre seguinte à classificação, a partir da divulgação oficial dos beneficiados.\n\nQuer saber mais? Entre em contato por meio dos nossos canais de atendimento. Será um prazer conversar com você!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação."
+    },
+    {
+     "anchor": "condicoes-para-bolsa-desempenho-academico-bolsa-melhores-alunos",
+     "heading": "Condições para Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)",
+     "text": "- Considerando-se o semestre objeto para análise de concessão de bolsa por desempenho, não concorrerão os estudantes com disciplinas reprovadas ou trancadas e/ou que cursam menos que 75% das disciplinas do referido semestre.\n- As notas de dependências, adaptações, antecipações, exames finais e trabalhos de curso (ou equivalentes) não são consideradas para efeito de classificação.\n- Os estudantes elegíveis serão classificados em ordem decrescente pela média geral, por curso, série e turma, no qual estão matriculados. Os Cursos de Relações Públicas e Publicidade e Propaganda, por compartilharem maior parte da carga-horária, têm classificação em conjunto da 1 a 4a séries. As turmas de Ciências Contábeis para Graduados concorrerão à bolsa a partir do 5o semestre. A média geral dos estudantes é a média aritmética das notas semestrais.\n- As bolsas serão atribuídas semestralmente ao estudante com a maior média de notas semestrais de cada turma dos Cursos de Graduação no semestre anterior. O valor da bolsa será de 40% das mensalidades."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-desempenho-academico-bolsa-melhores-alunos",
+     "heading": "Onde e quando pedir Bolsa Desempenho Acadêmico (Bolsa Melhores Alunos)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Estágio",
+   "title": "Bolsa Estágio",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Estágio",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-estagio/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Foi aprovado(a) como estagiário(a) FECAP? Parabéns! Agora, você tem direito à Bolsa de Estágio! Confira com o RH.\n\nEm caso de dúvidas, entre em contato por meio dos canais de atendimento do ASA. Será um prazer te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-estagio",
+     "heading": "Onde e quando pedir Bolsa Estágio",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Ex-Aluno",
+   "title": "Bolsa Ex-Aluno",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Ex-Aluno",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-ex-aluno/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você é um ex-aluno FECAP, prepare-se para uma notícia que vai aquecer o seu coração Alvarista: temos uma bolsa exclusiva para você! São 25% de desconto nos cursos de Graduação, Pós-Graduação e Mestrado. É a nossa maneira de agradecer pela sua dedicação e carinho pela nossa instituição. Para solicitar a sua bolsa, basta acessar o Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Bolsa Ex-Aluno.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-ex-aluno",
+     "heading": "Onde e quando pedir Bolsa Ex-Aluno",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Familiar (de Estudante)",
+   "title": "Bolsa Familiar (de Estudante)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Familiar (de Estudante)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-familiar-de-estudante/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Estudar com a família é ainda melhor!\n\nSe você é aluno(a) da FECAP e tem um parente de primeiro grau estudando na instituição, pode solicitar a Bolsa Familiar e ganhar um desconto de 10% na mensalidade. Basta acessar o Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Bolsa Familiar e preencher a solicitação.\n\nLembre-se de que o desconto só será válido enquanto você e seu(sua) parente estiverem estudando simultaneamente.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-familiar-de-estudante",
+     "heading": "Onde e quando pedir Bolsa Familiar (de Estudante)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Ingresso Especial (não elegíveis ao ProUni FIES)",
+   "title": "Bolsa Ingresso Especial (não elegíveis ao ProUni/FIES)",
+   "aliases": [
+    "Bolsa Ingresso Especial (não elegíveis ao ProUni FIES)"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Ingresso Especial (não elegíveis ao ProUni/FIES)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-ingresso-especial-nao-elegiveis-ao-prouni-fies/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você perdeu a bolsa ProUni ou Fies durante a realização do curso, não desanime. Isso não é motivo para desistir dos seus sonhos! Você pode solicitar a Bolsa Ingresso Especial FECAP. Basta enviar o seu pedido para análise via portal Requerimento/Bolsa Ingresso Especial (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/24/320)ou entre em contato conosco por meio dos canais de atendimento. Nós queremos te ajudar a construir o seu futuro!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-ingresso-especial-nao-elegiveis-ao-prouni-fies",
+     "heading": "Onde e quando pedir Bolsa Ingresso Especial (não elegíveis ao ProUni/FIES)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Iniciação Científica",
+   "title": "Bolsa Iniciação Científica",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Iniciação Científica",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-iniciacao-cientifica/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você é participante do Programa de Iniciação Científica e não identificou a aplicação da bolsa em sua mensalidade? Não se preocupe. Siga o passo a passo:\n\nPortal do Aluno> Requerimento> Bolsa Iniciação Científica (https://portal.fecap.br/FrameHTML/web/app/edu/PortalEducacional/#/requerimento/novo/24/321)e preencha a solicitação (https://portal.fecap.br/FrameHTML/web/app/edu/PortalEducacional/#/requerimento/novo/24/321).\n\nO prazo para a conclusão do requerimento é de 15 dias úteis.\n\nQualquer dúvida, estamos à disposição!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-bolsa-iniciacao-cientifica",
+     "heading": "Condições para Bolsa Iniciação Científica",
+     "text": "- O estudante deve ter sido selecionado no Programa de Iniciação Científica no período letivo da solicitação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-iniciacao-cientifica",
+     "heading": "Onde e quando pedir Bolsa Iniciação Científica",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Monitoria",
+   "title": "Bolsa Monitoria",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Monitoria",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-monitoria/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você sabia que a FECAP disponibiliza Bolsa Monitoria para os estudantes participantes? Para participar, precisa fazer o processo seletivo que ocorre no começo do ano. A bolsa mensal corresponde a 50% do valor da mensalidade, então fique de olho na divulgação do edital e prazos de inscrição.\n\nSe você já participa do Programa de Monitoria, mas ainda não identificou o desconto em sua mensalidade, nós iremos te ajudar! Acesse o Portal do Aluno > Requerimentos > Bolsa Monitoria e preencha a solicitação. Qualquer dúvida, estamos à disposição!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-bolsa-monitoria",
+     "heading": "Condições para Bolsa Monitoria",
+     "text": "- O estudante deve ter sido selecionado como Monitor de determinada disciplina no período letivo da solicitação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-monitoria",
+     "heading": "Onde e quando pedir Bolsa Monitoria",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Bolsa Santander",
+   "title": "Bolsa Santander",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Bolsa Santander",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/bolsa-santander/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Na FECAP, seu desempenho e esforço valem muito!\n\nCom o Programa de Bolsa Santander Graduação, os(as) estudantes com bom desempenho acadêmico são beneficiados com um auxílio financeiro para dar continuidade aos estudos e concluir o curso dos sonhos. Para se inscrever, acesse (https://www.becas-santander.com/pt_br) e preencha as informações solicitadas.\n\nFicou com dúvidas sobre o processo de inscrição? Não hesite em entrar em contato conosco por meio dos nossos canais de atendimento. Ficaremos felizes em te ajudar em seu caminho rumo ao sucesso!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-bolsa-santander",
+     "heading": "Onde e quando pedir Bolsa Santander",
+     "text": "- Setor responsável: Pró-Reitoria de Extensão e Desenvolvimento\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/FIES – Aditamento para Renovação",
+   "title": "FIES – Aditamento para Renovação",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — FIES – Aditamento para Renovação",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/fies-aditamento-para-renovacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer realizar a renovação (Aditamento) semestral do FIES e não sabe como? Entre em contato por meio dos canais de atendimento do Asa e nós te orientaremos sobre o processo de aditamento para renovação, esclarecendo todas as suas dúvidas quanto às condições e os tipos de aditamento disponíveis (simplificado ou não simplificado). Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-fies-aditamento-para-renovacao",
+     "heading": "Onde e quando pedir FIES – Aditamento para Renovação",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/FIES – Dilatação do Prazo (Prorrogação)",
+   "title": "FIES – Dilatação do Prazo (Prorrogação)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — FIES – Dilatação do Prazo (Prorrogação)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/fies-dilatacao-do-prazo-prorrogacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa prorrogar o prazo de utilização do FIES? Inicie o processo de dilatação pelo site e comunique o Financeiro pelo e-mail fies@fecap.br\n\nEm caso de dúvidas, pode nos procurar em um dos canais de atendimento do ASA. Faremos de tudo para lhe ajudar.\n\nAtenção: o(a) estudante pode solicitar a dilatação somente um semestre por vez. O limite são de 04 (quatro) dilatações, porém o valor de todos os semestres dilatados não poderá ultrapassar o dobro do valor do último semestre contratado regularmente.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-fies-dilatacao-do-prazo-prorrogacao",
+     "heading": "Onde e quando pedir FIES – Dilatação do Prazo (Prorrogação)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Programa de Bolsa Restituível – Adesão",
+   "title": "Programa de Bolsa Restituível – Adesão",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Programa de Bolsa Restituível – Adesão",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/programa-de-bolsa-restituivel-adesao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Na FECAP, acreditamos em facilitar o acesso à educação de qualidade para todos(as). Em uma destas iniciativas, a Fundação conta com o Programa de Bolsa Restituível. Nesta modalidade, os(as) candidatos(as)/estudantes podem realizar o curso de graduação pagando um percentual menor em sua mensalidade. Ao final, os valores restantes devem ser restituídos à FECAP, sem juros, de forma a beneficiar novos estudantes.\n\nNão deixe seu futuro para depois! Participe do programa! Envie a sua solicitação pelo portal Requerimento/ Programa de Bolsa Restituível – Adesão (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/24/31).\n\nEm caso de dúvidas, pode nos procurar por meio dos canais de atendimento do ASA. Será um prazer te auxiliar na sua jornada rumo ao sucesso!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-programa-de-bolsa-restituivel-adesao",
+     "heading": "Onde e quando pedir Programa de Bolsa Restituível – Adesão",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Programa de Bolsa Restituível – Prorrogação do Prazo",
+   "title": "Programa de Bolsa Restituível – Prorrogação do Prazo",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Programa de Bolsa Restituível – Prorrogação do Prazo",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/programa-de-bolsa-restituivel-prorrogacao-do-prazo/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se por algum motivo você precisa prorrogar o prazo de pagamento da sua Bolsa Restituível, fique tranquilo(a), você pode abrir uma solicitação de análise para novo vencimento. Basta requisitar pelo portal Requerimento/ Programa de Bolsa Restituível – Prorrogação do Prazo ou, caso tenha dúvidas, nos procure em um dos canais de atendimento do ASA. Faremos de tudo para lhe ajudar.\n\nAtenção: a solicitação deverá ser aberta antes do vencimento das parcelas do Programa.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-programa-de-bolsa-restituivel-prorrogacao-do-prazo",
+     "heading": "Onde e quando pedir Programa de Bolsa Restituível – Prorrogação do Prazo",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Programa de Bolsa Restituível – Quitação Antecipada",
+   "title": "Programa de Bolsa Restituível – Quitação Antecipada",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Programa de Bolsa Restituível – Quitação Antecipada",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/programa-de-bolsa-restituivel-quitacao-antecipada/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja antecipar suas parcelas do Programa de Bolsa Restituível? É possível! Basta acessar o portal Requerimento/Programa de Bolsa Restituível – Quitação Antecipada ou, caso tenha dúvidas, entre em contato por meio dos canais de atendimento do ASA. Será um prazer te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-programa-de-bolsa-restituivel-quitacao-antecipada",
+     "heading": "Onde e quando pedir Programa de Bolsa Restituível – Quitação Antecipada",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/Programa de Bolsa Restituível – Renovação",
+   "title": "Programa de Bolsa Restituível – Renovação",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Programa de Bolsa Restituível – Renovação",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/programa-de-bolsa-restituivel-renovacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Faça a renovação do Programa de Bolsa Restituível e garanta a continuidade da construção do seu futuro! Envie a sua solicitação pelo portalRequerimento/Programa de Bolsa Restituível – Renovação (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/24/44)ou, em caso de dúvidas, fale conosco por meio de um dos canais de atendimento do ASA. Vamos adorar te ajudar a realizar seu sonho da formação superior!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-programa-de-bolsa-restituivel-renovacao",
+     "heading": "Onde e quando pedir Programa de Bolsa Restituível – Renovação",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/ProUni Atualização",
+   "title": "ProUni: Atualização",
+   "aliases": [
+    "ProUni Atualização"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — ProUni: Atualização",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/prouni-atualizacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Para garantir o seu benefício ProUni, lembre-se de que a cada semestre você deverá assinar o Termo de Atualização do Usufruto da Bolsa.\n\nFique atento(a) às comunicações enviadas pelo ASA com os prazos para assinatura.\n\nEm caso de dúvidas, você pode nos procurar a qualquer momento. Os nossos meios de atendimento estão sempre abertos para te auxiliar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-prouni-atualizacao",
+     "heading": "Onde e quando pedir ProUni: Atualização",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/ProUni Concessão (vagas remanescentes)",
+   "title": "ProUni: Concessão (vagas remanescentes)",
+   "aliases": [
+    "ProUni Concessão (vagas remanescentes)"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — ProUni: Concessão (vagas remanescentes)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/prouni-concessao-vagas-remanescentes/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você não foi chamado(a) nas listas do ProUni, não fique triste! Ainda há opção de vagas remanescentes. Fique ligado(a) aos seus meios de comunicação, você será orientado sobre a entrega dos documentos por e-mail ou contato telefônico. Boa sorte!\n\nLembre-se, em caso de dúvidas estamos sempre prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-prouni-concessao-vagas-remanescentes",
+     "heading": "Onde e quando pedir ProUni: Concessão (vagas remanescentes)",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Bolsas e Financiamentos/ProUni Reconsideração da bolsa",
+   "title": "ProUni: Reconsideração da bolsa",
+   "aliases": [
+    "ProUni Reconsideração da bolsa"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "bolsas-e-financiamentos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — ProUni: Reconsideração da bolsa",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/prouni-reconsideracao-da-bolsa/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Bolsas e Financiamentos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você foi reprovado(a) e está com medo de perder a sua bolsa ProUni? Temos uma boa notícia: você pode solicitar a reconsideração da bolsa por até duas vezes. Abra a solicitação, informando os principais motivos que o(a) levarem a reprovação, pelo portal Requerimento/ ProUni: Reconsideração da bolsa (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/24/146). Sua requisição será analisada e você poderá acompanhar por meio do seu Portal do Aluno. Qualquer dúvida, entre em contato por meio dos nossos canais de atendimento. Estamos disponíveis para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-prouni-reconsideracao-da-bolsa",
+     "heading": "Onde e quando pedir ProUni: Reconsideração da bolsa",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Dados Cadastrais",
+   "title": "Dados Cadastrais",
+   "aliases": [
+    "serviços de dados cadastrais do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Dados Cadastrais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Alteração de dados cadastrais",
+    "Alteração de gênero no registro de matrícula",
+    "Alteração de responsável financeiro",
+    "Alteração de responsável financeiro para Empresa",
+    "Inclusão de nome social do estudante no registro de matrícula"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 5 serviços."
+    },
+    {
+     "anchor": "servicos-de-dados-cadastrais",
+     "heading": "Serviços de Dados Cadastrais",
+     "text": "- Alteração de dados cadastrais\n- Alteração de gênero no registro de matrícula\n- Alteração de responsável financeiro\n- Alteração de responsável financeiro para Empresa\n- Inclusão de nome social do estudante no registro de matrícula"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Dados Cadastrais/Alteração de dados cadastrais",
+   "title": "Alteração de dados cadastrais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "dados-cadastrais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração de dados cadastrais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-de-dados-cadastrais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Dados Cadastrais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja alterar os seus dados cadastrais, como nome e endereço? Podemos te ajudar!\n\nAbra a solicitação pelo seu Portal do Aluno (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web/App/Edu/PortalEducacional/login/) > Requerimento/ Alteração de dados cadastrais ou, se preferir, entre em contato conosco pelos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-de-dados-cadastrais",
+     "heading": "Onde e quando pedir Alteração de dados cadastrais",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta: 09:45h às 13:30 e das 17h às 20h\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Dados Cadastrais/Alteração de gênero no registro de matrícula",
+   "title": "Alteração de gênero no registro de matrícula",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "dados-cadastrais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração de gênero no registro de matrícula",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-de-genero-no-registro-de-matricula/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Dados Cadastrais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Seja você com muito orgulho!\n\nVocê pode solicitar a mudança de gênero no registro de matrícula. Para isso, basta acessar o seu portal Requerimento/ Alteração de gênero no registro de matrícula (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/25/252)e realizar a solicitação.\n\nE lembre-se, você pode contar sempre conosco por meio dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-de-genero-no-registro-de-matricula",
+     "heading": "Onde e quando pedir Alteração de gênero no registro de matrícula",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Dados Cadastrais/Alteração de responsável financeiro para Empresa",
+   "title": "Alteração de responsável financeiro para Empresa",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "dados-cadastrais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração de responsável financeiro para Empresa",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-de-responsavel-financeiro-para-empresa/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Dados Cadastrais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja alterar o responsável financeiro de pessoa física para jurídica (empresa)? Vamos te explicar como!\n\nAbra a solicitação por meio do portal Requerimento/Alteração de responsável financeiro para Empresa (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/25/106), anexando as declarações de autorização da transferência de ambos os responsáveis financeiros e os documentos da pessoa jurídica.\n\nEm caso de dúvida, é só nos procurar em um dos nossos canais. Será um prazer te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-de-responsavel-financeiro-para-empresa",
+     "heading": "Onde e quando pedir Alteração de responsável financeiro para Empresa",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Dados Cadastrais/Alteração de responsável financeiro",
+   "title": "Alteração de responsável financeiro",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "dados-cadastrais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração de responsável financeiro",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-de-responsavel-financeiro/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Dados Cadastrais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisou alterar seu responsável financeiro?\n\nSiga as instruções abaixo: Abra a solicitação pelo Portal do Aluno> Requerimento/Alteração de responsável financeiro (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/25/358) e em seguida, anexe as declarações de autorização da transferência de ambas as partes e os documentos do novo responsável financeiro.\n\nFácil, não é?!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado."
+    },
+    {
+     "anchor": "condicoes-para-alteracao-de-responsavel-financeiro",
+     "heading": "Condições para Alteração de responsável financeiro",
+     "text": "O estudante deve estar regularmente matriculado e adimplente em todas as mensalidades até o momento da solicitação;\nO responsável financeiro atual deve autorizar a transferência, por meio de carta assinada e datada;\nO novo responsável financeiro deve aceitar a transferência e entregar RG, CPF, comprovante de residência, e-mail, telefone e carta de próprio assinada e datada contendo o aceite."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-de-responsavel-financeiro",
+     "heading": "Onde e quando pedir Alteração de responsável financeiro",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Dados Cadastrais/Inclusão de nome social do estudante no registro de matrícula",
+   "title": "Inclusão de nome social do estudante no registro de matrícula",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "dados-cadastrais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Inclusão de nome social do estudante no registro de matrícula",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/inclusao-de-nome-social-do-estudante-no-registro-de-matricula/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Dados Cadastrais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Na FECAP, o respeito e a igualdade fazem parte do nosso DNA. Se você não se identifica com a sua identidade de gênero e não deseja ser chamad@ por seu nome civil, solicite a inclusão do seu nome social no registro da matrícula por meio do portal Requerimento/Inclusão de nome social do estudante no registro de matrícula. Caso prefira, fique à vontade para falar conosco por meio dos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-inclusao-de-nome-social-do-estudante-no-registro-de-matricula",
+     "heading": "Onde e quando pedir Inclusão de nome social do estudante no registro de matrícula",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos",
+   "title": "Documentos Acadêmicos",
+   "aliases": [
+    "serviços de documentos acadêmicos do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Documentos Acadêmicos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Alteração de contrato de prestação de serviços",
+    "Antecipação da Assinatura do Termo de Colação de Grau",
+    "Atestado de comparecimento",
+    "Atestado de conclusão",
+    "Atestado de matrícula",
+    "Atestado Personalizado",
+    "Certificado de conclusão",
+    "Confecção da Carteirinha – 2ª Via",
+    "Confecção da carteirinha da FECAP",
+    "Correção de Documentos",
+    "Crachá – 2ª via",
+    "Crachá – resolução de problemas",
+    "Diploma",
+    "Diploma – 2ª via",
+    "Entrega de documentos pendentes",
+    "Eventos – Solicitação de Certificado",
+    "Validação de Cartão de Ex-aluno"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 17 serviços."
+    },
+    {
+     "anchor": "servicos-de-documentos-academicos",
+     "heading": "Serviços de Documentos Acadêmicos",
+     "text": "- Alteração de contrato de prestação de serviços\n- Antecipação da Assinatura do Termo de Colação de Grau\n- Atestado de comparecimento\n- Atestado de conclusão\n- Atestado de matrícula\n- Atestado Personalizado\n- Certificado de conclusão\n- Confecção da Carteirinha – 2ª Via\n- Confecção da carteirinha da FECAP\n- Correção de Documentos\n- Crachá – 2ª via\n- Crachá – resolução de problemas\n- Diploma\n- Diploma – 2ª via\n- Entrega de documentos pendentes\n- Eventos – Solicitação de Certificado\n- Validação de Cartão de Ex-aluno"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Alteração de contrato de prestação de serviços",
+   "title": "Alteração de contrato de prestação de serviços",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração de contrato de prestação de serviços",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-de-contrato-de-prestacao-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você precisa atualizar algum de seus dados cadastrais, como responsável acadêmico ou financeiro? Não se preocupe! Você pode fazer isso facilmente por meio do Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Alteração de Contrato de Prestação de Serviços.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-de-contrato-de-prestacao-de-servicos",
+     "heading": "Onde e quando pedir Alteração de contrato de prestação de serviços",
+     "text": "- Setor responsável: Área de Sucesso Alvarista\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Antecipação da Assinatura do Termo de Colação de Grau",
+   "title": "Antecipação da Assinatura do Termo de Colação de Grau",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Antecipação da Assinatura do Termo de Colação de Grau",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/antecipacao-da-assinatura-do-termo-de-colacao-de-grau/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Vai fazer intercâmbio ou foi aprovado em concurso e precisa da antecipação da assinatura do termo de colação de grau? Sem problemas, vamos resolver para você! Acesse o seu portal Requerimento/ Antecipação da Assinatura do Termo de Colação de Grau (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/26/115)e faça a solicitação explicando a necessidade da antecipação.\n\nCaso prefira, fique à vontade para nos procurar em um dos nossos canais de atendimento. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-antecipacao-da-assinatura-do-termo-de-colacao-de-grau",
+     "heading": "Onde e quando pedir Antecipação da Assinatura do Termo de Colação de Grau",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Atestado de comparecimento",
+   "title": "Atestado de comparecimento",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Atestado de comparecimento",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/atestado-de-comparecimento/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Sabemos que você gosta de participar das aulas e atividades, não é mesmo?!\n\nCaso precise de um Atestado de Comparecimento, fique tranquilo, é só pedir! Basta acessar o seu Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Atestado de comparecimento e preencher a solicitação.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-atestado-de-comparecimento",
+     "heading": "Condições para Atestado de comparecimento",
+     "text": "1) Ter comparecido à FECAP ou ter realizado alguma atividade pela FECAP."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-atestado-de-comparecimento",
+     "heading": "Onde e quando pedir Atestado de comparecimento",
+     "text": "- Setor responsável: Área de Sucesso Alvarista\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Atestado de conclusão",
+   "title": "Atestado de conclusão",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Atestado de conclusão",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/atestado-de-conclusao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisando de um documento que ateste a sua formação, mas ainda não colou grau? Nós podemos te ajudar!\nEnquanto espera seu certificado de conclusão, você pode emitir o seu atestado de conclusão de maneira rápida e fácil pelo seu Portal do Aluno > Menu > Relatórios > Atestado de Conclusão > Emitir Relatório.\n\nEm caso de dúvidas, estamos à disposição para te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-atestado-de-conclusao",
+     "heading": "Condições para Atestado de conclusão",
+     "text": "1) O aluno precisa estar com situação de matrícula \"Formado\".\n2) A solicitação deve ocorrer antes da data de colação de grau."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-atestado-de-conclusao",
+     "heading": "Onde e quando pedir Atestado de conclusão",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Atestado de matrícula",
+   "title": "Atestado de matrícula",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Atestado de matrícula",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/atestado-de-matricula/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa do atestado de matrícula? É super simples: basta acessar o portal, escolher a opção Relatórios e emitir o documento.\n\nFicou com dúvidas? Entre em contato por meio dos nossos canais de atendimento. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-atestado-de-matricula",
+     "heading": "Onde e quando pedir Atestado de matrícula",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Atestado Personalizado",
+   "title": "Atestado Personalizado",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Atestado Personalizado",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/51199/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa de um atestado de matrícula com informações adicionais, além da série, curso e turno em qual está matriculado? Nós podemos te ajudar!\n\nFaça a solicitação pelo seu Portal do Aluno (https://portal.fecap.br/framehtml/web/app/edu/PortalEducacional/login/)> Requerimento/ Atestado composto (atestado personalizado).\n\nPague o valor da taxa informada e aguarde a emissão do documento.\n\nPrazo: 5 dias úteis.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-atestado-personalizado",
+     "heading": "Condições para Atestado Personalizado",
+     "text": "Ter registro de aluno ativo."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-atestado-personalizado",
+     "heading": "Onde e quando pedir Atestado Personalizado",
+     "text": "- Setor responsável: Área de Sucesso Alvarista\n- Onde: ASA - Área do Sucesso Alvarista\n- Horário: De segunda a sexta-feira, das 08h00 às 21h30 e aos sábados, das 09h00 às 13h00\n- Telefone: +5532722222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Certificado de conclusão",
+   "title": "Certificado de conclusão",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Certificado de conclusão",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/certificado-de-conclusao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Parabéns, Alvarista! Você se formou e estamos orgulhosos com a sua conquista!\n\nPara emitir seu certificado de conclusão, faça a solicitação pelo Portal do Aluno > Requerimentos > Certificado de conclusão (https://portal.fecap.br/FrameHTML/web/app/edu/PortalEducacional/#/requerimento/novo/26/374), e aguarde o recebimento em seu e-mail.\n\nImportante: a solicitação só deve ser aberta após a colação de grau.\n\nQualquer dúvida, estamos à disposição por meio dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-certificado-de-conclusao",
+     "heading": "Condições para Certificado de conclusão",
+     "text": "- O aluno precisa estar com situação de matrícula \"Formado\";\n- A solicitação deve ocorrer depois da data de colação de grau."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-certificado-de-conclusao",
+     "heading": "Onde e quando pedir Certificado de conclusão",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Confecção da Carteirinha – 2ª Via",
+   "title": "Confecção da Carteirinha – 2ª Via",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Confecção da Carteirinha – 2ª Via",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/confeccao-da-carteirinha-2a-via/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Perdeu sua carteirinha, Alvarista? Não se preocupe, podemos fornecer uma nova para você pelo custo de R$ 10,00. Basta enviar sua solicitação por meio do Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Confecção da Carteirinha da FECAP – 2ª Via.\n\nUma dica importante: se você perdeu sua carteirinha devido a um roubo, apresente o Boletim de Ocorrência para obter a isenção do pagamento da segunda via.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-confeccao-da-carteirinha-2-via",
+     "heading": "Onde e quando pedir Confecção da Carteirinha – 2ª Via",
+     "text": "- Setor responsável: Área de Sucesso Alvarista - ASA\n- Onde: Área de Sucesso Alvarista - ASA\n- Horário: Segunda a sexta das 10h às 13h30 e das 17h às 20h\n- Telefone: +5532722222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Confecção da carteirinha da FECAP",
+   "title": "Confecção da carteirinha da FECAP",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Confecção da carteirinha da FECAP",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/confeccao-da-carteirinha-da-fecap/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Parabéns por ser aprovado(a) na FECAP e iniciar um novo capítulo em sua vida acadêmica! Para acessar o campus, é necessário solicitar sua carteirinha de aluno(a) por meio do Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimento > Confecção da Carteirinha.\n\nImportante: Certifique-se de anexar sua foto frontal com fundo neutro. Estamos ansiosos para recebê-lo(a) em nosso campus e apoiá-lo(a) em sua jornada acadêmica.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-confeccao-da-carteirinha-da-fecap",
+     "heading": "Onde e quando pedir Confecção da carteirinha da FECAP",
+     "text": "- Setor responsável: Área de Sucesso Alvarista\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Correção de Documentos",
+   "title": "Correção de Documentos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Correção de Documentos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/correcao-de-documentos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Caso você tenha recebido ou emitido um certificado de um curso da FECAP com dados incorretos, não se preocupe! Nós fazemos a correção. Basta abrir uma solicitação pelo Portal do Aluno (https://portal.fecap.br/), acessando o Menu e selecionando a opção Secretaria/Requerimento > Correção de Documentos. Não se esqueça de informar qual é o documento e qual(is) é(são) o(s) dado(s) incorreto(s), anexando-o(s) à solicitação. Após a correção do documento, você receberá o novo certificado por e-mail ou pelo próprio Portal do Aluno.\n\nEssa situação pode ocorrer em cursos realizados pelo Moodle, cuja emissão é automatizada. Por isso, é fundamental que os(as) estudantes mantenham seus dados cadastrais sempre atualizados.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-correcao-de-documentos",
+     "heading": "Onde e quando pedir Correção de Documentos",
+     "text": "- Setor responsável: ASA - Área do Sucesso Alvarista\n- Onde: ASA - Área do Sucesso Alvarista\n- Horário: De segunda a sexta-feira, das 08h00 às 21h30 e aos sábados, das 09h00 às 13h00\n- Telefone: +5532722222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Crachá – 2ª via",
+   "title": "Crachá – 2ª via",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Crachá – 2ª via",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cracha-2a-via/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está sem sua carteirinha? Não tem problema, nós podemos disponibilizar outra para você! Basta nos enviar a sua solicitação por meio do portalRequerimento/ Crachá – 2ª via (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/26/104) ou pode nos procurar em um dos nossos canais de atendimento. Estaremos prontos para te ajudar!\n\nUma dica muito importante: caso esteja sem a sua carteirinha por motivo de roubo, basta apresentar o seu Boletim de Ocorrência para obter a isenção do pagamento da 2ª via.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cracha-2-via",
+     "heading": "Onde e quando pedir Crachá – 2ª via",
+     "text": "- Setor responsável: Área de Sucesso Alvarista\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Crachá – resolução de problemas",
+   "title": "Crachá – resolução de problemas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Crachá – resolução de problemas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cracha-resolucao-de-problemas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você recebeu a sua carteirinha de acesso ao campus e ela apresenta erro ao passar nas catracas, fique tranquilo(a). Pode nos procurar presencialmente no atendimento do ASA para verificarmos o que está acontecendo. Se for necessário, faremos uma nova carteirinha para você.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cracha-resolucao-de-problemas",
+     "heading": "Onde e quando pedir Crachá – resolução de problemas",
+     "text": "- Setor responsável: Área de Sucesso Alvarista\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Diploma – 2ª via",
+   "title": "Diploma – 2ª via",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Diploma – 2ª via",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/diploma-2a-via/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Perdeu o seu diploma? Saiba que podemos disponibilizar uma nova versão digital para você! Realize a solicitação e pague a taxa por meio do seu portal Requerimento/ Diploma 2ª via (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/26/271).\n\nSe preferir, pode nos procurar em um dos nossos canais de atendimento. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-diploma-2-via",
+     "heading": "Onde e quando pedir Diploma – 2ª via",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: ASA - Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Diploma",
+   "title": "Diploma",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Diploma",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/diploma/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Chegou na etapa final dos seus estudos. Parabéns, Alvarista! Você está pronto(a) para encarar os desafios dessa nova jornada.\n\nEm breve, você receberá um e-mail e SMS da Secretaria com o acesso ao seu Diploma. Fique ligado(a) sobre as condições para receber o Diploma: é necessário o cumprimento de todos os requisitos acadêmicos; todos os documentos pessoais e acadêmicos devem ter sido entregues; o termo da colação de grau deve estar assinado.\n\nEm caso de dúvidas sobre as condições e procedimentos de recebimento, entre em contato por meio dos nossos canais de atendimento. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-diploma",
+     "heading": "Onde e quando pedir Diploma",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Entrega de documentos pendentes",
+   "title": "Entrega de documentos pendentes",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Entrega de documentos pendentes",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/entrega-de-documentos-pendentes/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Já fez a sua matrícula, mas ainda está com algum documento pendente? Agora ficou mais fácil de regularizar sua situação! – Acesse o Portal do Aluno (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web/App/Edu/PortalEducacional/login/) e role a tela para baixo até o Mural;\n\n– Nesta aba você conseguirá visualizar a situação dos seus documentos e enviá-los via anexo no formato PDF.\n\nEvite problemas na sua rematrícula e conclusão de curso! Se precisar de ajuda, entre em contato conosco pelos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-entrega-de-documentos-pendentes",
+     "heading": "Condições para Entrega de documentos pendentes",
+     "text": "- Ter registro de matrícula e situação de matrícula diferente de Cancelado\n- Canais digitais, o documento deverá estar escaneado em PDF, não pode ser foto/imagem\n- Estar no nome do(a) aluno(a) e/ou do seu responsável financeiro"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-entrega-de-documentos-pendentes",
+     "heading": "Onde e quando pedir Entrega de documentos pendentes",
+     "text": "- Setor responsável: Secretaria\n- Onde: Área de Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Eventos – Solicitação de Certificado",
+   "title": "Eventos – Solicitação de Certificado",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos – Solicitação de Certificado",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/eventos-solicitacao-de-certificado/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Participou de um dos nossos eventos e deseja o certificado de presença? Entre em contato conosco por meio dos canais de atendimento e nós iremos providenciar. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-eventos-solicitacao-de-certificado",
+     "heading": "Onde e quando pedir Eventos – Solicitação de Certificado",
+     "text": "- Setor responsável: Pró-Reitoria de Extensão e Desenvolvimento\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Acadêmicos/Validação de Cartão de Ex-aluno",
+   "title": "Validação de Cartão de Ex-aluno",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Validação de Cartão de Ex-aluno",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/validacao-de-cartao-de-ex-aluno/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Parabéns, você se formou e recebeu a sua carteirinha dourada de Eterno(a) Alvarista!\n\nLembre-se de validá-la para ter acesso livre e vitalício às instalações dos campi, inclusive às bibliotecas, e usufruir de recursos e serviços da Instituição. Basta comparecer à recepção da FECAP Liberdade e solicitar a validação.\n\nBem-vindo(a) à comunidade Alumni Alvarista!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-validacao-de-cartao-de-ex-aluno",
+     "heading": "Onde e quando pedir Validação de Cartão de Ex-aluno",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Financeiros",
+   "title": "Documentos Financeiros",
+   "aliases": [
+    "serviços de documentos financeiros do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Documentos Financeiros",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Carta de Quitação de Débito",
+    "Declaração de adimplência",
+    "Declarações Financeiras",
+    "Demonstrativo de Pagamento (IR)"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 4 serviços."
+    },
+    {
+     "anchor": "servicos-de-documentos-financeiros",
+     "heading": "Serviços de Documentos Financeiros",
+     "text": "- Carta de Quitação de Débito\n- Declaração de adimplência\n- Declarações Financeiras\n- Demonstrativo de Pagamento (IR)"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Financeiros/Carta de Quitação de Débito",
+   "title": "Carta de Quitação de Débito",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Carta de Quitação de Débito",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/carta-de-quitacao-de-debito/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa de um documento que declara a quitação de débitos com a FECAP? Basta acessar o Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimentos > Carta de quitação de débito e realizar a solicitação.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-carta-de-quitacao-de-debito",
+     "heading": "Onde e quando pedir Carta de Quitação de Débito",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Financeiros/Declaração de adimplência",
+   "title": "Declaração de adimplência",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Declaração de adimplência",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/declaracao-de-adimplencia/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está com a sua mensalidade em dia e deseja uma Declaração de Adimplência e comprovação de pagamento?\n\nVocê pode extrair a declaração diretamente pelo Portal do Aluno. Confira como é fácil: abra o Menu e escolha a opção Relatórios, clique em Demonstrativo de Pagamento e selecione o período desejado. Agora é só emitir o relatório!\n\nSe preferir, entre em contato por meio dos nossos canais de atendimento. Estamos prontos para te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-declaracao-de-adimplencia",
+     "heading": "Onde e quando pedir Declaração de adimplência",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Financeiros/Declarações Financeiras",
+   "title": "Declarações Financeiras",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Declarações Financeiras",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/declaracoes-financeiras/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer ter acesso a declarações financeiras como: Declaração de Quitação de Débitos, Demonstrativo de Pagamento Detalhado, Declaração de Quitação de Cheque, Declaração de Anuência para títulos protestados em cartório, entre outros?\n\nBasta acessar o Portal do Aluno > Requerimentos > Declarações Financeiras e fazer sua sua solicitação. Fácil, não é?\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-declaracoes-financeiras",
+     "heading": "Condições para Declarações Financeiras",
+     "text": "- Aluno precisa abrir o atendimento no portal do aluno na opção Secretaria / Requerimentos > Declarações Financeiras > no campo observação especificar (tipo de declaração que deseja, período letivo, parcela, tipo de serviço, entre outras informações)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-declaracoes-financeiras",
+     "heading": "Onde e quando pedir Declarações Financeiras",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Documentos Financeiros/Demonstrativo de Pagamento (IR)",
+   "title": "Demonstrativo de Pagamento (IR)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "documentos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Demonstrativo de Pagamento (IR)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/demonstrativo-de-pagamento-ir/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Documentos Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Solicitar o Demonstrativo de Pagamento, para fins de Imposto de Renda, é rápido e simples.\n\nConfira o passo a passo: acesse o portal do aluno, escolha a opção Relatórios, selecione o período letivo desejado e clique em Emitir Relatório para o documento Demonstrativo de Pagamento no Período Letivo (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/relatorios).\n\nCaso prefira, entre em contato com a equipe ASA e nós iremos te ajudar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-demonstrativo-de-pagamento-ir",
+     "heading": "Onde e quando pedir Demonstrativo de Pagamento (IR)",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira",
+   "title": "Empregabilidade & Carreira",
+   "aliases": [
+    "serviços de empregabilidade & carreira do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Empregabilidade & Carreira",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Acesso a vagas – FECAP+ Oportunidades",
+    "Aconselhamento de Carreira",
+    "Aconselhamento sobre Estágio Não Obrigatório",
+    "Coach Holístico",
+    "Construção do Currículo do Futuro",
+    "Entrega do Relatório de Estágio Supervisionado",
+    "Estágio Entrega de Documentação",
+    "FECAP+ Oportunidades Dificuldade de Acesso",
+    "Modelos de Documentos de Estágio",
+    "Orientação para Construção de Currículo",
+    "Orientação para Desenvolvimento do LinkedIn"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 11 serviços."
+    },
+    {
+     "anchor": "servicos-de-empregabilidade-carreira",
+     "heading": "Serviços de Empregabilidade & Carreira",
+     "text": "- Acesso a vagas – FECAP+ Oportunidades\n- Aconselhamento de Carreira\n- Aconselhamento sobre Estágio Não Obrigatório\n- Coach Holístico\n- Construção do Currículo do Futuro\n- Entrega do Relatório de Estágio Supervisionado\n- Estágio Entrega de Documentação\n- FECAP+ Oportunidades Dificuldade de Acesso\n- Modelos de Documentos de Estágio\n- Orientação para Construção de Currículo\n- Orientação para Desenvolvimento do LinkedIn"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Acesso a vagas – FECAP+ Oportunidades",
+   "title": "Acesso a vagas – FECAP+ Oportunidades",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso a vagas – FECAP+ Oportunidades",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-a-vagas-fecap-oportunidades/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Bem-vindo(a) à sua Jornada de Desenvolvimento Pessoal e Profissional!\n\nE para começar com chave de ouro, queremos compartilhar uma incrível oportunidade que vai alavancar ainda mais o seu crescimento! 🚀 Apresentamos a você o FECAP+ Oportunidades, a plataforma de empregabilidade e carreira da FECAP. Esta é uma ferramenta muito poderosa que lhe possibilitará realizar a autogestão de sua carreira, aprimorar suas habilidades, identificar seu perfil comportamental e explorar caminhos profissionais alinhados ao seu potencial, além de dar aumentar o seu autoconhecimento.\n\nPara acessar é muito fácil: faça o login em seu Portal do Aluno > Menu > Urls Externas > FECAP+ Oportunidades.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-a-vagas-fecap-oportunidades",
+     "heading": "Onde e quando pedir Acesso a vagas – FECAP+ Oportunidades",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Aconselhamento de Carreira",
+   "title": "Aconselhamento de Carreira",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Aconselhamento de Carreira",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/aconselhamento-de-carreira/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está com dúvidas sobre seu direcionamento profissional no mercado de trabalho? Aqui na FECAP, nós te auxiliamos nesta jornada. Com as sessões individuais da mentoria de carreiras, você poderá focar em um plano de ação direcionado à colocação ou recolocação no mercado de trabalho.\n\nComece agora mesmo a traçar as estratégias para o seu futuro! Agende seu horário pelo caminho: Portal do Aluno (https://portal.fecap.br/) > Menu > Urls Externas > FECAP + Desenvolvimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-aconselhamento-de-carreira",
+     "heading": "Condições para Aconselhamento de Carreira",
+     "text": "O agendamento é destinado para alunos e ex-alunos FECAP.\nO estudante poderá solicitar o serviço por meio do canal listado."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-aconselhamento-de-carreira",
+     "heading": "Onde e quando pedir Aconselhamento de Carreira",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Aconselhamento sobre Estágio Não Obrigatório",
+   "title": "Aconselhamento sobre Estágio Não Obrigatório",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Aconselhamento sobre Estágio Não Obrigatório",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/aconselhamento-sobre-estagio-nao-obrigatorio/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Desde o primeiro semestre você já pode estagiar. Mas, está com dúvidas sobre como alavancar a sua carreira ou buscar por uma recolocação no mercado de trabalho? Ou gostaria de dicas para montar o seu currículo e/ou seu perfil no LinkedIn? Não se preocupe, estamos preparados para te auxiliar nesse momento tão importante da vida!\n\nAproveite e faça agora mesmo o seu agendamento de Mentoria de Carreira exclusivamente pelo Portal do Aluno. Confira o caminho: Menu > URLs Externas > FECAP+ Desenvolvimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-aconselhamento-sobre-estagio-nao-obrigatorio",
+     "heading": "Onde e quando pedir Aconselhamento sobre Estágio Não Obrigatório",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Coach Holístico",
+   "title": "Coach Holístico",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Coach Holístico",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/coach-holistico/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Já ouviu falar em Coach Holístico? São atendimentos individuais, realizados em 10 sessões, para te ajudar a definir seus objetivos, compreender os seus valores e identificar os obstáculos e conflitos da sua mente.\n\nFaça seu agendamento pelo Portal do Aluno > URLs externa > “FECAP + Desenvolvimento” e em reservas, selecione a agenda da Profa. Maria de Lurdes.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "condicoes-para-coach-holistico",
+     "heading": "Condições para Coach Holístico",
+     "text": "O agendamento é destinado para alunos e ex-alunos FECAP. O estudante poderá solicitar o serviço por meio do canal listado."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-coach-holistico",
+     "heading": "Onde e quando pedir Coach Holístico",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Construção do Currículo do Futuro",
+   "title": "Construção do Currículo do Futuro",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Construção do Currículo do Futuro",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/construcao-do-curriculo-do-futuro/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Ainda não fez o seu currículo do futuro? Não espere mais para sair na frente e se destacar na busca daquela oportunidade de emprego que faz seu olho brilhar! Acesse o seu Portal do Aluno, selecione a opção Urls externas, clique em FECAP+ Oportunidades e preencha todas as informações solicitadas em “Currículo do Futuro”. Seu currículo será gerado automaticamente em PDF e você poderá compartilhar via e-mail, LinkedIn etc.\n\nSe precisar de ajuda e orientações, fique à vontade para nos procurar. Nossos canais estão sempre abertos para te receber!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-construcao-do-curriculo-do-futuro",
+     "heading": "Onde e quando pedir Construção do Currículo do Futuro",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Entrega do Relatório de Estágio Supervisionado",
+   "title": "Entrega do Relatório de Estágio Supervisionado",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Entrega do Relatório de Estágio Supervisionado",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/entrega-do-relatorio-de-estagio-trabalho-supervisionado/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O Estágio Supervisionado é essencial para a conclusão do curso, sendo sua carga horária um requisito obrigatório para a obtenção do diploma. Para ser aprovado(a) na disciplina e comprovar as horas, é necessário entregar o Relatório de Estágio/Trabalho Supervisionado dentro dos prazos estabelecidos.\n\nOs cursos que exigem a entrega do Relatório de Estágio Supervisionado são: Administração, Ciências Contábeis/CCG, Secretariado Executivo e Relações Públicas.\n\nCronograma – 2026.1\n\n- 1º Prazo: até 24/04/2026\n\n- 2º Prazo: até 22/05/2026\n\nEntrega do relatório\n\nA entrega do relatório é obrigatória e condição para análise e validação pela instituição. Acesse mais informações aqui (https://www.fecap.br/wp-content/uploads/2026/04/Requisitos_para_formacao.pdf).\n\nO envio deve ser realizado uma única vez pelo caminho: Portal do Aluno > Menu > URLs Externas > FECAP+ Oportunidades > Gestão de Estágios\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-entrega-do-relatorio-de-estagio-supervisionado",
+     "heading": "Onde e quando pedir Entrega do Relatório de Estágio Supervisionado",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Estágio Entrega de Documentação",
+   "title": "Estágio: Entrega de Documentação",
+   "aliases": [
+    "Estágio Entrega de Documentação"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Estágio: Entrega de Documentação",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/entrega-de-documentos-de-estagio/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você passou na entrevista de emprego? Parabéns, estamos muito orgulhosos! Agora, se você precisa formalizar o seu estágio ou solicitar alguma mudança no contrato, seja ele obrigatório ou não, lembre-se de entregar os seus documentos para assinatura da FECAP. Para isso, basta encaminhá-lo(s) pelo Portal do Aluno > Menu > URLs externas > FECAP+ OPORTUINDADES > Gestão de Estágio.\n\nImportante: Você precisa estar regularmente matriculado para ter a aprovação da FECAP. E nós somos os últimos a assinar, portanto, certifique-se de encaminhar o(s) documento(s) já assinados por você e pela Empresa (física ou digitalmente).\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-estagio-entrega-de-documentacao",
+     "heading": "Condições para Estágio: Entrega de Documentação",
+     "text": "- Estar regularmente matriculado no período letivo informado no contrato;\n- Não possuir vínculo anterior ativo com outra(s) empresa(s);\n- Não possui documentos pendentes de empresas anteriores;\n- Ter entregue todos os Relatórios Semestrais do período de contratos anteriores."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-estagio-entrega-de-documentacao",
+     "heading": "Onde e quando pedir Estágio: Entrega de Documentação",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/FECAP+ Oportunidades Dificuldade de Acesso",
+   "title": "FECAP+ Oportunidades | Dificuldade de Acesso",
+   "aliases": [
+    "FECAP+ Oportunidades Dificuldade de Acesso"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — FECAP+ Oportunidades | Dificuldade de Acesso",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/fecap-oportunidades-dificuldade-de-acesso/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se tentou fazer login na plataforma FECAP+ Oportunidades, mas está com dificuldades referentes ao acesso? Não se preocupe!\n\nEntre em contato conosco por meio de um de nossos canais de atendimento informando o seu número da matrícula (RA), nome completo e o erro que aparece para você que um de nossos agentes terá o prazer em te auxiliar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-fecap-oportunidades-dificuldade-de-acesso",
+     "heading": "Onde e quando pedir FECAP+ Oportunidades | Dificuldade de Acesso",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Modelos de Documentos de Estágio",
+   "title": "Modelos de Documentos de Estágio",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Modelos de Documentos de Estágio",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/modelos-de-documentos-de-estagio/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Passou no estágio e não sabe quais documentos deve entregar para a empresa?\n\nVamos te ajudar! Confira alguns modelos de documentação que preparamos para você:\n\n- Acordo de Cooperação: baixe aqui (https://www.fecap.br/wp-content/uploads/2026/03/CONVENIO-DE-CONCESSAO-DE-ESTAGIO.docx).\n\n- Termo de Compromisso de Estágio e Plano de Atividades (Contrato): baixe aqui (https://www.fecap.br/wp-content/uploads/2026/03/TERMO-DE-COMPROMISSO-E-PLANO-DE-ATIVIDADES.docx).\n\n- Relatório Semestral de Atividades (Avaliação de Desempenho do(a) estagiário(a)): baixe aqui (https://www.fecap.br/wp-content/uploads/2026/03/RELATORIO-SEMESTRAL-DE-ATIVIDADES.docx).\n\n- Orientação Institucional para Elaboração do Relatório Semestral de Atividades: baixe aqui (https://www.fecap.br/wp-content/uploads/2022/08/Orientacoes-Gerais-de-Elaboracao-do-Relatorio-de-Atividades.pdf).\n\n- Termo Aditivo: baixe aqui (https://www.fecap.br/wp-content/uploads/2026/03/TERMO-ADITIVO.docx).\n\n- Rescisão (Termo de Encerramento de Estágio): baixe aqui (https://www.fecap.br/wp-content/uploads/2026/03/RESCISAO.docx).\n\n- Plano de Trabalho para Comprovação de Horas Complementares: baixe aqui (https://www.fecap.br/wp-content/uploads/2026/03/PLANO-DE-TRABALHO-PARA-COMPROVACAO-DE-HORAS-COMPLEMENTARES.docx).\n\nApós o preenchimento e assinatura do(s) documento(s), encaminhe para a aprovação e assinatura da FECAP por meio do Portal do Aluno > Menu > Secretaria/Requerimentos > Estágio: Entrega de Documentação.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-modelos-de-documentos-de-estagio",
+     "heading": "Onde e quando pedir Modelos de Documentos de Estágio",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Orientação para Construção de Currículo",
+   "title": "Orientação para Construção de Currículo",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Orientação para Construção de Currículo",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/orientacao-para-construcao-de-curriculo/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Chegou a hora de criar um currículo campeão! E é claro que estamos ao seu lado nesse momento! Oferecemos plantões presenciais ou on-line (via Zoom) para conversa, análise e elaboração de currículos, dicas para colocar informações assertivas sobre cada perfil de vaga, além de tirar dúvidas sobre processos seletivos.\n\nPara agendar seu horário, acesse o Portal do Aluno e selecione a opção URLs Externas > FECAP+ Desenvolvimento. Se preferir, entre em contato por meio dos canais de atendimento do ASA. Vamos juntos rumo ao seu sucesso!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-orientacao-para-construcao-de-curriculo",
+     "heading": "Onde e quando pedir Orientação para Construção de Currículo",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Empregabilidade & Carreira/Orientação para Desenvolvimento do LinkedIn",
+   "title": "Orientação para Desenvolvimento do LinkedIn",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "empregabilidade-carreira"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Orientação para Desenvolvimento do LinkedIn",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/orientacao-para-desenvolvimento-do-linkedin/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Empregabilidade & Carreira"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você já deu o primeiro passo para uma carreira de sucesso: a escolha do seu curso de graduação na FECAP! Agora, é o momento de elaborar um perfil forte e com bom engajamento no LinkedIn.\n\nOferecemos plantões presenciais ou on-line (via Zoom) para aprender como criar um perfil na rede, conteúdos e informações que devem ser colocadas, tipo de linguagem, além de tirar dúvidas sobre processos seletivos.\n\nVamos conversar? Os agendamentos devem ser realizados pelo Portal do Aluno, escolha a opção URLs Externas > FECAP+ Desenvolvimento. Em caso de dúvidas, entre em contato por meio dos canais de atendimento do ASA. Esperamos por você!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-orientacao-para-desenvolvimento-do-linkedin",
+     "heading": "Onde e quando pedir Orientação para Desenvolvimento do LinkedIn",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Eventos",
+   "title": "Eventos",
+   "aliases": [
+    "serviços de eventos do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Eventos – Divulgação do Calendário de Eventos",
+    "Eventos – Link do Evento para Inscrição",
+    "Eventos – Locação de Espaço",
+    "Eventos – Publicação de Notícia",
+    "Eventos – Transmissão nos Canais Digitais Institucionais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 5 serviços."
+    },
+    {
+     "anchor": "servicos-de-eventos",
+     "heading": "Serviços de Eventos",
+     "text": "- Eventos – Divulgação do Calendário de Eventos\n- Eventos – Link do Evento para Inscrição\n- Eventos – Locação de Espaço\n- Eventos – Publicação de Notícia\n- Eventos – Transmissão nos Canais Digitais Institucionais"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Eventos/Eventos – Divulgação do Calendário de Eventos",
+   "title": "Eventos – Divulgação do Calendário de Eventos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "eventos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos – Divulgação do Calendário de Eventos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/eventos-divulgacao-do-calendario-de-eventos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Eventos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Não fique de fora da nossa programação de eventos! Na Agenda de Eventos (https://www.fecap.br/evento/) você pode conferir todas as atividades disponíveis, informações e links de inscrição. Além disso, você também fica por dentro de tudo o que está rolando na FECAP pela nossa NewsFECAP!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-eventos-divulgacao-do-calendario-de-eventos",
+     "heading": "Onde e quando pedir Eventos – Divulgação do Calendário de Eventos",
+     "text": "- Setor responsável: Marketing\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Eventos/Eventos – Link do Evento para Inscrição",
+   "title": "Eventos – Link do Evento para Inscrição",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "eventos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos – Link do Evento para Inscrição",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/eventos-link-do-evento-para-inscricao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Eventos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você pode conferir todos os links de inscrição na Agenda de Eventos (https://www.fecap.br/evento/). Ainda assim não achou algum link de inscrição? Entre em contato com a equipe ASA, vamos adorar te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-eventos-link-do-evento-para-inscricao",
+     "heading": "Onde e quando pedir Eventos – Link do Evento para Inscrição",
+     "text": "- Setor responsável: Marketing\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Eventos/Eventos – Locação de Espaço",
+   "title": "Eventos – Locação de Espaço",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "eventos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos – Locação de Espaço",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/eventos-locacao-de-espaco/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Eventos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer realizar um evento, mas não sabe onde? Você pode fazer a locação das áreas comuns da FECAP!\n\nOlha só quanta opção bacana para reservar: Teatro, Auditórios, Laboratórios de informática, Sala de Empreendedorismo, Sala de Co-Labor-Ação, Sala de Negociações, entre outros. Envie a solicitação para locacoes@fecap.br, contendo as seguintes informações: nome da empresa, nome do evento, objetivo do evento, data, horário de início e término, número de participantes, público-alvo, espaço desejado, dados completos do estudante solicitante.\n\nEm caso de dúvidas, fique à vontade para nos chamar em um dos nossos canais de atendimento. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-eventos-locacao-de-espaco",
+     "heading": "Onde e quando pedir Eventos – Locação de Espaço",
+     "text": "- Setor responsável: Marketing\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Eventos/Eventos – Publicação de Notícia",
+   "title": "Eventos – Publicação de Notícia",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "eventos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos – Publicação de Notícia",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/eventos-publicacao-de-noticia/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Eventos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer publicar uma notícia para divulgação interna ou externa da FECAP? Envie a sua solicitação para imprensa@fecap.br. Ah, para facilitar a aprovação, lembre-se de mandar o maior número de informações possíveis sobre a notícia, combinado?!\n\nFicou com dúvidas? Entre em contato por meio dos nossos canais de atendimento. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-eventos-publicacao-de-noticia",
+     "heading": "Onde e quando pedir Eventos – Publicação de Notícia",
+     "text": "- Setor responsável: Marketing\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Eventos/Eventos – Transmissão nos Canais Digitais Institucionais",
+   "title": "Eventos – Transmissão nos Canais Digitais Institucionais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "eventos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Eventos – Transmissão nos Canais Digitais Institucionais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/eventos-transmissao-nos-canais-digitais-institucionais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Eventos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer transmitir alguma live pelos canais oficiais da FECAP? Envie sua solicitação para o e-mail marketing.digital@fecap.br. Ah, para facilitar a aprovação não esqueça de enviar o maior número de informações possíveis sobre a ação, combinado?!\n\nPrecisa de ajuda? Entre em contato conosco por meio dos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-eventos-transmissao-nos-canais-digitais-institucionais",
+     "heading": "Onde e quando pedir Eventos – Transmissão nos Canais Digitais Institucionais",
+     "text": "- Setor responsável: Marketing\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica",
+   "title": "Infraestrutura Física e Tecnológica",
+   "aliases": [
+    "serviços de infraestrutura física e tecnológica do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Infraestrutura Física e Tecnológica",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Acesso ao Wi-Fi",
+    "Empréstimo de recursos audiovisuais",
+    "Empréstimo de recursos para acessibilidade",
+    "Empréstimo de recursos tecnológicos",
+    "Manutenção de Periféricos (teclado, mouse, monitor)",
+    "Refeitório Estudantil",
+    "Suporte ao uso de ChromeBook",
+    "Suporte ao uso local de computadores (Laboratórios de Informática ou Co-labs)",
+    "Suporte para Impressão",
+    "Suporte para uso de Laboratórios de Informática (Disponibilidade, Softwares disponíveis)",
+    "Uso de Bicicletário"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 11 serviços."
+    },
+    {
+     "anchor": "servicos-de-infraestrutura-fisica-e-tecnologica",
+     "heading": "Serviços de Infraestrutura Física e Tecnológica",
+     "text": "- Acesso ao Wi-Fi\n- Empréstimo de recursos audiovisuais\n- Empréstimo de recursos para acessibilidade\n- Empréstimo de recursos tecnológicos\n- Manutenção de Periféricos (teclado, mouse, monitor)\n- Refeitório Estudantil\n- Suporte ao uso de ChromeBook\n- Suporte ao uso local de computadores (Laboratórios de Informática ou Co-labs)\n- Suporte para Impressão\n- Suporte para uso de Laboratórios de Informática (Disponibilidade, Softwares disponíveis)\n- Uso de Bicicletário"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Acesso ao Wi-Fi",
+   "title": "Acesso ao Wi-Fi",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso ao Wi-Fi",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-ao-wi-fi/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você sabia que, na FECAP, você pode ficar sempre conectado?\n\nA FECAP conta com uma rede de Wi-Fi pelo Campus todo! Para usufruir deste serviço, é só você acessar o link: https://login.wispot.com.br/ e realizar a autenticação na rede Wi-fi. O login pode ocorrer a partir do registro de matrícula e senha, pela conta Gmail, Facebook ou pelo cadastro do número de celular.\n\nMas, se você tentou conectar e está enfrentando dificuldades de acesso ao Wi-Fi da FECAP? Calma, nós não vamos te deixar sem internet! Procure algum agente da equipe ASA presencialmente e relate a dificuldade enfrentada ou a mensagem de erro exibida. Estamos prontos para te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-ao-wi-fi",
+     "heading": "Onde e quando pedir Acesso ao Wi-Fi",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Empréstimo de recursos audiovisuais",
+   "title": "Empréstimo de recursos audiovisuais",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Empréstimo de recursos audiovisuais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/emprestimo-de-recursos-audiovisuais/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer tornar o seu trabalho da faculdade ainda mais profissional? Aproveite os vários recursos audiovisuais da FECAP, como empréstimo de câmeras fotográficas e filmadoras, além de reservas de estúdio fotográfico ou de rádio e TV.\n\nEnvie a solicitação de empréstimo de material ou reserva de estúdio para: estudios@fecap.br\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-emprestimo-de-recursos-audiovisuais",
+     "heading": "Onde e quando pedir Empréstimo de recursos audiovisuais",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Empréstimo de recursos para acessibilidade",
+   "title": "Empréstimo de recursos para acessibilidade",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Empréstimo de recursos para acessibilidade",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/emprestimo-de-recursos-para-acessibilidade/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "É portador(a) de necessidades especiais e precisa de recursos para adaptação ao curso? Não se preocupe, estamos aqui para te auxiliar! Abra a sua solicitação em Requerimento/ Empréstimo de recursos para acessibilidade.\n\nSe preferir, entre em contato por meio dos nossos canais de atendimento. Faremos de tudo para te ajudar em sua jornada!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-emprestimo-de-recursos-para-acessibilidade",
+     "heading": "Onde e quando pedir Empréstimo de recursos para acessibilidade",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Empréstimo de recursos tecnológicos",
+   "title": "Empréstimo de recursos tecnológicos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Empréstimo de recursos tecnológicos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/emprestimo-de-recursos-tecnologicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer uma ajudinha tecnológica para te dar aquela força nos estudos? Na FECAP, você pode realizar empréstimos de tablets, notebooks, Chrome Books e mesas digitalizadoras. Bacana, não é?!\n\nFaça a reserva, com até 24h de antecedência, pelo portal do aluno Requerimento/ Empréstimo de recursos tecnológicos.\n\nSe preferir entre em contato por meio de um de nossos canais de atendimento. Estamos prontos para te ajudar!\n\nImportante: o empréstimo está disponível apenas para uso local, dentro do Campus.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-emprestimo-de-recursos-tecnologicos",
+     "heading": "Onde e quando pedir Empréstimo de recursos tecnológicos",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Manutenção de Periféricos (teclado, mouse, monitor)",
+   "title": "Manutenção de Periféricos (teclado, mouse, monitor)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Manutenção de Periféricos (teclado, mouse, monitor)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/manutencao-de-perifericos-teclado-mouse-monitor/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "A FECAP mantém regularmente a manutenção de todos os materiais, mas caso identifique a necessidade de revisão ou troca de equipamentos, como teclado, mouse ou monitor, localizados nos laboratórios de informática ou salas Co-labs, você pode solicitar o suporte e auxílio no funcionamento. Basta acessar Requerimento/ Manutenção de periféricos ou, se preferir, entrar em contato por meio de um dos nossos canais de atendimento informando qual o material e a necessidade. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-manutencao-de-perifericos-teclado-mouse-monitor",
+     "heading": "Onde e quando pedir Manutenção de Periféricos (teclado, mouse, monitor)",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Refeitório Estudantil",
+   "title": "Refeitório Estudantil",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Refeitório Estudantil",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/refeitorio-estudantil/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você sabia que na FECAP, temos um refeitório?\n\nPara sua comodidade, você pode trazer seu almoço, armazenar e esquentá-lo aqui. Mas tem que consumir no mesmo dia, ok?!\n\nO refeitório estudantil fica no 2º andar do Bloco B.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-refeitorio-estudantil",
+     "heading": "Condições para Refeitório Estudantil",
+     "text": "- Ter registro de matrícula"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-refeitorio-estudantil",
+     "heading": "Onde e quando pedir Refeitório Estudantil",
+     "text": "- Setor responsável: Classe de Primeira Classe\n- Onde: 2° andar - Bloco B"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Suporte ao uso de ChromeBook",
+   "title": "Suporte ao uso de ChromeBook",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Suporte ao uso de ChromeBook",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/suporte-ao-uso-de-chromebook/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está com dúvidas em relação a utilização e funcionamento do Chromebook? Vamos facilitar para você! Procure os agentes de sucesso e nós o ajudaremos com materiais explicativos e resolução das suas dúvidas. Afinal, a nossa meta é o seu sucesso!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-suporte-ao-uso-de-chromebook",
+     "heading": "Onde e quando pedir Suporte ao uso de ChromeBook",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Suporte ao uso local de computadores (Laboratórios de Informática ou Co-labs)",
+   "title": "Suporte ao uso local de computadores (Laboratórios de Informática ou Co-labs)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Suporte ao uso local de computadores (Laboratórios de Informática ou Co-labs)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/suporte-ao-uso-local-de-computadores-laboratorios-de-informatica-ou-co-labs/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você está com dificuldades na utilização dos laboratórios de informática ou salas Co-labs, não precisa se acanhar para pedir ajuda. A equipe ASA está disponível para te auxiliar! Basta nos procurar em um dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-suporte-ao-uso-local-de-computadores-laboratorios-de-informatica-ou-co-labs",
+     "heading": "Onde e quando pedir Suporte ao uso local de computadores (Laboratórios de Informática ou Co-labs)",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Suporte para Impressão",
+   "title": "Suporte para Impressão",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Suporte para Impressão",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/suporte-para-impressao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Nós sabemos como é chato quando queremos imprimir um documento e acontecem falhas, como papel preso ou insuficiente. Se você encontrou dificuldades nos Totens de impressão, não se preocupe, informe-nos o que aconteceu por meio de um dos nossos canais de atendimento. Estamos prontos para te auxiliar!\n\nImportante: para utilizar os serviços de impressão nos Totens é necessário possuir crédito na carteirinha de estudante da FECAP.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-suporte-para-impressao",
+     "heading": "Onde e quando pedir Suporte para Impressão",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Suporte para uso de Laboratórios de Informática (Disponibilidade, Softwares disponíveis)",
+   "title": "Suporte para uso de Laboratórios de Informática (Disponibilidade, Softwares disponíveis)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Suporte para uso de Laboratórios de Informática (Disponibilidade, Softwares disponíveis)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/suporte-para-uso-de-laboratorios-de-informatica-disponibilidade-softwares-disponiveis/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa utilizar algum laboratório de informática ou consultar os softwares disponíveis? Entre em contato conosco por meio de nossos canais de atendimento, e nós te auxiliaremos em relação ao período disponível, horários livres e programas.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-suporte-para-uso-de-laboratorios-de-informatica-disponibilidade-softwares-disponiveis",
+     "heading": "Onde e quando pedir Suporte para uso de Laboratórios de Informática (Disponibilidade, Softwares disponíveis)",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Infraestrutura Física e Tecnológica/Uso de Bicicletário",
+   "title": "Uso de Bicicletário",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "infraestrutura-fisica-e-tecnologica"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Uso de Bicicletário",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/uso-de-bicicletario/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Infraestrutura Física e Tecnológica"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer fugir do trânsito de São Paulo? Aproveite para ir às aulas de bicicleta. Além de ser um ótimo meio de transporte, faz muito bem à saúde!\n\nNa FECAP, você tem à sua disposição o Bicicletário, durante sua permanência no Campus e mediante disponibilidade. Para aproveitar desse serviço, compareça presencialmente na Portaria de Veículos e faça a solicitação.\n\nFique ligado(a): utilize sempre equipamento de proteção, como capacetes e joelheiras e permaneça nas ciclofaixas.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-uso-de-bicicletario",
+     "heading": "Onde e quando pedir Uso de Bicicletário",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Recepção Campi Liberdade\n- Horário: Segunda a Sexta, das 6h00 às 22h40 | Sábado, das 07h00 às 18h00.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais",
+   "title": "Plataformas Digitais",
+   "aliases": [
+    "serviços de plataformas digitais do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Plataformas Digitais",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Acesso ao e-mail FECAP",
+    "Acesso ao Moodle",
+    "Acesso ao Portal do Aluno",
+    "Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)",
+    "Acesso ao Zoom",
+    "Aplicativo EduFECAP",
+    "Dificuldades Acadêmicas no Moodle",
+    "Disciplina Indisponível no Moodle",
+    "Indisponibilidade de serviços on-line (Portal do Aluno, Wi-fi, Office 365, Moodle)",
+    "Office 365"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 10 serviços."
+    },
+    {
+     "anchor": "servicos-de-plataformas-digitais",
+     "heading": "Serviços de Plataformas Digitais",
+     "text": "- Acesso ao e-mail FECAP\n- Acesso ao Moodle\n- Acesso ao Portal do Aluno\n- Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)\n- Acesso ao Zoom\n- Aplicativo EduFECAP\n- Dificuldades Acadêmicas no Moodle\n- Disciplina Indisponível no Moodle\n- Indisponibilidade de serviços on-line (Portal do Aluno, Wi-fi, Office 365, Moodle)\n- Office 365"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Acesso ao e-mail FECAP",
+   "title": "Acesso ao e-mail FECAP",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso ao e-mail FECAP",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-ao-e-mail-fecap/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você ainda não acessou ou está com dificuldades para acessar o seu e-mail FECAP?\n\nSabia que ele possibilita o acesso a todos os recursos do Pacote Office online e Outlook 365, Teams e a 100GB de armazenamento no OneDrive?\n\nPara conseguir todos esses recursos, o seu Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimentos > Acesso ao e-mail FECAP e realizar a solicitação.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-ao-e-mail-fecap",
+     "heading": "Onde e quando pedir Acesso ao e-mail FECAP",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Acesso ao Moodle",
+   "title": "Acesso ao Moodle",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso ao Moodle",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-ao-moodle/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O Moodle é a nossa ferramenta de estudos, onde você terá acesso ao conteúdo das aulas e às atividades. Por isso, é muito importante que você esteja sempre atento(a) ao Moodle para não perder nada! Seu usuário e senha são os mesmos do Portal do Aluno. Acesse o Moodle pelo Portal do Aluno (https://portal.fecap.br/) > Menu > Urls Externas > EAD FECAP-Moodle.\n\nMas, se você está enfrentando dificuldades ou falhas relativas ao acesso ao Moodle, como erro de usuário ou indisponibilidades técnicas, e está precisando de suporte, não se preocupe. Entre em contato conosco por meio do e-mail apoiomoodle@fecap.br, informando seu nome completo, RA e descreva o erro que aparece para você. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-ao-moodle",
+     "heading": "Onde e quando pedir Acesso ao Moodle",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Acesso ao Portal do Aluno",
+   "title": "Acesso ao Portal do Aluno",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso ao Portal do Aluno",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-ao-portal-do-aluno/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O Portal do Aluno armazena toda a sua vida dentro da FECAP! Por lá, você tem acesso a documentos, notas, faltas, boletos, vagas, quadro de horários e muito mais! Você também pode abrir requerimentos, como envio de documentos, solicitação da carteirinha FECAP, atividades complementares, entre outros. Acesse o Portal do Aluno pelo link (https://portal.fecap.br/) ou pelo site (https://www.fecap.br/) > Portal do Aluno no canto superior direito. Para entrar no Portal do Aluno (e no Moodle), você utilizará seu Registro de Aluno (RA).\n\nMas, você tentou acessar e está enfrentando dificuldades, como erro de usuário ou indisponibilidades técnicas? Fique tranquilo(a). Entre em contato conosco por meio de nossos canais de atendimento que iremos te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-ao-portal-do-aluno",
+     "heading": "Onde e quando pedir Acesso ao Portal do Aluno",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)",
+   "title": "Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-ao-vpn-fecap-economatica-bases-de-dados-da-biblioteca/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você não está frequentando presencialmente o Campus da Instituição e precisa de ajuda para acesso à rede local da FECAP (VPN), para uso das bases Economática e da Biblioteca, não se preocupe. Confira o tutorial aqui (https://www.fecap.br/wp-content/uploads/2024/11/TUTORIAL-DE-ACESSO-VPN-FECAP-ALUNO-PROFESSOR-V.3.pdf).\n\nCaso ainda tenha dúvidas, entre em contato por meio de um dos nossos canais de atendimento e solicite a análise para a resolução da dificuldade enfrentada. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-acesso-ao-vpn-fecap-economatica-bases-de-dados-da-biblioteca",
+     "heading": "Condições para Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)",
+     "text": "É necessário possuir registro de matrícula."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-ao-vpn-fecap-economatica-bases-de-dados-da-biblioteca",
+     "heading": "Onde e quando pedir Acesso ao VPN FECAP (Economática, Bases de Dados da Biblioteca)",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Acesso ao Zoom",
+   "title": "Acesso ao Zoom",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Acesso ao Zoom",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/acesso-ao-zoom/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está com dúvidas sobre como acessar e utilizar a plataforma Zoom?\n\nNão se preocupe! Preparamos um Tutorial para você. Confira aqui: Tutorial de Acesso ao Zoom (https://www.fecap.br/wp-content/uploads/2023/09/Tutorial-de-Acesso-ao-Zoom.docx).\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-acesso-ao-zoom",
+     "heading": "Condições para Acesso ao Zoom",
+     "text": "É necessário possuir registro de matrícula"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-acesso-ao-zoom",
+     "heading": "Onde e quando pedir Acesso ao Zoom",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Aplicativo EduFECAP",
+   "title": "Aplicativo EduFECAP",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Aplicativo EduFECAP",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/aplicativo-edufecap/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Ei, Alvarista! Já pensou ter todo o seu Portal do Aluno dentro de um só aplicativo?\n\nAgora com o EduFECAP, você tem acesso aos seus boletos, notas, e muito mais.\n\nBaixe o aplicativo da FECAP pelo Google Play (https://play.google.com/store/apps/details?id=com.educonnect.totvs.fecap&hl=pt_BR&pli=1) ou Apple Store (https://apps.apple.com/br/app/edufecap/id1599109771)e tenha mais facilidade no seu dia a dia acadêmico!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-aplicativo-edufecap",
+     "heading": "Condições para Aplicativo EduFECAP",
+     "text": "Ter um registro de matrícula"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-aplicativo-edufecap",
+     "heading": "Onde e quando pedir Aplicativo EduFECAP",
+     "text": "- Setor responsável: Área de Sucesso Alvarista - ASA\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30."
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Dificuldades Acadêmicas no Moodle",
+   "title": "Dificuldades Acadêmicas no Moodle",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Dificuldades Acadêmicas no Moodle",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/dificuldades-academicas-no-moodle/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você está com dificuldades em relação ao Moodle, como problemas na abertura de arquivos, falta de acesso a alguma atividade, entre outras, não se preocupe. Abra uma solicitação em seu portal Requerimento/Dificuldades Acadêmicas no Moodle informando a dificuldade enfrentada.\n\nVocê também pode nos procurar em um dos nossos canais de atendimento. Será um prazer te auxiliar! Caso prefira, confira o tutorial (https://www.fecap.br/wp-content/uploads/2022/07/Manual_Moodle.pdf) do Moodle.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-dificuldades-academicas-no-moodle",
+     "heading": "Onde e quando pedir Dificuldades Acadêmicas no Moodle",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Disciplina Indisponível no Moodle",
+   "title": "Disciplina Indisponível no Moodle",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplina Indisponível no Moodle",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplina-indisponivel-no-moodle/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Entrou no Moodle e reparou que está faltando alguma disciplina? Fique tranquilo(a), vamos resolver essa questão! Abra uma solicitação em seu Portal do Aluno (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/web/app/edu/PortalEducacional/#/requerimento/novo/31/327) > Menu > Secretaria/Requerimentos > Disciplina Indisponível no Moodle, informando qual(is) disciplina(s) não aparece(m) para você que estaremos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplina-indisponivel-no-moodle",
+     "heading": "Onde e quando pedir Disciplina Indisponível no Moodle",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Indisponibilidade de serviços on-line (Portal do Aluno, Wi-fi, Office 365, Moodle)",
+   "title": "Indisponibilidade de serviços on-line (Portal do Aluno, Wi-fi, Office 365, Moodle)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Indisponibilidade de serviços on-line (Portal do Aluno, Wi-fi, Office 365, Moodle)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/indisponibilidade-de-servicos-on-line-portal-do-aluno-wi-fi-office-365-moodle/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Os serviços on-line, como Portal do Aluno, Office ou até mesmo o Moodle, estão indisponíveis? Pode nos procurar em um dos canais de atendimento do ASA para verificarmos o que está acontecendo. Estamos prontos para te auxiliar!\n\nAh, para agilizar o atendimento, informe a mensagem de erro exibida ao tentar acesso.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-indisponibilidade-de-servicos-on-line-portal-do-aluno-wi-fi-office-365-moodle",
+     "heading": "Onde e quando pedir Indisponibilidade de serviços on-line (Portal do Aluno, Wi-fi, Office 365, Moodle)",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Plataformas Digitais/Office 365",
+   "title": "Office 365",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "plataformas-digitais"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Office 365",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/office-365/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Plataformas Digitais"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "As tecnologias evoluem a todo momento e se você está com dúvidas sobre a utilização da plataforma Office 365 (e-mail, Word, Excel, OneDrive, Teams, entre outros), nós podemos te ajudar! Confira o tutorial aqui (https://www.fecap.br/wp-content/uploads/2022/08/Install-Suite-Office-from-Office365-updated.pdf).\n\nEm caso de dúvidas, envie a sua solicitação de suporte através do portal Requerimento/ Office 365. Se preferir, entre em contato conosco por meio dos canais de atendimento. A equipe ASA está treinada e pronta para solucionar todas as suas dúvidas!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-office-365",
+     "heading": "Onde e quando pedir Office 365",
+     "text": "- Setor responsável: DTI Infraestrutura\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Reservas e Recursos",
+   "title": "Reservas e Recursos",
+   "aliases": [
+    "serviços de reservas e recursos do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reservas e Recursos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Reserva de Sala"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 1 serviço."
+    },
+    {
+     "anchor": "servicos-de-reservas-e-recursos",
+     "heading": "Serviços de Reservas e Recursos",
+     "text": "- Reserva de Sala"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Reservas e Recursos/Reserva de Sala",
+   "title": "Reserva de Sala",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "reservas-e-recursos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reserva de Sala",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/reserva-de-sala/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Reservas e Recursos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Usufrua da infraestrutura das salas de aula para a realização de reuniões, atividades extras, trabalhos em grupo, orientações e muito mais!\n\nFaça a solicitação da reserva diretamente pelo portal Requerimento/ Reserva de Sala (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/32/395)ou entre em contato por meio dos nossos canais de atendimento. Lembre-se de informar o nome da atividade, a data e o horário de início e término.\n\nImportante: a reserva dependerá da disponibilidade de salas e o limite de término da atividade deverá ser de até 30 minutos antes do início das aulas.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-reserva-de-sala",
+     "heading": "Onde e quando pedir Reserva de Sala",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Segurança",
+   "title": "Segurança",
+   "aliases": [
+    "serviços de segurança do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Segurança",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Atendimento de Primeiros Socorros",
+    "Orientações em caso de incêndio",
+    "Participação no CONSEG (Conselho Comunitário de Segurança)",
+    "Rondas Internas",
+    "Sistema de Achados e Perdidos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 5 serviços."
+    },
+    {
+     "anchor": "servicos-de-seguranca",
+     "heading": "Serviços de Segurança",
+     "text": "- Atendimento de Primeiros Socorros\n- Orientações em caso de incêndio\n- Participação no CONSEG (Conselho Comunitário de Segurança)\n- Rondas Internas\n- Sistema de Achados e Perdidos"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Segurança/Atendimento de Primeiros Socorros",
+   "title": "Atendimento de Primeiros Socorros",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "seguranca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Atendimento de Primeiros Socorros",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/atendimento-de-primeiros-socorros/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Segurança"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Não está se sentindo bem ou presenciou alguma emergência em que será necessário atendimento de primeiros socorros?\n\nEntre em contato imediatamente com os canais de atendimento do ASA, informando a situação e local de ocorrência, e nós acionaremos o Bombeiro Civil ou Socorristas para prestar a devida assistência.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-atendimento-de-primeiros-socorros",
+     "heading": "Onde e quando pedir Atendimento de Primeiros Socorros",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Segurança/Orientações em caso de incêndio",
+   "title": "Orientações em caso de incêndio",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "seguranca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Orientações em caso de incêndio",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/orientacoes-em-caso-de-incendio/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Segurança"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "A FECAP mantém rigorosamente a atualização do AVCB (Auto de Vistoria do Corpo de Bombeiros) e revisa regularmente o projeto técnico de incêndio. Estamos prontos para agir em momentos de crise (princípio de incêndio), com Brigadistas, Socorristas e Bombeiro Civil, orientando os(as) estudantes até o ponto de encontro.\n\nCaso presencie alguma situação de risco, informe ao ASA em um de nossos canais de atendimento e nós tomaremos as providências necessárias.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-orientacoes-em-caso-de-incendio",
+     "heading": "Onde e quando pedir Orientações em caso de incêndio",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Segurança/Participação no CONSEG (Conselho Comunitário de Segurança)",
+   "title": "Participação no CONSEG (Conselho Comunitário de Segurança)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "seguranca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Participação no CONSEG (Conselho Comunitário de Segurança)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/participacao-no-conseg-conselho-comunitario-de-seguranca/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Segurança"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Garantir a segurança e tranquilidade da comunidade Alvarista no Campus e redondezas é a nossa prioridade. Dentre as diversas iniciativas de proteção, a equipe de Segurança FECAP participa ativamente das reuniões mensais do Conseg (Conselho Comunitário de Segurança) para desenvolver ações conjuntas e cobrar dos órgãos públicos melhorias de acessibilidade, zeladoria e segurança para a região da Liberdade.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-participacao-no-conseg-conselho-comunitario-de-seguranca",
+     "heading": "Onde e quando pedir Participação no CONSEG (Conselho Comunitário de Segurança)",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Segurança/Rondas Internas",
+   "title": "Rondas Internas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "seguranca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Rondas Internas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/rondas-internas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Segurança"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Presenciou alguma situação inadequada ou em que sentiu a sua segurança e dos demais abalada?\n\nAbra uma solicitação pelo portal Requerimento/ Rondas Internas (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/33/315) ou comunique ao ASA em um de nossos canais de atendimento, informando local e horário da ocorrência. Iremos providenciar, junto à equipe de Segurança, a ampliação da ronda na área indicada. Estamos prontos para te ajudar e garantir a sua proteção.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-rondas-internas",
+     "heading": "Onde e quando pedir Rondas Internas",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Segurança/Sistema de Achados e Perdidos",
+   "title": "Sistema de Achados e Perdidos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "seguranca"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Sistema de Achados e Perdidos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/sistema-de-achados-e-perdidos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Segurança"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Como diria a Luna Lovegood, “As coisas que nos pertencem acabam voltando para nós.”, não é mesmo?!\nPor isso, se você perdeu algo, tenha calma. Abra uma solicitação no portal Requerimento/ Sistema de Achados e Perdido (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/33/316) ou compareça à recepção e comunique o item perdido e demais informações, como dia e possível local da perda. Caso o seu item tenha sido encontrado, estará guardado em segurança no depósito de achados e perdidos. Mas atenção, você terá um prazo de até 15 dias para retirada.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-sistema-de-achados-e-perdidos",
+     "heading": "Onde e quando pedir Sistema de Achados e Perdidos",
+     "text": "- Setor responsável: Segurança e Gestão de Riscos\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos",
+   "title": "Serviços Acadêmicos",
+   "aliases": [
+    "serviços de serviços acadêmicos do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Serviços Acadêmicos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Abono ou Compensação de Faltas",
+    "Afastamento – Licença Maternidade",
+    "Ajuste de Ponderação",
+    "Ajustes por sobreposições de disciplinas",
+    "Alteração de horário de provas (oficial e exame)",
+    "Alteração do horário do PEDP",
+    "Análise de Grade",
+    "Antecipação de Disciplinas",
+    "Autorização para assistir aulas como ouvinte",
+    "Autorização para assistir aulas em outro curso",
+    "Cadastro de atividade complementar",
+    "Cancelamento de Dispensa de Disciplinas",
+    "Comprovante de restrição religiosa",
+    "Contestação da Bolsa Melhores Alunos",
+    "Destrancamento de Curso",
+    "Destrancamento de DP e Adaptação",
+    "Dificuldades para realização de Provas Oficiais Exame On-line",
+    "Disciplinas em Inglês – Equivalência de Disciplina Eletiva",
+    "Disciplinas em Inglês – Validação de Horas Complementares",
+    "Disciplinas extracurriculares",
+    "Disciplinas Isoladas (Ex-alunos)",
+    "Dispensa de disciplina",
+    "DP Adaptação indisponível no portfólio",
+    "Inclusão no Nivelamento",
+    "Inscrições PEDP (fora do prazo)",
+    "Lançamento de Notas Pendentes",
+    "Nome do aluno não consta na lista de presença",
+    "PEDP Revisão de provas",
+    "Reagendamento de provas por sobreposições de horários",
+    "Remanejamento de disciplinas",
+    "Rematrícula",
+    "Rematrícula fora de Época",
+    "Reunião com a Coordenação de Curso",
+    "Reverter Cancelamento do curso",
+    "Solicitação de Boleto",
+    "Tradução Juramentada do Histórico Escolar",
+    "Transferência de ênfase eletivas",
+    "Transferência de turma",
+    "Transferência de turno",
+    "Transferência interna de curso (Turmas a partir do 2ºsemestre)",
+    "Transferência interna de curso (Turmas do 1º semestre)",
+    "Vista de Prova de Exame"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 42 serviços."
+    },
+    {
+     "anchor": "servicos-de-servicos-academicos",
+     "heading": "Serviços de Serviços Acadêmicos",
+     "text": "- Abono ou Compensação de Faltas\n- Afastamento – Licença Maternidade\n- Ajuste de Ponderação\n- Ajustes por sobreposições de disciplinas\n- Alteração de horário de provas (oficial e exame)\n- Alteração do horário do PEDP\n- Análise de Grade\n- Antecipação de Disciplinas\n- Autorização para assistir aulas como ouvinte\n- Autorização para assistir aulas em outro curso\n- Cadastro de atividade complementar\n- Cancelamento de Dispensa de Disciplinas\n- Comprovante de restrição religiosa\n- Contestação da Bolsa Melhores Alunos\n- Destrancamento de Curso\n- Destrancamento de DP e Adaptação\n- Dificuldades para realização de Provas Oficiais Exame On-line\n- Disciplinas em Inglês – Equivalência de Disciplina Eletiva\n- Disciplinas em Inglês – Validação de Horas Complementares\n- Disciplinas extracurriculares\n- Disciplinas Isoladas (Ex-alunos)\n- Dispensa de disciplina\n- DP Adaptação indisponível no portfólio\n- Inclusão no Nivelamento\n- Inscrições PEDP (fora do prazo)\n- Lançamento de Notas Pendentes\n- Nome do aluno não consta na lista de presença\n- PEDP Revisão de provas\n- Reagendamento de provas por sobreposições de horários\n- Remanejamento de disciplinas\n- Rematrícula\n- Rematrícula fora de Época\n- Reunião com a Coordenação de Curso\n- Reverter Cancelamento do curso\n- Solicitação de Boleto\n- Tradução Juramentada do Histórico Escolar\n- Transferência de ênfase eletivas\n- Transferência de turma\n- Transferência de turno\n- Transferência interna de curso (Turmas a partir do 2ºsemestre)\n- Transferência interna de curso (Turmas do 1º semestre)\n- Vista de Prova de Exame"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Abono ou Compensação de Faltas",
+   "title": "Abono ou Compensação de Faltas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Abono ou Compensação de Faltas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/abono-de-faltas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Faltou nas aulas por motivo de saúde, alistamento militar ou outras razões previstas em lei? Calma, nós podemos te ajudar. Se você se enquadra nas condições descritas, envie seu atestado para análise do abono das faltas pelo portal Requerimento/ Abono de faltas (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/339).\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-abono-ou-compensacao-de-faltas",
+     "heading": "Condições para Abono ou Compensação de Faltas",
+     "text": "1) Não há abono de faltas. Em casos previstos em lei (doença infectocontagiosa, afastamento superior a 15 (quinze) dias ininterruptos, licença maternidade, serviço militar obrigatório, serviço eleitoral, guarda religiosa), o(a) estudante pode solicitar tratamento excepcional para fins de compensação de faltas;\n2) O(a) estudante deve estar regularmente matriculado(a) (situação de matrícula na disciplina como \"Cursando\");\n3) Em casos de problemas de saúde, deve ser entregue laudo médico contendo CID e relatório médico que ateste a impossibilidade de frequência às aulas. A entrega deverá ocorrer em até 5 dias consecutivos, a contar do início da data de afastamento;\n4) O laudo médico deve ser encaminhado em papel timbrado com dados do emissor e contatos para verificação de autenticidade."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-abono-ou-compensacao-de-faltas",
+     "heading": "Onde e quando pedir Abono ou Compensação de Faltas",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Afastamento – Licença Maternidade",
+   "title": "Afastamento – Licença Maternidade",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Afastamento – Licença Maternidade",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/compensacao-de-faltas-licenca-maternidade/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você pode solicitar a Licença Maternidade para a compensação de atividades e faltas. O atestado será válido por 90 dias, a partir da data de entrega do atestado. Para enviar a solicitação acesse o portal Requerimento/ Compensação de faltas – Licença Maternidade (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/290)ou entre em contato por meio dos nossos canais de atendimento. Será um prazer te auxiliar nesse momento tão importante!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-afastamento-licenca-maternidade",
+     "heading": "Onde e quando pedir Afastamento – Licença Maternidade",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Ajuste de Ponderação",
+   "title": "Ajuste de Ponderação",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Ajuste de Ponderação",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/ajuste-de-ponderacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Precisa de alteração na ponderação de algumas disciplinas em virtude de não cursar o PEDP? Solicite por meio do portal Requerimento/ Ajuste de Ponderação (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/312). Caso prefira, entre em contato com os canais de atendimento do ASA. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-ajuste-de-ponderacao",
+     "heading": "Onde e quando pedir Ajuste de Ponderação",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Ajustes por sobreposições de disciplinas",
+   "title": "Ajustes por sobreposições de disciplinas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Ajustes por sobreposições de disciplinas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/ajustes-por-sobreposicoes-de-disciplinas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Possui disciplinas de semestres anteriores, DP ou adaptações, com horários conflitantes? Não se preocupe, nós podemos te ajudar. Abra uma solicitação no portal Requerimento/ Ajustes por sobreposições de disciplinas, informando qual disciplina deseja cursar e qual deseja alterar o status para “A Cursar”. Se preferir, procure pelo atendimento ASA em um de nossos canais.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-ajustes-por-sobreposicoes-de-disciplinas",
+     "heading": "Onde e quando pedir Ajustes por sobreposições de disciplinas",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Alteração de horário de provas (oficial e exame)",
+   "title": "Alteração de horário de provas (oficial e exame)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração de horário de provas (oficial e exame)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-de-horario-de-provas-oficial-e-exame/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Imprevistos acontecem e se você não conseguiu realizar suas provas (oficiais e exames), na data e horários pré-estabelecidos, por um motivo previsto em lei, solicite a análise para aplicação de nova prova por meio do portal Requerimento/ Alteração de horário de provas (oficial e exame) (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/111). Se preferir, entre em contato conosco por meio dos nossos canais.\n\nImportante: não esqueça de apresentar o comprovante de impedimento (doenças infectocontagiosas, alistamento militar, licença maternidade etc.) para avaliação da Coordenação.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-de-horario-de-provas-oficial-e-exame",
+     "heading": "Onde e quando pedir Alteração de horário de provas (oficial e exame)",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Alteração do horário do PEDP",
+   "title": "Alteração do horário do PEDP",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Alteração do horário do PEDP",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/alteracao-do-horario-do-pedp/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "A correria está grande e você não está conseguindo encaixar as aulas do PEDP?\n\nRespira fundo que nós temos a solução! Solicite uma alteração de horário pelo portal Requerimento/ Alteração do horário do PEDP ou por um dos canais de atendimento do ASA. Vamos adorar te ajudar em sua trajetória de sucesso!\n\nMas lembre-se, o PEDP deve ter outro horário disponível para podermos realizar a alteração.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-alteracao-do-horario-do-pedp",
+     "heading": "Onde e quando pedir Alteração do horário do PEDP",
+     "text": "- Setor responsável: Secretaria\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Análise de Grade",
+   "title": "Análise de Grade",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Análise de Grade",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/analise-de-grade/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Decidiu mudar de curso, a matriz curricular foi alterada ou você trancou e resolveu voltar? Nós podemos te ajudar! Para Mudança de curso ou adaptação à nova matriz curricular, acesse o portal Requerimento/Análise de Grade (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/97)e solicite a análise de grade. Em caso de Retorno, acesse o nosso site (https://www.fecap.br/retorno-ao-curso/).\n\nA Coordenação do curso avaliará quais disciplinas deverá cursar e quais serão dispensadas ao longo do curso, assim como o semestre de ingresso. Se ficar com dúvidas, entre em contato conosco por meio dos canais de atendimento.\n\nImportante: confira o prazo para solicitação disponível no Manual do Aluno.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-analise-de-grade",
+     "heading": "Onde e quando pedir Análise de Grade",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Antecipação de Disciplinas",
+   "title": "Antecipação de Disciplinas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Antecipação de Disciplinas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/antecipacao-de-disciplinas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Possui janelas em sua grade horária e deseja antecipar algumas disciplinas da série seguinte? Isso é possível!\n\nFaça a solicitação pelo portal Requerimento/ Antecipação de Disciplina (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/113)ou entre em contato conosco por meio dos canais de atendimento. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-antecipacao-de-disciplinas",
+     "heading": "Onde e quando pedir Antecipação de Disciplinas",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Autorização para assistir aulas como ouvinte",
+   "title": "Autorização para assistir aulas como ouvinte",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Autorização para assistir aulas como ouvinte",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/autorizacao-para-assistir-aulas-como-ouvinte/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Tem curiosidade ou interesse em assistir à aula de alguma disciplina que não está na sua grade? Você pode participar como ouvinte. Bacana, não é?! Faça a sua solicitação pelo portal Requerimento/ Autorização para assistir aulas como ouvinte. Se preferir, entre em contato pelos canais de atendimento ASA. Será um prazer te ajudar nesse pedido especial!\n\nImportante: a validação dependerá da autorização da Coordenação.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-autorizacao-para-assistir-aulas-como-ouvinte",
+     "heading": "Onde e quando pedir Autorização para assistir aulas como ouvinte",
+     "text": "- Setor responsável: Secretaria\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Autorização para assistir aulas em outro curso",
+   "title": "Autorização para assistir aulas em outro curso",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Autorização para assistir aulas em outro curso",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/autorizacao-para-assistir-aulas-em-outro-curso/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Tem curiosidade ou interesse em assistir às aulas de outro curso? Faça a sua solicitação pelo portal Requerimento/ Autorização para assistir às aulas em outro curso (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/330)ou entre em contato pelos canais de atendimento do ASA que nós iremos te ajudar com esse pedido especial. Mas lembre-se, a validação dependerá da Coordenação, ok?!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-autorizacao-para-assistir-aulas-em-outro-curso",
+     "heading": "Onde e quando pedir Autorização para assistir aulas em outro curso",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: (11) 94018-5617"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Cadastro de atividade complementar",
+   "title": "Cadastro de atividade complementar",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cadastro de atividade complementar",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cadastro-de-atividade-complementar/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você já tem em mãos os certificados/comprovantes das suas atividades complementares, não esqueça de cadastrá-los para contarem como horas, a fim de cumprir o componente curricular obrigatório.\n\nAbra a solicitação e anexe os documentos em seu Portal do AlunoRequerimento/ Cadastro de atividade complementar (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/17). Se preferir, pode nos procurar em nossos canais de atendimento. Será um prazer te auxiliar\n\nImportante: cada curso tem um regulamento sobre qual tipo de atividade é aceita e quantas horas ela equivale. Confira em seu Portal do Aluno, no menu Arquivos.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cadastro-de-atividade-complementar",
+     "heading": "Onde e quando pedir Cadastro de atividade complementar",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Cancelamento de Dispensa de Disciplinas",
+   "title": "Cancelamento de Dispensa de Disciplinas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cancelamento de Dispensa de Disciplinas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cancelamento-de-dispensa-de-disciplinas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Foi dispensado(a) de uma disciplina, mas quer aproveitar todo o repertório e aprendizado? Sem problemas! Você pode solicitar o cancelamento da dispensa por meio do portal Requerimento/ Cancelamento de Dispensa de Disciplinas (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/124) ou nos procurar nos canais de atendimento do ASA.\n\nConfira o prazo para solicitação disponível no Manual do Aluno.\n\nAtenção: o cancelamento de disciplina dispensada é irreversível, sendo obrigatório ser aprovado(a) por notas e faltas. Caso contrário, ficará como reprovado(a) na disciplina.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cancelamento-de-dispensa-de-disciplinas",
+     "heading": "Onde e quando pedir Cancelamento de Dispensa de Disciplinas",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Comprovante de restrição religiosa",
+   "title": "Comprovante de restrição religiosa",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Comprovante de restrição religiosa",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/comprovante-de-restricao-religiosa/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Na FECAP, o respeito a liberdade de crença faz parte do nosso dia a dia.\n\nDe acordo com a Lei nº 13.796 de 03/01/2019, o(a) estudante poderá ausentar-se de provas e aulas marcadas em dias em que, segundo os preceitos da sua religião, seja vedado o exercício de tais atividades.\n\nPara remarcação de provas e novas atividades para compensação de faltas, encaminhe a documentação por meio do portal Requerimento/ Comprovante de restrição religiosa (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/118). Se preferir, entre em contato por meios dos canais de atendimento. Será um prazer te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-comprovante-de-restricao-religiosa",
+     "heading": "Onde e quando pedir Comprovante de restrição religiosa",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: ASA - Área do Sucesso Alvarista\n- Horário: De segunda a sexta-feira, das 08h00 às 21h30 e aos sábados, das 09h00 às 13h00\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Contestação da Bolsa Melhores Alunos",
+   "title": "Contestação da Bolsa Melhores Alunos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Contestação da Bolsa Melhores Alunos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/contestacao-da-bolsa-melhores-alunos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Não concordou com os critérios aplicados na seleção da Bolsa Melhores Alunos e deseja a revisão da sua turma? Você pode abrir uma solicitação para a Secretaria realizar uma nova análise. Envie para Requerimento/ Contestação da Bolsa Melhores Alunos ou, caso prefira, entre em contato por meio dos nossos canais de atendimento. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-contestacao-da-bolsa-melhores-alunos",
+     "heading": "Onde e quando pedir Contestação da Bolsa Melhores Alunos",
+     "text": "- Setor responsável: Secretária Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Destrancamento de Curso",
+   "title": "Destrancamento de Curso",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Destrancamento de Curso",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/destrancamento-do-curso/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você trancou o curso, mas mudou de ideia e quer retornar no mesmo período letivo, agora você pode solicitar e reverter o trancamento por meio do portalRequerimento/ Destrancamento do Curso (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/332)ou por um dos canais de atendimento do ASA. Estamos felizes em tê-lo(a) de volta!\n\nImportante: confira o prazo para solicitação disponível no Manual do Aluno.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-destrancamento-de-curso",
+     "heading": "Condições para Destrancamento de Curso",
+     "text": "- Estudante deve ter situação de matrícula \"Trancado\""
+    },
+    {
+     "anchor": "onde-e-quando-pedir-destrancamento-de-curso",
+     "heading": "Onde e quando pedir Destrancamento de Curso",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Destrancamento de DP e Adaptação",
+   "title": "Destrancamento de DP e Adaptação",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Destrancamento de DP e Adaptação",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/destrancamento-de-dp-e-adaptacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Mudar de ideia faz parte da vida. Se você trancou alguma disciplina de DP ou adaptação e deseja voltar a cursar no mesmo período letivo, faça a sua solicitação por meio do portal Requerimento/ Destrancamento de DP e adaptação (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/331). Se preferir, fale conosco por meio de um dos canais de atendimento do ASA.\n\nImportante: confira o prazo para solicitação disponível no Manual do Aluno.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-destrancamento-de-dp-e-adaptacao",
+     "heading": "Onde e quando pedir Destrancamento de DP e Adaptação",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Dificuldades para realização de Provas Oficiais Exame On-line",
+   "title": "Dificuldades para realização de Provas Oficiais/Exame On-line",
+   "aliases": [
+    "Dificuldades para realização de Provas Oficiais Exame On-line"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Dificuldades para realização de Provas Oficiais/Exame On-line",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/dificuldades-para-realizacao-de-provas-oficiais-exame-on-line/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Sabemos que imprevistos acontecem, sejam eles por queda de energia, instabilidade de internet, entre outros. E se no dia da sua P.O. isso aconteceu, não se preocupe, você pode enviar a sua solicitação pelo portal Requerimento/Dificuldades para realização de P.O. Informe-nos o que aconteceu para que seja possível a avaliação. Se preferir, pode nos procurar em um dos nossos canais. Estamos prontos para te auxiliar!\n\nLembre-se de anexar o seu comprovante ou print da dificuldade enfrentada, ele será importante para a análise.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-dificuldades-para-realizacao-de-provas-oficiais-exame-on-line",
+     "heading": "Onde e quando pedir Dificuldades para realização de Provas Oficiais/Exame On-line",
+     "text": "- Setor responsável: Secretaria\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Disciplinas em Inglês – Equivalência de Disciplina Eletiva",
+   "title": "Disciplinas em Inglês – Equivalência de Disciplina Eletiva",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplinas em Inglês – Equivalência de Disciplina Eletiva",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplinas-em-ingles-equivalencia-de-disciplina-eletiva/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você foi aprovado(a) em alguma disciplina em inglês do nosso curso de extensão. Parabéns! Agora você pode solicitar a validação da equivalência para uma disciplina eletiva por meio do seu portal Requerimento/ Disciplinas em Inglês – Equivalência de Disciplina Eletiva.\n\nFicou com dúvidas? Fique à vontade para falar conosco por meio dos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplinas-em-ingles-equivalencia-de-disciplina-eletiva",
+     "heading": "Onde e quando pedir Disciplinas em Inglês – Equivalência de Disciplina Eletiva",
+     "text": "- Setor responsável: Pró-Reitoria de Extensão e Desenvolvimento\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Disciplinas em Inglês – Validação de Horas Complementares",
+   "title": "Disciplinas em Inglês – Validação de Horas Complementares",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplinas em Inglês – Validação de Horas Complementares",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplinas-em-ingles-validacao-de-horas-complementares/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Sabia que as disciplinas em inglês do curso de extensão podem contar como horas complementares? Para isso, após aprovado(a) na matéria, abra a solicitação da validação da carga horária do curso como horas complementares por meio do portal Requerimento/ Disciplinas em Inglês – Validação de Horas Complementares.\n\nSe ficar com dúvidas, fique à vontade para nos chamar em um dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplinas-em-ingles-validacao-de-horas-complementares",
+     "heading": "Onde e quando pedir Disciplinas em Inglês – Validação de Horas Complementares",
+     "text": "- Setor responsável: Pró-Reitoria de Extensão e Desenvolvimento\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Disciplinas extracurriculares",
+   "title": "Disciplinas extracurriculares",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplinas extracurriculares",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplinas-extracurriculares/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja cursar outras disciplinas fora do seu curso ou com outra ênfase? É uma ótima opção para horas complementares, além de agregar na sua formação acadêmica. Para requisitar, basta acessar Requerimento/ Disciplinas extracurriculares ou entrar em contato por meio dos nossos canais de atendimento. Estamos prontos para te auxiliar!\n\nAtenção: disciplinas extracurriculares são pagas.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplinas-extracurriculares",
+     "heading": "Onde e quando pedir Disciplinas extracurriculares",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Disciplinas Isoladas (Ex-alunos)",
+   "title": "Disciplinas Isoladas (Ex-alunos)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplinas Isoladas (Ex-alunos)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplinas-isoladas-ex-alunos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Um bom filho a casa torna, não é mesmo? Se você é Alumni Alvarista e deseja cursar algumas disciplinas adicionais da grade de cursos da FECAP, faça a sua solicitação por meio do portal Requerimento/ Disciplinas Isoladas (Ex-alunos). Se preferir, pode nos procurar por meio dos nossos canais de atendimento. Vamos adorar te receber novamente!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplinas-isoladas-ex-alunos",
+     "heading": "Onde e quando pedir Disciplinas Isoladas (Ex-alunos)",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Dispensa de disciplina",
+   "title": "Dispensa de disciplina",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Dispensa de disciplina",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/dispensa-de-disciplina/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja solicitar a dispensa de uma disciplina já cursada na FECAP ou em outra Instituição de Ensino? Para requisitar, basta abrir uma solicitação em seu portal Requerimento/ Dispensa de disciplina (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/114). Se preferir, nos procure em um dos nossos canais informando qual disciplina deseja dispensar. Afinal, seu sucesso também é o nosso!\n\nImportante: se você cursou a disciplina em outra Instituição de Ensino deverá apresentar o Histórico Escolar e Conteúdo Programático da Instituição de origem.\n\nAtenção: confira o prazo para solicitação disponível no Manual do Aluno.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-dispensa-de-disciplina",
+     "heading": "Onde e quando pedir Dispensa de disciplina",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/DP Adaptação indisponível no portfólio",
+   "title": "DP/Adaptação indisponível no portfólio",
+   "aliases": [
+    "DP Adaptação indisponível no portfólio"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — DP/Adaptação indisponível no portfólio",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/dp-adaptacao-indisponivel-no-portfolio/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Tem alguma DP ou Adaptação que precisa cursar e não estamos oferecendo no momento?\n\nVocê pode solicitar a abertura de turma diretamente pelo portal Requerimento/ DP/Adaptação indisponível no portfólio ou nos acionar nos canais de atendimento do ASA informando o nome da disciplina.\n\nImportante: a validação dependerá se as turmas terão quórum suficiente ou se possuem estudantes formandos matriculados.\n\nE já anota na agenda: as aulas de DP/Adaptação ocorrem aos sábados.\n\nConfira o prazo para solicitação disponível no Manual do Aluno.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-dp-adaptacao-indisponivel-no-portfolio",
+     "heading": "Onde e quando pedir DP/Adaptação indisponível no portfólio",
+     "text": "- Setor responsável: Pró-Reitoria de Graduação\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Inclusão no Nivelamento",
+   "title": "Inclusão no Nivelamento",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Inclusão no Nivelamento",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/inscricoes-de-nivelamento-fora-do-prazo/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer participar do programa de nivelamento (Matemática e Português) oferecido aos estudantes do primeiro e segundo semestre, porém as aulas já estão em andamento e você ainda não está inscrito? Solicite sua inclusão no Programa pelo portal Requerimento/ Inscrições de nivelamento fora do prazo ou procure por um dos agentes de sucesso em nossos canais.\n\nConfira o cronograma abaixo:\n\nNIVELAMENTO I\n\nO Nivelamento I de Língua Portuguesa e de Matemática para os(as) alunos(as) dos primeiros semestres dos cursos de Graduação começam dia 25/03/2023.\n\nAs Provas Finais serão presenciais em 27/05 (sábado), período matutino, reserve esta data.\n\nConfira o regulamento aqui (https://www.fecap.br/wp-content/uploads/2023/03/Regulamento_Nivelamento_I_2023-1_v2.pdf).\n\nNIVELAMENTO II\n\nO Nivelamento II de Língua Portuguesa e de Matemática para os(as) alunos(as) dos segundos semestres dos cursos de Graduação começam dia 25/03/2023.\n\nAs Provas Finais serão presenciais em 27/05 (sábado), período matutino, reserve esta data.\n\nConfira o regulamento aqui (https://www.fecap.br/wp-content/uploads/2023/03/Regulamento-Nivelamento-II-2023-1.pdf).\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-inclusao-no-nivelamento",
+     "heading": "Onde e quando pedir Inclusão no Nivelamento",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Inscrições PEDP (fora do prazo)",
+   "title": "Inscrições PEDP (fora do prazo)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Inscrições PEDP (fora do prazo)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/inscricoes-pedp-fora-do-prazo/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "As aulas do PEDP já iniciaram e você ainda não está inscrito? Então corra para enviar a sua solicitação e não ficar de fora! Acesse o portal Requerimento/ Inscrições PEDP (fora do prazo) ou entre em contato com a equipe de atendimento ASA por um de nossos canais. Será um prazer te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-inscricoes-pedp-fora-do-prazo",
+     "heading": "Onde e quando pedir Inscrições PEDP (fora do prazo)",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Lançamento de Notas Pendentes",
+   "title": "Lançamento de Notas Pendentes",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Lançamento de Notas Pendentes",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/lancamento-de-notas-pendentes/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está com alguma nota pendente? Seja ela de disciplinas regulares, de PEDP, Nivelamento, entre outras, acesse o portal na opção Requerimento/ Lançamento de Notas Pendentes. Sua solicitação será recebida pela nossa coordenação e será avaliada. Se preferir, você pode nos procurar em um dos nossos canais. Estamos prontos para te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-lancamento-de-notas-pendentes",
+     "heading": "Onde e quando pedir Lançamento de Notas Pendentes",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Nome do aluno não consta na lista de presença",
+   "title": "Nome do aluno não consta na lista de presença",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Nome do aluno não consta na lista de presença",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/nome-do-aluno-nao-consta-na-lista-de-presenca/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Notou que seu nome não está na lista de presença? Estamos aqui para resolver essa questão! Você pode enviar a sua solicitação pelo portalRequerimento/Nome não consta na lista de presença (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/333)ou, em caso de dúvidas, nos procure por meio de um dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-nome-do-aluno-nao-consta-na-lista-de-presenca",
+     "heading": "Onde e quando pedir Nome do aluno não consta na lista de presença",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/PEDP Revisão de provas",
+   "title": "PEDP | Revisão de provas",
+   "aliases": [
+    "PEDP Revisão de provas"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — PEDP | Revisão de provas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/pedp-revisao-de-provas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "O Sufoco de provas e PEDP passou, mas não ficou feliz com o critério usado e gostaria que o professor realizasse uma nova análise? Vamos te ajudar!\n\nVocê pode solicitar a revisão da sua prova diretamente com a coordenação pelo portal Requerimento/Revisão de provas ou, se preferir, nos procure em um dos nossos canais.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-pedp-revisao-de-provas",
+     "heading": "Onde e quando pedir PEDP | Revisão de provas",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Reagendamento de provas por sobreposições de horários",
+   "title": "Reagendamento de provas por sobreposições de horários",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reagendamento de provas por sobreposições de horários",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/reagendamento-de-provas-por-sobreposicoes-de-horarios/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você está cursando adaptações ou dependências e as provas estão coincidindo o horário, não se preocupe, você pode requisitar o reagendamento de data/turno de uma delas. Solicite por meio do portal Requerimento/Reagendamento de provas por sobreposições de horários ou, se preferir, nos procure nos canais de atendimento do ASA. Faremos de tudo para te ajudar a ter sucesso em suas provas!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-reagendamento-de-provas-por-sobreposicoes-de-horarios",
+     "heading": "Onde e quando pedir Reagendamento de provas por sobreposições de horários",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Remanejamento de disciplinas",
+   "title": "Remanejamento de disciplinas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Remanejamento de disciplinas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/remanejamento-de-disciplinas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Possui janelas em sua grade horária e deseja remanejar disciplinas de DP ou adaptação? Sem problemas! Basta fazer a solicitação por meio do portal Requerimento/ Remanejamento de disciplinas (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/147). Se preferir, entre em contato por meio dos nossos canais de atendimento, informando o nome da disciplina que deseja remanejar, indicando o curso, dia da semana e horário.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-remanejamento-de-disciplinas",
+     "heading": "Onde e quando pedir Remanejamento de disciplinas",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Rematrícula fora de Época",
+   "title": "Rematrícula fora de Época",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Rematrícula fora de Época",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/rematricula-fora-de-epoca/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Imprevistos acontecem e se você necessita realizar a sua rematrícula fora da época, faça a solicitação via portal Requerimento/ Rematrícula fora de época (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/334). Mas corra, não perca a chance de continuar vivendo os melhores anos da sua vida! Se tiver alguma dúvida, fique à vontade para nos procurar por meio dos nossos canais de atendimento.\n\nAtenção: matrículas feitas fora do prazo podem resultar em faltas lançadas retroativamente e atividades avaliativas não revalidadas. Por isso, garanta sempre a sua rematrícula em dia!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-rematricula-fora-de-epoca",
+     "heading": "Onde e quando pedir Rematrícula fora de Época",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Rematrícula",
+   "title": "Rematrícula",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Rematrícula",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/rematricula/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Agora a rematrícula é automática! Ao final de todo semestre, você receberá o boleto de rematrícula (julho/janeiro) por e-mail e estará disponível em seu Portal do Aluno.\n\nRealize o pagamento dentro do vencimento e garanta a sua participação no curso.\n\nQualquer dúvida, estamos disponíveis para te ajudar por meio dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação."
+    },
+    {
+     "anchor": "condicoes-para-rematricula",
+     "heading": "Condições para Rematrícula",
+     "text": "- Deve estar adimplente ou ter realizado acordo com o Depto. Financeiro;"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-rematricula",
+     "heading": "Onde e quando pedir Rematrícula",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Reunião com a Coordenação de Curso",
+   "title": "Reunião com a Coordenação de Curso",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reunião com a Coordenação de Curso",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/reuniao-com-a-coordenacao-de-curso/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer bater um papo com a Coordenação do curso? Tirar suas dúvidas, entender mais sobre a profissão ou compartilhar suas necessidades. A Coordenação está pronta para te ouvir! Basta acessar Requerimento/ Reunião com a Coordenação de Curso (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/257)ou procurar a equipe ASA em nossos canais de atendimento que nós iremos te auxiliar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-reuniao-com-a-coordenacao-de-curso",
+     "heading": "Onde e quando pedir Reunião com a Coordenação de Curso",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a Sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: (11) 94018-5617"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Reverter Cancelamento do curso",
+   "title": "Reverter Cancelamento do curso",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Reverter Cancelamento do curso",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/reverter-o-cancelamento-do-curso/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você cancelou o seu curso, mas pensou melhor e resolveu ficar na FECAP? Essa é uma notícia maravilhosa! Você pode solicitar e reverter o seu cancelamento por meio do portal Requerimento/Reverter o cancelamento do curso (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/335)ou por um dos canais de atendimento do ASA. Será um enorme prazer te atender.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-reverter-cancelamento-do-curso",
+     "heading": "Onde e quando pedir Reverter Cancelamento do curso",
+     "text": "- Setor responsável: Área de Sucesso do Alvarista\n- Onde: ASA - Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Solicitação de Boleto",
+   "title": "Solicitação de Boleto",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Solicitação de Boleto",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/solicitacao-de-boleto/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Não recebeu o seu boleto, sua bolsa/desconto não está devidamente cadastrado ou precisa realizar algum ajuste? Abra este requerimento descrevendo qual é o problema que está enfrentando para que possamos verificar. Estamos disponíveis para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-solicitacao-de-boleto",
+     "heading": "Condições para Solicitação de Boleto",
+     "text": "- Ter registro de matrícula"
+    },
+    {
+     "anchor": "onde-e-quando-pedir-solicitacao-de-boleto",
+     "heading": "Onde e quando pedir Solicitação de Boleto",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Tradução Juramentada do Histórico Escolar",
+   "title": "Tradução Juramentada do Histórico Escolar",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Tradução Juramentada do Histórico Escolar",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/traducao-juramentada-do-historico-escolar/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você gostaria de realizar a tradução juramentada do seu Histórico Escolar? É fácil! Basta comparecer a um cartório ou junta comercial com o seu Histórico Escolar oficial assinado que o estabelecimento em questão realizará a tradução juramentada do documento.\n\nCaso você tenha o Histórico Escolar no formato digital, mas cartório aceite somente o documento impresso, para obter o seu Histórico Escolar Impresso, acesse o Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimentos > Histórico Escolar – 2a. Via.\n\nImportante: a emissão deste documento requer um custo de R$ 10,00 e o prazo para conclusão da solicitação é de 20 dias úteis.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Transferência de ênfase eletivas",
+   "title": "Transferência de ênfase/eletivas",
+   "aliases": [
+    "Transferência de ênfase eletivas"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Transferência de ênfase/eletivas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/transferencia-de-enfase-eletivas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Nem sempre as nossas escolhas permanecem as mesmas até o final do curso, não é mesmo? Se você deseja trocar de eletiva ou é estudante de Ciências Econômica e deseja trocar de ênfase, fique tranquilo(a), podemos analisar e realizar a mudança, caso esteja dentro do prazo!\n\nEnvie sua solicitação pelo portal Requerimento/ Transferência de ênfase/eletivas ou entre em contato conosco por meios dos canais de atendimento. Estamos prontos para te ajudar!\n\nAtenção: poderá ocorrer ajuste em sua ficha financeira.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-transferencia-de-enfase-eletivas",
+     "heading": "Onde e quando pedir Transferência de ênfase/eletivas",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Transferência de turma",
+   "title": "Transferência de turma",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Transferência de turma",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/transferencia-de-turma/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se por algum motivo você deseja mudar de uma turma para outra no mesmo curso, nós podemos te ajudar! Para isso, é necessário que um estudante na turma de destino aceite realizar a troca. Após combinado, solicite por meio do portal Requerimento/ Transferência de turma (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/337), informando o nome e matrícula do(a) estudante com o(a) qual realizará a permuta.\n\nSe preferir, é só nos procurar em um dos canais de atendimento. Faremos de tudo para te ajudar em sua jornada rumo ao sucesso.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação."
+    },
+    {
+     "anchor": "condicoes-para-transferencia-de-turma",
+     "heading": "Condições para Transferência de turma",
+     "text": "- Estudante deverá estar regularmente matriculado (situação de matrícula \"Cursando\");\n- Deve ter um estudante da turma de destino interessado em trocar de turma com o solicitante (permuta);\n- Estudante que aceita realizar a permuta com o solicitante também deve solicitar a transferência de turma, informando o nome e matrícula do solicitante."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-transferencia-de-turma",
+     "heading": "Onde e quando pedir Transferência de turma",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Transferência de turno",
+   "title": "Transferência de turno",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Transferência de turno",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/transferencia-de-turno/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está com dificuldades para frequentar o curso no seu turno? Se por algum motivo deseja trocar de horário (Matutino ou Noturno), fique tranquilo(a), podemos te ajudar a realizar a mudança! Você pode abrir a solicitação para análise no portal Requerimento/ Transferência de turno (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/34/338). Se preferir, é só nos procurar em um dos nossos canais. Faremos de tudo para lhe ajudar em sua jornada.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-transferencia-de-turno",
+     "heading": "Onde e quando pedir Transferência de turno",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Transferência interna de curso (Turmas a partir do 2ºsemestre)",
+   "title": "Transferência interna de curso (Turmas a partir do 2ºsemestre)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Transferência interna de curso (Turmas a partir do 2ºsemestre)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/transferencia-interna-de-curso-turmas-a-partir-do-2osemestre/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Vários fatores influenciam na escolha de um curso, não é mesmo? E se, por acaso, você decidiu mudar, vamos respeitar a sua decisão.\n\nVocê pode requisitar a transferência interna de curso por meio do portal Requerimento/ Transferência interna de curso. Vale lembrar que será realizada a análise de grade para verificar quais disciplinadas poderão ser aproveitadas no novo curso.\n\nSe preferir, entre em contato conosco por meio dos canais de atendimento. Estamos comprometidos com o seu sucesso!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-transferencia-interna-de-curso-turmas-a-partir-do-2-semestre",
+     "heading": "Onde e quando pedir Transferência interna de curso (Turmas a partir do 2ºsemestre)",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Transferência interna de curso (Turmas do 1º semestre)",
+   "title": "Transferência interna de curso (Turmas do 1º semestre)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Transferência interna de curso (Turmas do 1º semestre)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/transferencia-interna-de-curso-turmas-do-1o-semestre/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Ainda está no primeiro semestre e não sentiu identificação com o curso? Fique tranquilo(a), nós podemos te ajudar a encontrar um curso que combine mais com você e realizar a mudança.\n\nPara solicitar a transferência interna de curso, acesse o portal Requerimento/ Transferência interna de curso. Se preferir, entre em contato conosco por meio dos canais de atendimento. Conte com a gente em seu caminho até o topo!\n\nAtenção: estudantes bolsistas do ProUni não podem transferir de curso no primeiro semestre da concessão da bolsa.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-transferencia-interna-de-curso-turmas-do-1-semestre",
+     "heading": "Onde e quando pedir Transferência interna de curso (Turmas do 1º semestre)",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Acadêmicos/Vista de Prova de Exame",
+   "title": "Vista de Prova de Exame",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-academicos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Vista de Prova de Exame",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/vista-de-prova-de-exame/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Acadêmicos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "A correria das provas já acabou, mas você não concordou com os critérios usados na avaliação e deseja a revisão da nota? Vamos te ajudar! Você pode enviar a solicitação por meio do portal Requerimento/ Vista de Prova de Exame (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/10/311)ou nos procurar nos canais de atendimento do ASA.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-vista-de-prova-de-exame",
+     "heading": "Onde e quando pedir Vista de Prova de Exame",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros",
+   "title": "Serviços Financeiros",
+   "aliases": [
+    "serviços de serviços financeiros do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Serviços Financeiros",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Abatimento de valores de Disciplinas em Inglês",
+    "Antecipação de Parcelas",
+    "Boleto não registrado",
+    "Cadastro das parcelas de DP Adaptação",
+    "Cursos de Extensão Abono de valores em novo curso",
+    "Emissão Mensal de Boletos",
+    "FIES – Restituições Reembolsos",
+    "Negociação On-line",
+    "Pagamento à Vista da Semestralidade",
+    "Pagamento Recorrente",
+    "Pagamentos de Mensalidade",
+    "Restituições"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 12 serviços."
+    },
+    {
+     "anchor": "servicos-de-servicos-financeiros",
+     "heading": "Serviços de Serviços Financeiros",
+     "text": "- Abatimento de valores de Disciplinas em Inglês\n- Antecipação de Parcelas\n- Boleto não registrado\n- Cadastro das parcelas de DP Adaptação\n- Cursos de Extensão Abono de valores em novo curso\n- Emissão Mensal de Boletos\n- FIES – Restituições Reembolsos\n- Negociação On-line\n- Pagamento à Vista da Semestralidade\n- Pagamento Recorrente\n- Pagamentos de Mensalidade\n- Restituições"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Abatimento de valores de Disciplinas em Inglês",
+   "title": "Abatimento de valores de Disciplinas em Inglês",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Abatimento de valores de Disciplinas em Inglês",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/abatimento-de-valores-de-disciplinas-em-ingles/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você decidiu realizar alguma disciplina em inglês por meio dos nossos cursos de extensão e foi aprovado(a). Isso é maravilhoso! Você pode solicitar a sua restituição em forma de abatimento de mensalidades ou até mesmo realizar outro curso de extensão. Basta abrir a sua solicitação pelo portal Requerimento/Abatimento de valores de Disciplinas em Inglês ou pode nos procurar por meio dos canais de atendimento do ASA. Estaremos disponíveis para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-abatimento-de-valores-de-disciplinas-em-ingles",
+     "heading": "Onde e quando pedir Abatimento de valores de Disciplinas em Inglês",
+     "text": "- Setor responsável: Extensão\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Antecipação de Parcelas",
+   "title": "Antecipação de Parcelas",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Antecipação de Parcelas",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/antecipacao-de-parcelas/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer antecipar algumas parcelas do seu contrato? Basta nos procurar em um dos canais de atendimento do ASA. Estamos à disposição para te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-antecipacao-de-parcelas",
+     "heading": "Onde e quando pedir Antecipação de Parcelas",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Boleto não registrado",
+   "title": "Boleto não registrado",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Boleto não registrado",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/boleto-nao-registrado/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Tentou pagar o boleto e não conseguiu? Não se preocupe, nós resolvemos para você! Acesse o seu Portal do Aluno (https://portal.fecap.br/) > Menu > Secretaria/Requerimentos > Boleto não Registrado e informe o mês do boleto em questão.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-boleto-nao-registrado",
+     "heading": "Onde e quando pedir Boleto não registrado",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Cadastro das parcelas de DP Adaptação",
+   "title": "Cadastro das parcelas de DP/Adaptação",
+   "aliases": [
+    "Cadastro das parcelas de DP Adaptação"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cadastro das parcelas de DP/Adaptação",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cadastro-das-parcelas-de-dp-adaptacao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se a sua carga horária ultrapassou 400h ou você está cursando disciplinas em regime de DP ou adaptação, e seus boletos não foram gerados automaticamente, você pode solicitar o lançamento das parcelas pelo portal Requerimento/ Cadastro das parcelas de DP/Adaptação (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/35/329). É muito rápido e simples.\n\nCaso prefira, entre em contato com os canais de atendimento do ASA. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cadastro-das-parcelas-de-dp-adaptacao",
+     "heading": "Onde e quando pedir Cadastro das parcelas de DP/Adaptação",
+     "text": "- Setor responsável: Área do Sucesso Alvarista\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Cursos de Extensão Abono de valores em novo curso",
+   "title": "Cursos de Extensão | Abono de valores em novo curso",
+   "aliases": [
+    "Cursos de Extensão Abono de valores em novo curso"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Cursos de Extensão | Abono de valores em novo curso",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/cursos-de-extensao-abono-de-valores-em-novo-curso/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Fez inscrição em algum curso de extensão e, infelizmente, ele foi cancelado? Temos uma ótima notícia: você poderá usar o valor pago em outro curso! Mas caso não queira, você poderá solicitar a restituição, sem problema algum. Basta abrir uma solicitação pelo portal Requerimento/Abatimento de valores ou, se preferir, pode nos procurar através dos nossos canais de atendimento. Estamos disponíveis para te auxiliar.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-cursos-de-extensao-abono-de-valores-em-novo-curso",
+     "heading": "Onde e quando pedir Cursos de Extensão | Abono de valores em novo curso",
+     "text": "- Setor responsável: Extensão\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Emissão Mensal de Boletos",
+   "title": "Emissão Mensal de Boletos",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Emissão Mensal de Boletos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/emissao-mensal-de-boletos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Quer tirar a segunda via do seu boleto para pagamento da mensalidade? O envio acontece todo mês no seu e-mail cadastrado no ato da matrícula, mas você pode retirar a segunda via pelo caminho: Portal do aluno> Financeiro.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-emissao-mensal-de-boletos",
+     "heading": "Condições para Emissão Mensal de Boletos",
+     "text": "-A emissão dos boletos é realizada mensalmente na última semana do mês com vencimento para o dia 07 do mês subsequente."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-emissao-mensal-de-boletos",
+     "heading": "Onde e quando pedir Emissão Mensal de Boletos",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/FIES – Restituições Reembolsos",
+   "title": "FIES – Restituições/Reembolsos",
+   "aliases": [
+    "FIES – Restituições Reembolsos"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — FIES – Restituições/Reembolsos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/fies-restituicoes-reembolsos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Não sabe como solicitar a sua restituição do programa FIES? Veja como é simples: acesse o portal Requerimento/ FIES – Restituições/Reembolsos (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/35/348) e preencha a solicitação. Em caso de dúvidas, nos procure em nossos canais de Atendimento do ASA. Será um prazer te auxiliar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-fies-restituicoes-reembolsos",
+     "heading": "Onde e quando pedir FIES – Restituições/Reembolsos",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Negociação On-line",
+   "title": "Negociação On-line",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Negociação On-line",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/negociacao-on-line/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Sabia que na FECAP é possível negociar e quitar suas dívidas de maneira 100% on-line? Faça isso diretamente pelo Portal do Aluno > Menu > Negociações On-line.\n\nConfira também o tutorial “Como fazer uma Negociação On-line?”: https://www.youtube.com/watch?v=jvDe9O4HzPk\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-negociacao-on-line",
+     "heading": "Onde e quando pedir Negociação On-line",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Pagamento à Vista da Semestralidade",
+   "title": "Pagamento à Vista da Semestralidade",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Pagamento à Vista da Semestralidade",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/pagamento-a-vista-da-semestralidade/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Deseja realizar o pagamento antecipado do semestre? Faça a solicitação pelo portal Requerimento/ Pagamento à Vista da Semestralidade (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/35/350).\n\nEm caso de dúvidas, procure por um dos atendentes ASA em nossos canais de atendimento. Estamos prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-pagamento-a-vista-da-semestralidade",
+     "heading": "Onde e quando pedir Pagamento à Vista da Semestralidade",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Pagamento Recorrente",
+   "title": "Pagamento Recorrente",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Pagamento Recorrente",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/pagamento-recorrente/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Tenha mais comodidade no pagamento das suas mensalidades, com cobranças automáticas feitas mensalmente. Faça agora a ativação da nova modalidade de pagamento recorrente por meio do seu Portal do Aluno!\n\nPara habilitar essa modalidade, é fácil:\n•Entre no seu Portal do Aluno;\n•Na página inicial, acesse o menu “Financeiro”;\n•Em “Financeiro”, selecione “Cartão”;\n•Informe os dados do seu cartão e a quantidade de parcelas desejadas;\n•Logo abaixo, marque a opção “Pagamento recorrente”;\n•Aparecerá uma mensagem especificando a ação. Clique em “Sim”;\n•Feito isso, clique em “Pagar” e em seguida em “Confirmar”.\n•Pronto, pagamento recorrente habilitado!\n\nObs: a novidade não está disponível para estudantes oriundos das Plataformas “Quero Pago” e “NOVO FIES”.\n\nDúvidas? Entre em contato conosco por meio dos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-pagamento-recorrente",
+     "heading": "Onde e quando pedir Pagamento Recorrente",
+     "text": "- Setor responsável: Financeiro\n- Horário: Segunda a sexta-feira, das 8h às 18h.\n- WhatsApp: (11) 94018-5617\n- E-mail: tesouraria@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Pagamentos de Mensalidade",
+   "title": "Pagamentos de Mensalidade",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Pagamentos de Mensalidade",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/pagamentos-de-mensalidade/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Todos os boletos de serviços (mensalidades, dependências, adaptações, entre outros) são emitidos pelo seu Portal do Aluno. Assim que realizar seu login, vá até a aba Financeiro e escolha a opção da parcela desejada e a forma de pagamento (boleto, cartão ou PIX). Prontinho!\n\nEm caso de dúvidas, entre em contato por meio dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-pagamentos-de-mensalidade",
+     "heading": "Condições para Pagamentos de Mensalidade",
+     "text": "- O estudante pode estar regularmente matriculado ou não;\n- O estudante precisa do acesso (login e senha) ao portal;\n- Caso o estudante ou responsável financeiro não tenha mais acesso ao portal, deverá recuperar a senha ou solicitar o pagamento nos demais canais de atendimento disponíveis.\n- Por questões de segurança, as informações financeiras serão fornecidas somente ao estudante e seu responsável financeiro."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-pagamentos-de-mensalidade",
+     "heading": "Onde e quando pedir Pagamentos de Mensalidade",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Financeiros/Restituições",
+   "title": "Restituições",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-financeiros"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Restituições",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/restituicoes/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Financeiros"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Realizou algum pagamento indevido ou duplicado e precisa da restituição? Fique tranquilo(a), basta abrir uma solicitação pelo portal Requerimento/Restituição (https://fundacaoescola129779.rm.cloudtotvs.com.br/FrameHTML/Web//app/edu/PortalEducacional/#/requerimento/novo/35/347)ou, se preferir, pode nos procurar por meio dos canais do ASA! Estamos à disposição para te ajudar!\n\nLembre-se: envie-nos os dados bancários e o comprovante de pagamento para agilizar o processo de restituição.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-restituicoes",
+     "heading": "Onde e quando pedir Restituições",
+     "text": "- Setor responsável: Financeiro\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Para Candidatos",
+   "title": "Serviços Para Candidatos",
+   "aliases": [
+    "serviços de serviços para candidatos do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Serviços Para Candidatos",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Disciplinas Isoladas (Aluno de Instituições Parceiras e Não-Parceiras)",
+    "Disciplinas Isoladas (Alunos Estrangeiros)",
+    "ProUni Concessão",
+    "ProUni Concessão (lista de espera)"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 4 serviços."
+    },
+    {
+     "anchor": "servicos-de-servicos-para-candidatos",
+     "heading": "Serviços de Serviços Para Candidatos",
+     "text": "- Disciplinas Isoladas (Aluno de Instituições Parceiras e Não-Parceiras)\n- Disciplinas Isoladas (Alunos Estrangeiros)\n- ProUni Concessão\n- ProUni Concessão (lista de espera)"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Para Candidatos/Disciplinas Isoladas (Aluno de Instituições Parceiras e Não-Parceiras)",
+   "title": "Disciplinas Isoladas (Aluno de Instituições Parceiras e Não-Parceiras)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-para-candidatos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplinas Isoladas (Aluno de Instituições Parceiras e Não-Parceiras)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplinas-isoladas-aluno-de-instituicoes-parceiras-e-nao-parceiras/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Para Candidatos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você é estudante de outra instituição, mas deseja cursar uma ou mais disciplinas na FECAP, vamos adorar te receber! Entre em contato conosco por meio dos nossos canais de atendimento, indicando a disciplina que deseja cursar. Estamos prontos para te auxiliar.\n\nImportante: poderá ocorrer cobrança por disciplina ou por proporcionalidade de carga horária.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplinas-isoladas-aluno-de-instituicoes-parceiras-e-nao-parceiras",
+     "heading": "Onde e quando pedir Disciplinas Isoladas (Aluno de Instituições Parceiras e Não-Parceiras)",
+     "text": "- Setor responsável: Coordenação de Curso\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Para Candidatos/Disciplinas Isoladas (Alunos Estrangeiros)",
+   "title": "Disciplinas Isoladas (Alunos Estrangeiros)",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-para-candidatos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Disciplinas Isoladas (Alunos Estrangeiros)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/disciplinas-isoladas-alunos-estrangeiros/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Para Candidatos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Estudantes internacionais de instituições parceiras podem solicitar o ingresso em uma ou mais disciplinas da grade de cursos de graduação da FECAP. Para isso, entre em contato por um dos nossos canais de atendimento. Será um prazer ser a sua instituição de ensino no Brasil!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-disciplinas-isoladas-alunos-estrangeiros",
+     "heading": "Onde e quando pedir Disciplinas Isoladas (Alunos Estrangeiros)",
+     "text": "- Setor responsável: International Office\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Para Candidatos/ProUni Concessão (lista de espera)",
+   "title": "ProUni: Concessão (lista de espera)",
+   "aliases": [
+    "ProUni Concessão (lista de espera)"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-para-candidatos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — ProUni: Concessão (lista de espera)",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/prouni-concessao-lista-de-espera/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Para Candidatos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Está inscrito(a) na lista de espera do ProUni? Fique atento(a) ao seu e-mail e telefone, a Secretaria Acadêmica entrará em contato para solicitar a entrega da documentação. Boa sorte!\n\nLembre-se, em caso de dúvidas, fique à vontade para entrar em contato conosco por meios dos nossos canais de atendimento.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-prouni-concessao-lista-de-espera",
+     "heading": "Onde e quando pedir ProUni: Concessão (lista de espera)",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Serviços Para Candidatos/ProUni Concessão",
+   "title": "ProUni: Concessão",
+   "aliases": [
+    "ProUni Concessão"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "servicos-para-candidatos"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — ProUni: Concessão",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/prouni-concessao/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Serviços Para Candidatos"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Você foi pré-selecionado(a) e aprovado(a) no ProUni. Parabéns! Ficamos felizes que você nos escolheu como a sua Instituição de Ensino.\n\nFique ligado(a) aos seus meios de comunicação, você será orientado(a) sobre a entrega dos documentos por e-mail ou contato telefônico. Boa sorte!\n\nLembre-se, em caso de dúvidas estamos sempre prontos para te ajudar!\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria)."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-prouni-concessao",
+     "heading": "Onde e quando pedir ProUni: Concessão",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: Segunda a sexta, das 7h00 às 21h00 | Sábado, das 09h00 às 12h30.\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Transporte e Estacionamento",
+   "title": "Transporte e Estacionamento",
+   "aliases": [
+    "serviços de transporte e estacionamento do ASA"
+   ],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "categoria"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Transporte e Estacionamento",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Solicitação de Passe Escolar EMTU",
+    "Solicitação de Passe Escolar SPTrans"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Categoria da Cesta de Serviços do ASA - Área do Sucesso Alvarista com 2 serviços."
+    },
+    {
+     "anchor": "servicos-de-transporte-e-estacionamento",
+     "heading": "Serviços de Transporte e Estacionamento",
+     "text": "- Solicitação de Passe Escolar EMTU\n- Solicitação de Passe Escolar SPTrans"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Transporte e Estacionamento/Solicitação de Passe Escolar EMTU",
+   "title": "Solicitação de Passe Escolar EMTU",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "transporte-e-estacionamento"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Solicitação de Passe Escolar EMTU",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/solicitacao-de-passe-escolar-emtu/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Transporte e Estacionamento"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você está regularmente matriculado na FECAP e está fora da Cidade de São Paulo, saiba que você pode solicitar o benefício da meia passagem. Para fazer sua solicitação é fácil!\n\n1 – Primeiro faça seu pré-cadastro pelo site da EMTU (https://www.emtu.sp.gov.br/EMTU/home/home.htm). O pagamento da taxa é feito no próprio site.\n\n2 – Depois acesse o Portal do aluno > Menu > Requerimentos > e solicite o envio dos seus dados para a EMTU.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-solicitacao-de-passe-escolar-emtu",
+     "heading": "Condições para Solicitação de Passe Escolar EMTU",
+     "text": "- Ter situação de matrícula \"Cursando\"\n- Ter entregue os documentos do estudante: RG, CPF e comprovante de residência atualizado."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-solicitacao-de-passe-escolar-emtu",
+     "heading": "Onde e quando pedir Solicitação de Passe Escolar EMTU",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: De segunda a sexta-feira, das 08h00 às 21h30 e aos sábados, das 09h00 às 13h00\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
+  {
+   "id": "Cesta de Serviços do ASA/Transporte e Estacionamento/Solicitação de Passe Escolar SPTrans",
+   "title": "Solicitação de Passe Escolar SPTrans",
+   "aliases": [],
+   "tags": [
+    "asa",
+    "cesta-de-servicos",
+    "transporte-e-estacionamento"
+   ],
+   "sourceLabel": "Cesta de Serviços do ASA — Solicitação de Passe Escolar SPTrans",
+   "sourceUrl": "https://www.fecap.br/asa/cesta-de-servicos/solicitacao-de-passe-escolar-sptrans/",
+   "updated": "2026-11-10",
+   "generated": true,
+   "links": [
+    "ASA - Área do Sucesso Alvarista",
+    "Transporte e Estacionamento"
+   ],
+   "sections": [
+    {
+     "anchor": "",
+     "heading": "",
+     "text": "Se você está regularmente matriculado na FECAP e utiliza a SPTrans, informamos que o seu cadastro será atualizado automaticamente.\n\nSe você ou a SPTrans não identificaram o envio dos dados pela FECAP, acesse o Portal do aluno > Menu > Requerimentos > e solicite o comprovante de envio dos seus dados à SPTrans.\n\nCaso ainda não tenha ativado seu benefício, confira o passo a passo:\n\n1. Acesse sua situação cadastral no site da SPTrans;2. Pague a taxa solicitada e aguarde a liberação do benefício, que deverá ocorrer automaticamente em 72 horas.\n\nMas, fique atento(a):\n\n– Se você ingressou na FECAP neste semestre, o prazo para envio de seus dados para a SPTrans é de 15 dias após a data de conclusão da matrícula;– Se você está pedindo o Bilhete Único pela primeira vez, assim que você pagar a taxa e receber o seu Bilhete, é necessário fazer o desbloqueio na plataforma. Depois desse passo importante, em 72 horas o benefício será liberado automaticamente.\n\nATENÇÃO: Só abra este requerimento caso a SPTrans informe a necessidade de um comprovante de que os seus dados foram devidamente cadastrados ou se você ou a SPTrans não identificaram o envio dos dados pela FECAP.\n\nServiço da Cesta de Serviços do ASA (ver os outros serviços da categoria). Para: Colégio, Graduação, Mestrado, Pós-Graduação."
+    },
+    {
+     "anchor": "condicoes-para-solicitacao-de-passe-escolar-sptrans",
+     "heading": "Condições para Solicitação de Passe Escolar SPTrans",
+     "text": "- Ter situação de matrícula \"Cursando\";\n- Ter entregue os documentos do estudante: RG, CPF e comprovante de residência atualizado;\n- O estudante deverá possuir um pré-cadastro no site da SPTrans antes de realizar a solicitação."
+    },
+    {
+     "anchor": "onde-e-quando-pedir-solicitacao-de-passe-escolar-sptrans",
+     "heading": "Onde e quando pedir Solicitação de Passe Escolar SPTrans",
+     "text": "- Setor responsável: Secretaria Acadêmica\n- Onde: Área do Sucesso Alvarista\n- Horário: De segunda a sexta-feira, das 08h00 às 21h30 e aos sábados, das 09h00 às 13h00\n- Telefone: (11) 3272-2222\n- WhatsApp: (11) 94018-5617\n- E-mail: sucessoalvarista@fecap.br"
+    }
+   ]
+  },
   {
    "id": "FECAP/Acessibilidade na FECAP",
    "title": "Acessibilidade na FECAP",
