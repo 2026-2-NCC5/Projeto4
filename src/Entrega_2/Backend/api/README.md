@@ -34,6 +34,8 @@ Produção/containers: `npm run build && npm start`.
 npm run brain:site    # relê o site público da FECAP e recria ../cerebro/Site da FECAP (opcional)
 npm run brain:build   # compila ../cerebro em src/brain/vault.generated.ts (obrigatório depois de editar notas)
 npm run brain:gaps    # copia as perguntas sem resposta do banco para ../cerebro/00 Entrada
+npm run brain:cesta   # recria ../cerebro/Cesta de Serviços do ASA a partir da Cesta de Serviços
+npm run brain:probe   # avalia as respostas diretas do cérebro (sem LLM) num lote de perguntas
 ```
 
 Em produção o job diário `GET /api/internal/jobs/fecap-site-sync` (Vercel Cron, `Authorization: Bearer $CRON_SECRET`)

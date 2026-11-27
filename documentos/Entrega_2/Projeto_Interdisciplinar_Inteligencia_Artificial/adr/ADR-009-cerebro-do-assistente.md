@@ -51,3 +51,19 @@ nenhum dado pessoal enviado para fora.
   não é consultado. `BRAIN_SITE_SYNC_ENABLED=false` desliga a leitura do site.
 - Contrato 1.11 (só acréscimos): `GET /api/assistant-brain`, `PATCH /api/assistant-brain/gaps/:id`.
 - Ordem de implantação: migration 018 → API → portal.
+
+## Adendo (2026-11-27): resposta documental, Cesta de Serviços e mapa do cérebro
+
+- **Sem IA generativa, o cérebro responde direto.** Com a chave do Gemini recusada (403, projeto sem faturamento),
+  toda resposta saía só das regras. Agora, quando nada acima responde, `src/brain/answer.ts` devolve o trecho da nota
+  mais relevante, identificado como resposta documental da fonte oficial, sem IA generativa. Notas geradas do site
+  exigem pontuação maior que as revisadas, e perguntas fora do assunto não são respondidas.
+- **Limite conhecido.** A escolha da nota é por palavras, não por sentido: o assistente não entende continuações
+  ("e no sábado?"), não junta duas notas e às vezes escolhe a nota errada (ex.: "trancar" × "cancelar"). A avaliação
+  fica em `npm run brain:probe`. Resolver isso exige um modelo de linguagem (próprio, via Ollama, ou por API).
+- **Cesta de Serviços no vault.** `npm run brain:cesta` gera 177 notas de serviço e 17 notas-índice de categoria; uma
+  nota revisada descreve o ASA. O cérebro passa de 305 para 500 notas.
+- **Mapa do cérebro no portal** (`/asa|/admin/cerebro-assistente/mapa`): grafo das notas no estilo do Obsidian, com
+  busca, filtro por pasta e leitura da nota com links e backlinks. Contrato 1.12 (só acréscimos):
+  `GET /api/assistant-brain/graph` e `GET /api/assistant-brain/note?id=`.
+- Sem migration nova. Ordem de implantação: API → portal.

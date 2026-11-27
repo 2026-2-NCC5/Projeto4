@@ -26,8 +26,9 @@
 | 1.9 | support/whatsapp | Central de Atendimento WhatsApp (canal, conversas, eventos em tempo real) |
 | 1.10 | assistant | `history` opcional na mensagem do assistente (até 6 turnos, nunca persistidos) |
 | 1.11 | assistant-brain | Cérebro do assistente: `GET /api/assistant-brain` (notas, páginas do site, lacunas) e `PATCH /api/assistant-brain/gaps/:id` — ver [ADR-009](../adr/ADR-009-cerebro-do-assistente.md); avisos e push: `POST /api/notifications/broadcast` (`notifications:broadcast`) e `POST /api/notifications/push-test` — ver [PUSH_NOTIFICATIONS.md](PUSH_NOTIFICATIONS.md) |
+| 1.12 | assistant-brain | Mapa do cérebro: `GET /api/assistant-brain/graph` (notas e ligações) e `GET /api/assistant-brain/note?id=` (nota inteira, links e backlinks), ambos `kb:read:all`; sem IA generativa ligada, o assistente responde com o trecho da nota identificado como resposta documental — ver [ADR-009](../adr/ADR-009-cerebro-do-assistente.md) |
 
-`GET /api/platform/info` informa `contractVersion` (hoje `1.11`). Campos novos são opcionais ou têm valor padrão.
+`GET /api/platform/info` informa `contractVersion` (hoje `1.12`). Campos novos são opcionais ou têm valor padrão.
 Nenhum campo existente mudou de tipo nem de significado.
 
 ## Envelope
