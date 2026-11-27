@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/services/api/client';
-import type { AssistantBrainOverview, AssistantKnowledgeGap, AssistantKnowledgeGapStatus, AssistantKnowledgeGapUpdate } from '@/types/api';
+import type { AssistantBrainGraph, AssistantBrainNoteDetail, AssistantBrainOverview, AssistantKnowledgeGap, AssistantKnowledgeGapStatus, AssistantKnowledgeGapUpdate } from '@/types/api';
 
 /**
  * Cérebro do assistente: as notas do vault do Obsidian (Backend/cerebro, compiladas na API) e as perguntas
@@ -27,3 +27,23 @@ export function useUpdateGap() {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: brainKeys.all }),
   });
 }
+
+// ---- grafo do cérebro (v1.12): visão estilo Obsidian
+export function useBrainGraph(enabled = true) {
+  return useQuery({
+    queryKey: [...brainKeys.all, 'graph'] as const,
+    queryFn: () => api.get<AssistantBrainGraph>('/api/assistant-brain/graph'),
+    staleTime: 5 * 60_000,
+    enabled,
+  });
+}
+
+export function useBrainNote(id: string | null) {
+  return useQuery({
+    queryKey: [...brainKeys.all, 'note', id] as const,
+    queryFn: () => api.get<AssistantBrainNoteDetail>('/api/assistant-brain/note', { query: { id: id ?? '' } }),
+    staleTime: 5 * 60_000,
+    enabled: Boolean(id),
+  });
+}
+// ---- end grafo do cérebro

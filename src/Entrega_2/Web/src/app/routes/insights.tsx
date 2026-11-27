@@ -22,6 +22,7 @@ function knowledgeRoutes(): RouteObject[] {
     { path: 'base-conhecimento/:id/editar', element: page(knowledgeEditor) },
     // ---- cérebro do assistente
     { path: 'cerebro-assistente', element: page(() => import('@/pages/insights/knowledge/BrainPage')) },
+    { path: 'cerebro-assistente/mapa', element: page(() => import('@/pages/insights/knowledge/BrainGraphPage')) },
     // ---- avisos e push: aviso para todos os alunos
     { path: 'enviar-aviso', element: page(broadcast) },
   ];

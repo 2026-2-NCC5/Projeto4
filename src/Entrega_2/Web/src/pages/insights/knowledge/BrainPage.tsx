@@ -1,4 +1,4 @@
-import { BrainCircuit, Check, EyeOff, FileText, Mic, RotateCcw, Type } from 'lucide-react';
+import { BrainCircuit, Check, EyeOff, FileText, Mic, Network, RotateCcw, Type } from 'lucide-react';
 import { useState } from 'react';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Badge, KeyValueList, List, ListItem, PageHeader, SectionHeader, Surface } from '@/components/ui/Display';
@@ -63,6 +63,7 @@ export default function BrainPage() {
   const canWrite = can('kb:write');
   const [status, setStatus] = useState<AssistantKnowledgeGapStatus>('open');
   const overview = useBrainOverview(status, allowed);
+  const { to } = useInsightsArea();
 
   if (!allowed) return <AccessDenied />;
   const data = overview.data;
@@ -72,6 +73,11 @@ export default function BrainPage() {
       <PageHeader
         title="Cérebro do assistente"
         description="O assistente responde só com a base oficial: os artigos publicados desta base e as notas do cérebro da FECAP (um vault do Obsidian revisado pela equipe). Quando não encontra resposta, a pergunta aparece aqui para a equipe ensinar."
+        actions={
+          <ButtonLink to={to('cerebro-assistente/mapa')} variant="primary" icon={Network}>
+            Ver mapa do cérebro
+          </ButtonLink>
+        }
       />
       {overview.isPending ? (
         <LoadingRows rows={4} />
@@ -97,7 +103,7 @@ export default function BrainPage() {
                 { label: 'Por pasta', value: Object.entries(data.brain.folders).map(([folder, total]) => `${folder}: ${total}`).join(' · ') || '—' },
                 {
                   label: 'Linguagem natural',
-                  value: data.brain.llmEnabled ? <Badge tone="success">Ligada</Badge> : <Badge tone="warning">Desligada: o cérebro não é consultado</Badge>,
+                  value: data.brain.llmEnabled ? <Badge tone="success">Ligada</Badge> : <Badge tone="warning">Desligada: responde com o trecho da nota</Badge>,
                 },
               ]}
             />
